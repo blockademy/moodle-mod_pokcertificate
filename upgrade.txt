@@ -1,0 +1,5 @@
+This files describes API changes in the mod_pokcertificate code.
+
+=== 4.0 ===
+
+* Removed printheading from pokcertificate and admin settings. This will now be handled by the activity header and/or theme.
