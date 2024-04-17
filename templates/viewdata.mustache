@@ -1,0 +1,121 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_pokcertificate/viewdata
+
+    TODO describe template viewdata
+
+    Example context (json):
+    {
+    }
+}}
+
+<div class="tab-container">
+  <button class="tab-btn" onclick="openTab(event, 'tab1')">Tab 1</button>
+  <button class="tab-btn" onclick="openTab(event, 'tab2')">Tab 2</button>
+  <button class="tab-btn" onclick="openTab(event, 'tab3')">Tab 3</button>
+
+  <div id="tab1" class="tab active">
+    <div class="row mt-4">
+        <div class="col-md-8 ">
+            <h3 class="col-md-8 p-0 col-8 bold ">POK Account Details</h3>
+            <span class=""></span>
+            <div class="coursedetails_block mr-4">
+                <ul>
+                    <li class="d-flex">
+                        <span class="track_icon"></span>
+                        <span class="text-muted mx-2">Institution</span>
+                        <span class="count"></span>
+                    </li>
+                    <li class="d-flex">
+                        <span class="track_icon"></span>
+                        <span class="text-muted mx-2">Domain</span>
+                        <span class="count"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-4 right_container">
+            <h6 class="col-md-4 p-0 col-8 bold">Info</h6>
+            <div class="coursedetails_block mr-4">
+                <ul>
+                    <li class="d-flex">
+                        <span class="track_icon"></span>
+                        <span class="text-muted mx-2">No of avaialble certificates to Download</span>
+                        <span class="count"></span>
+                    </li>
+                    <li class="d-flex">
+                        <span class="track_icon"></span>
+                        <span class="text-muted mx-2">Pending Certificates</span>
+                        <span class="count"></span>
+                    </li>
+                    <li class="d-flex">
+                        <span class="track_icon"></span>
+                        <span class="text-muted mx-2">Issued Certificates</span>ad</span>
+                        <span class="count"></span>
+                    </li>
+                    <li class="d-flex">
+                        <span class="track_icon"></span>
+                        <span class="text-muted mx-2">Incomplete Student Profile</span>
+                        <span class="count"></span>
+                    </li>
+                    <li class="d-flex">
+                        <span class="track_icon"></span>
+                        <span class="text-muted mx-2">End of Service</span>
+                        <span class="count"></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+     </div>
+  </div>
+
+  <div id="tab2" class="tab">
+    <h3>Tab 2 Content</h3>
+    <p>This is the content of Tab 2.</p>
+  </div>
+
+  <div id="tab3" class="tab">
+    <h3>Tab 3 Content</h3>
+    <p>This is the content of Tab 3.</p>
+  </div>
+</div>
+
+<script>
+function openTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+
+  // Hide all tabs
+  tabcontent = document.getElementsByClassName("tab");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Deactivate all tab buttons
+  tablinks = document.getElementsByClassName("tab-btn");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  // Show the selected tab and set the corresponding button as active
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// Show the default tab on page load
+document.getElementById("defaultOpen").click();
+</script>

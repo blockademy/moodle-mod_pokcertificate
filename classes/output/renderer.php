@@ -14,17 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_pokcertificate\output;
+
 /**
- * Page module version information
+ * Renderer for POK Certificate
  *
- * @package mod_pokcertificate
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @package    mod_pokcertificate
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2024041604;       // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023100400;    // Requires this Moodle version.
-$plugin->component = 'mod_pokcertificate';       // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+class renderer extends \plugin_renderer_base {
+    public function get_content() {
+        return $this->render_from_template('mod_pokcertificate/viewdata', []);
+    }
+}

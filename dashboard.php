@@ -15,16 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Page module version information
+ * TODO describe file dashboard
  *
- * @package mod_pokcertificate
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @package    mod_pokcertificate
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+require('../../config.php');
 
-$plugin->version   = 2024041604;       // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023100400;    // Requires this Moodle version.
-$plugin->component = 'mod_pokcertificate';       // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+require_login();
+
+$url = new moodle_url('/mod/pokcertificate/dashboard.php', []);
+$PAGE->set_url($url);
+$PAGE->set_context(context_system::instance());
+
+$PAGE->set_heading($SITE->fullname);
+echo $OUTPUT->header();
+
+$renderer = $PAGE->get_renderer('mod_pokcertificate');
+
+echo $renderer->get_content();
+echo $OUTPUT->footer();

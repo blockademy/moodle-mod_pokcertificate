@@ -36,7 +36,28 @@ $capabilities = array(
 
     'mod/pokcertificate:addinstance' => array(
         'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:manageactivities'
+    ),
 
+    'mod/pokcertificate:editinstance' => array(
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/course:manageactivities'
+    ),
+
+    'mod/pokcertificate:manageinstance' => array(
+        'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
@@ -47,7 +68,7 @@ $capabilities = array(
     ),
 
 
-/* TODO: review public portfolio API first!
+    /* TODO: review public portfolio API first!
     'mod/pokcertificate:portfolioexport' => array(
 
         'captype' => 'read',

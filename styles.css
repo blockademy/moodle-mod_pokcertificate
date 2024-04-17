@@ -1,0 +1,16 @@
+#page-mod-pokcertificate-dashboard .tab {
+    display: none;
+}
+#page-mod-pokcertificate-dashboard .tab.active {
+    display: block;
+}
+/* Style for tab buttons */
+#page-mod-pokcertificate-dashboard  .tab-btn {
+    cursor: pointer;
+    padding: 5px 75px;
+    border: 1px solid #ccc;
+    background-color: #0c589c;
+}
+#page-mod-pokcertificate-dashboard  .tab-btn.active {
+    background-color: #ddd;
+}

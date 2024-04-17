@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
-require_once($CFG->dirroot.'/mod/pokcertificate/locallib.php');
-require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 class mod_pokcertificate_mod_form extends moodleform_mod {
     function definition() {
@@ -39,7 +39,7 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
-        $mform->addElement('text', 'name', get_string('name'), array('size'=>'48'));
+        $mform->addElement('text', 'name', get_string('name'), array('size' => '48'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -73,14 +73,14 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         }
 
         if (array_key_exists(RESOURCELIB_DISPLAY_POPUP, $options)) {
-            $mform->addElement('text', 'popupwidth', get_string('popupwidth', 'pokcertificate'), array('size'=>3));
+            $mform->addElement('text', 'popupwidth', get_string('popupwidth', 'pokcertificate'), array('size' => 3));
             if (count($options) > 1) {
                 $mform->hideIf('popupwidth', 'display', 'noteq', RESOURCELIB_DISPLAY_POPUP);
             }
             $mform->setType('popupwidth', PARAM_INT);
             $mform->setDefault('popupwidth', $config->popupwidth);
 
-            $mform->addElement('text', 'popupheight', get_string('popupheight', 'pokcertificate'), array('size'=>3));
+            $mform->addElement('text', 'popupheight', get_string('popupheight', 'pokcertificate'), array('size' => 3));
             if (count($options) > 1) {
                 $mform->hideIf('popupheight', 'display', 'noteq', RESOURCELIB_DISPLAY_POPUP);
             }
@@ -95,8 +95,10 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
 
         // add legacy files flag only if used
         if (isset($this->current->legacyfiles) and $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {
-            $options = array(RESOURCELIB_LEGACYFILES_DONE   => get_string('legacyfilesdone', 'pokcertificate'),
-                             RESOURCELIB_LEGACYFILES_ACTIVE => get_string('legacyfilesactive', 'pokcertificate'));
+            $options = array(
+                RESOURCELIB_LEGACYFILES_DONE   => get_string('legacyfilesdone', 'pokcertificate'),
+                RESOURCELIB_LEGACYFILES_ACTIVE => get_string('legacyfilesactive', 'pokcertificate')
+            );
             $mform->addElement('select', 'legacyfiles', get_string('legacyfiles', 'pokcertificate'), $options);
             $mform->setAdvanced('legacyfiles', 1);
         }
@@ -123,8 +125,15 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         if ($this->current->instance) {
             $draftitemid = file_get_submitted_draft_itemid('pokcertificate');
             $defaultvalues['pokcertificate']['format'] = $defaultvalues['contentformat'];
-            $defaultvalues['pokcertificate']['text']   = file_prepare_draft_area($draftitemid, $this->context->id, 'mod_pokcertificate',
-                    'content', 0, pokcertificate_get_editor_options($this->context), $defaultvalues['content']);
+            $defaultvalues['pokcertificate']['text']   = file_prepare_draft_area(
+                $draftitemid,
+                $this->context->id,
+                'mod_pokcertificate',
+                'content',
+                0,
+                pokcertificate_get_editor_options($this->context),
+                $defaultvalues['content']
+            );
             $defaultvalues['pokcertificate']['itemid'] = $draftitemid;
         }
         if (!empty($defaultvalues['displayoptions'])) {
@@ -144,4 +153,3 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         }
     }
 }
-

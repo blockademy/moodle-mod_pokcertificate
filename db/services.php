@@ -46,4 +46,12 @@ $functions = array(
         'capabilities'  => 'mod/pokcertificate:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+
+    'mod_pokcertificate_verify_auth' => array(
+        'classname'     => 'mod_pokcertificate_external',
+        'methodname'    => 'verify_authentication',
+        'description'   => 'Verify the authentication',
+        'ajax' => true,
+        'type' => 'write',
+    )
 );

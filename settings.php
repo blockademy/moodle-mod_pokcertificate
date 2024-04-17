@@ -24,29 +24,78 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-
+global $CFG;
 if ($ADMIN->fulltree) {
     require_once("$CFG->libdir/resourcelib.php");
+    /*
+    $ADMIN->add(
+        'modules',
+        new admin_externalpage(
+            'pokcertificatesettings',
+            new lang_string(
+                'pluginname',
+                'pokcertificate'
+            ),
+            "$CFG->wwwroot/mod/pokcertificate/pokcertificate.php",
+            array(
+                'moodle/site:config'
+            )
+        )
+    ); */
+    $settings->add(
+        new admin_setting_heading(
+            'pokcertificate/settings_msg',
+            '',
+            '<div class="" >' . get_string('verifyauth', 'pokcertificate') . '<a target="_blank" class="bt btn-primary" style="padding: 7px 18px; border-radius: 4px; color: white; background-color: #2578dd; margin-left: 5px;" href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >' . get_string('clickhere') . '</a></div><br>'
+        )
+    );
 
-    $displayoptions = resourcelib_get_displayoptions(array(RESOURCELIB_DISPLAY_OPEN, RESOURCELIB_DISPLAY_POPUP));
-    $defaultdisplayoptions = array(RESOURCELIB_DISPLAY_OPEN);
+    $options = ['1' => 'QA', '2' => 'LIVE'];
+    $settings->add(new admin_setting_configselect(
+        'pokcertificate/prodtype',
+        get_string('prodtype', 'pokcertificate'),
+        '',
+        '',
+        $options
+    ));
 
-    //--- general settings -----------------------------------------------------------------------------------
-    $settings->add(new admin_setting_configmultiselect('pokcertificate/displayoptions',
-        get_string('displayoptions', 'pokcertificate'), get_string('configdisplayoptions', 'pokcertificate'),
-        $defaultdisplayoptions, $displayoptions));
+    $settings->add(new admin_setting_configtext(
+        'pokcertificate/templateapiurl',
+        get_string('templateapiurl', 'pokcertificate'),
+        '',
+        '',
+        PARAM_RAW
+    ));
 
-    //--- modedit defaults -----------------------------------------------------------------------------------
-    $settings->add(new admin_setting_heading('pokcertificatemodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
+    $settings->add(new admin_setting_configtext(
+        'pokcertificate/minterapiurl',
+        get_string('minterapiurl', 'pokcertificate'),
+        '',
+        '',
+        PARAM_RAW
+    ));
 
-    $settings->add(new admin_setting_configcheckbox('pokcertificate/printintro',
-        get_string('printintro', 'pokcertificate'), get_string('printintroexplain', 'pokcertificate'), 0));
-    $settings->add(new admin_setting_configcheckbox('pokcertificate/printlastmodified',
-        get_string('printlastmodified', 'pokcertificate'), get_string('printlastmodifiedexplain', 'pokcertificate'), 1));
-    $settings->add(new admin_setting_configselect('pokcertificate/display',
-        get_string('displayselect', 'pokcertificate'), get_string('displayselectexplain', 'pokcertificate'), RESOURCELIB_DISPLAY_OPEN, $displayoptions));
-    $settings->add(new admin_setting_configtext('pokcertificate/popupwidth',
-        get_string('popupwidth', 'pokcertificate'), get_string('popupwidthexplain', 'pokcertificate'), 620, PARAM_INT, 7));
-    $settings->add(new admin_setting_configtext('pokcertificate/popupheight',
-        get_string('popupheight', 'pokcertificate'), get_string('popupheightexplain', 'pokcertificate'), 450, PARAM_INT, 7));
+    $settings->add(new admin_setting_configtext(
+        'pokcertificate/apikeysurl',
+        get_string('apikeysurl', 'pokcertificate'),
+        '',
+        '',
+        PARAM_RAW
+    ));
+
+    $settings->add(new admin_setting_configtext(
+        'pokcertificate/rbacapiurl',
+        get_string('rbacapiurl', 'pokcertificate'),
+        '',
+        '',
+        PARAM_RAW
+    ));
+
+    $settings->add(new admin_setting_configtext(
+        'pokcertificate/custodianapisurl',
+        get_string('custodianapisurl', 'pokcertificate'),
+        '',
+        '',
+        PARAM_RAW
+    ));
 }

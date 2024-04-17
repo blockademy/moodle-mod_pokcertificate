@@ -35,6 +35,7 @@ use core_external\external_value;
 use core_external\external_warnings;
 use core_external\util;
 
+
 /**
  * Page external functions
  *
@@ -72,10 +73,12 @@ class mod_pokcertificate_external extends external_api {
         global $DB, $CFG;
         require_once($CFG->dirroot . "/mod/pokcertificate/lib.php");
 
-        $params = self::validate_parameters(self::view_pokcertificate_parameters(),
-                                            array(
-                                                'pokcertificateid' => $pokcertificateid
-                                            ));
+        $params = self::validate_parameters(
+            self::view_pokcertificate_parameters(),
+            array(
+                'pokcertificateid' => $pokcertificateid
+            )
+        );
         $warnings = array();
 
         // Request and permission validation.
@@ -118,10 +121,13 @@ class mod_pokcertificate_external extends external_api {
      * @since Moodle 3.3
      */
     public static function get_pokcertificates_by_courses_parameters() {
-        return new external_function_parameters (
+        return new external_function_parameters(
             array(
                 'courseids' => new external_multiple_structure(
-                    new external_value(PARAM_INT, 'Course id'), 'Array of course ids', VALUE_DEFAULT, array()
+                    new external_value(PARAM_INT, 'Course id'),
+                    'Array of course ids',
+                    VALUE_DEFAULT,
+                    array()
                 ),
             )
         );
@@ -164,8 +170,14 @@ class mod_pokcertificate_external extends external_api {
 
                 $context = context_module::instance($pokcertificate->coursemodule);
                 list($pokcertificate->content, $pokcertificate->contentformat) = \core_external\util::format_text(
-                        $pokcertificate->content, $pokcertificate->contentformat,
-                        $context, 'mod_pokcertificate', 'content', $pokcertificate->revision, ['noclean' => true]);
+                    $pokcertificate->content,
+                    $pokcertificate->contentformat,
+                    $context,
+                    'mod_pokcertificate',
+                    'content',
+                    $pokcertificate->revision,
+                    ['noclean' => true]
+                );
                 $pokcertificate->contentfiles = util::get_area_files($context->id, 'mod_pokcertificate', 'content');
 
                 $returnedpokcertificates[] = $pokcertificate;
@@ -205,6 +217,79 @@ class mod_pokcertificate_external extends external_api {
                     ))
                 ),
                 'warnings' => new external_warnings(),
+            )
+        );
+    }
+
+
+
+    public static function verify_authentication_parameters() {
+        return new external_function_parameters(
+            array(
+                'authtoken' => new external_value(PARAM_RAW, get_string('authtoken', 'mod_pokcertificate')),
+                'institution' => new external_value(PARAM_TEXT, get_string('institution', 'mod_pokcertificate')),
+                'domain' => new external_value(PARAM_TEXT, get_string('domain', 'mod_pokcertificate')),
+            )
+        );
+    }
+    /**
+     * request to test connection
+     * @param  [type] $authtoken   [description]
+     * @param  [type] $institution [description]
+     * @param  [type] $domain [description]
+     * @return [type]           [description]
+     */
+    public static function verify_authentication($authtoken, $institution, $domain) {
+        $params = self::validate_parameters(
+            self::verify_authentication_parameters(),
+            array('authtoken' => $authtoken, "institution" => $institution, 'domain' => $domain)
+        );
+        $msg = get_string("success");
+        return array("status" => 0, "msg" => $msg);
+
+        $curl = curl_init();
+
+        $headers = array(
+            "APIKEY: AUTH API KEY",
+            "Content-type: text/xml;charset=\"utf-8\"",
+            "Accept: text/xml"
+        );
+        $params = [];
+
+        $url = get_config('mod_pokcertificate', 'authurl');
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 60);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+        $response = curl_exec($curl);
+
+        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        if (curl_error($curl)) {
+            $error_msg = curl_error($curl);
+            curl_close($curl);
+            return array("status" => 1, "msg" => $error_msg);
+        } else {
+            curl_close($curl);
+
+            if ("200" == $status_code) {
+                //insert isntitution,domain,authtoken,response to table
+                $msg = get_string("success");
+                return array("status" => 0, "msg" => $msg);
+            } else {
+                //insert to log table
+                $msg = get_string("error");
+                return array("status" => 1, "msg" => $msg);
+            }
+        }
+    }
+
+    public static function verify_authentication_returns() {
+        return new external_single_structure(
+            array(
+                'status'  => new external_value(PARAM_TEXT, get_string('status', 'mod_pokcertificate')),
+                'msg'  => new external_value(PARAM_RAW, get_string('errormsg', 'mod_pokcertificate'))
             )
         );
     }

@@ -43,25 +43,13 @@ $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Soci
 $string['legacyfiles'] = 'Migration of old course file';
 $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
-$string['modulename'] = 'Page';
-$string['modulename_help'] = 'The pokcertificate module enables a teacher to create a web pokcertificate resource using the text editor. A pokcertificate can display text, images, sound, video, web links and embedded code, such as Google maps.
 
-Advantages of using the pokcertificate module rather than the file module include the resource being more accessible (for example to users of mobile devices) and easier to update.
-
-For large amounts of content, it\'s recommended that a book is used rather than a pokcertificate.
-
-A pokcertificate may be used
-
-* To present the terms and conditions of a course or a summary of the course syllabus
-* To embed several videos or sound files together with some explanatory text';
 $string['modulename_link'] = 'mod/pokcertificate/view';
-$string['modulenameplural'] = 'Pages';
 $string['optionsheader'] = 'Display options';
 $string['pokcertificate-mod-pokcertificate-x'] = 'Any pokcertificate module pokcertificate';
-$string['pokcertificate:addinstance'] = 'Add a new pokcertificate resource';
-$string['pokcertificate:view'] = 'View pokcertificate content';
+
 $string['pluginadministration'] = 'Page module administration';
-$string['pluginname'] = 'POK Certificate';
+
 $string['popupheight'] = 'Pop-up height (in pixels)';
 $string['popupheightexplain'] = 'Specifies default height of popup windows.';
 $string['popupwidth'] = 'Pop-up width (in pixels)';
@@ -76,3 +64,53 @@ $string['search:activity'] = 'Page';
 // Deprecated since 4.0.
 $string['printheading'] = 'Display pokcertificate name';
 $string['printheadingexplain'] = 'Display pokcertificate name above content?';
+
+
+
+//Newly added string for POK
+
+//Settings
+$string['modulename'] = 'POK Certificate';
+$string['modulename_help'] = 'The pokcertificate module enables a teacher to create a web pokcertificate resource using the text editor. A pokcertificate can display text, images, sound, video, web links and embedded code, such as Google maps.
+
+Advantages of using the pokcertificate module rather than the file module include the resource being more accessible (for example to users of mobile devices) and easier to update.
+
+For large amounts of content, it\'s recommended that a book is used rather than a pokcertificate.
+
+A pokcertificate may be used
+
+* To present the terms and conditions of a course or a summary of the course syllabus
+* To embed several videos or sound files together with some explanatory text';
+$string['pluginname'] = 'POK Certificate';
+
+//settings
+$string['templateapiurl'] = 'TEMPLATE_MANAGER_ROOT API URL';
+$string['minterapiurl'] = 'MINTER_ROOT API URL';
+$string['apikeysurl'] = 'API_KEYS_ROOT API URL';
+$string['rbacapiurl'] = 'RBAC_ROOT API URL';
+$string['custodianapisurl'] = 'CUSTODIAN_ROOT API URL';
+
+//
+$string['linkpokdetails'] = 'Link POI Account Details';
+$string['institution'] = 'Institution';
+$string['institution_help'] = 'Institution Name';
+$string['domain'] = 'Domain Name';
+$string['domain_help'] = 'Domian Name';
+$string['authtoken'] = 'Authentication Token';
+$string['authtoken_help'] = 'Authentication Token for API';
+$string['verify'] = 'Verify';
+$string['verification'] = 'Account Details Verification';
+$string['successful'] = 'Verification Succesful';
+$string['failed'] = 'Verification Failed';
+$string['prodtype'] = 'Production Type';
+$string['prodtype_help'] = 'Select Production Type';
+$string['done'] = 'Done';
+$string['tryagain'] = 'Try again';
+$string['verifyauth'] = 'To verify authentication token';
+
+//capabilities
+$string['pokcertificate:view'] = 'View pokcertificate content';
+$string['pokcertificate:addinstance'] = 'Add a new pokcertificate resource';
+$string['pokcertificate:editinstance'] = 'Edit pokcertificate resource';
+$string['pokcertificate:manageinstance'] = 'Manage pokcertificate resource';
+$string['pokcertificate:deleteinstance'] = 'Delete pokcertificate resource';
