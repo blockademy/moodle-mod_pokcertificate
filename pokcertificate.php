@@ -39,12 +39,31 @@ echo $OUTPUT->container_start();
 
 $url = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
 $mform = new mod_pokcertificate_verifyauth_form();
-//$object = new verifyauth_form($url, null, 'post', '', [], true, null);
 
 if ($form_data = $mform->get_data()) {
 }
 
+echo
+'<div class="row verification_content">
+
+    <div class="col-md-8">
+        <div class="verification_form">';
 $mform->display();
+echo   '</div>
+    </div>
+    <div class="col-md-4">
+    <div class="">
+        <h5 class="">No of avaialble certificates to Download : </h5>
+
+        <h5 class="">Pending Certificates: </h5>
+
+        <h5 class="">Issued Certificates: </h5>
+
+        <h5 class="">Incomplete Student Profile: </h5>
+
+    </div>
+</div>
+</div>';
 
 echo $OUTPUT->container_end();
 

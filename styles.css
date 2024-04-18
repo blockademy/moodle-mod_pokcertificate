@@ -14,3 +14,11 @@
 #page-mod-pokcertificate-dashboard  .tab-btn.active {
     background-color: #ddd;
 }
+
+#page-mod-pokcertificate-pokcertificate .verification_content .verification_form {
+    background: #FFF 0% 0% no-repeat padding-box;
+    box-shadow: 0 0 16px #3838381A;
+    border-radius: 10px;
+    padding: 1.5rem 1rem;
+}
+

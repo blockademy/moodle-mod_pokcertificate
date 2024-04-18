@@ -40,9 +40,10 @@ var SERVICES = {
 
 const verify = function(e){
     e.preventDefault();
-    var institution = $("#id_authtoken").val();
-    var authtoken = $("#id_institution").val();
+    var institution = $("#id_institution").val();
+    var authtoken = $("#id_authtoken").val();
     var domain = $("#id_domain").val();
+    var prodtype = $("#id_prodtype").val();
 
     Str.get_strings([
         {key: 'confirm'},
@@ -51,9 +52,13 @@ const verify = function(e){
     ]).then(function(s) {
 
             var promises = Ajax.call([
-                {methodname:SERVICES.VERIFY_AUTHENTICATION, args: {authtoken: authtoken, institution:institution, domain:domain}}
+                {
+                    methodname:SERVICES.VERIFY_AUTHENTICATION,
+                    args: {prodtype:prodtype,authtoken: authtoken, institution:institution, domain:domain}
+                }
             ]);
             promises[0].done(function(data) {
+
                 if(data.status == 0){
                     Modal.create({
                         title: Str.get_string('verification', 'mod_pokcertificate'),
@@ -62,7 +67,9 @@ const verify = function(e){
                     }).then(function(modal) {
                         this.modal = modal;
                         modal.getRoot().find('[data-action="save"]').on('click', function() {
-                            window.location.href = 'dashboard.php';
+                            modal.destroy();
+                            var resp = JSON.parse(data.response);
+                            $("#id_institution").val(resp.name);
                         }.bind(this));
                         modal.show();
                     }.bind(this));

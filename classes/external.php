@@ -35,6 +35,8 @@ use core_external\external_value;
 use core_external\external_warnings;
 use core_external\util;
 
+use mod_pokcertificate\api;
+
 
 /**
  * Page external functions
@@ -221,67 +223,50 @@ class mod_pokcertificate_external extends external_api {
         );
     }
 
-
-
     public static function verify_authentication_parameters() {
         return new external_function_parameters(
             array(
+                'prodtype' => new external_value(PARAM_INT, get_string('prodtype', 'mod_pokcertificate')),
                 'authtoken' => new external_value(PARAM_RAW, get_string('authtoken', 'mod_pokcertificate')),
                 'institution' => new external_value(PARAM_TEXT, get_string('institution', 'mod_pokcertificate')),
                 'domain' => new external_value(PARAM_TEXT, get_string('domain', 'mod_pokcertificate')),
             )
         );
     }
+
     /**
-     * request to test connection
+     * request to verify authentication
+     * @param  [type] $prodtype   [description]
      * @param  [type] $authtoken   [description]
      * @param  [type] $institution [description]
      * @param  [type] $domain [description]
      * @return [type]           [description]
+     * //7cb608d4-0bb6-4641-aa06-594f2fedf2a0
      */
-    public static function verify_authentication($authtoken, $institution, $domain) {
+    public static function verify_authentication($prodtype, $authtoken, $institution, $domain) {
+        global $CFG;
+
+        set_config('prodtype', $prodtype, 'mod_pokcertificate');
+        require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
         $params = self::validate_parameters(
             self::verify_authentication_parameters(),
-            array('authtoken' => $authtoken, "institution" => $institution, 'domain' => $domain)
+            array('prodtype' => $prodtype, 'authtoken' => $authtoken, "institution" => $institution, 'domain' => $domain)
         );
-        $msg = get_string("success");
-        return array("status" => 0, "msg" => $msg);
 
-        $curl = curl_init();
+        $result = pokcertificate_validate_apikey($authtoken);
 
-        $headers = array(
-            "APIKEY: AUTH API KEY",
-            "Content-type: text/xml;charset=\"utf-8\"",
-            "Accept: text/xml"
-        );
-        $params = [];
+        if ($result) {
+            $response = (new mod_pokcertificate\api)->get_organization();
 
-        $url = get_config('mod_pokcertificate', 'authurl');
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_TIMEOUT, 60);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
-        $response = curl_exec($curl);
+            $creditsresp = (new mod_pokcertificate\api)->get_credits();
 
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            $certificatecount = (new mod_pokcertificate\api)->count_certificates();
 
-        if (curl_error($curl)) {
-            $error_msg = curl_error($curl);
-            curl_close($curl);
-            return array("status" => 1, "msg" => $error_msg);
+            $msg = get_string("success");
+            return array("status" => 0, "msg" => $msg, "response" => $response);
         } else {
-            curl_close($curl);
-
-            if ("200" == $status_code) {
-                //insert isntitution,domain,authtoken,response to table
-                $msg = get_string("success");
-                return array("status" => 0, "msg" => $msg);
-            } else {
-                //insert to log table
-                $msg = get_string("error");
-                return array("status" => 1, "msg" => $msg);
-            }
+            $msg = get_string("error");
+            return array("status" => 1, "msg" => $msg, "response" => '');
         }
     }
 
@@ -289,7 +274,8 @@ class mod_pokcertificate_external extends external_api {
         return new external_single_structure(
             array(
                 'status'  => new external_value(PARAM_TEXT, get_string('status', 'mod_pokcertificate')),
-                'msg'  => new external_value(PARAM_RAW, get_string('errormsg', 'mod_pokcertificate'))
+                'msg'  => new external_value(PARAM_RAW, get_string('errormsg', 'mod_pokcertificate')),
+                'response'  => new external_value(PARAM_RAW, get_string('response', 'mod_pokcertificate'))
             )
         );
     }

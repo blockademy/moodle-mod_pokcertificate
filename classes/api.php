@@ -21,12 +21,13 @@
  * @copyright  2024 Aleti Vinod Kumar <vinod.aleti@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace mod_pokcertificate;
 
-use stdClass;
 use moodle_exception;
 
 require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,11 +35,6 @@ class api {
 
     protected $authenticationtoken = '';
     protected $wallet = '';
-
-    const API_KEYS_ROOT = "https://api-keys.credentity.xyz";
-    const RBAC_ROOT = "https://rbac.credentity.xyz";
-    const MINTER_ROOT = "https://mint.credentity.xyz";
-    const TEMPLATE_MANAGER_ROOT = 'https://templates.credentity.xyz';
 
     /**
      * Constructor for the APIs
@@ -53,7 +49,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function get_organization() {
-        $location = self::RBAC_ROOT . '/organization/' . $this->wallet;
+        $location = RBAC_ROOT . '/organization/' . $this->wallet;
         return $this->execute_command($location, '');
     }
 
@@ -62,7 +58,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function get_credits() {
-        $location = self::MINTER_ROOT . '/credits/' . $this->wallet;
+        $location = MINTER_ROOT . '/credits/' . $this->wallet;
         return $this->execute_command($location, '');
     }
 
@@ -71,7 +67,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function count_certificates() {
-        $location = self::MINTER_ROOT . '/certificate/count';
+        $location = MINTER_ROOT . '/certificate/count';
         $params = "wallet={$this->wallet}";
         return $this->execute_command($location, $params);
     }
@@ -81,7 +77,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function get_templates_list() {
-        $location = self::TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet;
+        $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet;
         return $this->execute_command($location, '');
     }
 
@@ -91,7 +87,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function get_template_definition($templatename) {
-        $location = self::TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename;
+        $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename;
         return $this->execute_command($location, '');
     }
 
@@ -101,7 +97,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function preview_certificate($templatename) {
-        $location = self::TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename . '/render';
+        $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename . '/render';
         return $this->execute_command($location, '');
     }
 
@@ -110,9 +106,9 @@ class api {
      * @return string API response, in json encoded format
      */
     private function emit_certificate() {
-        $location = self::MINTER_ROOT . '/mint';
+        $location = MINTER_ROOT . '/mint';
         $options['postdata'] = '{
-                                "email": "johngalt@pok.tech", 
+                                "email": "johngalt@pok.tech",
                                 "institution": "Ohio State University",
                                 "identification": "0123456789",
                                 "first_name": "John",
@@ -125,7 +121,7 @@ class api {
                                 "language_tag": "en"
                                 }
                                 ';
-        $options['header'] = 'Content-Type: application/json';                
+        $options['header'] = 'Content-Type: application/json';
 
         return $this->execute_command($location, '', $options, 'POST');
     }
@@ -137,7 +133,7 @@ class api {
     public function get_certificate() {
         $response = $this->emit_certificate();
         $cert = json_decode($response);
-        $location = self::MINTER_ROOT . '/certificate/' . $cert->id . '/details';
+        $location = MINTER_ROOT . '/certificate/' . $cert->id . '/details';
         return $this->execute_command($location, '');
     }
 
@@ -154,7 +150,7 @@ class api {
         $options = array(
             'CURLOPT_HTTPHEADER' => array(
                 'Authorization: ApiKey ' . $this->authenticationtoken,
-            ) ,
+            ),
             'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
             'CURLOPT_RETURNTRANSFER' => true,
             'CURLOPT_ENCODING' => '',
@@ -169,7 +165,7 @@ class api {
             $options['CURLOPT_HTTPHEADER'][] = $apioptions['header'];
         }
         $result = $curl->post($location, $params, $options);
-        if($curl->get_errno()) {
+        if ($curl->get_errno()) {
             throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
         }
         // Insert the API log here.

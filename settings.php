@@ -27,21 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 global $CFG;
 if ($ADMIN->fulltree) {
     require_once("$CFG->libdir/resourcelib.php");
-    /*
-    $ADMIN->add(
-        'modules',
-        new admin_externalpage(
-            'pokcertificatesettings',
-            new lang_string(
-                'pluginname',
-                'pokcertificate'
-            ),
-            "$CFG->wwwroot/mod/pokcertificate/pokcertificate.php",
-            array(
-                'moodle/site:config'
-            )
-        )
-    ); */
+
     $settings->add(
         new admin_setting_heading(
             'pokcertificate/settings_msg',
@@ -50,7 +36,7 @@ if ($ADMIN->fulltree) {
         )
     );
 
-    $options = ['1' => 'QA', '2' => 'LIVE'];
+    /* $options = ['1' => 'QA', '2' => 'LIVE'];
     $settings->add(new admin_setting_configselect(
         'pokcertificate/prodtype',
         get_string('prodtype', 'pokcertificate'),
@@ -60,42 +46,34 @@ if ($ADMIN->fulltree) {
     ));
 
     $settings->add(new admin_setting_configtext(
-        'pokcertificate/templateapiurl',
-        get_string('templateapiurl', 'pokcertificate'),
+        'pokcertificate/institution',
+        get_string('institution', 'pokcertificate'),
         '',
         '',
         PARAM_RAW
     ));
 
     $settings->add(new admin_setting_configtext(
-        'pokcertificate/minterapiurl',
-        get_string('minterapiurl', 'pokcertificate'),
+        'pokcertificate/domain',
+        get_string('domain', 'pokcertificate'),
         '',
         '',
         PARAM_RAW
     ));
 
     $settings->add(new admin_setting_configtext(
-        'pokcertificate/apikeysurl',
-        get_string('apikeysurl', 'pokcertificate'),
+        'pokcertificate/authtoken',
+        get_string('authtoken', 'pokcertificate'),
         '',
         '',
         PARAM_RAW
     ));
 
-    $settings->add(new admin_setting_configtext(
-        'pokcertificate/rbacapiurl',
-        get_string('rbacapiurl', 'pokcertificate'),
-        '',
-        '',
-        PARAM_RAW
-    ));
-
-    $settings->add(new admin_setting_configtext(
-        'pokcertificate/custodianapisurl',
-        get_string('custodianapisurl', 'pokcertificate'),
-        '',
-        '',
-        PARAM_RAW
-    ));
+    $settings->add(
+        new admin_setting_heading(
+            'pokcertificate/settings_msg',
+            '',
+            '<button class="btn btn-primary" style="margin-left: 30%;" data-action="verifyauth" type="button">' . get_string('verify', 'pokcertificate') . '</button>'
+        )
+    ); */
 }

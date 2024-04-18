@@ -23,25 +23,38 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
 /**
  * List of features supported in Page module
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
  */
 function pokcertificate_supports($feature) {
-    switch($feature) {
-        case FEATURE_MOD_ARCHETYPE:           return MOD_ARCHETYPE_RESOURCE;
-        case FEATURE_GROUPS:                  return false;
-        case FEATURE_GROUPINGS:               return false;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE:         return false;
-        case FEATURE_GRADE_OUTCOMES:          return false;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
-        case FEATURE_MOD_PURPOSE:             return MOD_PURPOSE_CONTENT;
+    switch ($feature) {
+        case FEATURE_MOD_ARCHETYPE:
+            return MOD_ARCHETYPE_RESOURCE;
+        case FEATURE_GROUPS:
+            return false;
+        case FEATURE_GROUPINGS:
+            return false;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return false;
+        case FEATURE_GRADE_OUTCOMES:
+            return false;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_CONTENT;
 
-        default: return null;
+        default:
+            return null;
     }
 }
 
@@ -69,7 +82,7 @@ function pokcertificate_reset_userdata($data) {
  * @return array
  */
 function pokcertificate_get_view_actions() {
-    return array('view','view all');
+    return array('view', 'view all');
 }
 
 /**
@@ -116,7 +129,7 @@ function pokcertificate_add_instance($data, $mform = null) {
     $data->id = $DB->insert_record('pokcertificate', $data);
 
     // we need to use context now, so we need to make sure all needed info is already in db
-    $DB->set_field('course_modules', 'instance', $data->id, array('id'=>$cmid));
+    $DB->set_field('course_modules', 'instance', $data->id, array('id' => $cmid));
     $context = context_module::instance($cmid);
 
     if ($mform and !empty($data->pokcertificate['itemid'])) {
@@ -182,7 +195,7 @@ function pokcertificate_update_instance($data, $mform) {
 function pokcertificate_delete_instance($id) {
     global $DB;
 
-    if (!$pokcertificate = $DB->get_record('pokcertificate', array('id'=>$id))) {
+    if (!$pokcertificate = $DB->get_record('pokcertificate', array('id' => $id))) {
         return false;
     }
 
@@ -191,7 +204,7 @@ function pokcertificate_delete_instance($id) {
 
     // note: all context files are deleted automatically
 
-    $DB->delete_records('pokcertificate', array('id'=>$pokcertificate->id));
+    $DB->delete_records('pokcertificate', array('id' => $pokcertificate->id));
 
     return true;
 }
@@ -210,8 +223,11 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
-    if (!$pokcertificate = $DB->get_record('pokcertificate', array('id'=>$coursemodule->instance),
-            'id, name, display, displayoptions, intro, introformat')) {
+    if (!$pokcertificate = $DB->get_record(
+        'pokcertificate',
+        array('id' => $coursemodule->instance),
+        'id, name, display, displayoptions, intro, introformat'
+    )) {
         return NULL;
     }
 
@@ -284,7 +300,7 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
         $filepath = is_null($filepath) ? '/' : $filepath;
         $filename = is_null($filename) ? '.' : $filename;
 
-        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        $urlbase = $CFG->wwwroot . '/pluginfile.php';
         if (!$storedfile = $fs->get_file($context->id, 'mod_pokcertificate', 'content', 0, $filepath, $filename)) {
             if ($filepath === '/' and $filename === '.') {
                 $storedfile = new virtual_root_file($context->id, 'mod_pokcertificate', 'content', 0);
@@ -316,7 +332,7 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
  * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
@@ -340,13 +356,19 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
         // serve pokcertificate content
         $filename = $arg;
 
-        if (!$pokcertificate = $DB->get_record('pokcertificate', array('id'=>$cm->instance), '*', MUST_EXIST)) {
+        if (!$pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), '*', MUST_EXIST)) {
             return false;
         }
 
         // We need to rewrite the pluginfile URLs so the media filters can work.
-        $content = file_rewrite_pluginfile_urls($pokcertificate->content, 'webservice/pluginfile.php', $context->id, 'mod_pokcertificate', 'content',
-                                                $pokcertificate->revision);
+        $content = file_rewrite_pluginfile_urls(
+            $pokcertificate->content,
+            'webservice/pluginfile.php',
+            $context->id,
+            'mod_pokcertificate',
+            'content',
+            $pokcertificate->revision
+        );
         $formatoptions = new stdClass;
         $formatoptions->noclean = true;
         $formatoptions->overflowdiv = true;
@@ -355,8 +377,15 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
 
         // Remove @@PLUGINFILE@@/.
         $options = array('reverse' => true);
-        $content = file_rewrite_pluginfile_urls($content, 'webservice/pluginfile.php', $context->id, 'mod_pokcertificate', 'content',
-                                                $pokcertificate->revision, $options);
+        $content = file_rewrite_pluginfile_urls(
+            $content,
+            'webservice/pluginfile.php',
+            $context->id,
+            'mod_pokcertificate',
+            'content',
+            $pokcertificate->revision,
+            $options
+        );
         $content = str_replace('@@PLUGINFILE@@/', '', $content);
 
         send_file($content, $filename, 0, 0, true, true);
@@ -365,11 +394,11 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_pokcertificate/$filearea/0/$relativepath";
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            $pokcertificate = $DB->get_record('pokcertificate', array('id'=>$cm->instance), 'id, legacyfiles', MUST_EXIST);
+            $pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), 'id, legacyfiles', MUST_EXIST);
             if ($pokcertificate->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
                 return false;
             }
-            if (!$file = resourcelib_try_file_migration('/'.$relativepath, $cm->id, $cm->course, 'mod_pokcertificate', 'content', 0)) {
+            if (!$file = resourcelib_try_file_migration('/' . $relativepath, $cm->id, $cm->course, 'mod_pokcertificate', 'content', 0)) {
                 return false;
             }
             //file migrate - update flag
@@ -389,7 +418,7 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
  * @param stdClass $currentcontext Current context of block
  */
 function pokcertificate_pokcertificate_type_list($pokcertificatetype, $parentcontext, $currentcontext) {
-    $module_pokcertificatetype = array('mod-pokcertificate-*'=>get_string('pokcertificate-mod-pokcertificate-x', 'pokcertificate'));
+    $module_pokcertificatetype = array('mod-pokcertificate-*' => get_string('pokcertificate-mod-pokcertificate-x', 'pokcertificate'));
     return $module_pokcertificatetype;
 }
 
@@ -403,7 +432,7 @@ function pokcertificate_export_contents($cm, $baseurl) {
     $contents = array();
     $context = context_module::instance($cm->id);
 
-    $pokcertificate = $DB->get_record('pokcertificate', array('id'=>$cm->instance), '*', MUST_EXIST);
+    $pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), '*', MUST_EXIST);
 
     // pokcertificate contents
     $fs = get_file_storage();
@@ -414,7 +443,7 @@ function pokcertificate_export_contents($cm, $baseurl) {
         $file['filename']     = $fileinfo->get_filename();
         $file['filepath']     = $fileinfo->get_filepath();
         $file['filesize']     = $fileinfo->get_filesize();
-        $file['fileurl']      = file_encode_url("$CFG->wwwroot/" . $baseurl, '/'.$context->id.'/mod_pokcertificate/content/'.$pokcertificate->revision.$fileinfo->get_filepath().$fileinfo->get_filename(), true);
+        $file['fileurl']      = file_encode_url("$CFG->wwwroot/" . $baseurl, '/' . $context->id . '/mod_pokcertificate/content/' . $pokcertificate->revision . $fileinfo->get_filepath() . $fileinfo->get_filename(), true);
         $file['timecreated']  = $fileinfo->get_timecreated();
         $file['timemodified'] = $fileinfo->get_timemodified();
         $file['sortorder']    = $fileinfo->get_sortorder();
@@ -436,7 +465,7 @@ function pokcertificate_export_contents($cm, $baseurl) {
     $pokcertificatefile['filename']     = $filename;
     $pokcertificatefile['filepath']     = '/';
     $pokcertificatefile['filesize']     = 0;
-    $pokcertificatefile['fileurl']      = file_encode_url("$CFG->wwwroot/" . $baseurl, '/'.$context->id.'/mod_pokcertificate/content/' . $filename, true);
+    $pokcertificatefile['fileurl']      = file_encode_url("$CFG->wwwroot/" . $baseurl, '/' . $context->id . '/mod_pokcertificate/content/' . $filename, true);
     $pokcertificatefile['timecreated']  = null;
     $pokcertificatefile['timemodified'] = $pokcertificate->timemodified;
     // make this file as main file
@@ -455,9 +484,9 @@ function pokcertificate_export_contents($cm, $baseurl) {
  */
 function pokcertificate_dndupload_register() {
     return array('types' => array(
-                     array('identifier' => 'text/html', 'message' => get_string('createpokcertificate', 'pokcertificate')),
-                     array('identifier' => 'text', 'message' => get_string('createpokcertificate', 'pokcertificate'))
-                 ));
+        array('identifier' => 'text/html', 'message' => get_string('createpokcertificate', 'pokcertificate')),
+        array('identifier' => 'text', 'message' => get_string('createpokcertificate', 'pokcertificate'))
+    ));
 }
 
 /**
@@ -470,7 +499,7 @@ function pokcertificate_dndupload_handle($uploadinfo) {
     $data = new stdClass();
     $data->course = $uploadinfo->course->id;
     $data->name = $uploadinfo->displayname;
-    $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $data->intro = '<p>' . $uploadinfo->displayname . '</p>';
     $data->introformat = FORMAT_HTML;
     if ($uploadinfo->type == 'text/html') {
         $data->contentformat = FORMAT_HTML;
@@ -544,8 +573,11 @@ function pokcertificate_check_updates_since(cm_info $cm, $from, $filter = array(
  * @param \core_calendar\action_factory $factory
  * @return \core_calendar\local\event\entities\action_interface|null
  */
-function mod_pokcertificate_core_calendar_provide_event_action(calendar_event $event,
-                                                      \core_calendar\action_factory $factory, $userid = 0) {
+function mod_pokcertificate_core_calendar_provide_event_action(
+    calendar_event $event,
+    \core_calendar\action_factory $factory,
+    $userid = 0
+) {
     global $USER;
 
     if (empty($userid)) {
@@ -577,7 +609,7 @@ function mod_pokcertificate_core_calendar_provide_event_action(calendar_event $e
  * @param  array  $args The path (the part after the filearea and before the filename).
  * @return array The itemid and the filepath inside the $args path, for the defined filearea.
  */
-function mod_pokcertificate_get_path_from_pluginfile(string $filearea, array $args) : array {
+function mod_pokcertificate_get_path_from_pluginfile(string $filearea, array $args): array {
     // Page never has an itemid (the number represents the revision but it's not stored in database).
     array_shift($args);
 
@@ -595,8 +627,10 @@ function mod_pokcertificate_get_path_from_pluginfile(string $filearea, array $ar
 }
 
 function pokcertificate_validate_apikey($key) {
+
     $location = API_KEYS_ROOT . '/me';
     $params = '';
+
     $curl = new \curl();
     $options = array(
         'CURLOPT_HTTPHEADER' => array(
@@ -609,11 +643,13 @@ function pokcertificate_validate_apikey($key) {
         'CURLOPT_SSL_VERIFYPEER' => false
     );
     $result = $curl->post($location, $params, $options);
+
     if ($curl->get_errno()) {
         throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
     }
     if ($curl->get_info()['http_code'] == 200) {
         $result = json_decode($result);
+
         if (isset($result->org)) {
             set_config('wallet', $result->org, 'mod_pokcertificate');
             set_config('authenticationtoken', $key, 'mod_pokcertificate');
@@ -624,4 +660,32 @@ function pokcertificate_validate_apikey($key) {
     } else {
         return false;
     }
+}
+
+
+function get_pokcertificate_settings() {
+
+    $authtoken = get_config('authenticationtoken', 'mod_pokcertificate');
+    $wallet = get_config('wallet', 'mod_pokcertificate');
+    $domainname = get_config('domainname', 'mod_pokcertificate');
+    $institution = get_config('institution', 'mod_pokcertificate');
+    $availablecertificate = get_config('availablecertificate', 'mod_pokcertificate');
+    $pendingcertificates = get_config('pendingcertificates', 'mod_pokcertificate');
+    $issuedcertificates = get_config('issuedcertificates', 'mod_pokcertificate');
+    $incompletestudentprofiles = get_config('incompletestudentprofiles', 'mod_pokcertificate');
+    $endofservices = get_config('endofservices', 'mod_pokcertificate');
+
+    $data = array(
+        'authenticationtoken' => $authtoken,
+        'wallet' => $wallet,
+        'domainname'  => $domainname,
+        'institution' => $institution,
+        'availablecertificate' => $availablecertificate,
+        'pendingcertificates' => $pendingcertificates,
+        'issuedcertificates' => $issuedcertificates,
+        'incompletestudentprofiles' => $incompletestudentprofiles,
+        'endofservices' => $endofservices,
+    );
+
+    return $data;
 }
