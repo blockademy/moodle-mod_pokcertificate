@@ -40,12 +40,11 @@ class api {
     const MINTER_ROOT = "https://mint.credentity.xyz";
     const TEMPLATE_MANAGER_ROOT = 'https://templates.credentity.xyz';
 
-
     /**
      * Constructor for the APIs
      */
     public function __construct() {
-        $this->authenticationtoken = "7cb608d4-0bb6-4641-aa06-594f2fedf2a0";//get_config('mod_pokcertificate', 'authenticationtoken');
+        $this->authenticationtoken = get_config('mod_pokcertificate', 'authenticationtoken');
         $this->wallet = get_config('mod_pokcertificate', 'wallet');
     }
 
