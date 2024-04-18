@@ -38,40 +38,137 @@ class api {
     const API_KEYS_ROOT = "https://api-keys.credentity.xyz";
     const RBAC_ROOT = "https://rbac.credentity.xyz";
     const MINTER_ROOT = "https://mint.credentity.xyz";
+    const TEMPLATE_MANAGER_ROOT = 'https://templates.credentity.xyz';
 
+
+    /**
+     * Constructor for the APIs
+     */
     public function __construct() {
-        $this->authenticationtoken = get_config('mod_pokcertificate', 'authenticationtoken');
+        $this->authenticationtoken = "7cb608d4-0bb6-4641-aa06-594f2fedf2a0";//get_config('mod_pokcertificate', 'authenticationtoken');
         $this->wallet = get_config('mod_pokcertificate', 'wallet');
     }
 
+    /**
+     * get the organization details
+     * @return string API response, in json encoded format
+     */
     public function get_organization() {
         $location = self::RBAC_ROOT . '/organization/' . $this->wallet;
-        return $this->execute_command($location, []);
+        return $this->execute_command($location, '');
     }
 
-    public function get_credits($wallet) {
+    /**
+     * Get the credits
+     * @return string API response, in json encoded format
+     */
+    public function get_credits() {
         $location = self::MINTER_ROOT . '/credits/' . $this->wallet;
-        return $this->execute_command($location, []);
+        return $this->execute_command($location, '');
     }
 
-    public function count_certificates($wallet) {
+    /**
+     * Certificate count
+     * @return string API response, in json encoded format
+     */
+    public function count_certificates() {
         $location = self::MINTER_ROOT . '/certificate/count';
         $params = "wallet={$this->wallet}";
         return $this->execute_command($location, $params);
     }
 
-    private function execute_command($location, $params) {
+    /**
+     * get template list
+     * @return string API response, in json encoded format
+     */
+    public function get_templates_list() {
+        $location = self::TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet;
+        return $this->execute_command($location, '');
+    }
+
+    /**
+     * Template definition
+     * @param  string $templatename Name of the template
+     * @return string API response, in json encoded format
+     */
+    public function get_template_definition($templatename) {
+        $location = self::TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename;
+        return $this->execute_command($location, '');
+    }
+
+    /**
+     * Preview the certificate
+     * @param  string $templatename Name of the template
+     * @return string API response, in json encoded format
+     */
+    public function preview_certificate($templatename) {
+        $location = self::TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename . '/render';
+        return $this->execute_command($location, '');
+    }
+
+    /**
+     * Final Certificate of the user
+     * @return string API response, in json encoded format
+     */
+    private function emit_certificate() {
+        $location = self::MINTER_ROOT . '/mint';
+        $options['postdata'] = '{
+                                "email": "johngalt@pok.tech", 
+                                "institution": "Ohio State University",
+                                "identification": "0123456789",
+                                "first_name": "John",
+                                "last_name": "Galt",
+                                "title": "Engineer",
+                                "template_base64": "{\'version\':1}",
+                                "date": 1706497200000,
+                                "free": true,
+                                "wallet": "0x8cd7c619a1685a1f6e991946af6295ca05210af7",
+                                "language_tag": "en"
+                                }
+                                ';
+        $options['header'] = 'Content-Type: application/json';                
+
+        return $this->execute_command($location, '', $options, 'POST');
+    }
+
+    /**
+     * The actual certificate of the student
+     * @return string certificate url
+     */
+    public function get_certificate() {
+        $response = $this->emit_certificate();
+        $cert = json_decode($response);
+        $location = self::MINTER_ROOT . '/certificate/' . $cert->id . '/details';
+        return $this->execute_command($location, '');
+    }
+
+    /**
+     * Hit the API
+     * @param  string $location   API URL
+     * @param  string $params     URL parameters for the API
+     * @param  array  $apioptions Any specific options for the API
+     * @param  string $method     GET or POST
+     * @return string             API response, in json encoded format
+     */
+    private function execute_command($location, $params, $apioptions = array(), $method = 'GET') {
         $curl = new \curl();
         $options = array(
             'CURLOPT_HTTPHEADER' => array(
-                'Authorization: ApiKey ' . $this->authenticationtoken
-            ),
+                'Authorization: ApiKey ' . $this->authenticationtoken,
+            ) ,
             'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
             'CURLOPT_RETURNTRANSFER' => true,
             'CURLOPT_ENCODING' => '',
-            'CURLOPT_CUSTOMREQUEST' => 'GET',
+            'CURLOPT_CUSTOMREQUEST' => $method,
             'CURLOPT_SSL_VERIFYPEER' => false
         );
+        if ($apioptions['postdata']) {
+            $options['CURLOPT_POSTFIELDS'] = $apioptions['postdata'];
+        }
+
+        if ($apioptions['header']) {
+            $options['CURLOPT_HTTPHEADER'][] = $apioptions['header'];
+        }
         $result = $curl->post($location, $params, $options);
         if($curl->get_errno()) {
             throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
