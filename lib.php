@@ -613,7 +613,7 @@ function pokcertificate_validate_apikey($key) {
         throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
     }
     if ($curl->get_info()['http_code'] == 200) {
-        $result = json_encode($result);
+        $result = json_decode($result);
         if (isset($result->org)) {
             set_config('wallet', $result->org, 'mod_pokcertificate');
             set_config('authenticationtoken', $key, 'mod_pokcertificate');
