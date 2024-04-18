@@ -32,23 +32,28 @@ defined('MOODLE_INTERNAL') || die();
 
 class api {
 
-    protected $authenticationtoken;
+    protected $authenticationtoken = '';
+    protected $wallet = '';
 
     const API_KEYS_ROOT = "https://api-keys.credentity.xyz";
     const RBAC_ROOT = "https://rbac.credentity.xyz";
     const MINTER_ROOT = "https://mint.credentity.xyz";
 
     public function __construct() {
-        $this->authenticationtoken = "7cb608d4-0bb6-4641-aa06-594f2fedf2a0"; //get_config('mod_pokcertificate', 'authenticationtoken');
+        $this->authenticationtoken = get_config('mod_pokcertificate', 'authenticationtoken');
+        $this->wallet = get_config('mod_pokcertificate', 'wallet');
     }
 
     public function get_wallet() {
         $location = self::API_KEYS_ROOT . '/me';
-        return $this->execute_command($location, []);
+        $result = $this->execute_command($location, []);
+        $wallet = json_decode($result);
+        set_config('wallet', $wallet->org, 'mod_pokcertificate');
+        return $wallet->org;
     }
 
-    public function get_organization($wallet) {
-        $location = self::RBAC_ROOT . '/organization/' . $wallet;
+    public function get_organization() {
+        $location = self::RBAC_ROOT . '/organization/' . $this->wallet;
         return $this->execute_command($location, []);
     }
 
