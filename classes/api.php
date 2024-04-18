@@ -17,69 +17,74 @@
 /**
  * Class for loading/storing oauth2 linked logins from the DB.
  *
- * @package    auth_oauth2
- * @copyright  2017 Damyon Wiese
+ * @package    mod_pokcertificate
+ * @copyright  2024 Aleti Vinod Kumar <vinod.aleti@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace local_hsi;
+namespace mod_pokcertificate;
 
-use context_user;
 use stdClass;
 use moodle_exception;
-use moodle_url;
 
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->dirroot . '/local/hsi/lib.php');
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Static list of api methods for auth oauth2 configuration.
- *
- * @package    auth_oauth2
- * @copyright  2017 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class api {
 
-    protected $customerid;
-    protected $accesscode;
-    protected $mode;  
+    protected $authenticationtoken;
+
+    const API_KEYS_ROOT = "https://api-keys.credentity.xyz";
+    const RBAC_ROOT = "https://rbac.credentity.xyz";
+    const MINTER_ROOT = "https://mint.credentity.xyz";
 
     public function __construct() {
-        $this->customerid = get_config('local_hsi', 'customerid');
-        $this->accesscode = get_config('local_hsi', 'accesscode');
-        $this->mode = get_config('local_hsi', 'mode');  
+        $this->authenticationtoken = "7cb608d4-0bb6-4641-aa06-594f2fedf2a0"; //get_config('mod_pokcertificate', 'authenticationtoken');
     }
 
-    public function get_session_token() {
-        $location = "https://hsiservices.osmanager4.com/Auth/RequestSessionToken.aspx";
-        $params = "AccessCode={$this->accesscode}&CustomerId={$this->customerid}&Mode={$this->mode}";
-        return $this->execute_command($location, $params);
+    public function get_wallet() {
+        $location = self::API_KEYS_ROOT . '/me';
+        return $this->execute_command($location, []);
     }
 
-    public function send_scorm_completions($params) {
-        $location = "https://hsiservices.osmanager4.com/NBIv2.aspx";
-        $params[] = "AccessCode={$this->accesscode}";
-        $params[] = "Mode={$this->mode}";
-        $params = implode('&', $params);
+    public function get_organization($wallet) {
+        $location = self::RBAC_ROOT . '/organization/' . $wallet;
+        return $this->execute_command($location, []);
+    }
+
+    public function get_credits($wallet) {
+        $location = self::MINTER_ROOT . '/credits/' . $wallet;
+        return $this->execute_command($location, []);
+    }
+
+    public function count_certificates($wallet) {
+        $location = self::MINTER_ROOT . '/certificate/count';
+        $params = "wallet={$wallet}";
         return $this->execute_command($location, $params);
     }
 
     private function execute_command($location, $params) {
         $curl = new \curl();
         $options = array(
-            'returntransfer' => true,
-            'timeout' => 30,
             'CURLOPT_HTTPHEADER' => array(
-                "cache-control: no-cache",
-              ),
+                'Authorization: ApiKey 7cb608d4-0bb6-4641-aa06-594f2fedf2a0'
+            ),
             'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
+            'CURLOPT_RETURNTRANSFER' => true,
+            'CURLOPT_ENCODING' => '',
+            'CURLOPT_CUSTOMREQUEST' => 'GET',
+            'CURLOPT_SSL_VERIFYPEER' => false
         );
         $result = $curl->post($location, $params, $options);
         if($curl->get_errno()) {
-            throw new moodle_exception('connecterror', 'local_hsi', '', array('url' => $location));
+            throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
         }
+        // Insert the API log here.
+        /*$log = new stdClass();
+        $log->api = $location . '?' . $params;
+        $log->responsecode = $curl->get_info()['http_code'];
+        $log->responsevalue = $result;
+        $log->create();*/
         return $result;
     }
 }
