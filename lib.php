@@ -593,3 +593,35 @@ function mod_pokcertificate_get_path_from_pluginfile(string $filearea, array $ar
         'filepath' => $filepath,
     ];
 }
+
+function pokcertificate_validate_apikey($key) {
+    $location = API_KEYS_ROOT . '/me';
+    $params = '';
+    $curl = new \curl();
+    $options = array(
+        'CURLOPT_HTTPHEADER' => array(
+            'Authorization: ApiKey ' . $key
+        ),
+        'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
+        'CURLOPT_RETURNTRANSFER' => true,
+        'CURLOPT_ENCODING' => '',
+        'CURLOPT_CUSTOMREQUEST' => 'GET',
+        'CURLOPT_SSL_VERIFYPEER' => false
+    );
+    $result = $curl->post($location, $params, $options);
+    if ($curl->get_errno()) {
+        throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
+    }
+    if ($curl->get_info()['http_code'] == 200) {
+        $result = json_encode($result);
+        if (isset($result->org)) {
+            set_config('wallet', $result->org, 'mod_pokcertificate');
+            set_config('authenticationtoken', $key, 'mod_pokcertificate');
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}

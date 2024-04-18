@@ -44,27 +44,19 @@ class api {
         $this->wallet = get_config('mod_pokcertificate', 'wallet');
     }
 
-    public function get_wallet() {
-        $location = self::API_KEYS_ROOT . '/me';
-        $result = $this->execute_command($location, []);
-        $wallet = json_decode($result);
-        set_config('wallet', $wallet->org, 'mod_pokcertificate');
-        return $wallet->org;
-    }
-
     public function get_organization() {
         $location = self::RBAC_ROOT . '/organization/' . $this->wallet;
         return $this->execute_command($location, []);
     }
 
     public function get_credits($wallet) {
-        $location = self::MINTER_ROOT . '/credits/' . $wallet;
+        $location = self::MINTER_ROOT . '/credits/' . $this->wallet;
         return $this->execute_command($location, []);
     }
 
     public function count_certificates($wallet) {
         $location = self::MINTER_ROOT . '/certificate/count';
-        $params = "wallet={$wallet}";
+        $params = "wallet={$this->wallet}";
         return $this->execute_command($location, $params);
     }
 
@@ -72,7 +64,7 @@ class api {
         $curl = new \curl();
         $options = array(
             'CURLOPT_HTTPHEADER' => array(
-                'Authorization: ApiKey 7cb608d4-0bb6-4641-aa06-594f2fedf2a0'
+                'Authorization: ApiKey ' . $this->authenticationtoken
             ),
             'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
             'CURLOPT_RETURNTRANSFER' => true,
