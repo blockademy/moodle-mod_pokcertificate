@@ -93,23 +93,12 @@ class api {
     }
 
     /**
-     * Preview the certificate
-     * @param  string $templatename Name of the template
-     * @return string API response, in json encoded format
-     */
-    public function preview_certificate($templatename, $data) {
-        $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename . '/render';
-        $options['postdata'] = $data;
-        return $this->execute_command($location, '', $options, 'POST');
-    }
-
-    /**
      * Final Certificate of the user
      * @return string API response, in json encoded format
      */
-    private function emit_certificate() {
+    private function emit_certificate($data) {
         $location = MINTER_ROOT . '/mint';
-        $options['postdata'] = '{
+        /*'{
                                 "email": "johngalt@pok.tech",
                                 "institution": "Ohio State University",
                                 "identification": "0123456789",
@@ -122,10 +111,10 @@ class api {
                                 "wallet": "0x8cd7c619a1685a1f6e991946af6295ca05210af7",
                                 "language_tag": "en"
                                 }
-                                ';
+                                ';*/
         $options['header'] = 'Content-Type: application/json';
 
-        return $this->execute_command($location, '', $options, 'POST');
+        return $this->execute_command($location, $data, 'post');
     }
 
     /**
@@ -140,6 +129,16 @@ class api {
     }
 
     /**
+     * Preview the certificate
+     * @param  string $templatename Name of the template
+     * @return string API response, in json encoded format
+     */
+    public function preview_certificate($templatename, $data) {
+        $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename . '/render';
+        return $this->execute_command($location, $data, 'post');
+    }
+
+    /**
      * Hit the API
      * @param  string $location   API URL
      * @param  string $params     URL parameters for the API
@@ -147,7 +146,7 @@ class api {
      * @param  string $method     GET or POST
      * @return string             API response, in json encoded format
      */
-    private function execute_command($location, $params, $apioptions = array(), $method = 'GET') {
+    private function execute_command($location, $params, $method = 'get') {
         $curl = new \curl();
         $options = array(
             'CURLOPT_HTTPHEADER' => array(
@@ -156,17 +155,13 @@ class api {
             'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
             'CURLOPT_RETURNTRANSFER' => true,
             'CURLOPT_ENCODING' => '',
-            'CURLOPT_CUSTOMREQUEST' => $method,
             'CURLOPT_SSL_VERIFYPEER' => false
         );
-        if (isset($apioptions['postdata'])) {
-            $options['CURLOPT_POSTFIELDS'] = $apioptions['postdata'];
-        }
 
-        if (isset($apioptions['header'])) {
-            $options['CURLOPT_HTTPHEADER'][] = $apioptions['header'];
+        if ($method == 'post') {
+            $options['CURLOPT_HTTPHEADER'][] = 'Content-Type: application/json';
         }
-        $result = $curl->post($location, $params, $options);
+        $result = $curl->{$method}($location, $params, $options);
         if ($curl->get_errno()) {
             throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
         }
