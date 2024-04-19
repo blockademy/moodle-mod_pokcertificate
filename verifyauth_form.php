@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
 /**
  *form shown while adding activity.
@@ -37,18 +38,30 @@ class mod_pokcertificate_verifyauth_form extends moodleform {
 
         $mform->addElement('header', 'pokheading', get_string('linkpokdetails', 'pokcertificate') . "<div class ='test'> </div>");
 
+        $options = [1 => 'QA', 2 => 'LIVE'];
+        $configvalues = get_pokcertificate_settings();
+
+        $mform->addElement('select', 'prodtype', get_string('prodtype', 'pokcertificate'), $options);
+        $mform->setDefault('prodtype', 1);
+        $mform->addHelpButton('prodtype', 'prodtype', 'pokcertificate');
+
+        $mform->addElement('password', 'authtoken', get_string('authtoken', 'pokcertificate'), 'size="35"');
+        $mform->setType('authtoken', PARAM_RAW);
+        $mform->addHelpButton('authtoken', 'authtoken', 'pokcertificate');
+        if ($configvalues["authenticationtoken"]) {
+            $mform->setDefault("authtoken", $configvalues["authenticationtoken"]);
+        }
+
         $mform->addElement('text', 'institution', get_string('institution', 'pokcertificate'), 'size="35",readonly="readonly"');
         $mform->setType('institution', PARAM_TEXT);
         $mform->addHelpButton('institution', 'institution', 'pokcertificate');
-
+        if ($configvalues["institution"]) {
+            $mform->setDefault("institution", $configvalues["institution"]);
+        }
 
         $mform->addElement('text', 'domain', get_string('domain', 'pokcertificate'), 'size="35",readonly="readonly"');
         $mform->setType('domain', PARAM_TEXT);
         $mform->addHelpButton('domain', 'domain', 'pokcertificate');
-
-        $mform->addElement('text', 'authtoken', get_string('authtoken', 'pokcertificate'), 'size="35"');
-        $mform->setType('authtoken', PARAM_RAW);
-        $mform->addHelpButton('authtoken', 'authtoken', 'pokcertificate');
 
         $buttonarray = array();
         $buttonarray[] = $mform->createElement('button', 'verifyauth', get_string("verify", "pokcertificate"), "", "");

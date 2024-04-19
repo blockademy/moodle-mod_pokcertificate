@@ -253,17 +253,21 @@ class mod_pokcertificate_external extends external_api {
             array('prodtype' => $prodtype, 'authtoken' => $authtoken, "institution" => $institution, 'domain' => $domain)
         );
 
-        $result = pokcertificate_validate_apikey($authtoken);
+        $result = pokcertificate_validate_apikey($params['authtoken']);
 
         if ($result) {
-            $response = (new mod_pokcertificate\api)->get_organization();
-
+            $orgdetails = (new mod_pokcertificate\api)->get_organization();
+            $organisation = json_decode($orgdetails);
+            if (isset($organisation->id) && isset($organisation->name)) {
+                set_config('orgid', $organisation->id, 'mod_pokcertificate');
+                set_config('institution', $organisation->name, 'mod_pokcertificate');
+            }
             $creditsresp = (new mod_pokcertificate\api)->get_credits();
 
             $certificatecount = (new mod_pokcertificate\api)->count_certificates();
 
             $msg = get_string("success");
-            return array("status" => 0, "msg" => $msg, "response" => $response);
+            return array("status" => 0, "msg" => $msg, "response" => $orgdetails);
         } else {
             $msg = get_string("error");
             return array("status" => 1, "msg" => $msg, "response" => '');

@@ -665,15 +665,16 @@ function pokcertificate_validate_apikey($key) {
 
 function get_pokcertificate_settings() {
 
-    $authtoken = get_config('authenticationtoken', 'mod_pokcertificate');
-    $wallet = get_config('wallet', 'mod_pokcertificate');
-    $domainname = get_config('domainname', 'mod_pokcertificate');
-    $institution = get_config('institution', 'mod_pokcertificate');
-    $availablecertificate = get_config('availablecertificate', 'mod_pokcertificate');
-    $pendingcertificates = get_config('pendingcertificates', 'mod_pokcertificate');
-    $issuedcertificates = get_config('issuedcertificates', 'mod_pokcertificate');
-    $incompletestudentprofiles = get_config('incompletestudentprofiles', 'mod_pokcertificate');
-    $endofservices = get_config('endofservices', 'mod_pokcertificate');
+    $authtoken = get_config('mod_pokcertificate', 'authenticationtoken',);
+    $wallet = get_config('mod_pokcertificate', 'wallet');
+    $domainname = get_config('mod_pokcertificate', 'domainname');
+    $institution = get_config('mod_pokcertificate', 'institution');
+    $availablecertificate = get_config('mod_pokcertificate', 'availablecertificate');
+    $pendingcertificates = get_config('mod_pokcertificate', 'pendingcertificates');
+    $issuedcertificates = get_config('mod_pokcertificate', 'issuedcertificates');
+    $endofservices = get_config('mod_pokcertificate', 'endofservices');
+    $incompletestudentprofiles = get_config('mod_pokcertificate', 'incompletestudentprofiles');
+
 
     $data = array(
         'authenticationtoken' => $authtoken,
@@ -686,6 +687,7 @@ function get_pokcertificate_settings() {
         'incompletestudentprofiles' => $incompletestudentprofiles,
         'endofservices' => $endofservices,
     );
+
 
     return $data;
 }
