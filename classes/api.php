@@ -25,6 +25,7 @@
 namespace mod_pokcertificate;
 
 use moodle_exception;
+use mod_pokcertificate\persistent\pokcertificate_log;
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -158,11 +159,11 @@ class api {
             'CURLOPT_CUSTOMREQUEST' => $method,
             'CURLOPT_SSL_VERIFYPEER' => false
         );
-        if ($apioptions['postdata']) {
+        if (isset($apioptions['postdata'])) {
             $options['CURLOPT_POSTFIELDS'] = $apioptions['postdata'];
         }
 
-        if ($apioptions['header']) {
+        if (isset($apioptions['header'])) {
             $options['CURLOPT_HTTPHEADER'][] = $apioptions['header'];
         }
         $result = $curl->post($location, $params, $options);
@@ -170,11 +171,20 @@ class api {
             throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
         }
         // Insert the API log here.
-        /*$log = new stdClass();
+        $response = NULL;
+        if ($curl->get_info()['http_code'] == 200) {
+            $response = get_string('success');
+        } else {
+            $response = get_string('fail', 'pokcertificate');
+        }
+
+        $log = new \stdClass();
         $log->api = $location . '?' . $params;
+        $log->response = $response;
         $log->responsecode = $curl->get_info()['http_code'];
         $log->responsevalue = $result;
-        $log->create();*/
+        $logdata = new pokcertificate_log(0, $log);
+        $logdata->create();
         return $result;
     }
 }

@@ -31,15 +31,15 @@ require_once($CFG->libdir . '/filelib.php');
 
 class mod_pokcertificate_mod_form extends moodleform_mod {
     function definition() {
-        global $CFG, $DB;
+        global $CFG;
 
         $mform = $this->_form;
 
-        $config = get_config('pokcertificate');
+        $config = get_config('mod_pokcertificate');
 
         //-------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
-        $mform->addElement('text', 'name', get_string('name'), array('size' => '48'));
+        $mform->addElement('text', 'name', get_string('certificatename', 'pokcertificate'), array('size' => '48'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -47,14 +47,23 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+
+        $mform->addElement('text', 'institution', get_string('institution', 'pokcertificate'), array('size' => '48', 'readonly' => true));
+        if (get_config('mod_pokcertificate', 'institution')) {
+            $mform->setDefault('institution', get_config('mod_pokcertificate', 'institution'));
+        }
+
+        $mform->addElement('text', 'title', get_string('title', 'pokcertificate'), array('size' => '48'));
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('title', PARAM_TEXT);
+        } else {
+            $mform->setType('title', PARAM_CLEANHTML);
+        }
+        $mform->addRule('title', null, 'required', null, 'client');
+        $mform->addRule('title', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+
         $this->standard_intro_elements();
 
-        //-------------------------------------------------------
-        $mform->addElement('header', 'contentsection', get_string('contentheader', 'pokcertificate'));
-        $mform->addElement('editor', 'pokcertificate', get_string('content', 'pokcertificate'), null, pokcertificate_get_editor_options($this->context));
-        $mform->addRule('pokcertificate', get_string('required'), 'required', null, 'client');
-
-        //-------------------------------------------------------
         $mform->addElement('header', 'appearancehdr', get_string('appearance'));
 
         if ($this->current->instance) {
@@ -122,6 +131,7 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
      * @return void
      **/
     public function data_preprocessing(&$defaultvalues) {
+
         if ($this->current->instance) {
             $draftitemid = file_get_submitted_draft_itemid('pokcertificate');
             $defaultvalues['pokcertificate']['format'] = $defaultvalues['contentformat'];

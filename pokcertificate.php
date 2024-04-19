@@ -51,15 +51,11 @@ echo
 $mform->display();
 echo   '</div>
     </div>
-    <div class="col-md-4">
-    <div class="">
-        <h5 class="">No of avaialble certificates to Download : </h5>
+    <div class=" col-md-4">
+    <div class="verification_form">
+        <h5 class="" style ="border-bottom: 1px solid #f0f0f0;">' . get_string("certficatestobesent", "pokcertificate") . ' : </h5>
 
-        <h5 class="">Pending Certificates: </h5>
-
-        <h5 class="">Issued Certificates: </h5>
-
-        <h5 class="">Incomplete Student Profile: </h5>
+        <h5 class="" style ="border-bottom: 1px solid #f0f0f0;">' . get_string("incompleteprofile", "pokcertificate") . ' : </h5>
 
     </div>
 </div>

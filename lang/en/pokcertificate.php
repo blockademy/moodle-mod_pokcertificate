@@ -114,3 +114,8 @@ $string['pokcertificate:addinstance'] = 'Add a new pokcertificate resource';
 $string['pokcertificate:editinstance'] = 'Edit pokcertificate resource';
 $string['pokcertificate:manageinstance'] = 'Manage pokcertificate resource';
 $string['pokcertificate:deleteinstance'] = 'Delete pokcertificate resource';
+
+$string['certficatestobesent'] = 'Certificates to be sent';
+$string['incompleteprofile'] = 'Incomplete Student Profile';
+$string['certificatename'] = 'Certificate Name';
+$string['title'] = 'Title';

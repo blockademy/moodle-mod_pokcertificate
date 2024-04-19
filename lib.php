@@ -23,6 +23,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use mod_pokcertificate\persistent\pokcertificate;
+
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
 /**
@@ -106,7 +108,7 @@ function pokcertificate_get_post_actions() {
  * @return int new pokcertificate instance id
  */
 function pokcertificate_add_instance($data, $mform = null) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
     require_once("$CFG->libdir/resourcelib.php");
 
     $cmid = $data->coursemodule;
@@ -121,10 +123,10 @@ function pokcertificate_add_instance($data, $mform = null) {
     $displayoptions['printlastmodified'] = $data->printlastmodified;
     $data->displayoptions = serialize($displayoptions);
 
-    if ($mform) {
-        $data->content       = $data->pokcertificate['text'];
-        $data->contentformat = $data->pokcertificate['format'];
-    }
+    $data->orgname = get_config('mod_pokcertificate', 'institution');
+    $data->orgid = get_config('mod_pokcertificate', 'orgid');
+    $data->usercreated = $USER->id;
+    $data->timecreated = time();
 
     $data->id = $DB->insert_record('pokcertificate', $data);
 
@@ -135,6 +137,7 @@ function pokcertificate_add_instance($data, $mform = null) {
     if ($mform and !empty($data->pokcertificate['itemid'])) {
         $draftitemid = $data->pokcertificate['itemid'];
         $data->content = file_save_draft_area_files($draftitemid, $context->id, 'mod_pokcertificate', 'content', 0, pokcertificate_get_editor_options($context), $data->content);
+        $data->usermodified = $USER->id;
         $DB->update_record('pokcertificate', $data);
     }
 
@@ -169,9 +172,6 @@ function pokcertificate_update_instance($data, $mform) {
     $displayoptions['printintro']   = $data->printintro;
     $displayoptions['printlastmodified'] = $data->printlastmodified;
     $data->displayoptions = serialize($displayoptions);
-
-    $data->content       = $data->pokcertificate['text'];
-    $data->contentformat = $data->pokcertificate['format'];
 
     $DB->update_record('pokcertificate', $data);
 
@@ -665,7 +665,7 @@ function pokcertificate_validate_apikey($key) {
 
 function get_pokcertificate_settings() {
 
-    $authtoken = get_config('mod_pokcertificate', 'authenticationtoken',);
+    $authtoken = get_config('mod_pokcertificate', 'authenticationtoken');
     $wallet = get_config('mod_pokcertificate', 'wallet');
     $domainname = get_config('mod_pokcertificate', 'domainname');
     $institution = get_config('mod_pokcertificate', 'institution');

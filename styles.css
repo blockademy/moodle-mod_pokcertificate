@@ -22,3 +22,28 @@
     padding: 1.5rem 1rem;
 }
 
+#page-mod-pokcertificate-view {
+    box-sizing: border-box;
+}
+
+#page-mod-pokcertificate-view .column {
+    float: left;
+    width: 33.33%;
+    padding: 5px;
+}
+
+#page-mod-pokcertificate-view .row::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+#page-mod-pokcertificate-view  label {
+    display: inline-block;
+    margin-bottom: .5rem;
+    margin-right: 1.5em;
+}
+
+#page-mod-pokcertificate-view .certbutton{
+    margin: 10px 20px 10px 190px;
+}

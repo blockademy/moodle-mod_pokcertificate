@@ -24,28 +24,27 @@
  */
 
 require('../../config.php');
-require_once($CFG->dirroot.'/mod/pokcertificate/lib.php');
-require_once($CFG->dirroot.'/mod/pokcertificate/locallib.php');
-require_once($CFG->libdir.'/completionlib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
+require_once($CFG->libdir . '/completionlib.php');
 
 $id      = optional_param('id', 0, PARAM_INT); // Course Module ID
 $p       = optional_param('p', 0, PARAM_INT);  // Page instance ID
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
 if ($p) {
-    if (!$pokcertificate = $DB->get_record('pokcertificate', array('id'=>$p))) {
+    if (!$pokcertificate = $DB->get_record('pokcertificate', array('id' => $p))) {
         throw new \moodle_exception('invalidaccessparameter');
     }
     $cm = get_coursemodule_from_instance('pokcertificate', $pokcertificate->id, $pokcertificate->course, false, MUST_EXIST);
-
 } else {
     if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
         throw new \moodle_exception('invalidcoursemodule');
     }
-    $pokcertificate = $DB->get_record('pokcertificate', array('id'=>$cm->instance), '*', MUST_EXIST);
+    $pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), '*', MUST_EXIST);
 }
 
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
@@ -65,11 +64,11 @@ if (empty($options['printintro'])) {
 
 if ($inpopup and $pokcertificate->display == RESOURCELIB_DISPLAY_POPUP) {
     $PAGE->set_pagelayout('popup');
-    $PAGE->set_title($course->shortname.': '.$pokcertificate->name);
+    $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
     $PAGE->set_heading($course->fullname);
 } else {
     $PAGE->add_body_class('limitedwidth');
-    $PAGE->set_title($course->shortname.': '.$pokcertificate->name);
+    $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
     $PAGE->set_heading($course->fullname);
     $PAGE->set_activity_record($pokcertificate);
     if (!$PAGE->activityheader->is_title_allowed()) {
@@ -90,5 +89,7 @@ if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'
     $strlastmodified = get_string("lastmodified");
     echo html_writer::div("$strlastmodified: " . userdate($pokcertificate->timemodified), 'modified');
 }
+$renderer = $PAGE->get_renderer('mod_pokcertificate');
+echo $renderer->show_certificate_templates();
 
 echo $OUTPUT->footer();

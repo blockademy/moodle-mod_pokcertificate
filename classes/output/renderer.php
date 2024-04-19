@@ -24,7 +24,18 @@ namespace mod_pokcertificate\output;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends \plugin_renderer_base {
-    public function get_content() {
-        return $this->render_from_template('mod_pokcertificate/viewdata', []);
+
+    /**
+     * Renders the costcenter view.
+     *
+     * @param [int] $id
+     * @param [object] $categorycontext
+     * @return [template] departments_view mustache file
+     */
+    public function show_certificate_templates() {
+
+        $output = new certificatetemplates();
+        $certificatetemplatecontent = $output->export_for_template($this);
+        return $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
     }
 }

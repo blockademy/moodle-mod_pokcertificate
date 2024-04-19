@@ -55,19 +55,29 @@ class pokcertificate extends persistent {
                 'optional' => false,
             ],
             'certificatename' => [
-                'type' => PARAM_INT,
+                'type' => PARAM_TEXT,
                 'optional' => false,
             ],
             'orgname' => [
-                'type' => PARAM_INT,
+                'type' => PARAM_TEXT,
                 'optional' => false,
             ],
             'orgid' => [
-                'type' => PARAM_INT,
+                'type' => PARAM_RAW,
                 'optional' => false,
             ],
             'templateid' => [
                 'type' => PARAM_INT,
+                'optional' => true,
+                'default' => 0
+            ],
+            'display' => [
+                'type' => PARAM_INT,
+                'optional' => false,
+                'default' => 0
+            ],
+            'displayoptions' => [
+                'type' => PARAM_RAW,
                 'optional' => true,
             ],
             'usercreated' => [

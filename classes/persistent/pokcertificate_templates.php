@@ -48,10 +48,6 @@ class pokcertificate_templates extends persistent {
                 'type' => PARAM_TEXT,
                 'optional' => false,
             ],
-            'responsevalue' => [
-                'type' => PARAM_RAW,
-                'optional' => false,
-            ],
             'usercreated' => [
                 'type' => PARAM_INT,
                 'optional' => false,

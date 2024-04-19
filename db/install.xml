@@ -11,10 +11,12 @@
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="certificatename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="orgname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="orgid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="templateid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="display" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="displayoptions" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="usercreated" TYPE="char"  LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int"  LENGTH="10" NOTNULL="false"  DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="usermodified" TYPE="char"  LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
@@ -25,9 +27,10 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+         <INDEX NAME="name" UNIQUE="false" FIELDS="name"/>
         <INDEX NAME="orgid" UNIQUE="false" FIELDS="orgid"/>
         <INDEX NAME="orgname" UNIQUE="false" FIELDS="orgname"/>
-        <INDEX NAME="certificatename" UNIQUE="false" FIELDS="certificatename"/>
+        <INDEX NAME="title" UNIQUE="false" FIELDS="title"/>
         <INDEX NAME="templateid" UNIQUE="false" FIELDS="templateid"/>
       </INDEXES>
     </TABLE>

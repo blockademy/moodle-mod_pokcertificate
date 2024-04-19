@@ -39,7 +39,7 @@ class pokcertificate_log extends persistent {
 
         return [
             'api' => [
-                'type' => PARAM_INT,
+                'type' => PARAM_TEXT,
                 'optional' => false,
             ],
             'response' => [
