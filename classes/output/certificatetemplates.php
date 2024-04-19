@@ -46,6 +46,7 @@ class certificatetemplates implements templatable, renderable {
     public function export_for_template(renderer_base $output): array {
 
         global $USER;
+
         $templateslist = (new \mod_pokcertificate\api)->get_templates_list();
         $templateslist = json_decode($templateslist);
         $templates = [];
@@ -74,29 +75,10 @@ class certificatetemplates implements templatable, renderable {
                 $templatedata->create();
             }
 
-            /*    $previewdata = '{"name": "John Galt", "title": "Engineer", "date": 1704423600000, "institution": "Ohio State University"}';
+            $previewdata = '{"name": "John Galt", "title": "Engineer", "date": 1704423600000, "institution": "Ohio State University"}';
             $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
-            print_R($templatepreview); */
 
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://templates.credentity.xyz/templates/0x8cd7c619a1685a1f6e991946af6295ca05210af7/Artistic/render',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => '{"name": "John Galt", "title": "Engineer", "date": 1704423600000, "institution": "Ohio State University"}',
-                CURLOPT_HTTPHEADER => array(
-                    'Authorization: ApiKey 7cb608d4-0bb6-4641-aa06-594f2fedf2a0',
-                    'Content-Type: application/json'
-                ),
-            ));
-            $response = curl_exec($curl);
-            curl_close($curl);
-            $data['certimage'] = trim($response, '"');;
+            $data['certimage'] = trim($templatepreview, '"');
             $templates['certdata'][] = $data;
         }
         return $templates;
