@@ -112,8 +112,6 @@ class api {
                                 "language_tag": "en"
                                 }
                                 ';*/
-        $options['header'] = 'Content-Type: application/json';
-
         return $this->execute_command($location, $data, 'post');
     }
 
