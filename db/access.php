@@ -67,16 +67,40 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
 
-
-    /* TODO: review public portfolio API first!
-    'mod/pokcertificate:portfolioexport' => array(
-
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
+    'mod/pokcertificate:bulkupdateincompleteprofile' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-        )
+            'manager' => CAP_ALLOW
+        ),
     ),
-*/
+
+    'mod/pokcertificate:selfupdateincompleteprofile' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+    ),
+
+    'mod/pokcertificate:awardcertificate' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+    ),
+
+    'mod/pokcertificate:viewstatusreport' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+    ),
+
 );

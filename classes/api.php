@@ -96,9 +96,10 @@ class api {
      * @param  string $templatename Name of the template
      * @return string API response, in json encoded format
      */
-    public function preview_certificate($templatename) {
+    public function preview_certificate($templatename, $data) {
         $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename . '/render';
-        return $this->execute_command($location, '');
+        $options['postdata'] = $data;
+        return $this->execute_command($location, '', $options, 'POST');
     }
 
     /**
