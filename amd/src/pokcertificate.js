@@ -28,16 +28,18 @@ import Modal from 'core/modal';
 
 const SELECTORS = {
     VERIFYAUTH: '[id="id_verifyauth"]',
+    SAVECERTIFICATE: '[data-action="savecert"]',
+    ADDROW: '[class => addmapping]'
 };
 var SERVICES = {
     VERIFY_AUTHENTICATION: 'mod_pokcertificate_verify_auth',
 };
+
 /**
 * Displays a modal form
 *
 * @param {Event} e
 */
-
 const verify = function(e){
     e.preventDefault();
     var institution = $("#id_institution").val();
@@ -96,9 +98,20 @@ const verify = function(e){
 };
 
 /**
+* Field mapping
+*
+*
+*/
+export const fieldmapping = function(){
+   alert();
+};
+
+
+/**
  * Initialise masterdata aboutus actions
  */
 export const init = () => {
+
     $(SELECTORS.VERIFYAUTH).on('click', function(e) {
         e.preventDefault();
         verify(e);

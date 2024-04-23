@@ -47,3 +47,12 @@
 #page-mod-pokcertificate-view .certbutton{
     margin: 10px 20px 10px 190px;
 }
+
+#page-mod-pokcertificate-fieldmapping form .fieldmapping {
+    width: 38%;
+    float: left;
+}
+
+#page-mod-pokcertificate-fieldmapping form input[name="delete[0]"] {
+     display: none;
+}

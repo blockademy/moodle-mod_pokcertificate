@@ -27,13 +27,13 @@ require('../../config.php');
 
 $id = required_param('id', PARAM_INT); // course id
 
-$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
 
 require_course_login($course, true);
 $PAGE->set_pagelayout('incourse');
 
 // Trigger instances list viewed event.
-$event = \mod_pokcertificate\event\course_module_instance_list_viewed::create(array('context' => context_course::instance($course->id)));
+$event = \mod_pokcertificate\event\course_module_instance_list_viewed::create(['context' => context_course::instance($course->id)]);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 
@@ -43,7 +43,7 @@ $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
 
-$PAGE->set_url('/mod/pokcertificate/index.php', array('id' => $course->id));
+$PAGE->set_url('/mod/pokcertificate/index.php', ['id' => $course->id]);
 $PAGE->set_title($course->shortname . ': ' . $strpokcertificates);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strpokcertificates);
@@ -61,11 +61,11 @@ $table->attributes['class'] = 'generaltable mod_index';
 
 if ($usesections) {
     $strsectionname = get_string('sectionname', 'format_' . $course->format);
-    $table->head  = array($strsectionname, $strname, $strintro);
-    $table->align = array('center', 'left', 'left');
+    $table->head  = [$strsectionname, $strname, $strintro];
+    $table->align = ['center', 'left', 'left'];
 } else {
-    $table->head  = array($strlastmodified, $strname, $strintro);
-    $table->align = array('left', 'left', 'left');
+    $table->head  = [$strlastmodified, $strname, $strintro];
+    $table->align = ['left', 'left', 'left'];
 }
 
 $modinfo = get_fast_modinfo($course);
@@ -89,11 +89,11 @@ foreach ($pokcertificates as $pokcertificate) {
 
     $class = $pokcertificate->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed
 
-    $table->data[] = array(
+    $table->data[] = [
         $printsection,
         "<a $class href=\"view.php?id=$cm->id\">" . format_string($pokcertificate->name) . "</a>",
         format_module_intro('pokcertificate', $pokcertificate, $cm->id)
-    );
+    ];
 }
 
 echo html_writer::table($table);

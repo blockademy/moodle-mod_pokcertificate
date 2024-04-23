@@ -14,38 +14,44 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_pokcertificate\output;
-
-
 /**
- * Renderer for POK Certificate
+ * TODO describe file uninstall
  *
  * @package    mod_pokcertificate
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class renderer extends \plugin_renderer_base {
+/**
+ * Uninstall the plugin.
+ */
+function xmldb_mod_pokcertificate_uninstall() {
 
-    /**
-     * Renders the certifcate templates view.
-     *
-     * @param [int] $id course module id
-     * @return [template] certificate templates view mustache file
-     */
-    public function show_certificate_templates(int $id) {
-
-        $output = new certificatetemplates($id);
-        $certificatetemplatecontent = $output->export_for_template($this);
-        return $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
+    global $DB;
+    $dbman = $DB->get_manager();
+    $table = new xmldb_table('pokcertificate');
+    if ($dbman->table_exists($table)) {
+        $dbman->drop_table($table);
     }
 
-
-    /**
-     * Renders the preview certifcate templates view.
-     *
-     * @param [int] $id course module id
-     * @return [template] certificate templates view mustache file
-     */
-    public function preview_cetificate_template(int $templateid) {
+    $table = new xmldb_table('pokcertificate_issues');
+    if ($dbman->table_exists($table)) {
+        $dbman->drop_table($table);
     }
+
+    $table = new xmldb_table('pokcertificate_log');
+    if ($dbman->table_exists($table)) {
+        $dbman->drop_table($table);
+    }
+
+    $table = new xmldb_table('pokcertificate_fieldmapping');
+    if ($dbman->table_exists($table)) {
+        $dbman->drop_table($table);
+    }
+
+    $table = new xmldb_table('pokcertificate_templates');
+    if ($dbman->table_exists($table)) {
+        $dbman->drop_table($table);
+    }
+
+    return true;
 }

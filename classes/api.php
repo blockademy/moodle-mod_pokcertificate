@@ -26,6 +26,8 @@ namespace mod_pokcertificate;
 
 use moodle_exception;
 use mod_pokcertificate\persistent\pokcertificate_log;
+use mod_pokcertificate\persistent\pokcertificate_templates;
+use mod_pokcertificate\persistent\pokcertificate;
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -179,5 +181,51 @@ class api {
         $logdata = new pokcertificate_log(0, $log);
         $logdata->create();
         return $result;
+    }
+
+
+    /**
+     * Saves the selected template definition to the database.
+     *
+     * @param [string] $template - template name
+     * @param [string] $cm - course module instance
+     *
+     * @return [array]
+     */
+    public static function save_template_definition($template = '', $cm) {
+        global $USER;
+        $templateid = 0;
+        $templatedefdata = new \stdClass();
+        $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($template);
+        if ($templatedefinition) {
+            $templatedefdata = new \stdclass;
+            $templateexists = pokcertificate_templates::get_record(['templatename' => $template]);
+
+            if ($templateexists) {
+                $templateid = $templateexists->get('id');
+                $templatedata = new pokcertificate_templates($templateexists->get('id'));
+                $templatedata->set('templatename', $template);
+                $templatedata->set('templatedefinition', $templatedefinition);
+                $templatedata->set('usermodified', $USER->id);
+                $templatedata->set('timemodified', time());
+                $templatedata->update();
+            } else {
+                $templatedefdata->templatename = $template;
+                $templatedefdata->templatedefinition = $templatedefinition;
+                $templatedefdata->usercreated = $USER->id;
+                $templatedata = new pokcertificate_templates(0, $templatedefdata);
+                $newtemplate = $templatedata->create();
+                $templateid = $newtemplate->get('id');
+            }
+            if ($templateid != 0) {
+
+                $pokid = pokcertificate::get_field('id', ['id' => $cm->instance]);
+                $pokdata = new pokcertificate($pokid);
+                $pokdata->set('templateid', $templateid);
+                $pokdata->set('usermodified', $USER->id);
+                $pokdata->update();
+            }
+        }
+        return $newtemplate;
     }
 }

@@ -33,7 +33,7 @@ $p       = optional_param('p', 0, PARAM_INT);  // Page instance ID
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
 if ($p) {
-    if (!$pokcertificate = $DB->get_record('pokcertificate', array('id' => $p))) {
+    if (!$pokcertificate = $DB->get_record('pokcertificate', ['id' => $p])) {
         throw new \moodle_exception('invalidaccessparameter');
     }
     $cm = get_coursemodule_from_instance('pokcertificate', $pokcertificate->id, $pokcertificate->course, false, MUST_EXIST);
@@ -41,10 +41,10 @@ if ($p) {
     if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
         throw new \moodle_exception('invalidcoursemodule');
     }
-    $pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), '*', MUST_EXIST);
+    $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
 }
 
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
@@ -53,7 +53,8 @@ require_capability('mod/pokcertificate:view', $context);
 // Completion and trigger events.
 pokcertificate_view($pokcertificate, $course, $cm, $context);
 
-$PAGE->set_url('/mod/pokcertificate/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
+$PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
 
 $options = empty($pokcertificate->displayoptions) ? [] : (array) unserialize_array($pokcertificate->displayoptions);
 
@@ -77,19 +78,21 @@ if ($inpopup and $pokcertificate->display == RESOURCELIB_DISPLAY_POPUP) {
 }
 $PAGE->activityheader->set_attrs($activityheader);
 echo $OUTPUT->header();
-$content = file_rewrite_pluginfile_urls($pokcertificate->content, 'pluginfile.php', $context->id, 'mod_pokcertificate', 'content', $pokcertificate->revision);
-$formatoptions = new stdClass;
-$formatoptions->noclean = true;
-$formatoptions->overflowdiv = true;
-$formatoptions->context = $context;
-$content = format_text($content, $pokcertificate->contentformat, $formatoptions);
-echo $OUTPUT->box($content, "generalbox center clearfix");
 
 if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'])) {
     $strlastmodified = get_string("lastmodified");
     echo html_writer::div("$strlastmodified: " . userdate($pokcertificate->timemodified), 'modified');
 }
-$renderer = $PAGE->get_renderer('mod_pokcertificate');
-echo $renderer->show_certificate_templates();
+if (has_capability('mod/pokcertificate:manageinstance', $context)) {
+    $renderer = $PAGE->get_renderer('mod_pokcertificate');
+    echo $renderer->show_certificate_templates($id);
+} else {
+
+    echo '<a class="btn btn-primary certbutton" data-action="previewtemplate" tabindex="0" aria-selected="true">Preview Template</a>';
+    echo '<a href= "http://localhost/moodle/mod/pokcertificate/preview.php?id=35" class="btn btn-primary certbutton" data-action="previewtemplate" tabindex="0" aria-selected="true">Preview Template</a>';
+
+    $renderer = $PAGE->get_renderer('mod_pokcertificate');
+    echo $renderer->preview_cetificate_template($id);
+}
 
 echo $OUTPUT->footer();

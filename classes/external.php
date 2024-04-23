@@ -35,9 +35,6 @@ use core_external\external_value;
 use core_external\external_warnings;
 use core_external\util;
 
-use mod_pokcertificate\api;
-
-
 /**
  * Page external functions
  *
@@ -57,9 +54,9 @@ class mod_pokcertificate_external extends external_api {
      */
     public static function view_pokcertificate_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'pokcertificateid' => new external_value(PARAM_INT, 'pokcertificate instance id')
-            )
+            ]
         );
     }
 
@@ -72,19 +69,20 @@ class mod_pokcertificate_external extends external_api {
      * @throws moodle_exception
      */
     public static function view_pokcertificate($pokcertificateid) {
+
         global $DB, $CFG;
         require_once($CFG->dirroot . "/mod/pokcertificate/lib.php");
 
         $params = self::validate_parameters(
             self::view_pokcertificate_parameters(),
-            array(
+            [
                 'pokcertificateid' => $pokcertificateid
-            )
+            ]
         );
-        $warnings = array();
+        $warnings = [];
 
         // Request and permission validation.
-        $pokcertificate = $DB->get_record('pokcertificate', array('id' => $params['pokcertificateid']), '*', MUST_EXIST);
+        $pokcertificate = $DB->get_record('pokcertificate', ['id' => $params['pokcertificateid']], '*', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($pokcertificate, 'pokcertificate');
 
         $context = context_module::instance($cm->id);
@@ -95,7 +93,7 @@ class mod_pokcertificate_external extends external_api {
         // Call the pokcertificate/lib API.
         pokcertificate_view($pokcertificate, $course, $cm, $context);
 
-        $result = array();
+        $result = [];
         $result['status'] = true;
         $result['warnings'] = $warnings;
         return $result;
@@ -109,10 +107,10 @@ class mod_pokcertificate_external extends external_api {
      */
     public static function view_pokcertificate_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
                 'warnings' => new external_warnings()
-            )
+            ]
         );
     }
 
@@ -124,14 +122,14 @@ class mod_pokcertificate_external extends external_api {
      */
     public static function get_pokcertificates_by_courses_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'courseids' => new external_multiple_structure(
                     new external_value(PARAM_INT, 'Course id'),
                     'Array of course ids',
                     VALUE_DEFAULT,
-                    array()
+                    []
                 ),
-            )
+            ]
         );
     }
 
@@ -143,17 +141,17 @@ class mod_pokcertificate_external extends external_api {
      * @return array of warnings and pokcertificates
      * @since Moodle 3.3
      */
-    public static function get_pokcertificates_by_courses($courseids = array()) {
+    public static function get_pokcertificates_by_courses($courseids = []) {
 
-        $warnings = array();
-        $returnedpokcertificates = array();
+        $warnings = [];
+        $returnedpokcertificates = [];
 
-        $params = array(
+        $params = [
             'courseids' => $courseids,
-        );
+        ];
         $params = self::validate_parameters(self::get_pokcertificates_by_courses_parameters(), $params);
 
-        $mycourses = array();
+        $mycourses = [];
         if (empty($params['courseids'])) {
             $mycourses = enrol_get_my_courses();
             $params['courseids'] = array_keys($mycourses);
@@ -186,10 +184,10 @@ class mod_pokcertificate_external extends external_api {
             }
         }
 
-        $result = array(
+        $result = [
             'pokcertificates' => $returnedpokcertificates,
             'warnings' => $warnings
-        );
+        ];
         return $result;
     }
 
@@ -201,7 +199,7 @@ class mod_pokcertificate_external extends external_api {
      */
     public static function get_pokcertificates_by_courses_returns() {
         return new external_single_structure(
-            array(
+            [
                 'pokcertificates' => new external_multiple_structure(
                     new external_single_structure(array_merge(
                         helper_for_get_mods_by_courses::standard_coursemodule_elements_returns(),
@@ -219,18 +217,18 @@ class mod_pokcertificate_external extends external_api {
                     ))
                 ),
                 'warnings' => new external_warnings(),
-            )
+            ]
         );
     }
 
     public static function verify_authentication_parameters() {
         return new external_function_parameters(
-            array(
+            [
                 'prodtype' => new external_value(PARAM_INT, get_string('prodtype', 'mod_pokcertificate')),
                 'authtoken' => new external_value(PARAM_RAW, get_string('authtoken', 'mod_pokcertificate')),
                 'institution' => new external_value(PARAM_TEXT, get_string('institution', 'mod_pokcertificate')),
                 'domain' => new external_value(PARAM_TEXT, get_string('domain', 'mod_pokcertificate')),
-            )
+            ]
         );
     }
 
@@ -250,7 +248,7 @@ class mod_pokcertificate_external extends external_api {
         require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
         $params = self::validate_parameters(
             self::verify_authentication_parameters(),
-            array('prodtype' => $prodtype, 'authtoken' => $authtoken, "institution" => $institution, 'domain' => $domain)
+            ['prodtype' => $prodtype, 'authtoken' => $authtoken, "institution" => $institution, 'domain' => $domain]
         );
 
         $result = pokcertificate_validate_apikey($params['authtoken']);
@@ -262,25 +260,25 @@ class mod_pokcertificate_external extends external_api {
                 set_config('orgid', $organisation->id, 'mod_pokcertificate');
                 set_config('institution', $organisation->name, 'mod_pokcertificate');
             }
-            $creditsresp = (new mod_pokcertificate\api)->get_credits();
+            //$creditsresp = (new mod_pokcertificate\api)->get_credits();
 
-            $certificatecount = (new mod_pokcertificate\api)->count_certificates();
+            //$certificatecount = (new mod_pokcertificate\api)->count_certificates();
 
             $msg = get_string("success");
-            return array("status" => 0, "msg" => $msg, "response" => $orgdetails);
+            return ["status" => 0, "msg" => $msg, "response" => $orgdetails];
         } else {
             $msg = get_string("error");
-            return array("status" => 1, "msg" => $msg, "response" => '');
+            return ["status" => 1, "msg" => $msg, "response" => ''];
         }
     }
 
     public static function verify_authentication_returns() {
         return new external_single_structure(
-            array(
+            [
                 'status'  => new external_value(PARAM_TEXT, get_string('status', 'mod_pokcertificate')),
                 'msg'  => new external_value(PARAM_RAW, get_string('errormsg', 'mod_pokcertificate')),
                 'response'  => new external_value(PARAM_RAW, get_string('response', 'mod_pokcertificate'))
-            )
+            ]
         );
     }
 }

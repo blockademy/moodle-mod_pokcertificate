@@ -63,11 +63,11 @@ class mod_pokcertificate_verifyauth_form extends moodleform {
         $mform->setType('domain', PARAM_TEXT);
         $mform->addHelpButton('domain', 'domain', 'pokcertificate');
 
-        $buttonarray = array();
+        $buttonarray = [];
         $buttonarray[] = $mform->createElement('button', 'verifyauth', get_string("verify", "pokcertificate"), "", "");
         $buttonarray[] = $mform->createElement('html', '<div id="verify_response"> </div>');
 
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
     }
 
     public function validation($data, $files) {

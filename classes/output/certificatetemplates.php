@@ -32,9 +32,24 @@ use mod_pokcertificate\persistent\pokcertificate_templates;
  */
 class certificatetemplates implements templatable, renderable {
 
+    private $sampledata;
+    /** @var int */
+    protected int $cmid;
+
     /**
+     *  certificatetemplates constructor.
+     *
+     * @param int|string $id
      */
-    public function __construct() {
+    public function __construct($id) {
+
+        $this->sampledata = [
+            "name" => "John Galt",
+            "title" => "Engineer",
+            "date" => 1704423600000,
+            "institution" => "Ohio State University"
+        ];
+        $this->cmid = $id;
     }
 
     /**
@@ -45,42 +60,21 @@ class certificatetemplates implements templatable, renderable {
      */
     public function export_for_template(renderer_base $output): array {
 
-        global $USER;
-
+        $cmid = $this->cmid;
         $templateslist = (new \mod_pokcertificate\api)->get_templates_list();
         $templateslist = json_decode($templateslist);
         $templates = [];
         foreach ($templateslist as $template) {
             $data = [];
-            $data['name'] = $template;
-            $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($template);
-
-            //check if template record exists in table
-            $templatedefdata = new \stdclass;
-            $templateexists = pokcertificate_templates::get_record(['templatename' => $template]);
-
-            if ($templateexists) {
-                $templatedata = new pokcertificate_templates($templateexists->get('id'));
-                $templatedata->set('templatename', $template);
-                $templatedata->set('templatedefinition', $templatedefinition);
-                $templatedata->set('usermodified', $USER->id);
-                $templatedata->set('timemodified', time());
-                $templatedata->update();
-            } else {
-                $templatedefdata->templatename = $template;
-                $templatedefdata->templatedefinition = $templatedefinition;
-                $templatedefdata->usercreated = $USER->id;
-
-                $templatedata = new pokcertificate_templates(0, $templatedefdata);
-                $templatedata->create();
-            }
-
-            $previewdata = '{"name": "John Galt", "title": "Engineer", "date": 1704423600000, "institution": "Ohio State University"}';
+            $previewdata = json_encode($this->sampledata);
             $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
-
+            $data['tempname'] = base64_encode($template);
+            $data['name'] = $template;
+            $data['cmid'] = $cmid;
             $data['certimage'] = trim($templatepreview, '"');
             $templates['certdata'][] = $data;
         }
+
         return $templates;
     }
 }

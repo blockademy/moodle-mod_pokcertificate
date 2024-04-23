@@ -107,6 +107,8 @@ $string['prodtype_help'] = 'Select Production Type';
 $string['done'] = 'Done';
 $string['tryagain'] = 'Try again';
 $string['verifyauth'] = 'To verify authentication token';
+$string['connecterror'] = 'API Connection error';
+$string['fail'] = 'Failed';
 
 //capabilities
 $string['pokcertificate:view'] = 'View pokcertificate content';
@@ -119,3 +121,8 @@ $string['certficatestobesent'] = 'Certificates to be sent';
 $string['incompleteprofile'] = 'Incomplete Student Profile';
 $string['certificatename'] = 'Certificate Name';
 $string['title'] = 'Title';
+
+$string['fieldmapping'] = 'Field Mapping';
+$string['apifields'] = 'POK fields';
+$string['userfields'] = 'Moodle fields';
+$string['add'] = 'Add Mapping Field';

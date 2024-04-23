@@ -54,10 +54,7 @@ class pokcertificate extends persistent {
                 'type' => PARAM_RAW,
                 'optional' => false,
             ],
-            'certificatename' => [
-                'type' => PARAM_TEXT,
-                'optional' => false,
-            ],
+
             'orgname' => [
                 'type' => PARAM_TEXT,
                 'optional' => false,
@@ -85,5 +82,17 @@ class pokcertificate extends persistent {
                 'optional' => false,
             ],
         ];
+    }
+
+    /**
+     * Get the specific field value for pokcertificate
+     *
+     * @param string $field the field to return the value of.
+     * @param array $data optional array params
+     * @return mixed the specified value false if not found
+     */
+    public static function get_field($field, $data) {
+        global $DB;
+        return $DB->get_field(self::TABLE, $field, $data);
     }
 }

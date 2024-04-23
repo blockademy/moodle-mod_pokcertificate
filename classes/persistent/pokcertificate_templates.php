@@ -54,4 +54,16 @@ class pokcertificate_templates extends persistent {
             ],
         ];
     }
+
+    /**
+     * Get the specific field value for pokcertificate templates
+     *
+     * @param string $field the field to return the value of.
+     * @param array $data optional array params
+     * @return mixed the specified value false if not found
+     */
+    public static function get_field($field, $data) {
+        global $DB;
+        return $DB->get_field(self::TABLE, $field, $data);
+    }
 }

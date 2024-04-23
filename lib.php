@@ -70,7 +70,7 @@ function pokcertificate_reset_userdata($data) {
     // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
     // See MDL-9367.
 
-    return array();
+    return [];
 }
 
 /**
@@ -626,6 +626,13 @@ function mod_pokcertificate_get_path_from_pluginfile(string $filearea, array $ar
     ];
 }
 
+/**
+ * Given an api key, it returns true or false if api key is valid.
+ *
+ * @param  string $key authentication API key
+ *
+ * @return bool
+ */
 function pokcertificate_validate_apikey($key) {
 
     $location = API_KEYS_ROOT . '/me';
@@ -662,7 +669,11 @@ function pokcertificate_validate_apikey($key) {
     }
 }
 
-
+/**
+ * Returns the plugin settings array with values.
+ *
+ * @return [array]
+ */
 function get_pokcertificate_settings() {
 
     $authtoken = get_config('mod_pokcertificate', 'authenticationtoken');
@@ -687,7 +698,6 @@ function get_pokcertificate_settings() {
         'incompletestudentprofiles' => $incompletestudentprofiles,
         'endofservices' => $endofservices,
     );
-
 
     return $data;
 }
