@@ -83,16 +83,10 @@ if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'
     $strlastmodified = get_string("lastmodified");
     echo html_writer::div("$strlastmodified: " . userdate($pokcertificate->timemodified), 'modified');
 }
-if (has_capability('mod/pokcertificate:manageinstance', $context)) {
+if ($id) {
     $renderer = $PAGE->get_renderer('mod_pokcertificate');
     echo $renderer->show_certificate_templates($id);
-} else {
-
-    echo '<a class="btn btn-primary certbutton" data-action="previewtemplate" tabindex="0" aria-selected="true">Preview Template</a>';
-    echo '<a href= "http://localhost/moodle/mod/pokcertificate/preview.php?id=35" class="btn btn-primary certbutton" data-action="previewtemplate" tabindex="0" aria-selected="true">Preview Template</a>';
-
-    $renderer = $PAGE->get_renderer('mod_pokcertificate');
-    echo $renderer->preview_cetificate_template($id);
 }
+//echo '<a href= "' . $CFG->wwwroot . '/mod/pokcertificate/preview.php?id=' . $id . '" class="btn btn-primary certbutton" data-action="previewtemplate" tabindex="0" aria-selected="true">Preview Template</a>';
 
 echo $OUTPUT->footer();

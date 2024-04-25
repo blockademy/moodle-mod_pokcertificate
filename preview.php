@@ -29,18 +29,12 @@ use mod_pokcertificate\persistent\pokcertificate_templates;
 
 require_login();
 $id      = optional_param('id', 0, PARAM_INT); // Course Module ID
-$url = new moodle_url('/mod/pokcertificate/preview.php', []);
+$url = new moodle_url('/mod/pokcertificate/preview.php', ['id' => $id]);
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
 
 $PAGE->set_heading($SITE->fullname);
 echo $OUTPUT->header();
-$cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
-$templateid = pokcertificate::get_field('templateid', ['course' => $cm->course]);
-$templatename = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);
-
-$templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
-$templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templatename);
-$templatedefinition = json_decode($templatedefinition, true);
-
+$renderer = $PAGE->get_renderer('mod_pokcertificate');
+echo $renderer->preview_cetificate_template($id);
 echo $OUTPUT->footer();

@@ -23,7 +23,6 @@
  */
 
 use mod_pokcertificate\api;
-use mod_pokcertificate\fieldmapping;
 
 require('../../config.php');
 
@@ -36,29 +35,38 @@ $id  = required_param('id', PARAM_INT);
 $tempname = required_param('temp', PARAM_RAW);
 $template = base64_decode($tempname);
 
+$cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+
 $url = new moodle_url('/mod/pokcertificate/fieldmapping.php', ['id' => $id, 'temp' => $tempname]);
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());
-$PAGE->set_heading($SITE->fullname);
+$PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
+$PAGE->set_heading($course->fullname);
 //$PAGE->requires->js(new moodle_url('/mod/pokcertificate/fieldmap.js'));
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
 
 echo $OUTPUT->header();
-$cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
-
 // save selected template definition
 if ($template) {
-    api::save_template_definition($template, $cm);
+    $data = api::save_template_definition($template, $cm);
+    $certid = $data['certid'];
+    $templateid = $data['templateid'];
 }
+
 //$html = fieldmapping::get_mapping_fields();
 
-$mform = new mod_pokcertificate_fieldmapping_form($url, ['id' => $id, 'template' => $tempname]);
+$mform = new mod_pokcertificate_fieldmapping_form($url, ['id' => $id, 'template' => $tempname, 'templateid' => $templateid, 'certid' => $certid]);
+$redirecturl = new moodle_url('/mod/pokcertificate/view.php', ['id' => $id]);
 
 if ($mform->is_cancelled()) {
     redirect($url);
 } else if ($mform->get_data()) {
     $data =  $mform->get_data();
     $return = api::save_fieldmapping_data($data);
+    if ($return) {
+        redirect($url);
+    }
 } else {
     $mform->display();
 }

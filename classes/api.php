@@ -28,6 +28,7 @@ use moodle_exception;
 use mod_pokcertificate\persistent\pokcertificate_log;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\persistent\pokcertificate;
+use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -190,7 +191,7 @@ class api {
      * @param [string] $template - template name
      * @param [string] $cm - course module instance
      *
-     * @return [array]
+     * @return [array] $certid -pok certificate id ,$templateid - template id
      */
     public static function save_template_definition($template = '', $cm) {
         global $USER;
@@ -226,6 +227,34 @@ class api {
                 $pokdata->update();
             }
         }
-        return $newtemplate;
+        return ['certid' => $pokid, 'templateid' => $templateid];
+    }
+
+    /**
+     * Saves the fieldmapping fields.
+     *
+     * @param [object] $data - fieldmapping data
+     *
+     * @return [array]
+     */
+    public static function save_fieldmapping_data($data) {
+
+        try {
+            for ($i = 0; $i < $data->option_repeats; $i++) {
+                if (isset($data->templatefield[$i]) && isset($data->userfield[$i])) {
+                    $mappingfield = new \stdClass();
+                    $mappingfield->timecreated = time();
+                    $mappingfield->certid = $data->certid;
+                    $mappingfield->templatefield = $data->templatefield[$i];
+                    $mappingfield->userfield = $data->userfield[$i];
+                    $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
+                    $fieldmapping->create();
+                }
+            }
+            return true;
+        } catch (\moodle_exception $e) {
+            print_r($e);
+            return false;
+        }
     }
 }

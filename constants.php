@@ -40,3 +40,11 @@ define('RBAC_ROOT', $rbacurl);
 
 $custodianurl = ($prodtype == 1 ? 'https://custodian.credentity.xyz' : 'https://custodian.pok.tech');
 define('CUSTODIAN_ROOT', $custodianurl);
+
+$sampledata = [
+    "name" => "John Galt",
+    "title" => "Engineer",
+    "date" => 1704423600000,
+    "institution" => "Ohio State University"
+];
+define('SAMPLE_DATA', $sampledata);

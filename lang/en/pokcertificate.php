@@ -126,3 +126,5 @@ $string['fieldmapping'] = 'Field Mapping';
 $string['apifields'] = 'POK fields';
 $string['userfields'] = 'Moodle fields';
 $string['add'] = 'Add Mapping Field';
+$string['previewnotexists'] = 'Certifcate preview doesn`t exists';
+$string['invalidcoursemodule'] = 'Invalid course module Id';

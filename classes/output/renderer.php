@@ -16,6 +16,9 @@
 
 namespace mod_pokcertificate\output;
 
+use mod_pokcertificate\persistent\pokcertificate;
+use mod_pokcertificate\persistent\pokcertificate_templates;
+
 
 /**
  * Renderer for POK Certificate
@@ -33,19 +36,49 @@ class renderer extends \plugin_renderer_base {
      * @return [template] certificate templates view mustache file
      */
     public function show_certificate_templates(int $id) {
-
-        $output = new certificatetemplates($id);
-        $certificatetemplatecontent = $output->export_for_template($this);
-        return $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
+        global $DB;
+        $recexists = $DB->record_exists('course_modules', ['id' => $id]);
+        if ($recexists && has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+            $output = new certificatetemplates($id);
+            $certificatetemplatecontent = $output->export_for_template($this);
+            if ($certificatetemplatecontent) {
+                return $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
+            }
+        } else {
+            echo get_string('invalidcoursemodule', 'mod_pokcertificate');
+        }
     }
 
 
     /**
      * Renders the preview certifcate templates view.
      *
-     * @param [int] $id course module id
+     * @param [int] $cmid course module id
      * @return [template] certificate templates view mustache file
      */
-    public function preview_cetificate_template(int $templateid) {
+    public function preview_cetificate_template(int $cmid) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
+        $output = '';
+        $recexists = $DB->record_exists('course_modules', ['id' => $cmid]);
+        if ($recexists) {
+            $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
+            $templateid = pokcertificate::get_field('templateid', ['course' => $cm->course]);
+            if ($templateid) {
+                $template = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);
+                $previewdata = SAMPLE_DATA;
+                $previewdata = json_encode($previewdata);
+                $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
+                if ($templatepreview) {
+                    $temppreview = trim($templatepreview, '"');
+                    $output .= \html_writer::tag('img', '', ['src' =>  $temppreview, 'alt' => "Snow"]);
+                    $output .= \html_writer::tag('br', '');
+                    $output .= \html_writer::tag('a', get_string('back'), ['class' => 'btn btn-primary ', 'href' => $CFG->wwwroot . '/course/view.php?id=' . $cm->course]);
+                }
+            }
+        } else {
+            echo get_string('previewnotexists', 'mod_pokcertificate');
+        }
+        return $output;
     }
 }

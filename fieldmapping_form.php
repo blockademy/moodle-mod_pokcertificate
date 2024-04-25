@@ -39,7 +39,9 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
 
         $mform = $this->_form;
         $id        = $this->_customdata['id'];
-        $template  = $this->_customdata['template'];
+        $templatename  = $this->_customdata['template'];
+        $templateid  = $this->_customdata['templateid'];
+        $certid  = $this->_customdata['certid'];
 
         $mform->addElement('header', 'fieldmapping', get_string('fieldmapping', 'pokcertificate') . "<div class ='test'> </div>");
 
@@ -51,7 +53,7 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
 
             $mform->createElement(
                 'select',
-                'apifields',
+                'templatefield',
                 get_string('apifields', 'pokcertificate'),
                 $remotefields,
                 ['class' => 'fieldmapping']
@@ -59,7 +61,7 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
 
             $mform->createElement(
                 'select',
-                'userfields',
+                'userfield',
                 get_string('userfields', 'pokcertificate'),
                 $localfields,
                 ['class' => 'fieldmapping']
@@ -80,8 +82,8 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
 
         $repeateloptions = [];
         $repeateloptions['fieldmapping']['default'] = '{no}';
-        $repeateloptions['apifields']['type'] = PARAM_RAW;
-        $repeateloptions['userfields']['type'] = PARAM_RAW;
+        $repeateloptions['templatefield']['type'] = PARAM_RAW;
+        $repeateloptions['userfield']['type'] = PARAM_RAW;
 
         $mform->setDefault('optionid', 0);
         $mform->setType('optionid', PARAM_INT);
@@ -103,8 +105,14 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $mform->addElement('hidden', 'id', $id);
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'temp', $template);
+        $mform->addElement('hidden', 'temp', $templatename);
         $mform->setType('temp', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'tempid', $templateid);
+        $mform->setType('tempid', PARAM_INT);
+
+        $mform->addElement('hidden', 'certid', $certid);
+        $mform->setType('certid', PARAM_INT);
 
         /*        $buttonarray = array();
         //$savebuttonarray = array('class' => 'form-submit', 'onclick' => '(function(e){ require("mod_pokcertificate/pokcertificate").fieldmapping() })(event)');

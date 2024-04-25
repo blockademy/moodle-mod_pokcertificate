@@ -39,7 +39,7 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
 
         //-------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
-        $mform->addElement('text', 'name', get_string('certificatename', 'pokcertificate'), array('size' => '48'));
+        $mform->addElement('text', 'name', get_string('certificatename', 'pokcertificate'), ['size' => '48']);
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -48,12 +48,12 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $mform->addElement('text', 'institution', get_string('institution', 'pokcertificate'), array('size' => '48', 'readonly' => true));
+        $mform->addElement('text', 'institution', get_string('institution', 'pokcertificate'), ['size' => '48', 'readonly' => true]);
         if (get_config('mod_pokcertificate', 'institution')) {
             $mform->setDefault('institution', get_config('mod_pokcertificate', 'institution'));
         }
 
-        $mform->addElement('text', 'title', get_string('title', 'pokcertificate'), array('size' => '48'));
+        $mform->addElement('text', 'title', get_string('title', 'pokcertificate'), ['size' => '48']);
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('title', PARAM_TEXT);
         } else {
@@ -82,14 +82,14 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         }
 
         if (array_key_exists(RESOURCELIB_DISPLAY_POPUP, $options)) {
-            $mform->addElement('text', 'popupwidth', get_string('popupwidth', 'pokcertificate'), array('size' => 3));
+            $mform->addElement('text', 'popupwidth', get_string('popupwidth', 'pokcertificate'), ['size' => 3]);
             if (count($options) > 1) {
                 $mform->hideIf('popupwidth', 'display', 'noteq', RESOURCELIB_DISPLAY_POPUP);
             }
             $mform->setType('popupwidth', PARAM_INT);
             $mform->setDefault('popupwidth', $config->popupwidth);
 
-            $mform->addElement('text', 'popupheight', get_string('popupheight', 'pokcertificate'), array('size' => 3));
+            $mform->addElement('text', 'popupheight', get_string('popupheight', 'pokcertificate'), ['size' => 3]);
             if (count($options) > 1) {
                 $mform->hideIf('popupheight', 'display', 'noteq', RESOURCELIB_DISPLAY_POPUP);
             }
@@ -104,10 +104,10 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
 
         // add legacy files flag only if used
         if (isset($this->current->legacyfiles) and $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {
-            $options = array(
+            $options = [
                 RESOURCELIB_LEGACYFILES_DONE   => get_string('legacyfilesdone', 'pokcertificate'),
                 RESOURCELIB_LEGACYFILES_ACTIVE => get_string('legacyfilesactive', 'pokcertificate')
-            );
+            ];
             $mform->addElement('select', 'legacyfiles', get_string('legacyfiles', 'pokcertificate'), $options);
             $mform->setAdvanced('legacyfiles', 1);
         }
