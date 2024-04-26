@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -28,8 +27,8 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
-$id      = optional_param('id', 0, PARAM_INT); // Course Module ID
-$p       = optional_param('p', 0, PARAM_INT);  // Page instance ID
+$id      = optional_param('id', 0, PARAM_INT); // Course Module ID.
+$p       = optional_param('p', 0, PARAM_INT);  // Page instance ID.
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
 if ($p) {
@@ -63,7 +62,7 @@ if (empty($options['printintro'])) {
     $activityheader['description'] = '';
 }
 
-if ($inpopup and $pokcertificate->display == RESOURCELIB_DISPLAY_POPUP) {
+if ($inpopup && $pokcertificate->display == RESOURCELIB_DISPLAY_POPUP) {
     $PAGE->set_pagelayout('popup');
     $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
     $PAGE->set_heading($course->fullname);
@@ -87,6 +86,5 @@ if ($id) {
     $renderer = $PAGE->get_renderer('mod_pokcertificate');
     echo $renderer->show_certificate_templates($id);
 }
-//echo '<a href= "' . $CFG->wwwroot . '/mod/pokcertificate/preview.php?id=' . $id . '" class="btn btn-primary certbutton" data-action="previewtemplate" tabindex="0" aria-selected="true">Preview Template</a>';
 
 echo $OUTPUT->footer();

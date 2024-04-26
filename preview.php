@@ -24,11 +24,8 @@
 
 require('../../config.php');
 
-use mod_pokcertificate\persistent\pokcertificate;
-use mod_pokcertificate\persistent\pokcertificate_templates;
-
 require_login();
-$id      = optional_param('id', 0, PARAM_INT); // Course Module ID
+$id      = optional_param('id', 0, PARAM_INT); // Course Module ID.
 $url = new moodle_url('/mod/pokcertificate/preview.php', ['id' => $id]);
 $PAGE->set_url($url);
 $PAGE->set_context(context_system::instance());

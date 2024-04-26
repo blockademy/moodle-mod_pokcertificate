@@ -701,3 +701,8 @@ function get_pokcertificate_settings() {
 
     return $data;
 }
+
+function mod_pokcertificate_cm_info_view(cm_info $cm) {
+    global $CFG;
+    $cm->set_after_link('<a href= "' . $CFG->wwwroot . '/mod/pokcertificate/preview.php?id=' . $cm->id . '" class="btn btn-primary certbutton" data-action="previewtemplate" tabindex="0" aria-selected="true">Preview Template</a>');
+}

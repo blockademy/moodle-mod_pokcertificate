@@ -29,7 +29,7 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
 /**
- *form shown while adding activity.
+ * form shown while adding activity.
  */
 class mod_pokcertificate_verifyauth_form extends moodleform {
     public function definition() {
