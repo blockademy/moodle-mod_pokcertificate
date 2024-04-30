@@ -59,10 +59,6 @@ class mod_pokcertificate_verifyauth_form extends moodleform {
             $mform->setDefault("institution", $configvalues["institution"]);
         }
 
-        $mform->addElement('text', 'domain', get_string('domain', 'pokcertificate'), 'size="35",readonly="readonly"');
-        $mform->setType('domain', PARAM_TEXT);
-        $mform->addHelpButton('domain', 'domain', 'pokcertificate');
-
         $buttonarray = [];
         $buttonarray[] = $mform->createElement('button', 'verifyauth', get_string("verify", "pokcertificate"), "", "");
         $buttonarray[] = $mform->createElement('html', '<div id="verify_response"> </div>');

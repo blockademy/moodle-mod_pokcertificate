@@ -44,7 +44,6 @@ const verify = function(e){
     e.preventDefault();
     var institution = $("#id_institution").val();
     var authtoken = $("#id_authtoken").val();
-    var domain = $("#id_domain").val();
     var prodtype = $("#id_prodtype").val();
 
     Str.get_strings([
@@ -56,7 +55,7 @@ const verify = function(e){
             var promises = Ajax.call([
                 {
                     methodname:SERVICES.VERIFY_AUTHENTICATION,
-                    args: {prodtype:prodtype,authtoken: authtoken, institution:institution, domain:domain}
+                    args: {prodtype:prodtype,authtoken: authtoken, institution:institution}
                 }
             ]);
             promises[0].done(function(data) {

@@ -48,11 +48,11 @@
     margin: 10px 20px 10px 190px;
 }
 
-#page-mod-pokcertificate-fieldmapping form .fieldmapping {
-    width: 38%;
+#page-mod-pokcertificate-view form .fieldmapping {
+    width: 50%;
     float: left;
 }
 
-#page-mod-pokcertificate-fieldmapping form input[name="delete[0]"] {
+#page-mod-pokcertificate-view form input[name="delete[0]"] {
      display: none;
 }

@@ -51,4 +51,18 @@ class pokcertificate_fieldmapping extends persistent {
             ],
         ];
     }
+
+    /**
+     * Get a number of records as an array of objects where all the given conditions met for fieldmapping.
+     *
+     * @param array $data optional array $fieldname=>requestedvalue with AND in between
+     * @param string $fields a comma separated list of fields to return (optional, by default
+     *   all fields are returned). The first field will be used as key for the
+     *   array so must be a unique field such as 'id'.
+     * @return array An array of Objects indexed by first column.
+     */
+    public static function fieldmapping_records($data, $fields = '*') {
+        global $DB;
+        return $DB->get_records(self::TABLE, $data, $fields);
+    }
 }

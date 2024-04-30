@@ -30,12 +30,6 @@ require_once($CFG->libdir . '/completionlib.php');
 $id      = optional_param('id', 0, PARAM_INT); // Course Module ID.
 $p       = optional_param('p', 0, PARAM_INT);  // Page instance ID.
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
-$formedit = optional_param('formedit', 0, PARAM_BOOL);
-
-
-/* if (!$formedit && has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-    redirect(new moodle_url('/mod/pokcertificate/preview.php', ['id' => $id]));
-} */
 
 if ($p) {
     if (!$pokcertificate = $DB->get_record('pokcertificate', ['id' => $p])) {
@@ -86,18 +80,22 @@ if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'
     $strlastmodified = get_string("lastmodified");
     echo html_writer::div("$strlastmodified: " . userdate($pokcertificate->timemodified), 'modified');
 }
-
+$renderer = $PAGE->get_renderer('mod_pokcertificate');
 
 if ($id) {
-    $renderer = $PAGE->get_renderer('mod_pokcertificate');
-    $preview = $renderer->preview_cetificate_template($id);
-    if (!empty($preview) && !$formedit && has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-        echo $preview;
-    } else if (!$formedit && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-        redirect(new \moodle_url('/mod/pokcertificate/updateprofile.php', ['cmid' => $id, 'id' => $USER->id]));
-    } else {
-        echo $renderer->show_certificate_templates($id);
+
+    // Getting certificate template view.
+    if ($preview = get_template_preview($id)) {
+        $params = array('id' => $id);
+        $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
+        redirect($url);
+    }
+    if ($viewcertificate = view_issued_certificate($id)) {
+        $params = array('id' => $id);
+        $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
+        redirect($url);
     }
 }
 
+echo $renderer->show_certificate_templates($id);
 echo $OUTPUT->footer();

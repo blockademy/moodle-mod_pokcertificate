@@ -34,49 +34,8 @@ if ($ADMIN->fulltree) {
             '<div class="" >' . get_string('verifyauth', 'pokcertificate') . '
             <a target="_blank" class="bt btn-primary"
             style="padding: 7px 18px; border-radius: 4px; color: white; background-color: #2578dd; margin-left: 5px;"
-            href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >' . get_string('clickhere') . '
+            href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >' . get_string('clickhere', 'mod_pokcertificate') . '
             </a></div><br>'
         )
     );
-
-    /* $options = ['1' => 'QA', '2' => 'LIVE'];
-    $settings->add(new admin_setting_configselect(
-        'pokcertificate/prodtype',
-        get_string('prodtype', 'pokcertificate'),
-        '',
-        '',
-        $options
-    ));
-
-    $settings->add(new admin_setting_configtext(
-        'pokcertificate/institution',
-        get_string('institution', 'pokcertificate'),
-        '',
-        '',
-        PARAM_RAW
-    ));
-
-    $settings->add(new admin_setting_configtext(
-        'pokcertificate/domain',
-        get_string('domain', 'pokcertificate'),
-        '',
-        '',
-        PARAM_RAW
-    ));
-
-    $settings->add(new admin_setting_configtext(
-        'pokcertificate/authtoken',
-        get_string('authtoken', 'pokcertificate'),
-        '',
-        '',
-        PARAM_RAW
-    ));
-
-    $settings->add(
-        new admin_setting_heading(
-            'pokcertificate/settings_msg',
-            '',
-            '<button class="btn btn-primary" style="margin-left: 30%;" data-action="verifyauth" type="button">' . get_string('verify', 'pokcertificate') . '</button>'
-        )
-    ); */
 }

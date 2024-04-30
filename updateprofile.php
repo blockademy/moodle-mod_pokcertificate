@@ -27,26 +27,39 @@ require_once($CFG->dirroot . '/mod/pokcertificate/updateprofile_form.php');
 
 require_login();
 
-$userid  = required_param('id', PARAM_INT);
-$cmid  = required_param('cmid', PARAM_INT);
+$id  = required_param('id', PARAM_INT);
+$userid = $USER->id;
 
-$url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['id' => $USER->id, 'cmid' => $cmid]);
-$PAGE->set_url($url);
-$PAGE->set_context(context_system::instance());
-$PAGE->set_heading($SITE->fullname);
+$url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['id' => $id]);
+
+if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
+    throw new \moodle_exception('invalidcoursemodule');
+}
+$pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+
+require_course_login($course, true, $cm);
+$context = context_module::instance($cm->id);
+require_capability('mod/pokcertificate:view', $context);
+
+$PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
+$PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
+$PAGE->set_heading($course->fullname);
+$PAGE->add_body_class('limitedwidth');
+$PAGE->set_activity_record($pokcertificate);
 
 echo $OUTPUT->header();
 if (!$user = $DB->get_record('user', ['id' => $userid])) {
     throw new \moodle_exception('invaliduserid');
 } else {
-    $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
+    $cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
     if (!profile_has_required_custom_fields_set($user->id)) {
         // Load user preferences.
         useredit_load_preferences($user);
 
         // Load custom profile fields data.
         profile_load_data($user);
-        $mform = new mod_pokcertificate_updateprofile_form($url, ['user' => $user, 'cmid' => $cmid]);
+        $mform = new mod_pokcertificate_updateprofile_form($url, ['user' => $user, 'cmid' => $id]);
         $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
 
         if ($mform->is_cancelled()) {
@@ -62,7 +75,7 @@ if (!$user = $DB->get_record('user', ['id' => $userid])) {
         }
     } else {
         $renderer = $PAGE->get_renderer('mod_pokcertificate');
-        echo $renderer->preview_cetificate_template($cmid);
+        echo $renderer->preview_certificate_template($id);
     }
 }
 

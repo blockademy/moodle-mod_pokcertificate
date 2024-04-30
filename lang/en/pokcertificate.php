@@ -130,3 +130,5 @@ $string['previewnotexists'] = 'Certifcate preview doesn`t exists';
 $string['invalidcoursemodule'] = 'Invalid course module Id';
 $string['previewcertificate'] = 'Preview Certificate';
 $string['issuecertificate'] = 'Issue Certificate';
+$string['certificateslist'] = 'Certificate Templates';
+$string['clickhere'] = 'Click here';

@@ -47,9 +47,7 @@ class renderer extends \plugin_renderer_base {
                 if ($certificatetemplatecontent) {
                     return $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
                 }
-            } /* else {
-                redirect(new \moodle_url('/mod/pokcertificate/updateprofile.php', ['cmid' => $id, 'id' => $USER->id]));
-            } */
+            }
         } else {
             echo get_string('invalidcoursemodule', 'mod_pokcertificate');
         }
@@ -62,14 +60,14 @@ class renderer extends \plugin_renderer_base {
      * @param [int] $cmid course module id
      * @return [template] certificate templates view mustache file
      */
-    public function preview_cetificate_template(int $cmid) {
+    public function preview_certificate_template(int $cmid) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
         $output = '';
         $recexists = $DB->record_exists('course_modules', ['id' => $cmid]);
         if ($recexists) { // has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
             $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
-            $templateid = pokcertificate::get_field('templateid', ['course' => $cm->course]);
+            $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
             if ($templateid) {
                 $template = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);
                 $previewdata = SAMPLE_DATA;
@@ -86,5 +84,19 @@ class renderer extends \plugin_renderer_base {
             echo get_string('previewnotexists', 'mod_pokcertificate');
         }
         return $output;
+    }
+
+    /**
+     * This method returns the action bar.
+     *
+     * @param int $cmid The course module id.
+     * @param \moodle_url $pageurl The page url.
+     * @return string The HTML for the action bar.
+     */
+
+    public function action_bar(int $id,  \moodle_url $pageurl): string {
+        $actionbar = new action_bar($id, $pageurl);
+        $data = $actionbar->export_for_template($this);
+        return $this->render_from_template('mod_pokcertificate/action_bar', $data);
     }
 }

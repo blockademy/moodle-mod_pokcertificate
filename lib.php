@@ -23,7 +23,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-use mod_pokcertificate\persistent\pokcertificate;
+use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -699,6 +699,24 @@ function get_pokcertificate_settings() {
         'endofservices' => $endofservices,
     );
 
+    return $data;
+}
+
+function get_mapped_fields(int $certid) {
+
+    $fields = pokcertificate_fieldmapping::fieldmapping_records(['certid' => $certid], 'id');
+    $data = new \stdClass;
+    if ($fields) {
+        $data->option_repeats = count($fields);
+        $key = 0;
+        foreach ($fields as $field) {
+            $data->templatefield[$key] = $field->templatefield;
+            $data->userfield[$key] = $field->userfield;
+            $optionid[] = $field->id;
+            $key++;
+        }
+        $data->optionid = $optionid;
+    }
     return $data;
 }
 

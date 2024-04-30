@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TODO describe file preview
+ * TODO describe file certificates
  *
  * @package    mod_pokcertificate
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
@@ -25,10 +25,9 @@
 require('../../config.php');
 
 require_login();
-
 $id      = optional_param('id', 0, PARAM_INT); // Course Module ID.
-$url = new moodle_url('/mod/pokcertificate/preview.php', ['id' => $id]);
 
+$url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
 if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
     throw new \moodle_exception('invalidcoursemodule');
 }
@@ -40,14 +39,29 @@ $context = context_module::instance($cm->id);
 require_capability('mod/pokcertificate:view', $context);
 
 $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
+$PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
+
+$options = empty($pokcertificate->displayoptions) ? [] : (array) unserialize_array($pokcertificate->displayoptions);
+
+$activityheader = ['hidecompletion' => false];
+if (empty($options['printintro'])) {
+    $activityheader['description'] = '';
+}
 $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->add_body_class('limitedwidth');
-$PAGE->set_activity_record($pokcertificate);
+
+if ($inpopup && $pokcertificate->display == RESOURCELIB_DISPLAY_POPUP) {
+    $PAGE->set_pagelayout('popup');
+} else {
+    $PAGE->add_body_class('limitedwidth');
+    $PAGE->set_activity_record($pokcertificate);
+    if (!$PAGE->activityheader->is_title_allowed()) {
+        $activityheader['title'] = "";
+    }
+}
+$PAGE->activityheader->set_attrs($activityheader);
 
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
-echo $renderer->action_bar($id, $PAGE->url);
-echo $renderer->preview_certificate_template($id);
-
+echo $renderer->show_certificate_templates($id);
 echo $OUTPUT->footer();

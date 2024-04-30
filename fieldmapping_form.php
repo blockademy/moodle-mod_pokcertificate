@@ -24,6 +24,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 use mod_pokcertificate\persistent\pokcertificate_templates;
+use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
@@ -42,6 +43,7 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $templatename  = $this->_customdata['template'];
         $templateid  = $this->_customdata['templateid'];
         $certid  = $this->_customdata['certid'];
+        $data  = $this->_customdata['data'];
 
         $mform->addElement('header', 'fieldmapping', get_string('fieldmapping', 'pokcertificate') . "<div class ='test'> </div>");
 
@@ -89,6 +91,14 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $mform->setType('optionid', PARAM_INT);
 
         $repeatno = 1;
+        if (!empty($id)) {
+            $count = pokcertificate_fieldmapping::count_records(
+                ['certid' => $certid]
+            );
+            if ($count > 0) {
+                $repeatno = $count;
+            }
+        }
 
         $this->repeat_elements(
             $repeatarray,
@@ -114,11 +124,7 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $mform->addElement('hidden', 'certid', $certid);
         $mform->setType('certid', PARAM_INT);
 
-        /*        $buttonarray = array();
-        //$savebuttonarray = array('class' => 'form-submit', 'onclick' => '(function(e){ require("mod_pokcertificate/pokcertificate").fieldmapping() })(event)');
-        $savebuttonarray = array('class' => 'form-submit');
-        $buttonarray[] = &$mform->createElement('button', 'submit', get_string('save'), $savebuttonarray);
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false); */
+        $this->set_data($data);
 
         $this->add_action_buttons();
     }

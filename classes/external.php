@@ -227,7 +227,6 @@ class mod_pokcertificate_external extends external_api {
                 'prodtype' => new external_value(PARAM_INT, get_string('prodtype', 'mod_pokcertificate')),
                 'authtoken' => new external_value(PARAM_RAW, get_string('authtoken', 'mod_pokcertificate')),
                 'institution' => new external_value(PARAM_TEXT, get_string('institution', 'mod_pokcertificate')),
-                'domain' => new external_value(PARAM_TEXT, get_string('domain', 'mod_pokcertificate')),
             ]
         );
     }
@@ -237,18 +236,17 @@ class mod_pokcertificate_external extends external_api {
      * @param  [type] $prodtype   [description]
      * @param  [type] $authtoken   [description]
      * @param  [type] $institution [description]
-     * @param  [type] $domain [description]
      * @return [type]           [description]
      * //7cb608d4-0bb6-4641-aa06-594f2fedf2a0
      */
-    public static function verify_authentication($prodtype, $authtoken, $institution, $domain) {
+    public static function verify_authentication($prodtype, $authtoken, $institution) {
         global $CFG;
 
         set_config('prodtype', $prodtype, 'mod_pokcertificate');
         require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
         $params = self::validate_parameters(
             self::verify_authentication_parameters(),
-            ['prodtype' => $prodtype, 'authtoken' => $authtoken, "institution" => $institution, 'domain' => $domain]
+            ['prodtype' => $prodtype, 'authtoken' => $authtoken, "institution" => $institution]
         );
 
         $result = pokcertificate_validate_apikey($params['authtoken']);
