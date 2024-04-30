@@ -57,15 +57,14 @@ if ($template) {
 // $html = fieldmapping::get_mapping_fields();
 
 $mform = new mod_pokcertificate_fieldmapping_form($url, ['id' => $id, 'template' => $tempname, 'templateid' => $templateid, 'certid' => $certid]);
-$redirecturl = new moodle_url('/mod/pokcertificate/view.php', ['id' => $id]);
+$redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
 
 if ($mform->is_cancelled()) {
     redirect($url);
-} else if ($mform->get_data()) {
-    $data = $mform->get_data();
+} else if ($data = $mform->get_data()) {
     $return = api::save_fieldmapping_data($data);
     if ($return) {
-        redirect($url);
+        redirect($redirecturl);
     }
 } else {
     $mform->display();

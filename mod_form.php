@@ -122,6 +122,10 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'revision');
         $mform->setType('revision', PARAM_INT);
         $mform->setDefault('revision', 1);
+
+        $mform->addElement('hidden', 'formedit');
+        $mform->setType('formedit', PARAM_BOOL);
+        $mform->setDefault('formedit', true);
     }
 
     /**

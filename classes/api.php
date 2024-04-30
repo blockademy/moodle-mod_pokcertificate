@@ -102,19 +102,19 @@ class api {
     private function emit_certificate($data) {
         $location = MINTER_ROOT . '/mint';
         /*'{
-                                "email": "johngalt@pok.tech",
-                                "institution": "Ohio State University",
-                                "identification": "0123456789",
-                                "first_name": "John",
-                                "last_name": "Galt",
-                                "title": "Engineer",
-                                "template_base64": "{\'version\':1}",
-                                "date": 1706497200000,
-                                "free": true,
-                                "wallet": "0x8cd7c619a1685a1f6e991946af6295ca05210af7",
-                                "language_tag": "en"
-                                }
-                                ';*/
+            "email": "johngalt@pok.tech",
+            "institution": "Ohio State University",
+            "identification": "0123456789",
+            "first_name": "John",
+            "last_name": "Galt",
+            "title": "Engineer",
+            "template_base64": "{\'version\':1}",
+            "date": 1706497200000,
+            "free": true,
+            "wallet": "0x8cd7c619a1685a1f6e991946af6295ca05210af7",
+            "language_tag": "en"
+            }
+            ';*/
         return $this->execute_command($location, $data, 'post');
     }
 
@@ -193,7 +193,7 @@ class api {
      *
      * @return [array] $certid -pok certificate id ,$templateid - template id
      */
-    public static function save_template_definition($template = '', $cm) {
+    public static function save_template_definition($template, $cm) {
         global $USER;
         $templateid = 0;
         $templatedefdata = new \stdClass();
@@ -240,18 +240,29 @@ class api {
     public static function save_fieldmapping_data($data) {
 
         try {
-            for ($i = 0; $i < $data->option_repeats; $i++) {
-                if (isset($data->templatefield[$i]) && isset($data->userfield[$i])) {
-                    $mappingfield = new \stdClass();
-                    $mappingfield->timecreated = time();
-                    $mappingfield->certid = $data->certid;
-                    $mappingfield->templatefield = $data->templatefield[$i];
-                    $mappingfield->userfield = $data->userfield[$i];
-                    $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
-                    $fieldmapping->create();
+            if ($data->certid) {
+                $fields = pokcertificate_fieldmapping::get_records(['certid' => $data->certid]);
+
+                if ($fields) {
+                    foreach ($fields as $field) {
+                        $mappedfield = new pokcertificate_fieldmapping($field->get('id'));
+                        $mappedfield->delete();
+                    }
                 }
+                for ($i = 0; $i < $data->option_repeats; $i++) {
+                    if (isset($data->templatefield[$i]) && isset($data->userfield[$i])) {
+                        $mappingfield = new \stdClass();
+                        $mappingfield->timecreated = time();
+                        $mappingfield->certid = $data->certid;
+                        $mappingfield->templatefield = $data->templatefield[$i];
+                        $mappingfield->userfield = $data->userfield[$i];
+                        $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
+                        $fieldmapping->create();
+                    }
+                }
+                return true;
             }
-            return true;
+            return false;
         } catch (\moodle_exception $e) {
             print_r($e);
             return false;

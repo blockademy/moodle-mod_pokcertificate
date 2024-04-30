@@ -243,7 +243,7 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
         return $info;
     }
 
-    $fullurl = "$CFG->wwwroot/mod/pokcertificate/view.php?id=$coursemodule->id&amp;inpopup=1";
+    $fullurl = "$CFG->wwwroot/mod/pokcertificate/view.php?id=$coursemodule->id&amp;inpopup=1&amp;formedit=1";
     $options = empty($pokcertificate->displayoptions) ? [] : (array) unserialize_array($pokcertificate->displayoptions);
     $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
     $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
@@ -702,7 +702,37 @@ function get_pokcertificate_settings() {
     return $data;
 }
 
+/**
+ * Adding pokcertificate view button in the course-module content
+ *  *
+ * @param cm_info $cm
+ */
+/*
 function mod_pokcertificate_cm_info_view(cm_info $cm) {
     global $CFG;
-    $cm->set_after_link('<a href= "' . $CFG->wwwroot . '/mod/pokcertificate/preview.php?id=' . $cm->id . '" class="btn btn-primary certbutton" data-action="previewtemplate" tabindex="0" aria-selected="true">Preview Template</a>');
-}
+    require_once($CFG->dirroot . '/mod/resource/locallib.php');
+    $customdata = $cm->customdata;
+
+
+    if ($cm->availability) {
+        if (has_capability('mod/pokcertificate:manageinstance', context_system::instance())) {
+            $cm->set_after_link(' ' . html_writer::tag(
+                'a',
+                get_string('previewcertificate', 'mod_pokcertificate'),
+                [
+                    'href' => $CFG->wwwroot . '/mod/pokcertificate/preview.php?id=' . $cm->id,
+                    'class' => 'btn btn-primary certbutton', 'aria-selected' => "true"
+                ]
+            ));
+        } else {
+            $cm->set_after_link(' ' . html_writer::tag(
+                'a',
+                get_string('issuecertificate', 'mod_pokcertificate'),
+                [
+                    'href' => $CFG->wwwroot . '/mod/pokcertificate/issue.php?id=' . $cm->id,
+                    'class' => 'btn btn-primary certbutton', 'aria-selected' => "true"
+                ]
+            ));
+        }
+    }
+} */

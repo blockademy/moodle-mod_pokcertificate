@@ -33,17 +33,23 @@ class renderer extends \plugin_renderer_base {
      * Renders the certifcate templates view.
      *
      * @param [int] $id course module id
+     * @param [bool] $formedit for redirection form hidden field to preview
+     *
      * @return [template] certificate templates view mustache file
      */
-    public function show_certificate_templates(int $id) {
-        global $DB;
+    public function show_certificate_templates(int $id, bool $formedit = false) {
+        global $DB, $USER;
         $recexists = $DB->record_exists('course_modules', ['id' => $id]);
-        if ($recexists && has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-            $output = new certificatetemplates($id);
-            $certificatetemplatecontent = $output->export_for_template($this);
-            if ($certificatetemplatecontent) {
-                return $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
-            }
+        if ($recexists) {
+            if (has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+                $output = new certificatetemplates($id);
+                $certificatetemplatecontent = $output->export_for_template($this);
+                if ($certificatetemplatecontent) {
+                    return $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
+                }
+            } /* else {
+                redirect(new \moodle_url('/mod/pokcertificate/updateprofile.php', ['cmid' => $id, 'id' => $USER->id]));
+            } */
         } else {
             echo get_string('invalidcoursemodule', 'mod_pokcertificate');
         }
@@ -61,7 +67,7 @@ class renderer extends \plugin_renderer_base {
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
         $output = '';
         $recexists = $DB->record_exists('course_modules', ['id' => $cmid]);
-        if ($recexists) {
+        if ($recexists) { // has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
             $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
             $templateid = pokcertificate::get_field('templateid', ['course' => $cm->course]);
             if ($templateid) {

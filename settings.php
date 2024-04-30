@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,7 +18,7 @@
  * Page module admin settings and defaults
  *
  * @package mod_pokcertificate
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @copyright 2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +31,11 @@ if ($ADMIN->fulltree) {
         new admin_setting_heading(
             'pokcertificate/settings_msg',
             '',
-            '<div class="" >' . get_string('verifyauth', 'pokcertificate') . '<a target="_blank" class="bt btn-primary" style="padding: 7px 18px; border-radius: 4px; color: white; background-color: #2578dd; margin-left: 5px;" href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >' . get_string('clickhere') . '</a></div><br>'
+            '<div class="" >' . get_string('verifyauth', 'pokcertificate') . '
+            <a target="_blank" class="bt btn-primary"
+            style="padding: 7px 18px; border-radius: 4px; color: white; background-color: #2578dd; margin-left: 5px;"
+            href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >' . get_string('clickhere') . '
+            </a></div><br>'
         )
     );
 

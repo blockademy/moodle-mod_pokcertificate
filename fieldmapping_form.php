@@ -147,7 +147,7 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
     */
     public function get_externalfield_list($template) {
 
-        $templatefislds = [];
+        $templatefields = [];
         $template = base64_decode($template);
         $templatedefinition = pokcertificate_templates::get_field('templatedefinition', ['templatename' => $template]);
         $templatedefinition = json_decode($templatedefinition);

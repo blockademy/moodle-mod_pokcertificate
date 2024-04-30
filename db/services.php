@@ -26,32 +26,32 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$functions = array(
+$functions = [
 
-    'mod_pokcertificate_view_pokcertificate' => array(
+    'mod_pokcertificate_view_pokcertificate' => [
         'classname'     => 'mod_pokcertificate_external',
         'methodname'    => 'view_pokcertificate',
         'description'   => 'Simulate the view.php web interface pokcertificate: trigger events, completion, etc...',
         'type'          => 'write',
         'capabilities'  => 'mod/pokcertificate:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 
-    'mod_pokcertificate_get_pokcertificates_by_courses' => array(
+    'mod_pokcertificate_get_pokcertificates_by_courses' => [
         'classname'     => 'mod_pokcertificate_external',
         'methodname'    => 'get_pokcertificates_by_courses',
         'description'   => 'Returns a list of pokcertificates in a provided list of courses, if no list is provided all pokcertificates that the user
                             can view will be returned.',
         'type'          => 'read',
         'capabilities'  => 'mod/pokcertificate:view',
-        'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
-    ),
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 
-    'mod_pokcertificate_verify_auth' => array(
+    'mod_pokcertificate_verify_auth' => [
         'classname'     => 'mod_pokcertificate_external',
         'methodname'    => 'verify_authentication',
         'description'   => 'Verify the authentication',
         'ajax' => true,
         'type' => 'write',
-    )
-);
+    ]
+];

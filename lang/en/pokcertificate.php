@@ -128,3 +128,5 @@ $string['userfields'] = 'Moodle fields';
 $string['add'] = 'Add Mapping Field';
 $string['previewnotexists'] = 'Certifcate preview doesn`t exists';
 $string['invalidcoursemodule'] = 'Invalid course module Id';
+$string['previewcertificate'] = 'Preview Certificate';
+$string['issuecertificate'] = 'Issue Certificate';

@@ -30,6 +30,12 @@ require_once($CFG->libdir . '/completionlib.php');
 $id      = optional_param('id', 0, PARAM_INT); // Course Module ID.
 $p       = optional_param('p', 0, PARAM_INT);  // Page instance ID.
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
+$formedit = optional_param('formedit', 0, PARAM_BOOL);
+
+
+/* if (!$formedit && has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+    redirect(new moodle_url('/mod/pokcertificate/preview.php', ['id' => $id]));
+} */
 
 if ($p) {
     if (!$pokcertificate = $DB->get_record('pokcertificate', ['id' => $p])) {
@@ -61,15 +67,13 @@ $activityheader = ['hidecompletion' => false];
 if (empty($options['printintro'])) {
     $activityheader['description'] = '';
 }
+$PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
+$PAGE->set_heading($course->fullname);
 
 if ($inpopup && $pokcertificate->display == RESOURCELIB_DISPLAY_POPUP) {
     $PAGE->set_pagelayout('popup');
-    $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
-    $PAGE->set_heading($course->fullname);
 } else {
     $PAGE->add_body_class('limitedwidth');
-    $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
-    $PAGE->set_heading($course->fullname);
     $PAGE->set_activity_record($pokcertificate);
     if (!$PAGE->activityheader->is_title_allowed()) {
         $activityheader['title'] = "";
@@ -82,9 +86,18 @@ if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'
     $strlastmodified = get_string("lastmodified");
     echo html_writer::div("$strlastmodified: " . userdate($pokcertificate->timemodified), 'modified');
 }
+
+
 if ($id) {
     $renderer = $PAGE->get_renderer('mod_pokcertificate');
-    echo $renderer->show_certificate_templates($id);
+    $preview = $renderer->preview_cetificate_template($id);
+    if (!empty($preview) && !$formedit && has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+        echo $preview;
+    } else if (!$formedit && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+        redirect(new \moodle_url('/mod/pokcertificate/updateprofile.php', ['cmid' => $id, 'id' => $USER->id]));
+    } else {
+        echo $renderer->show_certificate_templates($id);
+    }
 }
 
 echo $OUTPUT->footer();

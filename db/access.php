@@ -18,89 +18,89 @@
  * Page module capability definition
  *
  * @package    mod_pokcertificate
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
 
-$capabilities = array(
-    'mod/pokcertificate:view' => array(
+$capabilities = [
+    'mod/pokcertificate:view' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'guest' => CAP_ALLOW,
             'user' => CAP_ALLOW,
-        )
-    ),
+        ],
+    ],
 
-    'mod/pokcertificate:addinstance' => array(
+    'mod/pokcertificate:addinstance' => [
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
+            'manager' => CAP_ALLOW,
+        ],
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
-    ),
+    ],
 
-    'mod/pokcertificate:editinstance' => array(
+    'mod/pokcertificate:editinstance' => [
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
+            'manager' => CAP_ALLOW,
+        ],
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
-    ),
+    ],
 
-    'mod/pokcertificate:manageinstance' => array(
+    'mod/pokcertificate:manageinstance' => [
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
+            'manager' => CAP_ALLOW,
+        ],
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
-    ),
+    ],
 
-    'mod/pokcertificate:bulkupdateincompleteprofile' => array(
+    'mod/pokcertificate:bulkupdateincompleteprofile' => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        ),
-    ),
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 
-    'mod/pokcertificate:selfupdateincompleteprofile' => array(
+    'mod/pokcertificate:selfupdateincompleteprofile' => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
-        'archetypes' => array(
-            'user' => CAP_ALLOW
-        ),
-    ),
+        'archetypes' => [
+            'user' => CAP_ALLOW,
+        ],
+    ],
 
-    'mod/pokcertificate:awardcertificate' => array(
+    'mod/pokcertificate:awardcertificate' => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        ),
-    ),
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 
-    'mod/pokcertificate:viewstatusreport' => array(
+    'mod/pokcertificate:viewstatusreport' => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        ),
-    ),
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
 
-);
+];
