@@ -18,6 +18,7 @@ namespace mod_pokcertificate\output;
 
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_templates;
+use mod_pokcertificate\persistent\pokcertificatestudent;
 
 
 /**
@@ -98,5 +99,84 @@ class renderer extends \plugin_renderer_base {
         $actionbar = new action_bar($id, $pageurl);
         $data = $actionbar->export_for_template($this);
         return $this->render_from_template('mod_pokcertificate/action_bar', $data);
+    }
+
+    public function get_incompletestudent() {
+
+        $systemcontext = \context_system::instance();
+        $data = pokcertificatestudent::incompletestudentlist();
+        $view = true;
+        $delete = false;
+        $update = false;
+        $results = [];
+        $lang = current_language();
+        foreach ($data as $rec) {
+
+            $studentlist = [];
+            $studentlist['id'] = $rec->id;
+            $studentlist['firstname'] = $rec->firstname;
+            $studentlist['lastname'] = $rec->lastname;
+            $studentlist['email'] = $rec->email;
+            $studentlist['studentid'] = $rec->username;
+            $studentlist['language'] = 'Hindi';
+            $results[] = $studentlist;
+        }
+
+        // if (is_siteadmin() || (permission::has_view_capability($systemcontext))) {
+        //     $view = true;
+        // }
+        // if (is_siteadmin() || (permission::has_update_capability($systemcontext))) {
+            $update = true;
+        // }
+        // if (is_siteadmin() || (permission::has_delete_capability($systemcontext))) {
+        //     $delete = true;
+        // }
+        if ($update == true || $delete == true) {
+            $action = true;
+        }
+
+        return  $this->render_from_template(
+            'mod_pokcertificate/incompletestudentprofile',
+            [
+                'results' => array_values(array_values($results)),
+                'canview' => $view,
+                'action' => $action,
+                'update' => $update,
+                'delete' => $delete,
+            ]
+        );
+    }
+
+    public function get_generalcertificate() {
+
+        $systemcontext = \context_system::instance();
+        $data = pokcertificatestudent::awardedgeneralcertificateusers();
+        $view = true;
+        $delete = false;
+        $update = false;
+        $results = [];
+        $lang = current_language();
+        foreach ($data as $rec) {
+
+            $studentlist = [];
+            $studentlist['id'] = $rec->id;
+            $studentlist['firstname'] = $rec->firstname;
+            $studentlist['lastname'] = $rec->lastname;
+            $studentlist['email'] = $rec->email;
+            $studentlist['studentid'] = $rec->username;
+            $studentlist['program'] = 'Programname';
+            $results[] = $studentlist;
+        }
+
+        return  $this->render_from_template(
+            'mod_pokcertificate/awardedcertificatestatus',
+            [
+                'results' => array_values(array_values($results)),
+                'canview' => $view,
+                'action' => $action,
+                'update' => $update,
+                'delete' => $delete,
+            ]
+        );
     }
 }
