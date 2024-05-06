@@ -71,6 +71,8 @@ $string['printheadingexplain'] = 'Display pokcertificate name above content?';
 
 //Settings
 $string['modulename'] = 'POK Certificate';
+$string['modulenameplural'] = 'POK Certificates';
+
 $string['modulename_help'] = 'The pokcertificate module enables a teacher to create a web pokcertificate resource using the text editor. A pokcertificate can display text, images, sound, video, web links and embedded code, such as Google maps.
 
 Advantages of using the pokcertificate module rather than the file module include the resource being more accessible (for example to users of mobile devices) and easier to update.
@@ -132,3 +134,14 @@ $string['previewcertificate'] = 'Preview Certificate';
 $string['issuecertificate'] = 'Issue Certificate';
 $string['certificateslist'] = 'Certificate Templates';
 $string['clickhere'] = 'Click here';
+
+$string['incomplete'] = 'Incomplete Student Profiles';
+$string['certificatestatus'] = 'Course Certificates Status';
+$string['awardcertificates'] = 'Award General Certificates';
+$string['contact'] = 'Contact';
+$string['verified'] = 'Verified';
+$string['notverified'] = 'Not Verified';
+$string['paid'] = 'Paid';
+$string['free'] = 'Free';
+$string['addactivity'] = 'Add Activity';
+$string['verificationinprocess'] = 'Verification in process';

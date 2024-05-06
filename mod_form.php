@@ -97,10 +97,10 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
             $mform->setDefault('popupheight', $config->popupheight);
         }
 
-        $mform->addElement('advcheckbox', 'printintro', get_string('printintro', 'pokcertificate'));
+        /*     $mform->addElement('advcheckbox', 'printintro', get_string('printintro', 'pokcertificate'));
         $mform->setDefault('printintro', $config->printintro);
         $mform->addElement('advcheckbox', 'printlastmodified', get_string('printlastmodified', 'pokcertificate'));
-        $mform->setDefault('printlastmodified', $config->printlastmodified);
+        $mform->setDefault('printlastmodified', $config->printlastmodified); */
 
         // add legacy files flag only if used
         if (isset($this->current->legacyfiles) and $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {

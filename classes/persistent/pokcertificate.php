@@ -47,7 +47,7 @@ class pokcertificate extends persistent {
                 'optional' => false,
             ],
             'intro' => [
-                'type' => PARAM_TEXT,
+                'type' => PARAM_RAW,
                 'optional' => false,
             ],
             'introformat' => [

@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_pokcertificate\pok;
+
 require('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
@@ -83,19 +85,23 @@ if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 
 if ($id) {
-
-    // Getting certificate template view.
-    if ($preview = get_template_preview($id)) {
-        $params = array('id' => $id);
+    pok::set_cmid($id);
+    // Getting certificate template view for admin.
+    if (is_siteadmin()  || has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+        $preview = pok::preview_template($id);
+        $params = ['id' => $id];
         $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
         redirect($url);
     }
-    if ($viewcertificate = view_issued_certificate($id)) {
-        $params = array('id' => $id);
-        $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
-        redirect($url);
+    // Getting certificate template view for student.
+    if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+        $emitcertificate = pok::emit_certificate($id, $USER);
+        if (!empty($emitcertificate)) {
+            $params = ['cmid' => $id];
+            $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
+            redirect($url);
+        }
     }
 }
-
 echo $renderer->show_certificate_templates($id);
 echo $OUTPUT->footer();

@@ -39,7 +39,14 @@ class pokcertificate_templates extends persistent {
     protected static function define_properties(): array {
 
         return [
-
+            'pokid' => [
+                'type' => PARAM_INT,
+                'optional' => false,
+            ],
+            'templatetype' => [
+                'type' => PARAM_TEXT,
+                'optional' => false,
+            ],
             'templatename' => [
                 'type' => PARAM_TEXT,
                 'optional' => false,

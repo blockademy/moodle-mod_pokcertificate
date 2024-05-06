@@ -23,14 +23,14 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
-use mod_pokcertificate\persistent\pokcertificate_templates;
+
 use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
-
+require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 /**
  *form shown while adding activity.
  */
@@ -45,10 +45,10 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $certid  = $this->_customdata['certid'];
         $data  = $this->_customdata['data'];
 
-        $mform->addElement('header', 'fieldmapping', get_string('fieldmapping', 'pokcertificate') . "<div class ='test'> </div>");
+        $mform->addElement('header', 'fieldmapping', get_string('fieldmapping', 'pokcertificate') . "");
 
-        $localfields = $this->get_internalfield_list();
-        $remotefields = $localfields; //$this->get_externalfield_list($template);
+        $localfields = get_internalfield_list();
+        $remotefields = get_externalfield_list($templatename);
 
         $repeatarray = [
             $mform->createElement('hidden', 'fieldmapping', 'fieldmapping'),
@@ -91,13 +91,22 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $mform->setType('optionid', PARAM_INT);
 
         $repeatno = 1;
-        if (!empty($id)) {
+        /*    if (!empty($id)) {
             $count = pokcertificate_fieldmapping::count_records(
                 ['certid' => $certid]
             );
             if ($count > 0) {
                 $repeatno = $count;
             }
+        } else {
+            $count = count($remotefields);
+            if ($count > 0) {
+                $repeatno = $count;
+            }
+        } */
+        $count = count($remotefields);
+        if ($count > 0) {
+            $repeatno = $count;
         }
 
         $this->repeat_elements(
@@ -129,37 +138,6 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $this->add_action_buttons();
     }
 
-    public function get_internalfield_list() {
-        global $DB;
-        $usercolumns = $DB->get_columns('user');
-        $localfields = array();
-        foreach ((array)$usercolumns as $key => $field) {
-            $localfields[$key] = $field->name;
-        }
-
-        $allcustomfields = profile_get_custom_fields();
-        $customfields = array_combine(array_column($allcustomfields, 'shortname'), $allcustomfields);
-        foreach ((array)$customfields as $key => $field) {
-            $localfields['profile_field_' . $key] = $field->shortname;
-        }
-
-        return $localfields;
-    }
-
-    /* Get all template definition fields
-    *
-    * @param string $template
-    * @return array
-    */
-    public function get_externalfield_list($template) {
-
-        $templatefields = [];
-        $template = base64_decode($template);
-        $templatedefinition = pokcertificate_templates::get_field('templatedefinition', ['templatename' => $template]);
-        $templatedefinition = json_decode($templatedefinition);
-
-        return $templatedefinition;
-    }
 
     /**
      * Enforce defaults here.

@@ -34,6 +34,7 @@ use core_external\external_single_structure;
 use core_external\external_value;
 use core_external\external_warnings;
 use core_external\util;
+use mod_pokcertificate\pok;
 
 /**
  * Page external functions
@@ -258,10 +259,13 @@ class mod_pokcertificate_external extends external_api {
                 set_config('orgid', $organisation->id, 'mod_pokcertificate');
                 set_config('institution', $organisation->name, 'mod_pokcertificate');
             }
-            //$creditsresp = (new mod_pokcertificate\api)->get_credits();
-
-            //$certificatecount = (new mod_pokcertificate\api)->count_certificates();
-
+            $credits = (new mod_pokcertificate\api)->get_credits();
+            $credits = json_decode($credits);
+            $certificatecount = (new mod_pokcertificate\api)->count_certificates();
+            $certificatecount = json_decode($certificatecount);
+            set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
+            set_config('pendingcertificates', $certificatecount->processing, 'mod_pokcertificate');
+            set_config('issuedcertificates', $certificatecount->emitted, 'mod_pokcertificate');
             $msg = get_string("success");
             return ["status" => 0, "msg" => $msg, "response" => $orgdetails];
         } else {
@@ -273,10 +277,52 @@ class mod_pokcertificate_external extends external_api {
     public static function verify_authentication_returns() {
         return new external_single_structure(
             [
-                'status'  => new external_value(PARAM_TEXT, get_string('status', 'mod_pokcertificate')),
-                'msg'  => new external_value(PARAM_RAW, get_string('errormsg', 'mod_pokcertificate')),
-                'response'  => new external_value(PARAM_RAW, get_string('response', 'mod_pokcertificate'))
+                'status'  => new external_value(PARAM_TEXT, get_string('status')),
+                'msg'  => new external_value(PARAM_RAW, get_string('error')),
+                'response'  => new external_value(PARAM_RAW, get_string('response'))
             ]
         );
+    }
+
+    public static function show_certificate_templates_parameters() {
+        return new external_function_parameters(
+            [
+                'type' => new external_value(PARAM_TEXT, 'type'),
+                'cmid' => new external_value(PARAM_INT, 'cmid'),
+            ]
+        );
+    }
+
+    public static function show_certificate_templates($type, $cmid) {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
+        $params = self::validate_parameters(
+            self::show_certificate_templates_parameters(),
+            ['type' => $type, 'cmid' => $cmid]
+        );
+
+        $certificatetemplatecontent = pok::get_certificate_templates($params['cmid'], $params['type']);
+
+        return json_encode($certificatetemplatecontent);
+    }
+
+    public static function show_certificate_templates_returns() {
+        return new external_value(PARAM_RAW, 'return');
+        /*    return new external_single_structure(
+            [
+                'certdata' => new external_multiple_structure(
+                    new external_single_structure(
+                        [
+                            'tempname' => new external_value(PARAM_RAW, 'encoded certificate template name'),
+                            'name' => new external_value(PARAM_TEXT, 'certificate template name'),
+                            'cmid' => new external_value(PARAM_RAW, 'pok certifcate course module id'),
+                            'certimage' => new external_value(PARAM_RAW, 'certificate image url'),
+                            'url' => new external_value(PARAM_RAW, 'url'),
+                        ]
+                    )
+                )
+            ]
+        ); */
     }
 }

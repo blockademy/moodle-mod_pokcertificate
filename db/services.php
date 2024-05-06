@@ -53,5 +53,13 @@ $functions = [
         'description'   => 'Verify the authentication',
         'ajax' => true,
         'type' => 'write',
+    ],
+
+    'mod_pokcertificate_show_certificate_templates' => [
+        'classname'     => 'mod_pokcertificate_external',
+        'methodname'    => 'show_certificate_templates',
+        'description'   => 'Retieve the certificate templates',
+        'ajax' => true,
+        'type' => 'write',
     ]
 ];

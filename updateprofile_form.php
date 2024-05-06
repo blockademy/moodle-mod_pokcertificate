@@ -35,37 +35,33 @@ require_once($CFG->dirroot . '/user/editlib.php');
 class mod_pokcertificate_updateprofile_form extends \moodleform {
 
     public function definition() {
-        global $USER;
+
         $mform = $this->_form;
 
         $user = $this->_customdata['user'];
         $cmid = $this->_customdata['cmid'];
+        $pokfields = $this->_customdata['pokfields'];
         $userid = $user->id;
 
         // Next the customisable profile fields.
 
         $strrequired = get_string('required');
         $stringman = get_string_manager();
-        // Add the necessary names.
-        foreach (useredit_get_required_name_fields() as $fullname) {
-            $purpose = user_edit_map_field_purpose($user->id, $fullname);
-            $mform->addElement('text', $fullname,  get_string($fullname),  'maxlength="100" size="30"' . $purpose);
-            if ($stringman->string_exists('missing' . $fullname, 'core')) {
-                $strmissingfield = get_string('missing' . $fullname, 'core');
-            } else {
-                $strmissingfield = $strrequired;
+        foreach ($pokfields as $field) {
+            $fieldname = $field->get('userfield');
+
+            if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') === false)) {
+                $purpose = user_edit_map_field_purpose($user->id, $fieldname);
+                $mform->addElement('text', $fieldname,  get_string($fieldname),  'maxlength="100" size="30"' . $purpose);
+                if ($stringman->string_exists('missing' . $fieldname, 'core')) {
+                    $strmissingfield = get_string('missing' . $fieldname, 'core');
+                } else {
+                    $strmissingfield = $strrequired;
+                }
+                $mform->addRule($fieldname, $strmissingfield, 'required', null, 'client');
+                $mform->setType($fieldname, PARAM_NOTAGS);
             }
-            $mform->addRule($fullname, $strmissingfield, 'required', null, 'client');
-            $mform->setType($fullname, PARAM_NOTAGS);
         }
-
-        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"' . $purpose);
-        $mform->addRule('email', $strrequired, 'required', null, 'client');
-        $mform->setType('email', PARAM_RAW_TRIMMED);
-
-        $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
-        $mform->setType('idnumber', core_user::get_property_type('idnumber'));
-
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', $userid);
@@ -74,7 +70,9 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
         $mform->setType('cmid', PARAM_INT);
         $mform->setDefault('cmid', $cmid);
 
-        profile_definition($mform, $userid);
+        self::get_profile_fields($mform, $pokfields, $userid);
+
+        //profile_definition($mform, $userid);
 
         $this->add_action_buttons(true, get_string('updatemyprofile'));
 
@@ -138,6 +136,33 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
             profile_definition_after_data($mform, $user->id);
         } else {
             profile_definition_after_data($mform, 0);
+        }
+    }
+
+
+    public function get_profile_fields(&$mform, $pokfields, $userid) {
+        $categories = profile_get_user_fields_with_data_by_category($userid);
+        foreach ($categories as $categoryid => $fields) {
+            // Check first if *any* fields will be displayed.
+            $fieldstodisplay = [];
+
+            foreach ($pokfields as $field) {
+                $fieldname = $field->get('userfield');
+                foreach ($fields as $formfield) {
+                    if ($formfield->inputname == $fieldname && $formfield->is_editable()) {
+                        $fieldstodisplay[] = $formfield;
+                    }
+                }
+            }
+
+            if (empty($fieldstodisplay)) {
+                continue;
+            }
+
+            // Display the header and the fields.
+            foreach ($fieldstodisplay as $formfield) {
+                $formfield->edit_field($mform);
+            }
         }
     }
 

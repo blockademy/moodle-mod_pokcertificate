@@ -23,7 +23,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
+use mod_pokcertificate\persistent\pokcertificate_templates;
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -108,42 +110,7 @@ function pokcertificate_get_post_actions() {
  * @return int new pokcertificate instance id
  */
 function pokcertificate_add_instance($data, $mform = null) {
-    global $CFG, $DB, $USER;
-    require_once("$CFG->libdir/resourcelib.php");
-
-    $cmid = $data->coursemodule;
-
-    $data->timemodified = time();
-    $displayoptions = array();
-    if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
-        $displayoptions['popupwidth']  = $data->popupwidth;
-        $displayoptions['popupheight'] = $data->popupheight;
-    }
-    $displayoptions['printintro']   = $data->printintro;
-    $displayoptions['printlastmodified'] = $data->printlastmodified;
-    $data->displayoptions = serialize($displayoptions);
-
-    $data->orgname = get_config('mod_pokcertificate', 'institution');
-    $data->orgid = get_config('mod_pokcertificate', 'orgid');
-    $data->usercreated = $USER->id;
-    $data->timecreated = time();
-
-    $data->id = $DB->insert_record('pokcertificate', $data);
-
-    // we need to use context now, so we need to make sure all needed info is already in db
-    $DB->set_field('course_modules', 'instance', $data->id, array('id' => $cmid));
-    $context = context_module::instance($cmid);
-
-    if ($mform and !empty($data->pokcertificate['itemid'])) {
-        $draftitemid = $data->pokcertificate['itemid'];
-        $data->content = file_save_draft_area_files($draftitemid, $context->id, 'mod_pokcertificate', 'content', 0, pokcertificate_get_editor_options($context), $data->content);
-        $data->usermodified = $USER->id;
-        $DB->update_record('pokcertificate', $data);
-    }
-
-    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
-    \core_completion\api::update_completion_date_event($cmid, 'pokcertificate', $data->id, $completiontimeexpected);
-
+    $data = pok::save_pokcertificate_instance($data, $mform);
     return $data->id;
 }
 
@@ -154,36 +121,7 @@ function pokcertificate_add_instance($data, $mform = null) {
  * @return bool true
  */
 function pokcertificate_update_instance($data, $mform) {
-    global $CFG, $DB;
-    require_once("$CFG->libdir/resourcelib.php");
-
-    $cmid        = $data->coursemodule;
-    $draftitemid = $data->pokcertificate['itemid'];
-
-    $data->timemodified = time();
-    $data->id           = $data->instance;
-    $data->revision++;
-
-    $displayoptions = array();
-    if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
-        $displayoptions['popupwidth']  = $data->popupwidth;
-        $displayoptions['popupheight'] = $data->popupheight;
-    }
-    $displayoptions['printintro']   = $data->printintro;
-    $displayoptions['printlastmodified'] = $data->printlastmodified;
-    $data->displayoptions = serialize($displayoptions);
-
-    $DB->update_record('pokcertificate', $data);
-
-    $context = context_module::instance($cmid);
-    if ($draftitemid) {
-        $data->content = file_save_draft_area_files($draftitemid, $context->id, 'mod_pokcertificate', 'content', 0, pokcertificate_get_editor_options($context), $data->content);
-        $DB->update_record('pokcertificate', $data);
-    }
-
-    $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
-    \core_completion\api::update_completion_date_event($cmid, 'pokcertificate', $data->id, $completiontimeexpected);
-
+    $data = pok::update_pokcertificate_instance($data, $mform);
     return true;
 }
 
@@ -193,19 +131,7 @@ function pokcertificate_update_instance($data, $mform) {
  * @return bool true
  */
 function pokcertificate_delete_instance($id) {
-    global $DB;
-
-    if (!$pokcertificate = $DB->get_record('pokcertificate', array('id' => $id))) {
-        return false;
-    }
-
-    $cm = get_coursemodule_from_instance('pokcertificate', $id);
-    \core_completion\api::update_completion_date_event($cm->id, 'pokcertificate', $id, null);
-
-    // note: all context files are deleted automatically
-
-    $DB->delete_records('pokcertificate', array('id' => $pokcertificate->id));
-
+    pok::delete_pokcertificate_instance($id);
     return true;
 }
 
@@ -709,6 +635,7 @@ function get_mapped_fields(int $certid) {
     if ($fields) {
         $data->option_repeats = count($fields);
         $key = 0;
+
         foreach ($fields as $field) {
             $data->templatefield[$key] = $field->templatefield;
             $data->userfield[$key] = $field->userfield;
@@ -717,7 +644,49 @@ function get_mapped_fields(int $certid) {
         }
         $data->optionid = $optionid;
     }
+
     return $data;
+}
+
+function get_internalfield_list() {
+    global $DB;
+    $usercolumns = $DB->get_columns('user');
+    $localfields = [];
+    foreach ((array)$usercolumns as $key => $field) {
+        $localfields[$key] = $field->name;
+    }
+
+    $allcustomfields = profile_get_custom_fields();
+    $customfields = array_combine(array_column($allcustomfields, 'shortname'), $allcustomfields);
+    foreach ((array)$customfields as $key => $field) {
+        $localfields['profile_field_' . $key] = $field->shortname;
+    }
+    return $localfields;
+}
+
+/* Get all template definition fields
+*
+* @param string $template
+* @return array
+*/
+function get_externalfield_list($template) {
+
+    $templatefields = [];
+    $template = base64_decode($template);
+    $templatedefinition = pokcertificate_templates::get_field('templatedefinition', ['templatename' => $template]);
+
+    $templatedefinition = json_decode($templatedefinition);
+    if ($templatedefinition) {
+        foreach ($templatedefinition->params as $param) {
+            $pos = strpos($param->name, 'custom:');
+            if ($pos !== false) {
+                $var = substr($param->name, strlen('custom:'));
+                $templatefields[$var] = $var;
+            }
+        }
+    }
+
+    return $templatefields;
 }
 
 /**

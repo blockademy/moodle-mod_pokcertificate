@@ -20,7 +20,6 @@ use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\persistent\pokcertificatestudent;
 
-
 /**
  * Renderer for POK Certificate
  *
@@ -30,6 +29,13 @@ use mod_pokcertificate\persistent\pokcertificatestudent;
  */
 class renderer extends \plugin_renderer_base {
 
+    public function display_tabs() {
+        return $this->render_from_template('mod_pokcertificate/viewdata', []);
+    }
+
+    public function render_certificate_types(int $cmid) {
+        return $this->render_from_template('mod_pokcertificate/certificatetypes', ['cmid' => $cmid]);
+    }
     /**
      * Renders the certifcate templates view.
      *
@@ -38,17 +44,22 @@ class renderer extends \plugin_renderer_base {
      *
      * @return [template] certificate templates view mustache file
      */
-    public function show_certificate_templates(int $id, bool $formedit = false) {
-        global $DB, $USER;
+    public function show_certificate_templates(int $id) {
+        global $DB;
+        $output = '';
         $recexists = $DB->record_exists('course_modules', ['id' => $id]);
+
         if ($recexists) {
+
             if (has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-                $output = new certificatetemplates($id);
-                $certificatetemplatecontent = $output->export_for_template($this);
+
+                $certificatetemplatecontent = pok::get_certificate_templates($id);
                 if ($certificatetemplatecontent) {
-                    return $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
+                    $output = $this->render_certificate_types($id);
+                    $output .= $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
                 }
             }
+            echo $output;
         } else {
             echo get_string('invalidcoursemodule', 'mod_pokcertificate');
         }
@@ -126,7 +137,7 @@ class renderer extends \plugin_renderer_base {
         //     $view = true;
         // }
         // if (is_siteadmin() || (permission::has_update_capability($systemcontext))) {
-            $update = true;
+        $update = true;
         // }
         // if (is_siteadmin() || (permission::has_delete_capability($systemcontext))) {
         //     $delete = true;

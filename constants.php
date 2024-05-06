@@ -29,7 +29,7 @@ $prodtype = get_config('mod_pokcertificate', 'prodtype');
 $tempurl = ($prodtype == 1 ? 'https://templates.credentity.xyz' : 'https://templates.pok.tech');
 define('TEMPLATE_MANAGER_ROOT', $tempurl);
 
-$minturl = ($prodtype == 1 ? 'https://mint.credentity.xyz' : 'https://mint.pok.tech');
+$minturl = ($prodtype == 1 ? 'https://minter.credentity.xyz' : 'https://mint.pok.tech');
 define('MINTER_ROOT', $minturl);
 
 $apikeysurl = ($prodtype == 1 ? 'https://api-keys.credentity.xyz' : 'https://api-keys.pok.tech');

@@ -16,6 +16,9 @@
 
 namespace mod_pokcertificate\output;
 
+use mod_pokcertificate\persistent\pokcertificate;
+use mod_pokcertificate\persistent\pokcertificate_templates;
+
 /**
  * Class action_bar
  *
@@ -76,7 +79,10 @@ class action_bar {
         }
 
         if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
-            $fieldmappinglink = new \moodle_url('/mod/pokcertificate/fieldmapping.php', ['id' => $this->cmid]);
+            $cm = get_coursemodule_from_id('pokcertificate', $this->cmid, 0, false, MUST_EXIST);
+            $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
+            $template = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);
+            $fieldmappinglink = new \moodle_url('/mod/pokcertificate/fieldmapping.php', ['id' => $this->cmid, 'temp' => base64_encode($template)]);
             $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');
         }
         return new \url_select($menu, $menu[null], null, 'pokactionselect');

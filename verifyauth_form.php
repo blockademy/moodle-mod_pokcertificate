@@ -28,18 +28,18 @@ require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
+
 /**
  * form shown while adding activity.
  */
 class mod_pokcertificate_verifyauth_form extends moodleform {
     public function definition() {
-
+        $data  = $this->_customdata['data'];
         $mform = $this->_form;
 
         $mform->addElement('header', 'pokheading', get_string('linkpokdetails', 'pokcertificate') . "<div class ='test'> </div>");
 
         $options = [1 => 'QA', 2 => 'LIVE'];
-        $configvalues = get_pokcertificate_settings();
 
         $mform->addElement('select', 'prodtype', get_string('prodtype', 'pokcertificate'), $options);
         $mform->setDefault('prodtype', 1);
@@ -48,22 +48,29 @@ class mod_pokcertificate_verifyauth_form extends moodleform {
         $mform->addElement('password', 'authtoken', get_string('authtoken', 'pokcertificate'), 'size="35"');
         $mform->setType('authtoken', PARAM_RAW);
         $mform->addHelpButton('authtoken', 'authtoken', 'pokcertificate');
-        if ($configvalues["authenticationtoken"]) {
-            $mform->setDefault("authtoken", $configvalues["authenticationtoken"]);
+        if (get_config('mod_pokcertificate', 'authenticationtoken')) {
+            $mform->setDefault("authtoken", get_config('mod_pokcertificate', 'authenticationtoken'));
         }
 
-        $mform->addElement('text', 'institution', get_string('institution', 'pokcertificate'), 'size="35",readonly="readonly"');
+        $institution = get_config('mod_pokcertificate', 'institution');
+        $class = ($institution) ? 'verified' : 'notverified';
+        $message = ($institution) ? ucwords(get_string('verified', 'mod_pokcertificate')) :  ucwords(get_string('notverified', 'mod_pokcertificate'));
+        $groupelem = [];
+        $groupelem[] = &$mform->createElement('text', 'institution', get_string('institution', 'pokcertificate'), 'size="35",readonly="readonly"');
+        $groupelem[] = &$mform->createElement('html', '<div id="verifyresponse" ><i class="' . $class . 'fa-solid fa-circle-check"></i>
+            <span>' . $message . '</span></div>');
+        $groupelem[] = &$mform->createElement('html', '<div class="loadElement"></div>');
+
+        $mform->addGroup($groupelem, 'institution', get_string('institution', 'pokcertificate'), [' '], false, ['class' => 'locationtypes']);
         $mform->setType('institution', PARAM_TEXT);
         $mform->addHelpButton('institution', 'institution', 'pokcertificate');
-        if ($configvalues["institution"]) {
-            $mform->setDefault("institution", $configvalues["institution"]);
-        }
+
 
         $buttonarray = [];
         $buttonarray[] = $mform->createElement('button', 'verifyauth', get_string("verify", "pokcertificate"), "", "");
-        $buttonarray[] = $mform->createElement('html', '<div id="verify_response"> </div>');
-
         $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
+
+        $this->set_data($data);
     }
 
     public function validation($data, $files) {

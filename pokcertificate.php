@@ -37,30 +37,45 @@ $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
 echo $OUTPUT->header();
 echo $OUTPUT->container_start();
 
-$url = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
-$mform = new mod_pokcertificate_verifyauth_form();
-
-if ($form_data = $mform->get_data()) {
+$renderer = $PAGE->get_renderer('mod_pokcertificate');
+echo $renderer->display_tabs();
+if (get_config('mod_pokcertificate', 'institution')) {
+    $data = new stdClass();
+    $data->institution = get_config('mod_pokcertificate', 'institution');
 }
+$mform = new mod_pokcertificate_verifyauth_form(
+    $url,
+    ['data' => $data]
+);
 
 echo
-'<div class="row verification_content">
-
-    <div class="col-md-8">
+'<div class="row mt-5 pok_details_content mx-0">
+<div class="col-md-8 p-0">
         <div class="verification_form">';
 $mform->display();
-echo   '</div>
+echo
+'</div>
+    </div>';
+
+
+$orgdetails = (new mod_pokcertificate\api)->get_organization();
+$orgid = get_config('mod_pokcertificate', 'wallet');
+if ($orgid) {
+    echo '
+    <div class="col-md-4 p-0">
+      <ul class="pok_details ml-0 ml-md-5">
+        <li class="d-flex justify-content-between align-items-center">
+          <p class="m-0">' . get_string("certficatestobesent", "pokcertificate") . ' : </p>
+          <p class="m-0 text-muted text-right">' . get_config('mod_pokcertificate', 'availablecertificate') . '</p>
+        </li>
+        <li class="d-flex justify-content-between border-0">
+          <p class="m-0">' . get_string("incompleteprofile", "pokcertificate") . ' :</p>
+          <p class="m-0 text-muted text-right">' . get_config('mod_pokcertificate', 'availablecertificate') . '</p>
+        </li>
+      </ul>
     </div>
-    <div class=" col-md-4">
-    <div class="verification_form">
-        <h5 class="" style ="border-bottom: 1px solid #f0f0f0;">' . get_string("certficatestobesent", "pokcertificate") . ' : </h5>
-
-        <h5 class="" style ="border-bottom: 1px solid #f0f0f0;">' . get_string("incompleteprofile", "pokcertificate") . ' : </h5>
-
-    </div>
-</div>
-</div>';
-
+  </div>';
+}
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();

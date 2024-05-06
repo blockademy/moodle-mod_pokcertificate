@@ -22,12 +22,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_pokcertificate\pok;
+
 require('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/updateprofile_form.php');
 
 require_login();
 
-$id  = required_param('id', PARAM_INT);
+$id  = optional_param('cmid', 0, PARAM_INT);
 $userid = $USER->id;
 
 $url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['id' => $id]);
@@ -52,14 +54,17 @@ echo $OUTPUT->header();
 if (!$user = $DB->get_record('user', ['id' => $userid])) {
     throw new \moodle_exception('invaliduserid');
 } else {
+
     $cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
-    if (!profile_has_required_custom_fields_set($user->id)) {
+    //if (!profile_has_required_custom_fields_set($user->id)) {
+    $pokfields = pok::check_profile_fields($user, $cm);
+    if ($pokfields) {
         // Load user preferences.
         useredit_load_preferences($user);
 
         // Load custom profile fields data.
         profile_load_data($user);
-        $mform = new mod_pokcertificate_updateprofile_form($url, ['user' => $user, 'cmid' => $id]);
+        $mform = new mod_pokcertificate_updateprofile_form($url, ['pokfields' => $pokfields, 'user' => $user, 'cmid' => $id]);
         $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
 
         if ($mform->is_cancelled()) {
@@ -71,6 +76,7 @@ if (!$user = $DB->get_record('user', ['id' => $userid])) {
             // Save custom profile fields data.
             profile_save_data($userdata);
         } else {
+
             $mform->display();
         }
     } else {

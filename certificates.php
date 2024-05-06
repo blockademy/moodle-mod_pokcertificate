@@ -36,7 +36,7 @@ $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
-require_capability('mod/pokcertificate:view', $context);
+require_capability('mod/pokcertificate:manageinstance', $context);
 
 $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");

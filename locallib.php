@@ -55,29 +55,3 @@ function pokcertificate_get_editor_options($context) {
     global $CFG;
     return array('subdirs' => 1, 'maxbytes' => $CFG->maxbytes, 'maxfiles' => -1, 'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0);
 }
-
-function get_template_preview($cmid) {
-    global $DB;
-    $recexists = $DB->record_exists('course_modules', ['id' => $cmid]);
-    if ($recexists && has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-        $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
-        $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
-        if ($templateid) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function view_issued_certificate($cmid) {
-    global $DB;
-    $recexists = $DB->record_exists('course_modules', ['id' => $cmid]);
-    if ($recexists && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-        $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
-        $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
-        if ($templateid) {
-            return true;
-        }
-    }
-    return false;
-}

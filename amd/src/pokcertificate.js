@@ -25,14 +25,20 @@ import * as Str from 'core/str';
 import Notification from 'core/notification';
 import Ajax from 'core/ajax';
 import Modal from 'core/modal';
+import Templates from 'core/templates';
+import LoadingIcon from 'core/loadingicon';
 
 const SELECTORS = {
     VERIFYAUTH: '[id="id_verifyauth"]',
+    CERTIFICATETEMPLATETYPE: '[data-action="templatetype"]',
     SAVECERTIFICATE: '[data-action="savecert"]',
     ADDROW: '[class => addmapping]'
 };
 var SERVICES = {
     VERIFY_AUTHENTICATION: 'mod_pokcertificate_verify_auth',
+    INCOMPLETE_PROFILES: 'mod_pokcertificate_incomplete_profiles',
+    SHOW_CERTIFICATE_TEMPLATES: 'mod_pokcertificate_show_certificate_templates'
+
 };
 
 /**
@@ -45,13 +51,20 @@ const verify = function(e){
     var institution = $("#id_institution").val();
     var authtoken = $("#id_authtoken").val();
     var prodtype = $("#id_prodtype").val();
+    var loadElement = $('.loadElement');
+    var loadingIcon = LoadingIcon.addIconToContainerWithPromise(loadElement);
 
+    $("#verify_response").css("display", "none");
     Str.get_strings([
         {key: 'confirm'},
         {key: 'tryagain',component: 'mod_pokcertificate'},
         {key: 'done',component: 'mod_pokcertificate'},
+        {key: 'failed', component: 'mod_pokcertificate'},
+        {key: 'successful', component: 'mod_pokcertificate'},
+        {key: 'notverified', component: 'mod_pokcertificate'},
+        {key: 'verified', component: 'mod_pokcertificate'},
     ]).then(function(s) {
-
+            $('#loading-image').show();
             var promises = Ajax.call([
                 {
                     methodname:SERVICES.VERIFY_AUTHENTICATION,
@@ -59,42 +72,63 @@ const verify = function(e){
                 }
             ]);
             promises[0].done(function(data) {
+               loadingIcon.resolve();
 
-                if(data.status == 0){
-                    Modal.create({
-                        title: Str.get_string('verification', 'mod_pokcertificate'),
-                        body:  Str.get_string('successful', 'mod_pokcertificate'),
-                        footer: '<button type="button" class="btn btn-primary" data-action="save">'+s[2]+'</button>&nbsp;'
-                    }).then(function(modal) {
-                        this.modal = modal;
-                        modal.getRoot().find('[data-action="save"]').on('click', function() {
-                            modal.destroy();
-                            var resp = JSON.parse(data.response);
-                            $("#id_institution").val(resp.name);
-                        }.bind(this));
-                        modal.show();
-                    }.bind(this));
-                }else  if(data.status == 1){
-                    Modal.create({
-                        title: Str.get_string('verification', 'mod_pokcertificate'),
-                        body: Str.get_string('failed', 'mod_pokcertificate'),
-                        footer: '<button type="button" class="btn btn-primary" data-action="save">'+s[1]+'</button>&nbsp;'
-                    }).then(function(modal) {
-                        this.modal = modal;
-                        modal.getRoot().find('[data-action="save"]').on('click', function() {
-                            modal.destroy();
-                            //window.location.href ='index.php?delete='+elem+'&confirm=1&sesskey=' + M.cfg.sesskey;
-                        }.bind(this));
-                        modal.show();
-                    }.bind(this));
+                if(data.status == 1){
+                    var msg = s[3];
+                    var footerbtn = s[1];
+                    $("#verifyresponse").html('<i class="notverified fa-solid fa-circle-xmark"></i>' +
+                                                '<span">' +s[5]+'</span>');
+                }else{
+                    var msg = s[4];
+                    var footerbtn = s[2];
+                    $("#verifyresponse").html('<i class="verified fa-solid fa-circle-check"></i>' +
+                                                '<span>' +s[6]+ '</span>');
+                    var resp = JSON.parse(data.response);
+                    $("#id_institution").val(resp.name);
                 }
+                Modal.create({
+                    title: Str.get_string('verification', 'mod_pokcertificate'),
+                    body: msg,
+                    footer: '<button type="button" class="btn btn-primary" data-action="save">'+footerbtn+'</button>&nbsp;'
+                }).then(function(modal) {
+                    this.modal = modal;
+                    modal.getRoot().find('[data-action="save"]').on('click', function() {
+                        modal.destroy();
+                    }.bind(this));
+                    modal.show();
+                }.bind(this));
 
             }).fail(Notification.exception);
 
     }).fail(Notification.exception);
 
-
 };
+
+/**
+* Load certificate templates
+*
+* @param {Event} e
+*/
+export const loadtemplates = function(e){
+    e.preventDefault();
+    var type = $(e.currentTarget).attr('data-value');//$("input[type='radio'][name='optradio']:checked").val();
+    var cmid = $(e.currentTarget).attr('data-cmid');
+    var promise = Ajax.call([{
+        methodname:SERVICES.SHOW_CERTIFICATE_TEMPLATES,
+        args: {type:type,cmid:cmid}
+    }]);
+    promise[0].done(function(data) {
+        var resp = JSON.parse(data);
+        if(resp){
+            var content = Templates.render('mod_pokcertificate/certificatetemplates', resp);
+            content.then(function (html) {
+                $('.certtemplatedata').html(html);
+            });
+        }
+    }).fail(function() {
+    });
+ };
 
 /**
 * Field mapping
@@ -116,7 +150,8 @@ export const init = () => {
         verify(e);
     });
 
-
-
-
+    $(SELECTORS.CERTIFICATETEMPLATETYPE).on('change', function(e) {
+        e.preventDefault();
+        loadtemplates(e);
+    });
 };

@@ -26,9 +26,6 @@ namespace mod_pokcertificate;
 
 use moodle_exception;
 use mod_pokcertificate\persistent\pokcertificate_log;
-use mod_pokcertificate\persistent\pokcertificate_templates;
-use mod_pokcertificate\persistent\pokcertificate;
-use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -72,7 +69,7 @@ class api {
      */
     public function count_certificates() {
         $location = MINTER_ROOT . '/certificate/count';
-        $params = "wallet={$this->wallet}";
+        $params['wallet'] = $this->wallet;
         return $this->execute_command($location, $params);
     }
 
@@ -99,7 +96,7 @@ class api {
      * Final Certificate of the user
      * @return string API response, in json encoded format
      */
-    private function emit_certificate($data) {
+    private function emit_certificate($data = '') {
         $location = MINTER_ROOT . '/mint';
         /*'{
             "email": "johngalt@pok.tech",
@@ -163,6 +160,7 @@ class api {
             $options['CURLOPT_HTTPHEADER'][] = 'Content-Type: application/json';
         }
         $result = $curl->{$method}($location, $params, $options);
+
         if ($curl->get_errno()) {
             throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
         }
@@ -174,6 +172,7 @@ class api {
             $response = get_string('fail', 'pokcertificate');
         }
 
+
         $log = new \stdClass();
         $log->api = $location . '?' . $params;
         $log->response = $response;
@@ -182,90 +181,5 @@ class api {
         $logdata = new pokcertificate_log(0, $log);
         $logdata->create();
         return $result;
-    }
-
-
-    /**
-     * Saves the selected template definition to the database.
-     *
-     * @param [string] $template - template name
-     * @param [string] $cm - course module instance
-     *
-     * @return [array] $certid -pok certificate id ,$templateid - template id
-     */
-    public static function save_template_definition($template, $cm) {
-        global $USER;
-        $templateid = 0;
-        $templatedefdata = new \stdClass();
-        $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($template);
-        if ($templatedefinition) {
-            $templatedefdata = new \stdclass;
-            $templateexists = pokcertificate_templates::get_record(['templatename' => $template]);
-
-            if ($templateexists) {
-                $templateid = $templateexists->get('id');
-                $templatedata = new pokcertificate_templates($templateexists->get('id'));
-                $templatedata->set('templatename', $template);
-                $templatedata->set('templatedefinition', $templatedefinition);
-                $templatedata->set('usermodified', $USER->id);
-                $templatedata->set('timemodified', time());
-                $templatedata->update();
-            } else {
-                $templatedefdata->templatename = $template;
-                $templatedefdata->templatedefinition = $templatedefinition;
-                $templatedefdata->usercreated = $USER->id;
-                $templatedata = new pokcertificate_templates(0, $templatedefdata);
-                $newtemplate = $templatedata->create();
-                $templateid = $newtemplate->get('id');
-            }
-            if ($templateid != 0) {
-
-                $pokid = pokcertificate::get_field('id', ['id' => $cm->instance]);
-                $pokdata = new pokcertificate($pokid);
-                $pokdata->set('templateid', $templateid);
-                $pokdata->set('usermodified', $USER->id);
-                $pokdata->update();
-            }
-        }
-        return ['certid' => $pokid, 'templateid' => $templateid];
-    }
-
-    /**
-     * Saves the fieldmapping fields.
-     *
-     * @param [object] $data - fieldmapping data
-     *
-     * @return [array]
-     */
-    public static function save_fieldmapping_data($data) {
-
-        try {
-            if ($data->certid) {
-                $fields = pokcertificate_fieldmapping::get_records(['certid' => $data->certid]);
-
-                if ($fields) {
-                    foreach ($fields as $field) {
-                        $mappedfield = new pokcertificate_fieldmapping($field->get('id'));
-                        $mappedfield->delete();
-                    }
-                }
-                for ($i = 0; $i < $data->option_repeats; $i++) {
-                    if (isset($data->templatefield[$i]) && isset($data->userfield[$i])) {
-                        $mappingfield = new \stdClass();
-                        $mappingfield->timecreated = time();
-                        $mappingfield->certid = $data->certid;
-                        $mappingfield->templatefield = $data->templatefield[$i];
-                        $mappingfield->userfield = $data->userfield[$i];
-                        $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
-                        $fieldmapping->create();
-                    }
-                }
-                return true;
-            }
-            return false;
-        } catch (\moodle_exception $e) {
-            print_r($e);
-            return false;
-        }
     }
 }
