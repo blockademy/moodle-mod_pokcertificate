@@ -16,6 +16,7 @@
 
 namespace mod_pokcertificate\output;
 
+use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\persistent\pokcertificatestudent;

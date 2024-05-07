@@ -55,15 +55,18 @@ $PAGE->set_activity_record($pokcertificate);
 echo $OUTPUT->header();
 // Save selected template definition.
 if ($tempname) {
-
-    $templateexists = pokcertificate_templates::get_record(['templatename' => $template]);
+    $templateinfo = new \stdclass;
+    $templateinfo->template = base64_decode($tempname);
+    $templateinfo->templatetype = $temptype;
+    $data = pok::save_template_definition($templateinfo, $cm);
+    /*  $templateexists = pokcertificate_templates::get_record(['templatename' => $template]);
 
     if (!$templateexists) {
         $templateinfo = new \stdclass;
         $templateinfo->template = base64_decode($tempname);
         $templateinfo->templatetype = $temptype;
         $data = pok::save_template_definition($templateinfo, $cm);
-    }
+    } */
 }
 
 $remotefields = get_externalfield_list($tempname);
