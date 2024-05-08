@@ -89,9 +89,11 @@ if ($id) {
     // Getting certificate template view for admin.
     if (is_siteadmin()  || has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
         $preview = pok::preview_template($id);
-        $params = ['id' => $id];
-        $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
-        redirect($url);
+        if ($preview) {
+            $params = ['id' => $id];
+            $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
+            redirect($url);
+        }
     }
     // Getting certificate template view for student.
     if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {

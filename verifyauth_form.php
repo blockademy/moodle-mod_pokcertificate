@@ -54,10 +54,11 @@ class mod_pokcertificate_verifyauth_form extends moodleform {
 
         $institution = get_config('mod_pokcertificate', 'institution');
         $class = ($institution) ? 'verified' : 'notverified';
+        $faicon = ($institution) ? ' fa-solid fa-circle-check' : ' fa-solid fa-circle-xmark';
         $message = ($institution) ? ucwords(get_string('verified', 'mod_pokcertificate')) :  ucwords(get_string('notverified', 'mod_pokcertificate'));
         $groupelem = [];
         $groupelem[] = &$mform->createElement('text', 'institution', get_string('institution', 'pokcertificate'), 'size="35",readonly="readonly"');
-        $groupelem[] = &$mform->createElement('html', '<div id="verifyresponse" ><i class="' . $class . ' fa-solid fa-circle-check"></i>
+        $groupelem[] = &$mform->createElement('html', '<div id="verifyresponse" ><i class="' . $class . $faicon . '"></i>
             <span>' . $message . '</span></div>');
         $groupelem[] = &$mform->createElement('html', '<div class="loadElement"></div>');
 

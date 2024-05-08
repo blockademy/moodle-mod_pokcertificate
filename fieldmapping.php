@@ -23,7 +23,6 @@
  */
 
 use mod_pokcertificate\pok;
-use mod_pokcertificate\persistent\pokcertificate_templates;
 
 require('../../config.php');
 

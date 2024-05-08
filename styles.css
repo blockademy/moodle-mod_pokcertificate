@@ -40,22 +40,24 @@
 
 #page-mod-pokcertificate-view  label {
     display: inline-block;
-    margin-bottom: .5rem;
-    margin-right: 1.5em;
+    margin-bottom: 1.5rem;
+    margin-right: 3.5em;
+    margin-top: 1.5em;
+    margin-left: 1.5em;
 }
 
 #page-mod-pokcertificate-view .certbutton{
     margin: 10px 20px 10px 190px;
 }
-
+/*
 #page-mod-pokcertificate-view form .fieldmapping {
     width: 50%;
     float: left;
-}
+} */
 
-#page-mod-pokcertificate-view form input[name="delete[0]"] {
+/* #page-mod-pokcertificate-view form input[name="delete[0]"] {
      display: none;
-}
+} */
 
 
 /* Style the tab */
@@ -109,7 +111,7 @@
 
   #page-mod-pokcertificate-pokcertificate .loadElement{
     position : absolute;
-    left:460px;
+    left:475px;
   }
 
   #page-mod-pokcertificate-pokcertificate .verified{
@@ -133,7 +135,7 @@
   }
 
   #page-mod-pokcertificate-pokcertificate .pok_details {
-    box-shadow: 0px 0px 66px #00000040;
+    box-shadow: 0px 0px 6px #00000040;
     border-radius: 10px;
     font-size: 14px;
     padding: 6px;
@@ -144,5 +146,42 @@
 #page-mod-pokcertificate-pokcertificate .pok_details li {
     padding: 10px;
     border-bottom: 1px solid #ebebeb;
+}
+
+#page-mod-pokcertificate-view .removerow .col-md-3 {
+    padding: 0 !important;
+}
+
+#page-mod-pokcertificate-view .fieldmapping{
+    display: flex;
+    align-items: center;
+    margin-left: 10%;
+}
+
+#page-mod-pokcertificate-view .mappingheaders{
+    margin-right: 20%;
+}
+
+#page-mod-pokcertificate-view .ufheader{
+    margin-left:8.5em!important;
+}
+
+#page-mod-pokcertificate-view div#id_fieldmappingcontainer{
+    margin-top: 35px;
+}
+
+#page-mod-pokcertificate-view .verifyauth{
+    margin-top: 1.5em;
+}
+
+#page-mod-pokcertificate-pokcertificate .navmenu {
+    margin-left: 40%;
+}
+
+#page-mod-pokcertificate-pokcertificate .navmenu .nav-tabs{
+    border-bottom: 0px!important;
+}
+#page-mod-pokcertificate-pokcertificate .navmenu .nav-tabs .nav-item{
+    border-right: 1px solid #dee2e6;
 }
 

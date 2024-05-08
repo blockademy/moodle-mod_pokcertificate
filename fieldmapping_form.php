@@ -30,7 +30,6 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 /**
  *form shown while adding activity.
  */
@@ -47,39 +46,47 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
 
         $mform->addElement('header', 'fieldmapping', get_string('fieldmapping', 'pokcertificate') . "");
 
+        $groupelem = [];
+        $groupelem[] = &$mform->createElement('html', '<span>' . get_string('apifields', 'pokcertificate') . '</span>');
+        $groupelem[] = &$mform->createElement('html', '<span class="ufheader" >' . get_string('userfields', 'pokcertificate') . '</span>');
+        $mform->addGroup($groupelem, '', '', [' '], false, ['class' => 'mappingheaders']);
+
         $localfields = get_internalfield_list();
-        $remotefields = get_externalfield_list($templatename);
+        $remotefields = get_internalfield_list(); //get_externalfield_list($templatename);
 
         $repeatarray = [
             $mform->createElement('hidden', 'fieldmapping', 'fieldmapping'),
 
+            $mform->createElement('html', '<div class = "fieldmapping">'),
             $mform->createElement(
                 'select',
                 'templatefield',
-                get_string('apifields', 'pokcertificate'),
+                '',
                 $remotefields,
-                ['class' => 'fieldmapping']
+                ['class' => 'templatefields']
             ),
 
             $mform->createElement(
                 'select',
                 'userfield',
-                get_string('userfields', 'pokcertificate'),
+                '',
                 $localfields,
-                ['class' => 'fieldmapping']
+                ['class' => 'userfields']
             ),
 
             $mform->createElement(
                 'submit',
                 'delete',
-                get_string('delete'),
-                ['class' => 'deletefield']
+                'X',
+                ['class' => 'removerow']
             ),
 
             $mform->createElement(
                 'hidden',
                 'optionid'
             ),
+            $mform->createElement('html', '</div>'),
+
         ];
 
         $repeateloptions = [];
@@ -114,7 +121,7 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
             $repeatno,
             $repeateloptions,
             'option_repeats',
-            'option_add_fields',
+            'option_add_fields addfields',
             1,
             get_string('add', 'pokcertificate'),
             true,

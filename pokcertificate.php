@@ -39,8 +39,9 @@ echo $OUTPUT->container_start();
 
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 echo $renderer->display_tabs();
+$data = new stdClass();
+
 if (get_config('mod_pokcertificate', 'institution')) {
-    $data = new stdClass();
     $data->institution = get_config('mod_pokcertificate', 'institution');
 }
 $mform = new mod_pokcertificate_verifyauth_form(

@@ -563,7 +563,7 @@ function pokcertificate_validate_apikey($key) {
 
     $location = API_KEYS_ROOT . '/me';
     $params = '';
-
+    set_pokcertificate_settings();
     $curl = new \curl();
     $options = array(
         'CURLOPT_HTTPHEADER' => array(
@@ -582,8 +582,8 @@ function pokcertificate_validate_apikey($key) {
     }
     if ($curl->get_info()['http_code'] == 200) {
         $result = json_decode($result);
-
         if (isset($result->org)) {
+            set_config('pokverified', true, 'mod_pokcertificate');
             set_config('wallet', $result->org, 'mod_pokcertificate');
             set_config('authenticationtoken', $key, 'mod_pokcertificate');
             return true;
@@ -593,6 +593,17 @@ function pokcertificate_validate_apikey($key) {
     } else {
         return false;
     }
+}
+
+function set_pokcertificate_settings() {
+    set_config('pokverified', false, 'mod_pokcertificate');
+    set_config('wallet', '', 'mod_pokcertificate');
+    set_config('authenticationtoken', '', 'mod_pokcertificate');
+    set_config('orgid', '', 'mod_pokcertificate');
+    set_config('institution', '', 'mod_pokcertificate');
+    set_config('availablecertificate', '', 'mod_pokcertificate');
+    set_config('pendingcertificates', '0', 'mod_pokcertificate');
+    set_config('issuedcertificates', '', 'mod_pokcertificate');
 }
 
 /**

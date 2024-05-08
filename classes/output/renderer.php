@@ -37,6 +37,15 @@ class renderer extends \plugin_renderer_base {
     public function render_certificate_types(int $cmid) {
         return $this->render_from_template('mod_pokcertificate/certificatetypes', ['cmid' => $cmid]);
     }
+
+    public function verify_authentication() {
+        global $CFG;
+        return '<div class="verifyauth" >' . get_string('verifyauth', 'pokcertificate') . '
+                    <a target="_blank" class="bt btn-primary"
+                    style="padding: 7px 18px; border-radius: 4px; color: white; background-color: #2578dd; margin-left: 5px;"
+                    href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >' . get_string('clickhere', 'mod_pokcertificate') . '
+                    </a></div>';
+    }
     /**
      * Renders the certifcate templates view.
      *
@@ -49,20 +58,23 @@ class renderer extends \plugin_renderer_base {
         global $DB;
         $output = '';
         $recexists = $DB->record_exists('course_modules', ['id' => $id]);
+        if (get_config('mod_pokcertificate', 'pokverified')) {
+            if ($recexists) {
 
-        if ($recexists) {
+                if (has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
 
-            if (has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-
-                $certificatetemplatecontent = pok::get_certificate_templates($id);
-                if ($certificatetemplatecontent) {
-                    $output = $this->render_certificate_types($id);
-                    $output .= $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
+                    $certificatetemplatecontent = pok::get_certificate_templates($id);
+                    if ($certificatetemplatecontent) {
+                        $output = $this->render_certificate_types($id);
+                        $output .= $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
+                    }
                 }
+                echo $output;
+            } else {
+                echo get_string('invalidcoursemodule', 'mod_pokcertificate');
             }
-            echo $output;
-        } else {
-            echo get_string('invalidcoursemodule', 'mod_pokcertificate');
+        } else if (has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+            echo self::verify_authentication();
         }
     }
 
