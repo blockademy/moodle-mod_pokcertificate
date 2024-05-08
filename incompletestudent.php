@@ -34,16 +34,13 @@ $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
 
-// If user don't have permission to view Nature of the Programs.
-// if (!permission::has_manage_capability($context)) {
-//     throw new \moodle_exception('nopermission', 'mod_pokcertificate');
-// }
-
-// Requires the required js and css.
-$PAGE->requires->css('/mod/pokcertificate/css/jquery.dataTables.min.css');
-
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
-echo $renderer->get_incompletestudent();
+$filterparams = $renderer->get_incompletestudentprofile(true);
+echo $renderer->userbulkupload();
+$filterparams['submitid'] = 'form#filteringform';
+$filterparams['placeholder'] = get_string('studentid', 'mod_pokcertificate');
+echo $OUTPUT->render_from_template('mod_pokcertificate/global_filter', $filterparams);
+echo $renderer->get_incompletestudentprofile();
 
 echo $OUTPUT->footer();

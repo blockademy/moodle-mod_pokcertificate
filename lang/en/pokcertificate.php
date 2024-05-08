@@ -202,3 +202,7 @@ $string['empfile_syncstatus'] = 'User file sync status';
 $string['back'] = 'Back';
 $string['sample'] = 'Sample';
 $string['help_manual'] = 'Help Manual';
+$string['incompletestudent'] = 'Incomplete Student Profiles';
+$string['coursecertificatestatus'] = 'Course Certificate Status';
+$string['generalcertificate'] = 'Award General Certificates';
+$string['contact'] = 'Contact POK';
