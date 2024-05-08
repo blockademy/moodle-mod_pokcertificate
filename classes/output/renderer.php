@@ -125,82 +125,89 @@ class renderer extends \plugin_renderer_base {
         return $this->render_from_template('mod_pokcertificate/action_bar', $data);
     }
 
-    public function get_incompletestudent() {
-
+    public function get_incompletestudentprofile($filter = false){
+        global $USER;
         $systemcontext = \context_system::instance();
-        $data = pokcertificatestudent::incompletestudentlist();
-        $view = true;
-        $delete = false;
-        $update = false;
-        $results = [];
-        $lang = current_language();
-        foreach ($data as $rec) {
+        $options = array('targetID' => 'viewincompletestudent','perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
 
-            $studentlist = [];
-            $studentlist['id'] = $rec->id;
-            $studentlist['firstname'] = $rec->firstname;
-            $studentlist['lastname'] = $rec->lastname;
-            $studentlist['email'] = $rec->email;
-            $studentlist['studentid'] = $rec->username;
-            $studentlist['language'] = 'Hindi';
-            $results[] = $studentlist;
+        $options['methodName']='mod_pokcertificate_incompletestudentprofile_view';
+        $options['templateName']='mod_pokcertificate/incompletestudentprofile_view';
+        $options = json_encode($options);
+
+        $dataoptions = json_encode(array('contextid' => $systemcontext->id));
+        $filterdata = json_encode(array());
+
+        $context = [
+            'targetID' => 'viewincompletestudent',
+            'options' => $options,
+            'dataoptions' => $dataoptions,
+            'filterdata' => $filterdata
+        ];
+
+        if($filter){
+            return  $context;
+        }else{
+            return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
         }
-
-        // if (is_siteadmin() || (permission::has_view_capability($systemcontext))) {
-        //     $view = true;
-        // }
-        // if (is_siteadmin() || (permission::has_update_capability($systemcontext))) {
-        $update = true;
-        // }
-        // if (is_siteadmin() || (permission::has_delete_capability($systemcontext))) {
-        //     $delete = true;
-        // }
-        if ($update == true || $delete == true) {
-            $action = true;
-        }
-
-        return  $this->render_from_template(
-            'mod_pokcertificate/incompletestudentprofile',
-            [
-                'results' => array_values(array_values($results)),
-                'canview' => $view,
-                'action' => $action,
-                'update' => $update,
-                'delete' => $delete,
-            ]
-        );
     }
 
-    public function get_generalcertificate() {
-
+    public function userbulkupload() {
+        global $CFG;
         $systemcontext = \context_system::instance();
-        $data = pokcertificatestudent::awardedgeneralcertificateusers();
-        $view = true;
-        $delete = false;
-        $update = false;
-        $results = [];
-        $lang = current_language();
-        foreach ($data as $rec) {
+        return $this->render_from_template('mod_pokcertificate/userbulkuploadbutton', array('contextid' => $categorycontext->id));
+    }
 
-            $studentlist = [];
-            $studentlist['id'] = $rec->id;
-            $studentlist['firstname'] = $rec->firstname;
-            $studentlist['lastname'] = $rec->lastname;
-            $studentlist['email'] = $rec->email;
-            $studentlist['studentid'] = $rec->username;
-            $studentlist['program'] = 'Programname';
-            $results[] = $studentlist;
+
+    public function get_generalcertificate($filter = false){
+        global $USER;
+        $systemcontext = \context_system::instance();
+        $options = array('targetID' => 'view_generalcertificate','perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
+
+        $options['methodName']='mod_pokcertificate_generalcertificate_view';
+        $options['templateName']='mod_pokcertificate/awardedcertificatestatus';
+        $options = json_encode($options);
+
+        $dataoptions = json_encode(array('contextid' => $systemcontext->id));
+        $filterdata = json_encode(array());
+
+        $context = [
+            'targetID' => 'view_generalcertificate',
+            'options' => $options,
+            'dataoptions' => $dataoptions,
+            'filterdata' => $filterdata
+        ];
+
+        if($filter){
+            return  $context;
+        }else{
+            return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
         }
+    }
 
-        return  $this->render_from_template(
-            'mod_pokcertificate/awardedcertificatestatus',
-            [
-                'results' => array_values(array_values($results)),
-                'canview' => $view,
-                'action' => $action,
-                'update' => $update,
-                'delete' => $delete,
-            ]
-        );
+    public function get_courseparticipantslist($filter = false){
+        global $USER;
+        $courseid = required_param('courseid', PARAM_INT);
+        $systemcontext = \context_system::instance();
+        $options = array('targetID' => 'view_courseparticipants','perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
+
+        $options['methodName']='mod_pokcertificate_courseparticipants_view';
+        $options['templateName']='mod_pokcertificate/courseparticipants';
+        $options = json_encode($options);
+
+        $dataoptions = json_encode(array('contextid' => $systemcontext->id, 'courseid' => $courseid));
+        $filterdata = json_encode(array());
+
+        $context = [
+            'targetID' => 'view_courseparticipants',
+            'options' => $options,
+            'dataoptions' => $dataoptions,
+            'filterdata' => $filterdata
+        ];
+
+        if($filter){
+            return  $context;
+        }else{
+            return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
+        }
     }
 }

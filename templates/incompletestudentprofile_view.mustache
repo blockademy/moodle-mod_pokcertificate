@@ -14,6 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
+    ddd
+
 }}
 {{#response}}
     {{#viewtypeCard}}
@@ -24,7 +27,8 @@
                     <th>{{#str}}surname,mod_pokcertificate{{/str}}</th>
                     <th>{{#str}}email,mod_pokcertificate{{/str}}</th>
                     <th>{{#str}}studentid,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}program,mod_pokcertificate{{/str}}</th>
+                    <th>{{#str}}language,mod_pokcertificate{{/str}}</th>
+                    <th>{{#str}} action,mod_pokcertificate{{/str}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,7 +38,14 @@
                         <td>{{lastname}}</td>
                         <td>{{email}}</td>
                         <td>{{studentid}}</td>
-                        <td>{{program}}</td>
+                        <td>{{language}}</td>
+                        <td>
+                            <a href="{{globals.config.wwwroot}}/mod/pokcertificate/updateprofile.php?userid={{id}}">
+                                <span class='createicon'>
+                                    <i class='createiconchild fa fa-pencil' aria-hidden='true'></i>
+                                </span>
+                            </a>
+                        </td>
                     </tr>
                 {{/records}}
             </tbody>

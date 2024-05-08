@@ -14,37 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_pokcertificate\persistent;
-
-use core\persistent;
-
 /**
- * Class pokcertificatestudent
+ * index to view incomplete student profile.
  *
  * @package   mod_pokcertificate
  * @copyright 2024 Moodle India Information Solutions Pvt Ltd
  * @author    2024 Narendra.Patel <narendra.patel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class pokcertificatestudent extends persistent {
 
-    /** Database table user. */
-    public const TABLE = 'user';
+require_once('../../config.php');
+require_login();
 
-    /**
-     * Get the incomplete student
-     *
-     * @param string $field the field to return the value of.
-     * @param array $data optional array params
-     * @return mixed the specified value false if not found
-     */
-    public static function incompletestudentlist() {
-        global $DB;
-        return $DB->get_records_sql('SELECT * FROM {'.self::TABLE.'} WHERE deleted = 0 AND suspended = 0 AND id > 2');
-    }
+$context = \context_system::instance();
+$url = new moodle_url('/mod/pokcertificate/courseparticipants.php', []);
+$heading = get_string('courseparticipants', 'mod_pokcertificate');
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+$PAGE->set_heading($heading);
+$PAGE->set_title($heading);
 
-    public static function awardedgeneralcertificateusers() {
-        global $DB;
-        return $DB->get_records_sql('SELECT * FROM {'.self::TABLE.'} WHERE deleted = 0 AND suspended = 0 AND id > 2');
-    }
-}
+
+echo $OUTPUT->header();
+$renderer = $PAGE->get_renderer('mod_pokcertificate');
+$filterparams = $renderer->get_courseparticipantslist(true);
+$filterparams['submitid'] = 'form#filteringform';
+$filterparams['placeholder'] = get_string('studentid', 'mod_pokcertificate');
+echo $OUTPUT->render_from_template('mod_pokcertificate/global_filter', $filterparams);
+echo $renderer->get_courseparticipantslist();
+
+echo $OUTPUT->footer();

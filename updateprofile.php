@@ -26,46 +26,88 @@ use mod_pokcertificate\pok;
 
 require('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/updateprofile_form.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/editprofile_form.php');
 
 require_login();
 
 $id  = optional_param('cmid', 0, PARAM_INT);
-$userid = $USER->id;
+if($id>0){
 
-$url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['id' => $id]);
+    $userid = $USER->id;
 
-if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
-    throw new \moodle_exception('invalidcoursemodule');
-}
-$pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
-$course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+    $url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['id' => $id]);
 
-require_course_login($course, true, $cm);
-$context = context_module::instance($cm->id);
-require_capability('mod/pokcertificate:view', $context);
+    if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
+        throw new \moodle_exception('invalidcoursemodule');
+    }
+    $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
-$PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
-$PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
-$PAGE->set_heading($course->fullname);
-$PAGE->add_body_class('limitedwidth');
-$PAGE->set_activity_record($pokcertificate);
+    require_course_login($course, true, $cm);
+    $context = context_module::instance($cm->id);
+    require_capability('mod/pokcertificate:view', $context);
 
-echo $OUTPUT->header();
-if (!$user = $DB->get_record('user', ['id' => $userid])) {
-    throw new \moodle_exception('invaliduserid');
+    $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
+    $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
+    $PAGE->set_heading($course->fullname);
+    $PAGE->add_body_class('limitedwidth');
+    $PAGE->set_activity_record($pokcertificate);
+
+    echo $OUTPUT->header();
+    if (!$user = $DB->get_record('user', ['id' => $userid])) {
+        throw new \moodle_exception('invaliduserid');
+    } else {
+
+        $cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
+        //if (!profile_has_required_custom_fields_set($user->id)) {
+        $pokfields = pok::check_profile_fields($user, $cm);
+        if ($pokfields) {
+            // Load user preferences.
+            useredit_load_preferences($user);
+
+            // Load custom profile fields data.
+            profile_load_data($user);
+            $mform = new mod_pokcertificate_updateprofile_form($url, ['pokfields' => $pokfields, 'user' => $user, 'cmid' => $id]);
+            $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
+
+            if ($mform->is_cancelled()) {
+                redirect($redirecturl);
+            } else if ($userdata = $mform->get_data()) {
+                $userdata->timemodified = time();
+                // Update user with new profile data.
+                user_update_user($userdata, false, false);
+                // Save custom profile fields data.
+                profile_save_data($userdata);
+            } else {
+
+                $mform->display();
+            }
+        } else {
+            $renderer = $PAGE->get_renderer('mod_pokcertificate');
+            echo $renderer->preview_certificate_template($id);
+        }
+    }
+
 } else {
+    $userid  = required_param('userid', PARAM_INT);
 
-    $cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
-    //if (!profile_has_required_custom_fields_set($user->id)) {
-    $pokfields = pok::check_profile_fields($user, $cm);
-    if ($pokfields) {
-        // Load user preferences.
+    $url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['userid' => $userid]);
+
+    $PAGE->set_url($url);
+    $PAGE->set_title(get_string('profile', 'mod_pokcertificate'));
+    $PAGE->set_heading(get_string('profile', 'mod_pokcertificate'));
+
+    echo $OUTPUT->header();
+    if (!$user = $DB->get_record('user', ['id' => $userid])) {
+        throw new \moodle_exception('invaliduserid');
+    } else {
+        
         useredit_load_preferences($user);
 
         // Load custom profile fields data.
         profile_load_data($user);
-        $mform = new mod_pokcertificate_updateprofile_form($url, ['pokfields' => $pokfields, 'user' => $user, 'cmid' => $id]);
-        $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
+        $mform = new mod_pokcertificate_editprofile_form($url, ['user' => $user]);
+        $redirecturl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
 
         if ($mform->is_cancelled()) {
             redirect($redirecturl);
@@ -75,14 +117,10 @@ if (!$user = $DB->get_record('user', ['id' => $userid])) {
             user_update_user($userdata, false, false);
             // Save custom profile fields data.
             profile_save_data($userdata);
+            redirect($redirecturl);
         } else {
-
             $mform->display();
         }
-    } else {
-        $renderer = $PAGE->get_renderer('mod_pokcertificate');
-        echo $renderer->preview_certificate_template($id);
     }
 }
-
 echo $OUTPUT->footer();

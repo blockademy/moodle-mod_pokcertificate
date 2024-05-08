@@ -734,3 +734,113 @@ function mod_pokcertificate_cm_info_view(cm_info $cm) {
         }
     }
 } */
+
+//////For display on incomplete student profile page//////////
+function incompletestudentprofilelist($filtervalues){
+    global $DB, $PAGE,$USER,$CFG,$OUTPUT;
+    $systemcontext = \context_system::instance();
+    $countsql = "SELECT count(id) FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
+    $selectsql = "SELECT * FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
+
+    $queryparam = array();
+
+    
+    if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
+        $concatsql .= " AND (idnumber LIKE :search1 )";
+        $queryparam['search1'] = '%'.trim($filtervalues->search_query).'%';
+    }
+    $count = $DB->count_records_sql($countsql.$concatsql, $queryparam);
+    $concatsql.=" order by id desc";
+    $records = $DB->get_records_sql($selectsql.$concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
+
+    $list=array();
+    $data=array();
+    if ($records) {
+        foreach ($records as $c) {
+            $list=array();
+            $list['id'] = $c->id;
+            $list['firstname'] = $c->firstname;
+            $list['lastname'] = $c->lastname;
+            $list['email'] = $c->email;
+            $list['studentid'] = $c->idnumber ? $c->idnumber : 10;
+            $list['language'] = 'English';
+            $data[] = $list;
+        }
+    }
+    return array('count' => $count, 'data' => $data);
+}
+
+//////For display on general certificate status page//////////
+function generalcertificatelist($filtervalues){
+    global $DB, $PAGE,$USER,$CFG,$OUTPUT;
+    $systemcontext = \context_system::instance();
+    $countsql = "SELECT count(id) FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
+    $selectsql = "SELECT * FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
+
+    $queryparam = array();
+
+    
+    if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
+        $concatsql .= " AND (idnumber LIKE :search1 )";
+        $queryparam['search1'] = '%'.trim($filtervalues->search_query).'%';
+    }
+    $count = $DB->count_records_sql($countsql.$concatsql, $queryparam);
+    $concatsql.=" order by id desc";
+    $records = $DB->get_records_sql($selectsql.$concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
+
+    $list=array();
+    $data=array();
+    if ($records) {
+        foreach ($records as $c) {
+            $list=array();
+            $list['id'] = $c->id;
+            $list['firstname'] = $c->firstname;
+            $list['lastname'] = $c->lastname;
+            $list['email'] = $c->email;
+            $list['studentid'] = $c->idnumber ? $c->idnumber : 10;
+            $list['program'] = 'Program Name';
+            $data[] = $list;
+        }
+    }
+    return array('count' => $count, 'data' => $data);
+}
+
+//////For display on course participants page//////////
+function courseparticipantslist($courseid, $filtervalues){
+    global $DB, $PAGE,$USER,$CFG,$OUTPUT;
+    $systemcontext = \context_system::instance();
+    $countsql = "SELECT count(u.id) ";
+    $selectsql = "SELECT u.id, u.username, u.firstname, u.lastname, FROM_UNIXTIME(ue.timecreated) AS enrolment_date, FROM_UNIXTIME(cc.timecompleted) AS completion_date ";
+    $fromsql = "FROM mdl_user AS u
+                JOIN mdl_user_enrolments AS ue ON u.id = ue.userid
+                JOIN mdl_enrol AS e ON ue.enrolid = e.id
+           LEFT JOIN mdl_course_completions AS cc ON (cc.userid = u.id AND cc.course = e.courseid)
+                WHERE e.courseid = ".$courseid." AND u.deleted = 0 AND u.suspended = 0 AND u.id > 2 ";
+
+    $queryparam = array();
+
+    
+    if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
+        $concatsql .= " AND (u.idnumber LIKE :search1 )";
+        $queryparam['search1'] = '%'.trim($filtervalues->search_query).'%';
+    }
+    $count = $DB->count_records_sql($countsql.$fromsql.$concatsql, $queryparam);
+    $concatsql.=" order by u.id desc";
+    $records = $DB->get_records_sql($selectsql.$fromsql.$concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
+
+    $list=array();
+    $data=array();
+    if ($records) {
+        foreach ($records as $c) {
+            $list=array();
+            $list['id'] = $c->id;
+            $list['firstname'] = $c->firstname;
+            $list['email'] = $c->email;
+            $list['studentid'] = $c->idnumber ? $c->idnumber : 10;
+            $list['lastname'] = $c->lastname;
+            $list['program'] = 'Program Name';
+            $data[] = $list;
+        }
+    }
+    return array('count' => $count, 'data' => $data);
+}

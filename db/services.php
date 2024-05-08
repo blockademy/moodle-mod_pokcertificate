@@ -61,5 +61,35 @@ $functions = [
         'description'   => 'Retieve the certificate templates',
         'ajax' => true,
         'type' => 'write',
+    ],
+
+    'mod_pokcertificate_incompletestudentprofile_view' => [
+        'classname'   => 'mod_pokcertificate_external',
+        'methodname'  => 'incompletestudentprofile_view',
+        'classpath'   => 'mod/pokcertificate/classes/external.php',
+        'description' => 'Display the incompletestudentprofile Page',
+        'type'        => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+
+    'mod_pokcertificate_generalcertificate_view' => [
+        'classname'   => 'mod_pokcertificate_external',
+        'methodname'  => 'generalcertificate_view',
+        'classpath'   => 'mod/pokcertificate/classes/external.php',
+        'description' => 'Display the generalcertificate Page',
+        'type'        => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+
+    'mod_pokcertificate_courseparticipants_view' => [
+        'classname'   => 'mod_pokcertificate_external',
+        'methodname'  => 'courseparticipants_view',
+        'classpath'   => 'mod/pokcertificate/classes/external.php',
+        'description' => 'Display the courseparticipants Page',
+        'type'        => 'write',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ]
 ];

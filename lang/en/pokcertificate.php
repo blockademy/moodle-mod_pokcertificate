@@ -135,13 +135,70 @@ $string['issuecertificate'] = 'Issue Certificate';
 $string['certificateslist'] = 'Certificate Templates';
 $string['clickhere'] = 'Click here';
 
-$string['incomplete'] = 'Incomplete Student Profiles';
-$string['certificatestatus'] = 'Course Certificates Status';
-$string['awardcertificates'] = 'Award General Certificates';
-$string['contact'] = 'Contact';
-$string['verified'] = 'Verified';
-$string['notverified'] = 'Not Verified';
-$string['paid'] = 'Paid';
-$string['free'] = 'Free';
-$string['addactivity'] = 'Add Activity';
-$string['verificationinprocess'] = 'Verification in process';
+// POK-13 and POK-15
+$string['incompletestudent'] = 'Incomplete Student Profile';
+$string['generalcertificate'] = 'General Certificate Status';
+$string['studentname'] = 'Student Name';
+$string['surname'] = 'Surname';
+$string['email'] = 'Email';
+$string['studentid'] = 'Student ID';
+$string['language'] = 'Language';
+$string['action'] = 'Action';
+$string['program'] = 'Program';
+$string['profile'] = 'Profile';
+$string['no_data_available'] = 'No Data Available';
+$string['bulkupload'] = 'Bulk Upload';
+$string['coursename'] = 'Course Name';
+$string['enrolldate'] = 'Enroll Date';
+$string['completedate'] = 'Complete Date';
+$string['coursestatus'] = 'Course Status';
+$string['typeofcerti'] = 'Type of certificate';
+$string['certificatestatus'] = 'Certificate status';
+$string['previewcerti'] = 'Preview Certifcate';
+$string['courseparticipants'] = 'Course Participants';
+$string['help_1'] = '
+    <div class="field_type font-weight-bold" style="text-align:left;"></div>
+    <br>
+    <div class="helpmanual_table"><table class="generaltable" border="1">
+        <table class="generaltable" border="1">
+            <th>Mandatory Fields</th>
+            <th>Restriction</th>
+            <tr>
+                <td>Region_Code</td>
+                <td>Please enter region code.</td>
+                
+            </tr>
+            <tr>
+                <td>EN_Name</td>
+                <td>Please enter english name of the record.</td>
+            </tr>
+            <tr>
+                <td>AR_Name</td>
+                <td>Please enter arabic name of the record.</td>
+            </tr>
+            <tr>
+                <td>PAYMENT_ID</td>
+                <td>Please enter payment ID for region.</td>
+            </tr>
+        </table>
+
+        <table class="generaltable" border="1">
+            <th>Optional Fields</th>
+            <th>Restriction</th>
+            <tr>
+                <td>OLD_ID</td>
+                <td>Please enter ID value of the record.</td>
+            </tr>
+        </table>
+    </div>';
+$string['authenticationmethods'] = 'Authentication method';
+$string['missing'] = 'Missing {$a->field} at line {$a->linenumber}';
+$string['addedusers_msg'] = 'Total {$a} new users added to the system.';
+$string['updatedusers_msg'] = 'Total {$a} users details updated.';
+$string['errorscount_msg'] = 'Total {$a} errors occured in the sync update.';
+$string['warningscount_msg'] = 'Total {$a} warnings occured in the sync update.';
+$string['superwarnings_msg'] = 'Total {$a} Warnings occured while updating supervisor.';
+$string['empfile_syncstatus'] = 'User file sync status';
+$string['back'] = 'Back';
+$string['sample'] = 'Sample';
+$string['help_manual'] = 'Help Manual';
