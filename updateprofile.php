@@ -30,6 +30,8 @@ require_once($CFG->dirroot . '/mod/pokcertificate/editprofile_form.php');
 
 require_login();
 
+global $USER;
+
 $id  = optional_param('cmid', 0, PARAM_INT);
 $userid  = required_param('id', PARAM_INT);
 
@@ -97,9 +99,7 @@ if ($id > 0) {
     $PAGE->set_heading(get_string('profile', 'mod_pokcertificate'));
 
     echo $OUTPUT->header();
-    if ($userid != $USER->id) {
-        throw new \moodle_exception('invaliduserid');
-    }
+
     if (!$user = $DB->get_record('user', ['id' => $userid])) {
         throw new \moodle_exception('invaliduserid');
     } else {
