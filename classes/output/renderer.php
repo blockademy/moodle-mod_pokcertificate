@@ -117,7 +117,7 @@ class renderer extends \plugin_renderer_base {
                     "name" => "John Galt",
                     "title" => $pokcertificate->get('title'),
                     "date" => time(),
-                    "institution" => get_config('mod_pokcertificate', 'institution')
+                    "institution" => get_config('mod_pokcertificate', 'institution'),
                 ];
                 $previewdata = json_encode($previewdata);
                 $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
@@ -139,7 +139,7 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function certificate_pending_message() {
-        global $CFG, $USER;
+        global $CFG, $USER, $COURSE;
         require_once("{$CFG->libdir}/completionlib.php");
 
         $attributes = [
@@ -152,6 +152,11 @@ class renderer extends \plugin_renderer_base {
         $output .= $this->box_start('modal-content', 'modal-content');
         $output .= $this->box_start('modal-header p-x-1', 'modal-header');
         $output .= \html_writer::tag('h6', get_string('certificatepending', 'mod_pokcertificate'));
+        /*  $output .= \html_writer::tag(
+            'input',
+            '',
+            ['type' => 'button', 'class' => 'close', 'data-dismiss' => 'modal']
+        ); */
         $output .= $this->box_end();
         $attributes = [
             'role' => 'prompt',
@@ -159,7 +164,7 @@ class renderer extends \plugin_renderer_base {
             'class' => 'certificatestatus',
         ];
 
-        /*  $cinfo = new \completion_info($courseobject);
+        /*  $cinfo = new \completion_info($COURSE);
         $iscomplete = $cinfo->is_course_complete($USER->id); */
 
         $output .= $this->box_start('modal-body', 'modal-body', $attributes);
@@ -184,9 +189,41 @@ class renderer extends \plugin_renderer_base {
         );
 
         $output .= $this->box_end();
+        $output .= $this->box_end();
+        $output .= $this->box_end();
+        return $output;
+    }
 
-        $output .= $this->box_end();
-        $output .= $this->box_end();
+    /**
+     * emit_certificate_templates
+     *
+     * @param  mixed $cmid
+     * @param  mixed $user
+     * @return string
+     */
+    public function emit_certificate_templates($cmid, $user) {
+        $output  = '';
+        $availablecredits = get_config('mod_pokcertificate', 'availablecertificates');
+        $credits = (new \mod_pokcertificate\api)->get_credits();
+        $credits = json_decode($credits);
+        if (!empty($credits)) {
+            if (($availablecredits != $credits->pokCredits || $credits->pokCredits > $availablecredits)) {
+                set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
+            }
+        }
+        $availablecredits = get_config('mod_pokcertificate', 'availablecertificates');
+        if ($availablecredits >= 0) {
+            $emitcertificate = pok::emit_certificate($cmid, $user);
+            if (!empty($emitcertificate)) {
+                if ($emitcertificate->processing) {
+                    $output = self::certificate_pending_message();
+                } else {
+                    redirect($emitcertificate->viewUrl);
+                }
+            }
+        } else if ($availablecredits == 0) {
+            $output = self::certificate_pending_message();
+        }
         return $output;
     }
 

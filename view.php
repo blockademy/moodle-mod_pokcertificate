@@ -79,7 +79,7 @@ $renderer = $PAGE->get_renderer('mod_pokcertificate');
 if ($id) {
     pok::set_cmid($id);
     // Getting certificate template view for admin.
-    if (is_siteadmin()  || has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+    if (is_siteadmin()  || has_capability('mod/pokcertificate:manageinstance', $context)) {
         $preview = pok::preview_template($id);
         if ($preview) {
             $params = ['id' => $id];
@@ -88,24 +88,11 @@ if ($id) {
         }
     }
     // Getting certificate template view for student.
-    if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+    if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', $context)) {
         if ($flag) {
-            $availablecredits = get_config('mod_pokcertificate', 'availablecertificates');
-            if ($availablecredits >= 0) {
-                $emitcertificate = pok::emit_certificate($id, $USER);
-                if (!empty($emitcertificate)) {
-                    if ($emitcertificate->processing) {
-                        echo $renderer->certificate_pending_message();
-                    } else {
-                        redirect($emitcertificate->viewUrl);
-                    }
-                }
-            } else if ($availablecredits == 0) {
-                echo $renderer->certificate_pending_message();
-                exit;
-            }
+            echo $renderer->emit_certificate_templates($id, $USER);
         } else {
-            $params = ['cmid' => $id, 'userid' => $USER->id];
+            $params = ['cmid' => $id, 'id' => $USER->id];
             $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
             redirect($url);
         }

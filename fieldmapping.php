@@ -23,6 +23,7 @@
  */
 
 use mod_pokcertificate\pok;
+use mod_pokcertificate\persistent\pokcertificate_templates;
 
 require('../../config.php');
 
@@ -54,18 +55,13 @@ $PAGE->set_activity_record($pokcertificate);
 echo $OUTPUT->header();
 // Save selected template definition.
 if ($tempname) {
-    $templateinfo = new \stdclass;
-    $templateinfo->template = base64_decode($tempname);
-    $templateinfo->templatetype = $temptype;
-    $data = pok::save_template_definition($templateinfo, $cm);
-    /* ...$templateexists = pokcertificate_templates::get_record(['templatename' => $template]);
-
-    if (!$templateexists) {
+    $existstemplate = pokcertificate_templates::get_record(['id' => $pokcertificate->id]);
+    if ($existstemplate->get('templatename') != base64_decode($tempname)) {
         $templateinfo = new \stdclass;
         $templateinfo->template = base64_decode($tempname);
         $templateinfo->templatetype = $temptype;
         $data = pok::save_template_definition($templateinfo, $cm);
-    } */
+    }
 }
 
 $remotefields = get_externalfield_list($tempname);

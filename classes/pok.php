@@ -354,7 +354,11 @@ class pok {
                 $emitdata = self::get_emitcertificate_data($user, $template);
                 $data = json_encode($emitdata);
                 // $emitcertificate = (new \mod_pokcertificate\api)->get_certificate($data);
-                $emitcertificate = '{"processing": "true", "viewUrl": "https://view.pok.tech/c/662d6a93-2dab-493c-be88-2c44e6076002"}';
+                if ($user->username == 'student1') {
+                    $emitcertificate = '{"processing": true, "viewUrl": "https://view.pok.tech/c/662d6a93-2dab-493c-be88-2c44e6076002"}';
+                } else {
+                    $emitcertificate = '{"processing": false, "viewUrl": "https://view.pok.tech/c/662d6a93-2dab-493c-be88-2c44e6076002"}';
+                }
                 $emitcertificate = json_decode($emitcertificate);
             }
         }

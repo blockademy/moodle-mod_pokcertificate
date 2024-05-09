@@ -134,7 +134,10 @@ $string['previewcertificate'] = 'Preview Certificate';
 $string['issuecertificate'] = 'Issue Certificate';
 $string['certificateslist'] = 'Certificate Templates';
 $string['clickhere'] = 'Click here';
-
+$string['notverified'] = 'Not Verified';
+$string['verified'] = 'Verified';
+$string['free'] = 'Free';
+$string['paid'] = 'Paid';
 // POK-13 and POK-15
 
 $string['studentname'] = 'Student Name';
@@ -218,7 +221,5 @@ $string['lastname_help'] = 'Surname which will be displayed on certificate.';
 $string['email_help'] = 'Email which will be displayed on certificate.';
 $string['idnumber'] = 'Student ID';
 $string['idnumber_help'] = 'Student ID which will be displayed on certificate.';
-
-
 $string['institution_help_help'] = 'This field will be displayed on the certificates to be issued';
 $string['title_help'] = 'This field will be displayed on the certificates to be issued';

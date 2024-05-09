@@ -111,7 +111,7 @@
 
   #page-mod-pokcertificate-pokcertificate .loadElement{
     position : absolute;
-    left:475px;
+    left:485px;
   }
 
   #page-mod-pokcertificate-pokcertificate .verified{
@@ -187,18 +187,22 @@
 
 #page-mod-pokcertificate-view .generalbox .mainheading{
     color:green;
-    margin-left:40%;
+    margin-left:45%;
+}
+
+#page-mod-pokcertificate-view div#notice {
+    max-width: fit-content;
 }
 
 #page-mod-pokcertificate-view .generalbox .complheading{
     color:#0072ffcc;
-    margin-left:30%;
+    margin-left:38%;
 }
 
 #page-mod-pokcertificate-view .generalbox input[type="button"] {
     color: white;
     background: red;
-    margin-left:37%;
+    margin-left:42%;
  }
 
  #page-mod-pokcertificate-view .generalbox .certmessage {

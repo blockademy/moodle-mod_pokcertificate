@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/pokcertificate/editprofile_form.php');
 require_login();
 
 $id  = optional_param('cmid', 0, PARAM_INT);
-$userid  = required_param('userid', PARAM_INT);
+$userid  = required_param('id', PARAM_INT);
 
 if ($id > 0) {
 
@@ -39,9 +39,10 @@ if ($id > 0) {
     if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
         throw new \moodle_exception('invalidcoursemodule');
     }
-    if (!$user = $DB->get_record('user', ['id' => $userid])) {
+    if ($userid != $USER->id || (!$user = $DB->get_record('user', ['id' => $userid]))) {
         throw new \moodle_exception('invaliduserid');
     }
+
     $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
     $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
@@ -97,6 +98,9 @@ if ($id > 0) {
     $PAGE->set_heading(get_string('profile', 'mod_pokcertificate'));
 
     echo $OUTPUT->header();
+    if ($userid != $USER->id) {
+        throw new \moodle_exception('invaliduserid');
+    }
     if (!$user = $DB->get_record('user', ['id' => $userid])) {
         throw new \moodle_exception('invaliduserid');
     } else {
