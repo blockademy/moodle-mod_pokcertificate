@@ -89,7 +89,6 @@ if ($id > 0) {
         }
     }
 } else {
-    $userid  = required_param('userid', PARAM_INT);
 
     $url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['userid' => $userid]);
 

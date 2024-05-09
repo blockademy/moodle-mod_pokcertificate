@@ -265,13 +265,19 @@ class pok {
                 }
                 for ($i = 0; $i < $data->option_repeats; $i++) {
                     if (isset($data->templatefield[$i]) && isset($data->userfield[$i])) {
-                        $mappingfield = new \stdClass();
-                        $mappingfield->timecreated = time();
-                        $mappingfield->certid = $data->certid;
-                        $mappingfield->templatefield = $data->templatefield[$i];
-                        $mappingfield->userfield = $data->userfield[$i];
-                        $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
-                        $fieldmapping->create();
+                        $pokfield = pokcertificate_fieldmapping::get_record(['certid' => $data->certid]);
+                        if (
+                            $pokfield->get('templatefield') != $data->templatefield[$i]
+                            && $pokfield->get('userfield') != $data->userfield[$i]
+                        ) {
+                            $mappingfield = new \stdClass();
+                            $mappingfield->timecreated = time();
+                            $mappingfield->certid = $data->certid;
+                            $mappingfield->templatefield = $data->templatefield[$i];
+                            $mappingfield->userfield = $data->userfield[$i];
+                            $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
+                            $fieldmapping->create();
+                        }
                     }
                 }
                 return true;
