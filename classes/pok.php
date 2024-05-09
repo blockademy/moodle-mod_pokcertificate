@@ -265,19 +265,14 @@ class pok {
                 }
                 for ($i = 0; $i < $data->option_repeats; $i++) {
                     if (isset($data->templatefield[$i]) && isset($data->userfield[$i])) {
-                        $pokfield = pokcertificate_fieldmapping::get_record(['certid' => $data->certid]);
-                        if (
-                            $pokfield->get('templatefield') != $data->templatefield[$i]
-                            && $pokfield->get('userfield') != $data->userfield[$i]
-                        ) {
-                            $mappingfield = new \stdClass();
-                            $mappingfield->timecreated = time();
-                            $mappingfield->certid = $data->certid;
-                            $mappingfield->templatefield = $data->templatefield[$i];
-                            $mappingfield->userfield = $data->userfield[$i];
-                            $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
-                            $fieldmapping->create();
-                        }
+
+                        $mappingfield = new \stdClass();
+                        $mappingfield->timecreated = time();
+                        $mappingfield->certid = $data->certid;
+                        $mappingfield->templatefield = $data->templatefield[$i];
+                        $mappingfield->userfield = $data->userfield[$i];
+                        $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
+                        $fieldmapping->create();
                     }
                 }
                 return true;
@@ -357,7 +352,8 @@ class pok {
             $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
             if ($pokrecord && $pokrecord->get('templateid')) {
                 $template = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
-                $emitdata = self::get_emitcertificate_data($user, $template);
+
+                $emitdata = self::get_emitcertificate_data($user, $template, $pokrecord);
                 $data = json_encode($emitdata);
                 // $emitcertificate = (new \mod_pokcertificate\api)->get_certificate($data);
                 if ($user->username == 'student1') {
@@ -371,16 +367,56 @@ class pok {
         return $emitcertificate;
     }
 
-
     /**
      * get_emitcertificate_data
      *
      * @param  mixed $user
      * @param  mixed $template
+     * @param  mixed $pokrecord
      * @return [object]
      */
-    public static function get_emitcertificate_data($user, $template) {
+    public static function get_emitcertificate_data($user, $template, $pokrecord) {
+        global $USER;
+        $templatedefinition = json_decode($template->get('templatedefinition'));
+        if ($templatedefinition) {
+            foreach ($templatedefinition->params as $param) {
+                if ($param->name == 'institution') {
+                    $param->value = get_config('mod_pokcertificate', 'institution');
+                }
+                if ($param->name == 'achiever') {
+                    $param->value = $USER->firstname . ' ' . $USER->lastname;
+                }
+                if ($param->name == 'title') {
+                    $param->value = $pokrecord->get('title');
+                }
+                if ($param->name == 'date') {
+                    $param->value = date('d-m-Y');
+                }
+                $pos = strpos($param->name, 'custom:');
 
+                if ($pos !== false) {
+
+                    $pokfields = pokcertificate_fieldmapping::get_records(['certid' => $pokrecord->get('id')]);
+
+                    if ($pokfields) {
+                        foreach ($pokfields as $field) {
+                            $varname = substr($param->name, strlen('custom:'));
+
+                            if ($field->get('templatefield') == $varname) {
+                                $userfield =  $field->get('userfield');
+                                if (strpos($field->get('userfield'), 'profile_field_') === 0) {
+                                    $userprofilefield = substr($field->get('userfield'), strlen('profile_field_'));
+                                    $param->value = $USER->profile[$userprofilefield];
+                                } else {
+                                    $param->value = $USER->$userfield;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $templatedefinition = json_encode($templatedefinition);
         $emitdata = new \stdclass;
         $emitdata->email = $user->email;
         $emitdata->institution = get_config('mod_pokcertificate', 'institution');
@@ -388,7 +424,7 @@ class pok {
         $emitdata->first_name = $user->firstname;
         $emitdata->last_name = $user->lastname;
         $emitdata->title = "Course Completion";
-        $emitdata->template_base64 = base64_encode($template->get('templatedefinition'));
+        $emitdata->template_base64 = base64_encode($templatedefinition);
         $emitdata->date = time();
         $emitdata->free = ($template->get('templatetype') == 0) ? 'free' : 'paid';
         $emitdata->wallet = get_config('mod_pokcertificate', 'wallet');
