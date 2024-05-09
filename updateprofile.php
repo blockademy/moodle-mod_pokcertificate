@@ -31,14 +31,16 @@ require_once($CFG->dirroot . '/mod/pokcertificate/editprofile_form.php');
 require_login();
 
 $id  = optional_param('cmid', 0, PARAM_INT);
+$userid  = required_param('userid', PARAM_INT);
+
 if ($id > 0) {
 
-    $userid = $USER->id;
-
     $url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['id' => $id]);
-
     if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
         throw new \moodle_exception('invalidcoursemodule');
+    }
+    if (!$user = $DB->get_record('user', ['id' => $userid])) {
+        throw new \moodle_exception('invaliduserid');
     }
     $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
     $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -79,22 +81,8 @@ if ($id > 0) {
             user_update_user($userdata, false, false);
             // Save custom profile fields data.
             profile_save_data($userdata);
-
-            $availablecredits = get_config('mod_pokcertificate', 'availablecertificates');
-            if ($availablecredits >= 0) {
-
-                $emitcertificate = pok::emit_certificate($id, $USER);
-                if (!empty($emitcertificate)) {
-                    if ($emitcertificate->processing) {
-                        echo $renderer->certificate_pending_message();
-                    } else {
-                        redirect($emitcertificate->viewUrl);
-                    }
-                }
-            } else if ($availablecredits == 0) {
-                echo $renderer->certificate_pending_message();
-                exit;
-            }
+            $redirecturl = new moodle_url('/mod/pokcertificate/view.php', ['id' => $id, 'flag' => 1]);
+            redirect($redirecturl);
         } else {
             $mform->display();
         }

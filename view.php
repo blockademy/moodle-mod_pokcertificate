@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Page module version information
+ * pokcertificate module version information
  *
  * @package mod_pokcertificate
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @copyright   2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,21 +30,13 @@ require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 $id      = optional_param('id', 0, PARAM_INT); // Course Module ID.
-$p       = optional_param('p', 0, PARAM_INT);  // Page instance ID.
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
+$flag = optional_param('flag', 0, PARAM_BOOL);
 
-if ($p) {
-    if (!$pokcertificate = $DB->get_record('pokcertificate', ['id' => $p])) {
-        throw new \moodle_exception('invalidaccessparameter');
-    }
-    $cm = get_coursemodule_from_instance('pokcertificate', $pokcertificate->id, $pokcertificate->course, false, MUST_EXIST);
-} else {
-    if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-    $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
+if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
+    throw new \moodle_exception('invalidcoursemodule');
 }
-
+$pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
@@ -97,15 +89,26 @@ if ($id) {
     }
     // Getting certificate template view for student.
     if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-        $params = ['cmid' => $id];
-        $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
-        redirect($url);
-        /*  $profilefields = pok::check_userfields_data($id, $USER);
-        if (!$profilefields) {
-            $params = ['cmid' => $id];
+        if ($flag) {
+            $availablecredits = get_config('mod_pokcertificate', 'availablecertificates');
+            if ($availablecredits >= 0) {
+                $emitcertificate = pok::emit_certificate($id, $USER);
+                if (!empty($emitcertificate)) {
+                    if ($emitcertificate->processing) {
+                        echo $renderer->certificate_pending_message();
+                    } else {
+                        redirect($emitcertificate->viewUrl);
+                    }
+                }
+            } else if ($availablecredits == 0) {
+                echo $renderer->certificate_pending_message();
+                exit;
+            }
+        } else {
+            $params = ['cmid' => $id, 'userid' => $USER->id];
             $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
             redirect($url);
-        } */
+        }
     }
 }
 echo $renderer->show_certificate_templates($id);

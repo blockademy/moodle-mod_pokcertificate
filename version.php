@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Page module version information
+ * pokcertificate module version information
  *
  * @package mod_pokcertificate
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @copyright   2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

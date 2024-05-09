@@ -17,7 +17,7 @@
 
 /**
  * @package mod_pokcertificate
- * @copyright  2009 Petr Skoda (http://skodak.org)
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -736,28 +736,28 @@ function mod_pokcertificate_cm_info_view(cm_info $cm) {
 } */
 
 //////For display on incomplete student profile page//////////
-function incompletestudentprofilelist($filtervalues){
-    global $DB, $PAGE,$USER,$CFG,$OUTPUT;
+function incompletestudentprofilelist($filtervalues) {
+    global $DB, $PAGE, $USER, $CFG, $OUTPUT;
     $systemcontext = \context_system::instance();
     $countsql = "SELECT count(id) FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
     $selectsql = "SELECT * FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
 
     $queryparam = array();
 
-    
+
     if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
         $concatsql .= " AND (idnumber LIKE :search1 )";
-        $queryparam['search1'] = '%'.trim($filtervalues->search_query).'%';
+        $queryparam['search1'] = '%' . trim($filtervalues->search_query) . '%';
     }
-    $count = $DB->count_records_sql($countsql.$concatsql, $queryparam);
-    $concatsql.=" order by id desc";
-    $records = $DB->get_records_sql($selectsql.$concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
+    $count = $DB->count_records_sql($countsql . $concatsql, $queryparam);
+    $concatsql .= " order by id desc";
+    $records = $DB->get_records_sql($selectsql . $concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
 
-    $list=array();
-    $data=array();
+    $list = array();
+    $data = array();
     if ($records) {
         foreach ($records as $c) {
-            $list=array();
+            $list = array();
             $list['id'] = $c->id;
             $list['firstname'] = $c->firstname;
             $list['lastname'] = $c->lastname;
@@ -771,28 +771,28 @@ function incompletestudentprofilelist($filtervalues){
 }
 
 //////For display on general certificate status page//////////
-function generalcertificatelist($filtervalues){
-    global $DB, $PAGE,$USER,$CFG,$OUTPUT;
+function generalcertificatelist($filtervalues) {
+    global $DB, $PAGE, $USER, $CFG, $OUTPUT;
     $systemcontext = \context_system::instance();
     $countsql = "SELECT count(id) FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
     $selectsql = "SELECT * FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
 
     $queryparam = array();
 
-    
+
     if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
         $concatsql .= " AND (idnumber LIKE :search1 )";
-        $queryparam['search1'] = '%'.trim($filtervalues->search_query).'%';
+        $queryparam['search1'] = '%' . trim($filtervalues->search_query) . '%';
     }
-    $count = $DB->count_records_sql($countsql.$concatsql, $queryparam);
-    $concatsql.=" order by id desc";
-    $records = $DB->get_records_sql($selectsql.$concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
+    $count = $DB->count_records_sql($countsql . $concatsql, $queryparam);
+    $concatsql .= " order by id desc";
+    $records = $DB->get_records_sql($selectsql . $concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
 
-    $list=array();
-    $data=array();
+    $list = array();
+    $data = array();
     if ($records) {
         foreach ($records as $c) {
-            $list=array();
+            $list = array();
             $list['id'] = $c->id;
             $list['firstname'] = $c->firstname;
             $list['lastname'] = $c->lastname;
@@ -806,8 +806,8 @@ function generalcertificatelist($filtervalues){
 }
 
 //////For display on course participants page//////////
-function courseparticipantslist($courseid, $filtervalues){
-    global $DB, $PAGE,$USER,$CFG,$OUTPUT;
+function courseparticipantslist($courseid, $filtervalues) {
+    global $DB, $PAGE, $USER, $CFG, $OUTPUT;
     $systemcontext = \context_system::instance();
     $countsql = "SELECT count(u.id) ";
     $selectsql = "SELECT u.id, u.username, u.firstname, u.lastname, FROM_UNIXTIME(ue.timecreated) AS enrolment_date, FROM_UNIXTIME(cc.timecompleted) AS completion_date ";
@@ -815,24 +815,24 @@ function courseparticipantslist($courseid, $filtervalues){
                 JOIN mdl_user_enrolments AS ue ON u.id = ue.userid
                 JOIN mdl_enrol AS e ON ue.enrolid = e.id
            LEFT JOIN mdl_course_completions AS cc ON (cc.userid = u.id AND cc.course = e.courseid)
-                WHERE e.courseid = ".$courseid." AND u.deleted = 0 AND u.suspended = 0 AND u.id > 2 ";
+                WHERE e.courseid = " . $courseid . " AND u.deleted = 0 AND u.suspended = 0 AND u.id > 2 ";
 
     $queryparam = array();
 
-    
+
     if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
         $concatsql .= " AND (u.idnumber LIKE :search1 )";
-        $queryparam['search1'] = '%'.trim($filtervalues->search_query).'%';
+        $queryparam['search1'] = '%' . trim($filtervalues->search_query) . '%';
     }
-    $count = $DB->count_records_sql($countsql.$fromsql.$concatsql, $queryparam);
-    $concatsql.=" order by u.id desc";
-    $records = $DB->get_records_sql($selectsql.$fromsql.$concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
+    $count = $DB->count_records_sql($countsql . $fromsql . $concatsql, $queryparam);
+    $concatsql .= " order by u.id desc";
+    $records = $DB->get_records_sql($selectsql . $fromsql . $concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
 
-    $list=array();
-    $data=array();
+    $list = array();
+    $data = array();
     if ($records) {
         foreach ($records as $c) {
-            $list=array();
+            $list = array();
             $list['id'] = $c->id;
             $list['firstname'] = $c->firstname;
             $list['email'] = $c->email;

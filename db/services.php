@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Page external functions and service definitions.
+ * pokcertificate external functions and service definitions.
  *
  * @package    mod_pokcertificate
  * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @copyright   2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */

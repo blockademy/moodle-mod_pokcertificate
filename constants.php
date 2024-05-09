@@ -13,6 +13,13 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * List of all pokcertificates constants
+ *
+ * @package mod_pokcertificate
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace mod_pokcertificate;
 
