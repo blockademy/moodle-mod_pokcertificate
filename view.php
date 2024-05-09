@@ -97,12 +97,15 @@ if ($id) {
     }
     // Getting certificate template view for student.
     if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-        $emitcertificate = pok::emit_certificate($id, $USER);
-        if (!empty($emitcertificate)) {
+        $params = ['cmid' => $id];
+        $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
+        redirect($url);
+        /*  $profilefields = pok::check_userfields_data($id, $USER);
+        if (!$profilefields) {
             $params = ['cmid' => $id];
             $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
             redirect($url);
-        }
+        } */
     }
 }
 echo $renderer->show_certificate_templates($id);

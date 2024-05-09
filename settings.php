@@ -34,8 +34,27 @@ if ($ADMIN->fulltree) {
             '<div class="" >' . get_string('verifyauth', 'pokcertificate') . '
             <a target="_blank" class="bt btn-primary"
             style="padding: 7px 18px; border-radius: 4px; color: white; background-color: #2578dd; margin-left: 5px;"
-            href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >' . get_string('clickhere', 'mod_pokcertificate') . '
+            href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >' .
+                get_string('clickhere', 'mod_pokcertificate') . '
             </a></div><br>'
         )
     );
 }
+/* defined('MOODLE_INTERNAL') || die();
+require_once(dirname(__FILE__) . '/lib.php');
+
+$ADMIN->add('modsettings', new admin_category(
+    'pokcertificatesettings',
+    get_string('modulename', 'pokcertificate'),
+    $module->is_enabled() === false
+));
+
+$ADMIN->add(
+    'pokcertificatesettings',
+    new admin_externalpage(
+        'pokcertificate_settings',
+        get_string('verifyauth', 'pokcertificate'),
+        new moodle_url('/mod/pokcertificate/pokcertificate.php'),
+        'mod/pokcertificate:manageinstance'
+    )
+); */

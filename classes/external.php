@@ -37,11 +37,11 @@ use core_external\util;
 use mod_pokcertificate\pok;
 
 /**
- * Page external functions
+ * pokcertificate external functions
  *
  * @package    mod_pokcertificate
  * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.0
  */
@@ -56,7 +56,7 @@ class mod_pokcertificate_external extends external_api {
     public static function view_pokcertificate_parameters() {
         return new external_function_parameters(
             [
-                'pokcertificateid' => new external_value(PARAM_INT, 'pokcertificate instance id')
+                'pokcertificateid' => new external_value(PARAM_INT, 'pokcertificate instance id'),
             ]
         );
     }
@@ -77,7 +77,7 @@ class mod_pokcertificate_external extends external_api {
         $params = self::validate_parameters(
             self::view_pokcertificate_parameters(),
             [
-                'pokcertificateid' => $pokcertificateid
+                'pokcertificateid' => $pokcertificateid,
             ]
         );
         $warnings = [];
@@ -110,7 +110,7 @@ class mod_pokcertificate_external extends external_api {
         return new external_single_structure(
             [
                 'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-                'warnings' => new external_warnings()
+                'warnings' => new external_warnings(),
             ]
         );
     }
@@ -279,7 +279,7 @@ class mod_pokcertificate_external extends external_api {
             [
                 'status'  => new external_value(PARAM_TEXT, get_string('status')),
                 'msg'  => new external_value(PARAM_RAW, get_string('error')),
-                'response'  => new external_value(PARAM_RAW, get_string('response'))
+                'response'  => new external_value(PARAM_RAW, get_string('response')),
             ]
         );
     }
@@ -309,21 +309,6 @@ class mod_pokcertificate_external extends external_api {
 
     public static function show_certificate_templates_returns() {
         return new external_value(PARAM_RAW, 'return');
-        /*    return new external_single_structure(
-            [
-                'certdata' => new external_multiple_structure(
-                    new external_single_structure(
-                        [
-                            'tempname' => new external_value(PARAM_RAW, 'encoded certificate template name'),
-                            'name' => new external_value(PARAM_TEXT, 'certificate template name'),
-                            'cmid' => new external_value(PARAM_RAW, 'pok certifcate course module id'),
-                            'certimage' => new external_value(PARAM_RAW, 'certificate image url'),
-                            'url' => new external_value(PARAM_RAW, 'url'),
-                        ]
-                    )
-                )
-            ]
-        ); */
     }
 
     public static function incompletestudentprofile_view_parameters() {
@@ -355,7 +340,7 @@ class mod_pokcertificate_external extends external_api {
         $contextid,
         $filterdata
     ) {
-        global $OUTPUT, $CFG, $USER,$PAGE;
+        global $OUTPUT, $CFG, $USER, $PAGE;
         require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
         require_login();
         $PAGE->set_url('/mod/pokcertificate/incompletestudent.php', array());
@@ -382,16 +367,15 @@ class mod_pokcertificate_external extends external_api {
         $stable->length = $limit;
         $incompletestudent = incompletestudentprofilelist($filtervalues);
         $totalcount = $incompletestudent['count'];
-        $data=$incompletestudent['data'];
+        $data = $incompletestudent['data'];
         return [
             'is_admin' => is_siteadmin(),
             'totalcount' => $totalcount,
-            'records' =>$data,
+            'records' => $data,
             'options' => $options,
             'dataoptions' => $dataoptions,
             'filterdata' => $filterdata,
         ];
-
     }
 
     /**
@@ -448,7 +432,7 @@ class mod_pokcertificate_external extends external_api {
         $contextid,
         $filterdata
     ) {
-        global $OUTPUT, $CFG, $USER,$PAGE;
+        global $OUTPUT, $CFG, $USER, $PAGE;
         require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
         require_login();
         $PAGE->set_url('/mod/pokcertificate/incompletestudent.php', array());
@@ -475,16 +459,15 @@ class mod_pokcertificate_external extends external_api {
         $stable->length = $limit;
         $incompletestudent = generalcertificatelist($filtervalues);
         $totalcount = $incompletestudent['count'];
-        $data=$incompletestudent['data'];
+        $data = $incompletestudent['data'];
         return [
             'is_admin' => is_siteadmin(),
             'totalcount' => $totalcount,
-            'records' =>$data,
+            'records' => $data,
             'options' => $options,
             'dataoptions' => $dataoptions,
             'filterdata' => $filterdata,
         ];
-
     }
 
     /**
@@ -541,7 +524,7 @@ class mod_pokcertificate_external extends external_api {
         $contextid,
         $filterdata
     ) {
-        global $OUTPUT, $CFG, $USER,$PAGE;
+        global $OUTPUT, $CFG, $USER, $PAGE;
         require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
         require_login();
         $PAGE->set_url('/mod/pokcertificate/incompletestudent.php', array());
@@ -568,16 +551,15 @@ class mod_pokcertificate_external extends external_api {
         $stable->length = $limit;
         $incompletestudent = courseparticipantslist($decodedata->courseid, $filtervalues);
         $totalcount = $incompletestudent['count'];
-        $data=$incompletestudent['data'];
+        $data = $incompletestudent['data'];
         return [
             'is_admin' => is_siteadmin(),
             'totalcount' => $totalcount,
-            'records' =>$data,
+            'records' => $data,
             'options' => $options,
             'dataoptions' => $dataoptions,
             'filterdata' => $filterdata,
         ];
-
     }
 
     /**

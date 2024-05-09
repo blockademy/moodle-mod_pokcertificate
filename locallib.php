@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,8 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-use mod_pokcertificate\persistent\pokcertificate;
-
 
 require_once("$CFG->libdir/filelib.php");
 require_once("$CFG->libdir/resourcelib.php");
@@ -38,13 +35,13 @@ require_once("$CFG->dirroot/mod/pokcertificate/lib.php");
  */
 class pokcertificate_content_file_info extends file_info_stored {
     public function get_parent() {
-        if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
+        if ($this->lf->get_filepath() === '/' && $this->lf->get_filename() === '.') {
             return $this->browser->get_file_info($this->context);
         }
         return parent::get_parent();
     }
     public function get_visible_name() {
-        if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
+        if ($this->lf->get_filepath() === '/' && $this->lf->get_filename() === '.') {
             return $this->topvisiblename;
         }
         return parent::get_visible_name();
@@ -53,5 +50,8 @@ class pokcertificate_content_file_info extends file_info_stored {
 
 function pokcertificate_get_editor_options($context) {
     global $CFG;
-    return array('subdirs' => 1, 'maxbytes' => $CFG->maxbytes, 'maxfiles' => -1, 'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0);
+    return [
+        'subdirs' => 1, 'maxbytes' => $CFG->maxbytes, 'maxfiles' => -1,
+        'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0
+    ];
 }

@@ -185,3 +185,28 @@
     border-right: 1px solid #dee2e6;
 }
 
+#page-mod-pokcertificate-view .generalbox .mainheading{
+    color:green;
+    margin-left:40%;
+}
+
+#page-mod-pokcertificate-view .generalbox .complheading{
+    color:#0072ffcc;
+    margin-left:30%;
+}
+
+#page-mod-pokcertificate-view .generalbox input[type="button"] {
+    color: white;
+    background: red;
+    margin-left:37%;
+ }
+
+ #page-mod-pokcertificate-view .generalbox .certmessage {
+    text-align: justify!important;
+    text-justify: inter-word;
+ }
+ #page-mod-pokcertificate-view .generalbox .faicon{
+    color: green;
+    margin-left: 50%;
+ }
+

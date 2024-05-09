@@ -24,14 +24,12 @@
 defined('MOODLE_INTERNAL') || die;
 
 
-use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
-
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 /**
- *form shown while adding activity.
+ * form shown while adding activity.
  */
 class mod_pokcertificate_fieldmapping_form extends moodleform {
 
@@ -48,11 +46,14 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
 
         $groupelem = [];
         $groupelem[] = &$mform->createElement('html', '<span>' . get_string('apifields', 'pokcertificate') . '</span>');
-        $groupelem[] = &$mform->createElement('html', '<span class="ufheader" >' . get_string('userfields', 'pokcertificate') . '</span>');
+        $groupelem[] = &$mform->createElement(
+            'html',
+            '<span class="ufheader" >' . get_string('userfields', 'pokcertificate') . '</span>'
+        );
         $mform->addGroup($groupelem, '', '', [' '], false, ['class' => 'mappingheaders']);
 
         $localfields = get_internalfield_list();
-        $remotefields = get_internalfield_list(); //get_externalfield_list($templatename);
+        $remotefields = get_externalfield_list($templatename);
 
         $repeatarray = [
             $mform->createElement('hidden', 'fieldmapping', 'fieldmapping'),
@@ -91,6 +92,7 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
 
         $repeateloptions = [];
         $repeateloptions['fieldmapping']['default'] = '{no}';
+        $repeateloptions['fieldmapping']['type'] = PARAM_RAW;
         $repeateloptions['templatefield']['type'] = PARAM_RAW;
         $repeateloptions['userfield']['type'] = PARAM_RAW;
 
@@ -98,7 +100,7 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $mform->setType('optionid', PARAM_INT);
 
         $repeatno = 1;
-        /*    if (!empty($id)) {
+        /* if (!empty($id)) {
             $count = pokcertificate_fieldmapping::count_records(
                 ['certid' => $certid]
             );

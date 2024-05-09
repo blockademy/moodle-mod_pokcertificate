@@ -29,7 +29,7 @@ require('../../config.php');
 require_login();
 require_once($CFG->dirroot . '/mod/pokcertificate/fieldmapping_form.php');
 
-$id  = required_param('id', PARAM_INT); //course module id.
+$id = required_param('id', PARAM_INT); // Course module id.
 $tempname = optional_param('temp', '', PARAM_RAW);
 $temptype = optional_param('type', '', PARAM_INT);
 $template = base64_decode($tempname);
@@ -58,7 +58,7 @@ if ($tempname) {
     $templateinfo->template = base64_decode($tempname);
     $templateinfo->templatetype = $temptype;
     $data = pok::save_template_definition($templateinfo, $cm);
-    /*  $templateexists = pokcertificate_templates::get_record(['templatename' => $template]);
+    /* ...$templateexists = pokcertificate_templates::get_record(['templatename' => $template]);
 
     if (!$templateexists) {
         $templateinfo = new \stdclass;
@@ -94,7 +94,7 @@ if ($remotefields) {
 } else {
     $preview = pok::preview_template($id);
     if ($preview) {
-        $params = array('id' => $id);
+        $params = ['id' => $id];
         $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
         redirect($url);
     }

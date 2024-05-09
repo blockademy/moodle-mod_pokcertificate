@@ -30,36 +30,49 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 require_once($CFG->dirroot . '/lib/formslib.php');
 require_once($CFG->dirroot . '/user/editlib.php');
 /**
- *form shown while adding activity.
+ * form shown while adding activity.
  */
 class mod_pokcertificate_updateprofile_form extends \moodleform {
 
     public function definition() {
-
+        global $CFG;
         $mform = $this->_form;
 
         $user = $this->_customdata['user'];
         $cmid = $this->_customdata['cmid'];
-        $pokfields = $this->_customdata['pokfields'];
+        $pokfields = ($this->_customdata['pokfields']) ? $this->_customdata['pokfields'] : '';
         $userid = $user->id;
-
-        // Next the customisable profile fields.
 
         $strrequired = get_string('required');
         $stringman = get_string_manager();
-        foreach ($pokfields as $field) {
-            $fieldname = $field->get('userfield');
 
-            if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') === false)) {
-                $purpose = user_edit_map_field_purpose($user->id, $fieldname);
-                $mform->addElement('text', $fieldname,  get_string($fieldname),  'maxlength="100" size="30"' . $purpose);
-                if ($stringman->string_exists('missing' . $fieldname, 'core')) {
-                    $strmissingfield = get_string('missing' . $fieldname, 'core');
-                } else {
-                    $strmissingfield = $strrequired;
+        $mandatoryfields = ['firstname', 'lastname', 'email', 'idnumber'];
+        foreach ($mandatoryfields as $fullname) {
+
+            $mform->addElement('text', $fullname,  get_string($fullname, 'mod_pokcertificate'),  'maxlength="100" size="30"');
+            $mform->addRule($fullname, '', 'required', null, 'client');
+            $mform->setType($fullname, PARAM_RAW);
+        }
+        $translations = get_string_manager()->get_list_of_translations();
+        $mform->addElement('select', 'lang', get_string('preferredlanguage'), $translations);
+        $lang = empty($user->lang) ? $CFG->lang : $user->lang;
+        $mform->setDefault('lang', $lang);
+
+        if (!empty($pokfields)) {
+            foreach ($pokfields as $field) {
+                $fieldname = $field->get('userfield');
+
+                if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') === false)) {
+                    $purpose = user_edit_map_field_purpose($user->id, $fieldname);
+                    $mform->addElement('text', $fieldname,  get_string($fieldname),  'maxlength="100" size="30"' . $purpose);
+                    if ($stringman->string_exists('missing' . $fieldname, 'core')) {
+                        $strmissingfield = get_string('missing' . $fieldname, 'core');
+                    } else {
+                        $strmissingfield = $strrequired;
+                    }
+                    $mform->addRule($fieldname, $strmissingfield, 'required', null, 'client');
+                    $mform->setType($fieldname, PARAM_NOTAGS);
                 }
-                $mform->addRule($fieldname, $strmissingfield, 'required', null, 'client');
-                $mform->setType($fieldname, PARAM_NOTAGS);
             }
         }
         $mform->addElement('hidden', 'id');
@@ -72,7 +85,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
 
         self::get_profile_fields($mform, $pokfields, $userid);
 
-        //profile_definition($mform, $userid);
+        // profile_definition($mform, $userid);
 
         $this->add_action_buttons(true, get_string('updatemyprofile'));
 
@@ -93,7 +106,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
             $mform->applyFilter($field, 'trim');
         }
 
-        if ($user = $DB->get_record('user', array('id' => $userid))) {
+        if ($user = $DB->get_record('user', ['id' => $userid])) {
 
             // Disable fields that are locked by auth plugins.
             $fields = get_user_fieldnames();
@@ -125,7 +138,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
                     if ($authplugin->config->{$configvariable} === 'locked') {
                         $mform->hardFreeze($formfield);
                         $mform->setConstant($formfield, $value);
-                    } else if ($authplugin->config->{$configvariable} === 'unlockedifempty' and $value != '') {
+                    } else if ($authplugin->config->{$configvariable} === 'unlockedifempty' && $value != '') {
                         $mform->hardFreeze($formfield);
                         $mform->setConstant($formfield, $value);
                     }

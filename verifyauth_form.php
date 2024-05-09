@@ -55,17 +55,30 @@ class mod_pokcertificate_verifyauth_form extends moodleform {
         $institution = get_config('mod_pokcertificate', 'institution');
         $class = ($institution) ? 'verified' : 'notverified';
         $faicon = ($institution) ? ' fa-solid fa-circle-check' : ' fa-solid fa-circle-xmark';
-        $message = ($institution) ? ucwords(get_string('verified', 'mod_pokcertificate')) :  ucwords(get_string('notverified', 'mod_pokcertificate'));
+        $message = ($institution) ?
+            ucwords(get_string('verified', 'mod_pokcertificate')) : ucwords(get_string('notverified', 'mod_pokcertificate'));
+
         $groupelem = [];
-        $groupelem[] = &$mform->createElement('text', 'institution', get_string('institution', 'pokcertificate'), 'size="35",readonly="readonly"');
+        $groupelem[] = &$mform->createElement(
+            'text',
+            'institution',
+            get_string('institution', 'pokcertificate'),
+            'size="35",readonly="readonly"'
+        );
         $groupelem[] = &$mform->createElement('html', '<div id="verifyresponse" ><i class="' . $class . $faicon . '"></i>
             <span>' . $message . '</span></div>');
         $groupelem[] = &$mform->createElement('html', '<div class="loadElement"></div>');
 
-        $mform->addGroup($groupelem, 'institution', get_string('institution', 'pokcertificate'), [' '], false, ['class' => 'locationtypes']);
+        $mform->addGroup(
+            $groupelem,
+            'institution',
+            get_string('institution', 'pokcertificate'),
+            [' '],
+            false,
+            ['class' => 'locationtypes']
+        );
         $mform->setType('institution', PARAM_TEXT);
         $mform->addHelpButton('institution', 'institution', 'pokcertificate');
-
 
         $buttonarray = [];
         $buttonarray[] = $mform->createElement('button', 'verifyauth', get_string("verify", "pokcertificate"), "", "");

@@ -20,6 +20,8 @@ use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 
+defined('MOODLE_INTERNAL') || die;
+
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
 /**
@@ -32,10 +34,22 @@ require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
 class pok {
     protected static $cmid;
 
+    /**
+     * set_cmid
+     *
+     * @param  int $cmid
+     * @return void
+     */
     public static function set_cmid($cmid) {
         self::$cmid = $cmid;
     }
 
+    /**
+     * get cm instance
+     *
+     * @param  int $cmid
+     * @return object
+     */
     public static function get_cm_instance($cmid) {
         global $DB;
         $cm = '';
@@ -45,6 +59,7 @@ class pok {
         }
         return $cm;
     }
+
     /**
      * Save pokcertificate instance.
      * @param [stdClass] $data
@@ -57,7 +72,7 @@ class pok {
         $cmid = $data->coursemodule;
 
         $data->timemodified = time();
-        $displayoptions = array();
+        $displayoptions = [];
         if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
             $displayoptions['popupwidth']  = $data->popupwidth;
             $displayoptions['popupheight'] = $data->popupheight;
@@ -75,13 +90,21 @@ class pok {
         $pokcertificate->create();
         $data->id = $pokcertificate->get('id');
 
-        // we need to use context now, so we need to make sure all needed info is already in db
-        $DB->set_field('course_modules', 'instance', $data->id, array('id' => $cmid));
+        // We need to use context now, so we need to make sure all needed info is already in db.
+        $DB->set_field('course_modules', 'instance', $data->id, ['id' => $cmid]);
         $context = \context_module::instance($cmid);
 
-        if ($mform and !empty($data->pokcertificate['itemid'])) {
+        if ($mform && !empty($data->pokcertificate['itemid'])) {
             $draftitemid = $data->pokcertificate['itemid'];
-            $data->content = file_save_draft_area_files($draftitemid, $context->id, 'mod_pokcertificate', 'content', 0, pokcertificate_get_editor_options($context), $data->content);
+            $data->content = file_save_draft_area_files(
+                $draftitemid,
+                $context->id,
+                'mod_pokcertificate',
+                'content',
+                0,
+                pokcertificate_get_editor_options($context),
+                $data->content
+            );
             $data->usermodified = $USER->id;
             $pokcertificate = new pokcertificate(0, $data);
             $pokcertificate->update();
@@ -100,17 +123,21 @@ class pok {
      * @return [bool] true
      */
     public static function update_pokcertificate_instance($data, $mform) {
-        global $CFG;
+        global $CFG, $USER;
         require_once("$CFG->libdir/resourcelib.php");
 
         $cmid        = $data->coursemodule;
         $draftitemid = $data->pokcertificate['itemid'];
 
+        $data->orgname = get_config('mod_pokcertificate', 'institution');
+        $data->orgid = get_config('mod_pokcertificate', 'orgid');
+        $data->usercreated = $USER->id;
+        $data->usermodified = $USER->id;
         $data->timemodified = time();
         $data->id           = $data->instance;
         $data->revision++;
 
-        $displayoptions = array();
+        $displayoptions = [];
         if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
             $displayoptions['popupwidth']  = $data->popupwidth;
             $displayoptions['popupheight'] = $data->popupheight;
@@ -124,7 +151,15 @@ class pok {
 
         $context = \context_module::instance($cmid);
         if ($draftitemid) {
-            $data->content = file_save_draft_area_files($draftitemid, $context->id, 'mod_pokcertificate', 'content', 0, pokcertificate_get_editor_options($context), $data->content);
+            $data->content = file_save_draft_area_files(
+                $draftitemid,
+                $context->id,
+                'mod_pokcertificate',
+                'content',
+                0,
+                pokcertificate_get_editor_options($context),
+                $data->content
+            );
             $pokcertificate = new pokcertificate(0, $data);
             $pokcertificate->update();
         }
@@ -143,16 +178,16 @@ class pok {
     public static function delete_pokcertificate_instance($id) {
         global $DB;
 
-        if (!$pokcertificate = $DB->get_record('pokcertificate', array('id' => $id))) {
+        if (!$pokcertificate = $DB->get_record('pokcertificate', ['id' => $id])) {
             return false;
         }
 
         $cm = get_coursemodule_from_instance('pokcertificate', $id);
         \core_completion\api::update_completion_date_event($cm->id, 'pokcertificate', $id, null);
 
-        // note: all context files are deleted automatically
+        // Note: all context files are deleted automatically.
 
-        $DB->delete_records('pokcertificate', array('id' => $pokcertificate->id));
+        $DB->delete_records('pokcertificate', ['id' => $pokcertificate->id]);
         return true;
     }
 
@@ -248,6 +283,13 @@ class pok {
         }
     }
 
+    /**
+     * get_certificate_templates
+     *
+     * @param  mixed $cmid
+     * @param  mixed $type
+     * @return array
+     */
     public static function get_certificate_templates($cmid, $type = 'free') {
         global $CFG;
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -275,10 +317,19 @@ class pok {
         return $templates;
     }
 
+    /**
+     * preview_template
+     *
+     * @param  mixed $cmid
+     * @return bool
+     */
     public static function preview_template($cmid) {
         $cm = self::get_cm_instance($cmid);
         if (!empty($cm) && has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-            $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
+            $templateid = pokcertificate::get_field(
+                'templateid',
+                ['id' => $cm->instance, 'course' => $cm->course]
+            );
             if ($templateid) {
                 return true;
             }
@@ -286,30 +337,87 @@ class pok {
         return false;
     }
 
+    /**
+     * emit_certificate
+     *
+     * @param  mixed $cmid
+     * @param  mixed $user
+     * @return [void]
+     */
     public static function emit_certificate($cmid, $user) {
         $cm = self::get_cm_instance($cmid);
-        $pokfields = [];
+        $emitcertificate = '';
         if (!empty($cm) && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
             $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
-            $totalcertcount = get_config('mod_pokcertificate', 'availablecertificate');
-            if ($totalcertcount >= 0) {
-                $pokfields = self::check_profile_fields($user, $cm);
+            if ($pokrecord && $pokrecord->get('templateid')) {
+                $template = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
+                $emitdata = self::get_emitcertificate_data($user, $template);
+                $data = json_encode($emitdata);
+                // $emitcertificate = (new \mod_pokcertificate\api)->get_certificate($data);
+                $emitcertificate = '{"processing": "true", "viewUrl": "https://view.pok.tech/c/662d6a93-2dab-493c-be88-2c44e6076002"}';
+                $emitcertificate = json_decode($emitcertificate);
             }
         }
+        return $emitcertificate;
+    }
+
+
+    /**
+     * get_emitcertificate_data
+     *
+     * @param  mixed $user
+     * @param  mixed $template
+     * @return [object]
+     */
+    public static function get_emitcertificate_data($user, $template) {
+
+        $emitdata = new \stdclass;
+        $emitdata->email = $user->email;
+        $emitdata->institution = get_config('mod_pokcertificate', 'institution');
+        $emitdata->identification = '0123456789';
+        $emitdata->first_name = $user->firstname;
+        $emitdata->last_name = $user->lastname;
+        $emitdata->title = "Course Completion";
+        $emitdata->template_base64 = base64_encode($template->get('templatedefinition'));
+        $emitdata->date = time();
+        $emitdata->free = ($template->get('templatetype') == 0) ? 'free' : 'paid';
+        $emitdata->wallet = get_config('mod_pokcertificate', 'wallet');
+        $emitdata->language_tag = $user->lang;
+        return $emitdata;
+    }
+
+    /**
+     * get_mapping_fields
+     *
+     * @param  mixed $user
+     * @param  mixed $cm
+     * @return [object]
+     */
+    public static function get_mapping_fields($user, $cm) {
+        $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+        $pokfields = pokcertificate_fieldmapping::get_records(['certid' => $pokrecord->get('id')]);
         return $pokfields;
     }
 
-    public static function check_profile_fields($user, $cm) {
-        $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
-
-        $pokfields = pokcertificate_fieldmapping::get_records(['certid' => $pokrecord->get('id')]);
-        return $pokfields;
-        /*  foreach ($pokfields as $field) {
-            $fieldname = $field->get('userfield');
-            if (empty($user->$fieldname)) {
-                return false;
+    /**
+     * check_userfields_data
+     *
+     * @param  mixed $cmid
+     * @param  mixed $user
+     * @return bool
+     */
+    public static function check_userfields_data($cmid, $user) {
+        $cm = self::get_cm_instance($cmid);
+        $pokfields = [];
+        if (!empty($cm)) {
+            $pokfields = self::get_mapping_fields($user, $cm);
+            foreach ($pokfields as $field) {
+                $fieldname = $field->get('userfield');
+                if (empty($user->$fieldname)) {
+                    return false;
+                }
             }
         }
-        return true; */
+        return true;
     }
 }

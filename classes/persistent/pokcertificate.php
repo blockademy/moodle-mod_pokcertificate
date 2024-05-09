@@ -46,6 +46,10 @@ class pokcertificate extends persistent {
                 'type' => PARAM_TEXT,
                 'optional' => false,
             ],
+            'title' => [
+                'type' => PARAM_TEXT,
+                'optional' => false,
+            ],
             'intro' => [
                 'type' => PARAM_RAW,
                 'optional' => false,
@@ -66,12 +70,12 @@ class pokcertificate extends persistent {
             'templateid' => [
                 'type' => PARAM_INT,
                 'optional' => true,
-                'default' => 0
+                'default' => 0,
             ],
             'display' => [
                 'type' => PARAM_INT,
                 'optional' => false,
-                'default' => 0
+                'default' => 0,
             ],
             'displayoptions' => [
                 'type' => PARAM_RAW,

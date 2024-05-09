@@ -20,9 +20,6 @@ use renderable;
 use renderer_base;
 use templatable;
 
-use mod_pokcertificate\api;
-use mod_pokcertificate\persistent\pokcertificate_templates;
-
 /**
  * Class certificatetemplates
  *
@@ -43,12 +40,6 @@ class certificatetemplates implements templatable, renderable {
      */
     public function __construct($id) {
 
-        $this->sampledata = [
-            "name" => "John Galt",
-            "title" => "Engineer",
-            "date" => 1704423600000,
-            "institution" => "Ohio State University"
-        ];
         $this->cmid = $id;
     }
 

@@ -119,8 +119,8 @@ class api {
      * The actual certificate of the student
      * @return string certificate url
      */
-    public function get_certificate() {
-        $response = $this->emit_certificate();
+    public function get_certificate($data = '') {
+        $response = $this->emit_certificate($data);
         $cert = json_decode($response);
         $location = MINTER_ROOT . '/certificate/' . $cert->id . '/details';
         return $this->execute_command($location, '');

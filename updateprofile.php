@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/pokcertificate/editprofile_form.php');
 require_login();
 
 $id  = optional_param('cmid', 0, PARAM_INT);
-if($id>0){
+if ($id > 0) {
 
     $userid = $USER->id;
 
@@ -59,35 +59,46 @@ if($id>0){
     } else {
 
         $cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
-        //if (!profile_has_required_custom_fields_set($user->id)) {
-        $pokfields = pok::check_profile_fields($user, $cm);
-        if ($pokfields) {
-            // Load user preferences.
-            useredit_load_preferences($user);
+        // if (!profile_has_required_custom_fields_set($user->id)) {
+        $pokfields = pok::get_mapping_fields($user, $cm);
 
-            // Load custom profile fields data.
-            profile_load_data($user);
-            $mform = new mod_pokcertificate_updateprofile_form($url, ['pokfields' => $pokfields, 'user' => $user, 'cmid' => $id]);
-            $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
+        // Load user preferences.
+        useredit_load_preferences($user);
 
-            if ($mform->is_cancelled()) {
-                redirect($redirecturl);
-            } else if ($userdata = $mform->get_data()) {
-                $userdata->timemodified = time();
-                // Update user with new profile data.
-                user_update_user($userdata, false, false);
-                // Save custom profile fields data.
-                profile_save_data($userdata);
-            } else {
+        // Load custom profile fields data.
+        profile_load_data($user);
+        $mform = new mod_pokcertificate_updateprofile_form($url, ['pokfields' => $pokfields, 'user' => $user, 'cmid' => $id]);
+        $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
+        $renderer = $PAGE->get_renderer('mod_pokcertificate');
 
-                $mform->display();
+        if ($mform->is_cancelled()) {
+            redirect($redirecturl);
+        } else if ($userdata = $mform->get_data()) {
+            $userdata->timemodified = time();
+            // Update user with new profile data.
+            user_update_user($userdata, false, false);
+            // Save custom profile fields data.
+            profile_save_data($userdata);
+
+            $availablecredits = get_config('mod_pokcertificate', 'availablecertificates');
+            if ($availablecredits >= 0) {
+
+                $emitcertificate = pok::emit_certificate($id, $USER);
+                if (!empty($emitcertificate)) {
+                    if ($emitcertificate->processing) {
+                        echo $renderer->certificate_pending_message();
+                    } else {
+                        redirect($emitcertificate->viewUrl);
+                    }
+                }
+            } else if ($availablecredits == 0) {
+                echo $renderer->certificate_pending_message();
+                exit;
             }
         } else {
-            $renderer = $PAGE->get_renderer('mod_pokcertificate');
-            echo $renderer->preview_certificate_template($id);
+            $mform->display();
         }
     }
-
 } else {
     $userid  = required_param('userid', PARAM_INT);
 
@@ -101,7 +112,7 @@ if($id>0){
     if (!$user = $DB->get_record('user', ['id' => $userid])) {
         throw new \moodle_exception('invaliduserid');
     } else {
-        
+
         useredit_load_preferences($user);
 
         // Load custom profile fields data.

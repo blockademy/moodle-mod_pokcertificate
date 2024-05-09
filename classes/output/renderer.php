@@ -19,7 +19,6 @@ namespace mod_pokcertificate\output;
 use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_templates;
-use mod_pokcertificate\persistent\pokcertificatestudent;
 
 /**
  * Renderer for POK Certificate
@@ -42,9 +41,22 @@ class renderer extends \plugin_renderer_base {
         global $CFG;
         return '<div class="verifyauth" >' . get_string('verifyauth', 'pokcertificate') . '
                     <a target="_blank" class="bt btn-primary"
-                    style="padding: 7px 18px; border-radius: 4px; color: white; background-color: #2578dd; margin-left: 5px;"
-                    href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >' . get_string('clickhere', 'mod_pokcertificate') . '
+                    style="padding: 7px 18px; border-radius: 4px; color:
+                    white; background-color: #2578dd; margin-left: 5px;"
+                    href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >'
+            . get_string('clickhere', 'mod_pokcertificate') . '
                     </a></div>';
+    }
+
+    /**
+     * Render the view page.
+     *
+     * @param view_page $page
+     * @return [output]
+     */
+    public function display_message() {
+        $output = \html_writer::tag('span', get_string('certificatepending', 'pokcertificate'), []);
+        return $output;
     }
     /**
      * Renders the certifcate templates view.
@@ -66,7 +78,10 @@ class renderer extends \plugin_renderer_base {
                     $certificatetemplatecontent = pok::get_certificate_templates($id);
                     if ($certificatetemplatecontent) {
                         $output = $this->render_certificate_types($id);
-                        $output .= $this->render_from_template('mod_pokcertificate/certificatetemplates', $certificatetemplatecontent);
+                        $output .= $this->render_from_template(
+                            'mod_pokcertificate/certificatetemplates',
+                            $certificatetemplatecontent
+                        );
                     }
                 }
                 echo $output;
@@ -92,22 +107,86 @@ class renderer extends \plugin_renderer_base {
         $recexists = $DB->record_exists('course_modules', ['id' => $cmid]);
         if ($recexists) { // has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
             $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
-            $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
-            if ($templateid) {
-                $template = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);
-                $previewdata = SAMPLE_DATA;
+            $pokcertificate = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+            if ($pokcertificate && $pokcertificate->get('templateid')) {
+                $template = pokcertificate_templates::get_field(
+                    'templatename',
+                    ['id' => $pokcertificate->get('templateid')]
+                );
+                $previewdata = [
+                    "name" => "John Galt",
+                    "title" => $pokcertificate->get('title'),
+                    "date" => time(),
+                    "institution" => get_config('mod_pokcertificate', 'institution')
+                ];
                 $previewdata = json_encode($previewdata);
                 $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
                 if ($templatepreview) {
                     $temppreview = trim($templatepreview, '"');
-                    $output .= \html_writer::tag('img', '', ['src' =>  $temppreview, 'alt' => "Snow"]);
+                    $output .= \html_writer::tag('img', '', ['src' => $temppreview, 'alt' => "Snow"]);
                     $output .= \html_writer::tag('br', '');
-                    $output .= \html_writer::tag('a', get_string('back'), ['class' => 'btn btn-primary ', 'href' => $CFG->wwwroot . '/course/view.php?id=' . $cm->course]);
+                    $output .= \html_writer::tag(
+                        'a',
+                        get_string('back'),
+                        ['class' => 'btn btn-primary ', 'href' => $CFG->wwwroot . '/course/view.php?id=' . $cm->course]
+                    );
                 }
             }
         } else {
             echo get_string('previewnotexists', 'mod_pokcertificate');
         }
+        return $output;
+    }
+
+    public function certificate_pending_message() {
+        global $CFG, $USER;
+        require_once("{$CFG->libdir}/completionlib.php");
+
+        $attributes = [
+            'role' => 'promptdialog',
+            'aria-labelledby' => 'modal-header',
+            'aria-describedby' => 'modal-body',
+            'aria-modal' => 'true',
+        ];
+        $output = $this->box_start('generalbox modal modal-dialog modal-in-page show', 'notice', $attributes);
+        $output .= $this->box_start('modal-content', 'modal-content');
+        $output .= $this->box_start('modal-header p-x-1', 'modal-header');
+        $output .= \html_writer::tag('h6', get_string('certificatepending', 'mod_pokcertificate'));
+        $output .= $this->box_end();
+        $attributes = [
+            'role' => 'prompt',
+            'data-aria-autofocus' => 'true',
+            'class' => 'certificatestatus',
+        ];
+
+        /*  $cinfo = new \completion_info($courseobject);
+        $iscomplete = $cinfo->is_course_complete($USER->id); */
+
+        $output .= $this->box_start('modal-body', 'modal-body', $attributes);
+
+        $output .= \html_writer::tag('i', '', ['class' => ' faicon fa-solid fa-circle-check fa-xl']);
+        $output .= \html_writer::tag('p', get_string('congratulations', 'mod_pokcertificate'), ['class' => 'mainheading']);
+        $output .= \html_writer::tag('p', get_string('completionmsg', 'mod_pokcertificate'), ['class' => 'complheading']);
+
+        $output .= \html_writer::tag(
+            'p',
+            get_string(
+                'pendingcertificatemsg',
+                'mod_pokcertificate',
+                ['institution' => get_config('mod_pokcertificate', 'institution')]
+            ),
+            ['class' => 'certmessage']
+        );
+        $output .= \html_writer::tag(
+            'input',
+            '',
+            ['type' => 'button', 'class' => 'btn btn-secondary', 'value' => 'Certificate Pending']
+        );
+
+        $output .= $this->box_end();
+
+        $output .= $this->box_end();
+        $output .= $this->box_end();
         return $output;
     }
 
@@ -125,13 +204,13 @@ class renderer extends \plugin_renderer_base {
         return $this->render_from_template('mod_pokcertificate/action_bar', $data);
     }
 
-    public function get_incompletestudentprofile($filter = false){
+    public function get_incompletestudentprofile($filter = false) {
         global $USER;
         $systemcontext = \context_system::instance();
-        $options = array('targetID' => 'viewincompletestudent','perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
+        $options = array('targetID' => 'viewincompletestudent', 'perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
 
-        $options['methodName']='mod_pokcertificate_incompletestudentprofile_view';
-        $options['templateName']='mod_pokcertificate/incompletestudentprofile_view';
+        $options['methodName'] = 'mod_pokcertificate_incompletestudentprofile_view';
+        $options['templateName'] = 'mod_pokcertificate/incompletestudentprofile_view';
         $options = json_encode($options);
 
         $dataoptions = json_encode(array('contextid' => $systemcontext->id));
@@ -144,9 +223,9 @@ class renderer extends \plugin_renderer_base {
             'filterdata' => $filterdata
         ];
 
-        if($filter){
+        if ($filter) {
             return  $context;
-        }else{
+        } else {
             return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
         }
     }
@@ -158,13 +237,13 @@ class renderer extends \plugin_renderer_base {
     }
 
 
-    public function get_generalcertificate($filter = false){
+    public function get_generalcertificate($filter = false) {
         global $USER;
         $systemcontext = \context_system::instance();
-        $options = array('targetID' => 'view_generalcertificate','perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
+        $options = array('targetID' => 'view_generalcertificate', 'perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
 
-        $options['methodName']='mod_pokcertificate_generalcertificate_view';
-        $options['templateName']='mod_pokcertificate/awardedcertificatestatus';
+        $options['methodName'] = 'mod_pokcertificate_generalcertificate_view';
+        $options['templateName'] = 'mod_pokcertificate/awardedcertificatestatus';
         $options = json_encode($options);
 
         $dataoptions = json_encode(array('contextid' => $systemcontext->id));
@@ -177,21 +256,21 @@ class renderer extends \plugin_renderer_base {
             'filterdata' => $filterdata
         ];
 
-        if($filter){
+        if ($filter) {
             return  $context;
-        }else{
+        } else {
             return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
         }
     }
 
-    public function get_courseparticipantslist($filter = false){
+    public function get_courseparticipantslist($filter = false) {
         global $USER;
         $courseid = required_param('courseid', PARAM_INT);
         $systemcontext = \context_system::instance();
-        $options = array('targetID' => 'view_courseparticipants','perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
+        $options = array('targetID' => 'view_courseparticipants', 'perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
 
-        $options['methodName']='mod_pokcertificate_courseparticipants_view';
-        $options['templateName']='mod_pokcertificate/courseparticipants';
+        $options['methodName'] = 'mod_pokcertificate_courseparticipants_view';
+        $options['templateName'] = 'mod_pokcertificate/courseparticipants';
         $options = json_encode($options);
 
         $dataoptions = json_encode(array('contextid' => $systemcontext->id, 'courseid' => $courseid));
@@ -204,9 +283,9 @@ class renderer extends \plugin_renderer_base {
             'filterdata' => $filterdata
         ];
 
-        if($filter){
+        if ($filter) {
             return  $context;
-        }else{
+        } else {
             return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
         }
     }

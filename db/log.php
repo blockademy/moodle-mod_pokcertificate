@@ -26,9 +26,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$logs = array(
-    array('module'=>'pokcertificate', 'action'=>'view', 'mtable'=>'pokcertificate', 'field'=>'name'),
-    array('module'=>'pokcertificate', 'action'=>'view all', 'mtable'=>'pokcertificate', 'field'=>'name'),
-    array('module'=>'pokcertificate', 'action'=>'update', 'mtable'=>'pokcertificate', 'field'=>'name'),
-    array('module'=>'pokcertificate', 'action'=>'add', 'mtable'=>'pokcertificate', 'field'=>'name'),
-);
+$logs = [
+    ['module' => 'pokcertificate', 'action' => 'view', 'mtable' => 'pokcertificate', 'field' => 'name'],
+    ['module' => 'pokcertificate', 'action' => 'view all', 'mtable' => 'pokcertificate', 'field' => 'name'],
+    ['module' => 'pokcertificate', 'action' => 'update', 'mtable' => 'pokcertificate', 'field' => 'name'],
+    ['module' => 'pokcertificate', 'action' => 'add', 'mtable' => 'pokcertificate', 'field' => 'name'],
+];

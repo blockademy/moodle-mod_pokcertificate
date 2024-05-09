@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -30,6 +29,7 @@ require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
 
 class mod_pokcertificate_mod_form extends moodleform_mod {
+
     function definition() {
         global $CFG;
 
@@ -37,7 +37,6 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
 
         $config = get_config('mod_pokcertificate');
 
-        //-------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
         $mform->addElement('text', 'name', get_string('certificatename', 'pokcertificate'), ['size' => '48']);
         if (!empty($CFG->formatstringstriptags)) {
@@ -48,10 +47,17 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $mform->addElement('text', 'institution', get_string('institution', 'pokcertificate'), ['size' => '48', 'readonly' => true]);
+        $mform->addElement(
+            'text',
+            'institution',
+            get_string('institution', 'pokcertificate'),
+            ['size' => '48', 'readonly' => true]
+        );
         if (get_config('mod_pokcertificate', 'institution')) {
             $mform->setDefault('institution', get_config('mod_pokcertificate', 'institution'));
         }
+        $mform->addRule('institution', null, 'required', null, 'client');
+        $mform->addHelpButton('authtoken', 'authtoken', 'pokcertificate');
 
         $mform->addElement('text', 'title', get_string('title', 'pokcertificate'), ['size' => '48']);
         if (!empty($CFG->formatstringstriptags)) {
@@ -61,6 +67,7 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         }
         $mform->addRule('title', null, 'required', null, 'client');
         $mform->addRule('title', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $mform->addHelpButton('title', 'title', 'pokcertificate');
 
         $this->standard_intro_elements();
 
@@ -97,13 +104,13 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
             $mform->setDefault('popupheight', $config->popupheight);
         }
 
-        /*     $mform->addElement('advcheckbox', 'printintro', get_string('printintro', 'pokcertificate'));
+        $mform->addElement('advcheckbox', 'printintro', get_string('printintro', 'pokcertificate'));
         $mform->setDefault('printintro', $config->printintro);
         $mform->addElement('advcheckbox', 'printlastmodified', get_string('printlastmodified', 'pokcertificate'));
-        $mform->setDefault('printlastmodified', $config->printlastmodified); */
+        $mform->setDefault('printlastmodified', $config->printlastmodified);
 
-        // add legacy files flag only if used
-        if (isset($this->current->legacyfiles) and $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {
+        // Add legacy files flag only if used.
+        if (isset($this->current->legacyfiles) && $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {
             $options = [
                 RESOURCELIB_LEGACYFILES_DONE   => get_string('legacyfilesdone', 'pokcertificate'),
                 RESOURCELIB_LEGACYFILES_ACTIVE => get_string('legacyfilesactive', 'pokcertificate')
@@ -112,13 +119,10 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
             $mform->setAdvanced('legacyfiles', 1);
         }
 
-        //-------------------------------------------------------
         $this->standard_coursemodule_elements();
 
-        //-------------------------------------------------------
         $this->add_action_buttons();
 
-        //-------------------------------------------------------
         $mform->addElement('hidden', 'revision');
         $mform->setType('revision', PARAM_INT);
         $mform->setDefault('revision', 1);

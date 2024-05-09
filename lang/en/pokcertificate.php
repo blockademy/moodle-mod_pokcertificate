@@ -19,7 +19,7 @@
  * Strings for component 'pokcertificate', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package   mod_pokcertificate
- * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright 2024 Moodle India Information Solutions Pvt Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -136,8 +136,7 @@ $string['certificateslist'] = 'Certificate Templates';
 $string['clickhere'] = 'Click here';
 
 // POK-13 and POK-15
-$string['incompletestudent'] = 'Incomplete Student Profile';
-$string['generalcertificate'] = 'General Certificate Status';
+
 $string['studentname'] = 'Student Name';
 $string['surname'] = 'Surname';
 $string['email'] = 'Email';
@@ -166,7 +165,7 @@ $string['help_1'] = '
             <tr>
                 <td>Region_Code</td>
                 <td>Please enter region code.</td>
-                
+
             </tr>
             <tr>
                 <td>EN_Name</td>
@@ -206,3 +205,20 @@ $string['incompletestudent'] = 'Incomplete Student Profiles';
 $string['coursecertificatestatus'] = 'Course Certificate Status';
 $string['generalcertificate'] = 'Award General Certificates';
 $string['contact'] = 'Contact POK';
+$string['certificatepending'] = 'Certificate Pending';
+$string['congratulations'] = 'Congratulations';
+$string['completionmsg'] = 'You have completed the course';
+$string['pendingcertificatemsg'] = 'Your certificate is being issued by {$a->institution}.
+We would like to remind you that it is important for you to check your email in order
+to accept the certificate. For any questions please contact {$a->institution} . <br /><br />';
+$string['firstname'] = 'Student Name';
+$string['firstname_help'] = 'Student name which will be displayed on certificate.';
+$string['lastname'] = 'Surname';
+$string['lastname_help'] = 'Surname which will be displayed on certificate.';
+$string['email_help'] = 'Email which will be displayed on certificate.';
+$string['idnumber'] = 'Student ID';
+$string['idnumber_help'] = 'Student ID which will be displayed on certificate.';
+
+
+$string['institution_help_help'] = 'This field will be displayed on the certificates to be issued';
+$string['title_help'] = 'This field will be displayed on the certificates to be issued';

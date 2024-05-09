@@ -68,10 +68,7 @@ class action_bar {
         global $PAGE;
 
         $menu = [];
-        /*   if (has_capability('mod/pokcertificate:view', $PAGE->context)) {
-            $previewlink = new \moodle_url('/mod/pokcertificate/preview.php', ['id' => $this->cmid]);
-            $menu[$previewlink->out(false)] = get_string('previewcertificate', 'mod_pokcertificate');
-        } */
+
         $menu[null] = get_string('select');
         if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
             $certificateslink = new \moodle_url('/mod/pokcertificate/certificates.php', ['id' => $this->cmid]);
@@ -82,7 +79,10 @@ class action_bar {
             $cm = get_coursemodule_from_id('pokcertificate', $this->cmid, 0, false, MUST_EXIST);
             $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
             $template = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);
-            $fieldmappinglink = new \moodle_url('/mod/pokcertificate/fieldmapping.php', ['id' => $this->cmid, 'temp' => base64_encode($template)]);
+            $fieldmappinglink = new \moodle_url(
+                '/mod/pokcertificate/fieldmapping.php',
+                ['id' => $this->cmid, 'temp' => base64_encode($template)]
+            );
             $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');
         }
         return new \url_select($menu, $menu[null], null, 'pokactionselect');

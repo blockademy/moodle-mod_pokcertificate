@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,7 +24,7 @@
 
 require('../../config.php');
 
-$id = required_param('id', PARAM_INT); // course id
+$id = required_param('id', PARAM_INT); // Course id.
 
 $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
 
@@ -87,12 +86,12 @@ foreach ($pokcertificates as $pokcertificate) {
         $printsection = '<span class="smallinfo">' . userdate($pokcertificate->timemodified) . "</span>";
     }
 
-    $class = $pokcertificate->visible ? '' : 'class="dimmed"'; // hidden modules are dimmed
+    $class = $pokcertificate->visible ? '' : 'class="dimmed"'; // Hidden modules are dimmed.
 
     $table->data[] = [
         $printsection,
         "<a $class href=\"view.php?id=$cm->id\">" . format_string($pokcertificate->name) . "</a>",
-        format_module_intro('pokcertificate', $pokcertificate, $cm->id)
+        format_module_intro('pokcertificate', $pokcertificate, $cm->id,)
     ];
 }
 
