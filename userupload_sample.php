@@ -28,17 +28,13 @@ $format = optional_param('format', 'csv', PARAM_ALPHA);
 
 $systemcontext = \context_system::instance();
 if ($format) {
-    $fields = array(
-    'first_name' => 'first_name',
-    'last_name' => 'last_name',
-    'email' => 'email',
-    'idnumber' => 'idnumber',
-    'username' => 'username',
-    'password' => 'password',
-    'language' => 'language',
-    'timezone' => 'timezone',
-    'force_password_change' => 'force_password_change'
-    );
+    $fields = [
+        'username'      => 'username',
+        'studentname'   => 'studentname',
+        'surname'       => 'surname',
+        'email'         => 'email',
+        'studentid'     => 'studentid'
+    ];
 
     switch ($format) {
         case 'csv' : user_download_csv($fields);
@@ -47,14 +43,23 @@ if ($format) {
 }
 
 function user_download_csv($fields) {
-    global $CFG;
+    global $CFG, $DB;
     require_once($CFG->libdir . '/csvlib.class.php');
-    $filename = clean_filename(get_string('users'));
+    $filename = clean_filename(get_string('students'));
     $csvexport = new csv_export_writer();
     $csvexport->set_filename($filename);
     $csvexport->add_data($fields);
-    $userprofiledata = array();
-    $csvexport->add_data($userprofiledata);
+    $users = $DB->get_records_sql('SELECT id, username, firstname, lastname, email, idnumber FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2');
+    foreach($users as $user) {
+        $userprofiledata = [
+            $user->username,
+            $user->firstname,
+            $user->lastname,
+            $user->email,
+            $user->idnumber
+        ];
+        $csvexport->add_data($userprofiledata);
+    }
     $csvexport->download_file();
     die;
 }

@@ -51,23 +51,19 @@ $returnurl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
 
 $PAGE->set_url('/mod/pokcertificate/userupload.php');
 $PAGE->set_heading(get_string('bulkupload', 'mod_pokcertificate'));
-$strheading = get_string('pluginname', 'mod_pokcertificate');
+$strheading = get_string('bulkupload', 'mod_pokcertificate');
 $PAGE->set_title($strheading);
-$PAGE->navbar->add(get_string('pluginname', 'mod_pokcertificate'), new moodle_url('/local/users/index.php'));
-$PAGE->navbar->add(get_string('bulkupload', 'mod_pokcertificate'));
 $returnurl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
+$PAGE->navbar->add(get_string('incompletestudent', 'mod_pokcertificate'), $returnurl);
+$PAGE->navbar->add(get_string('bulkupload', 'mod_pokcertificate'));
 
-$STD_FIELDS = array(
-    'first_name' => 'first_name',
-    'last_name' => 'last_name',
-    'email' => 'email',
-    'idnumber' => 'idnumber',
-    'username' => 'username',
-    'password' => 'password',
-    'language' => 'language',
-    'timezone' => 'timezone',
-    'force_password_change' => 'force_password_change'
-    );
+$STD_FIELDS = [
+    'username'      => 'username',
+    'studentname'   => 'studentname',
+    'surname'       => 'surname',
+    'email'         => 'email',
+    'studentid'     => 'studentid'
+];
 
 
 $PRF_FIELDS = array();

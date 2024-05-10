@@ -28,6 +28,7 @@ use csv_import_reader;
 use moodle_url;
 use core_text;
 use moodle_exception;
+use html_writer;
 class progresslibfunctions {
     /**
      * [uu_validate_user_upload_columns description]
@@ -43,12 +44,14 @@ class progresslibfunctions {
         if (empty($columns)) {
             $cir->close();
             $cir->cleanup();
-            print_error('cannotreadtmpfile', 'error', $returnurl);
+            echo '<div class=local_users_sync_error>' . get_string('cannotreadtmpfile', 'mod_pokcertificate', $field) . '</div>';
+                $this->continue_button($returnurl);
         }
-        if (count($columns) < 2) {
+        if (count($columns) < 5) {
             $cir->close();
             $cir->cleanup();
-            throw new moodle_exception('csvfewcolumns', 'error', $returnurl);
+            echo '<div class=local_users_sync_error>' . get_string('csvfewcolumns', 'mod_pokcertificate', $field) . '</div>';
+                $this->continue_button($returnurl);
         }
 
         // test columns
@@ -75,17 +78,31 @@ class progresslibfunctions {
             }else {
                 $cir->close();
                 $cir->cleanup();
-                throw new moodle_exception('invalidfieldname', 'error', $returnurl, $field);
+                echo '<div class=local_users_sync_error>' . get_string('invalidfieldname', 'mod_pokcertificate', $field) . '</div>';
+                $this->continue_button($returnurl);
             }
             if (in_array($newfield, $processed)) {
                 $cir->close();
                 $cir->cleanup();
-                throw new moodle_exception('duplicatefieldname', 'error', $returnurl, $newfield);
+                echo '<div class=local_users_sync_error>' . get_string('duplicatefieldname', 'mod_pokcertificate', $newfield) . '</div>';   
+                $this->continue_button($returnurl);
             }
             $processed[$key] = $newfield;
 
         }
 
         return $processed;
+    }
+
+    public function continue_button($returnurl) {
+        echo html_writer::tag(
+            'a',
+            get_string('continue'),
+            [
+                'href' => $returnurl,
+                'class' => "btn btn-primary",
+            ]
+        );
+        exit;
     }
 }

@@ -138,8 +138,8 @@ $string['notverified'] = 'Not Verified';
 $string['verified'] = 'Verified';
 $string['free'] = 'Free';
 $string['paid'] = 'Paid';
-// POK-13 and POK-15
-
+$string['incompletestudent'] = 'Incomplete Student Profile';
+$string['generalcertificate'] = 'General Certificate Status';
 $string['studentname'] = 'Student Name';
 $string['surname'] = 'Surname';
 $string['email'] = 'Email';
@@ -158,7 +158,7 @@ $string['typeofcerti'] = 'Type of certificate';
 $string['certificatestatus'] = 'Certificate status';
 $string['previewcerti'] = 'Preview Certifcate';
 $string['courseparticipants'] = 'Course Participants';
-$string['help_1'] = '
+$string['helpmanualsdata'] = '
     <div class="field_type font-weight-bold" style="text-align:left;"></div>
     <br>
     <div class="helpmanual_table"><table class="generaltable" border="1">
@@ -166,41 +166,34 @@ $string['help_1'] = '
             <th>Mandatory Fields</th>
             <th>Restriction</th>
             <tr>
-                <td>Region_Code</td>
-                <td>Please enter region code.</td>
-
+                <td>username</td>
+                <td>Please do not change username.</td>
             </tr>
             <tr>
-                <td>EN_Name</td>
-                <td>Please enter english name of the record.</td>
+                <td>studentname</td>
+                <td>Please enter studentname.</td>
+                
             </tr>
             <tr>
-                <td>AR_Name</td>
-                <td>Please enter arabic name of the record.</td>
+                <td>surname</td>
+                <td>Please enter surname.</td>
             </tr>
             <tr>
-                <td>PAYMENT_ID</td>
-                <td>Please enter payment ID for region.</td>
+                <td>email</td>
+                <td>Please enter email.</td>
             </tr>
-        </table>
-
-        <table class="generaltable" border="1">
-            <th>Optional Fields</th>
-            <th>Restriction</th>
             <tr>
-                <td>OLD_ID</td>
-                <td>Please enter ID value of the record.</td>
+                <td>studentid</td>
+                <td>Please enter studentid.</td>
             </tr>
         </table>
     </div>';
 $string['authenticationmethods'] = 'Authentication method';
-$string['missing'] = 'Missing {$a->field} at line {$a->linenumber}';
-$string['addedusers_msg'] = 'Total {$a} new users added to the system.';
+$string['missing'] = 'Missing {$a->field} at line {$a->linenumber}.';
+$string['nouserrecord'] = 'No data available with username \'{$a->username}\' at line {$a->linenumber}';
 $string['updatedusers_msg'] = 'Total {$a} users details updated.';
-$string['errorscount_msg'] = 'Total {$a} errors occured in the sync update.';
-$string['warningscount_msg'] = 'Total {$a} warnings occured in the sync update.';
-$string['superwarnings_msg'] = 'Total {$a} Warnings occured while updating supervisor.';
-$string['empfile_syncstatus'] = 'User file sync status';
+$string['errorscount_msg'] = 'Total {$a} errors occured in the bulk upload.';
+$string['empfile_syncstatus'] = 'Student file sync status';
 $string['back'] = 'Back';
 $string['sample'] = 'Sample';
 $string['help_manual'] = 'Help Manual';
@@ -208,6 +201,14 @@ $string['incompletestudent'] = 'Incomplete Student Profiles';
 $string['coursecertificatestatus'] = 'Course Certificate Status';
 $string['generalcertificate'] = 'Award General Certificates';
 $string['contact'] = 'Contact POK';
+$string['invalidemail_msg'] = 'Invalid email at line {$a->linenumber}.';
+$string['invalidstudentid'] = 'Invalid studerntid at line {$a->linenumber}. Enter only numeric.';
+$string['invalidfieldname'] = '\'{$a}\' is not a valid field name.';
+$string['duplicatefieldname'] = 'Duplicate field name \'{$a}\' detected.';
+$string['cannotreadtmpfile'] = 'Uploaded file is empty. Please upload a valid file.';
+$string['csvfewcolumns'] = 'Not enough columns. Upload file with columns \'username, studentname, surname, email, studentid\'.';
+$string['studentexist'] = 'Student already exists with {$a->field} \'{$a->data}\' at line {$a->linenumber}.';
+$string['helpmanual'] = 'Help Manual';
 $string['certificatepending'] = 'Certificate Pending';
 $string['congratulations'] = 'Congratulations';
 $string['completionmsg'] = 'You have completed the course';

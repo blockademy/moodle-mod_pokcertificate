@@ -34,11 +34,8 @@ $PAGE->set_context($systemcontext);
 
 $strheading = get_string('pluginname', 'mod_pokcertificate');
 $PAGE->set_heading(get_string('helpmanual', 'mod_pokcertificate', $strheading));
-// require_capability('masterdata/regions:upload', $systemcontext);
 $PAGE->set_title($strheading);
-// if (!is_siteadmin()) {
-//     throw new \moodle_exception(get_string('nopermission', 'local_settings'));
-// }
+
 if ($CFG->forcelogin) {
     require_login();
 } else {
@@ -48,12 +45,12 @@ if ($CFG->forcelogin) {
 echo $OUTPUT->header();
 echo html_writer::tag(
     'a',
-    get_string('back', 'local_settings'),
+    get_string('back', 'mod_pokcertificate'),
     [
         'href' => $CFG->wwwroot . '/mod/pokcertificate/userupload.php',
         'class' => "btn btn-secondary ml-2 float-right",
     ]
 );
-echo get_string('help_1', 'mod_pokcertificate');
+echo get_string('helpmanualsdata', 'mod_pokcertificate');
 echo $OUTPUT->footer();
 
