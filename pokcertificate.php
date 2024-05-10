@@ -58,10 +58,9 @@ echo
 '</div>
     </div>';
 
+$pokverified = get_config('mod_pokcertificate', 'pokverified');
 
-$orgdetails = (new mod_pokcertificate\api)->get_organization();
-$orgid = get_config('mod_pokcertificate', 'wallet');
-if ($orgid) {
+if ($pokverified) {
     echo '
     <div class="col-md-4 p-0">
       <ul class="pok_details ml-0 ml-md-5">
@@ -77,6 +76,8 @@ if ($orgid) {
     </div>
   </div>';
 }
+/* $renderer = $PAGE->get_renderer('mod_pokcertificate');
+echo $renderer->verify_auth_form($mform); */
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();

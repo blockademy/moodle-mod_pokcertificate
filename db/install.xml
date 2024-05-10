@@ -47,6 +47,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="certid" TYPE="foreign" FIELDS="certid" REFTABLE="pokcertificate" REFFIELDS="id"/>
         <KEY NAME="templateid" TYPE="foreign" FIELDS="templateid" REFTABLE="pokcertificate" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
@@ -83,7 +84,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="certid" TYPE="foreign" FIELDS="certid" REFTABLE="pokcertificate_issues" REFFIELDS="id"/>
+        <KEY NAME="certid" TYPE="foreign" FIELDS="certid" REFTABLE="pokcertificate" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="certid" UNIQUE="false" FIELDS="certid"/>
@@ -108,9 +109,12 @@
      </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="pokid" TYPE="foreign" FIELDS="pokid" REFTABLE="pokcertificate" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="pokid" UNIQUE="false" FIELDS="pokid"/>
+        <INDEX NAME="templatedefinition" UNIQUE="false" FIELDS="templatedefinition"/>
+        <INDEX NAME="templatename" UNIQUE="false" FIELDS="templatename"/>
       </INDEXES>
     </TABLE>
 

@@ -218,6 +218,7 @@ class renderer extends \plugin_renderer_base {
                 if ($emitcertificate->processing) {
                     $output = self::certificate_pending_message();
                 } else {
+                    pok::save_issued_certificate($cmid, $user, $emitcertificate);
                     redirect($emitcertificate->viewUrl);
                 }
             }
@@ -301,7 +302,7 @@ class renderer extends \plugin_renderer_base {
     }
 
     public function get_courseparticipantslist($filter = false) {
-        global $USER;
+
         $courseid = required_param('courseid', PARAM_INT);
         $systemcontext = \context_system::instance();
         $options = array('targetID' => 'view_courseparticipants', 'perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');

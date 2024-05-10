@@ -19,6 +19,7 @@ namespace mod_pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
+use mod_pokcertificate\persistent\pokcertificate_issues;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -430,6 +431,36 @@ class pok {
         $emitdata->wallet = get_config('mod_pokcertificate', 'wallet');
         $emitdata->language_tag = $user->lang;
         return $emitdata;
+    }
+
+    /**
+     * save_issued_certificate
+     *
+     * @param  mixed $cmid
+     * @param  mixed $user
+     * @param  mixed $emitcertificate
+     * @return [void]
+     */
+    public static function save_issued_certificate($cmid, $user, $emitcertificate) {
+        $cm = self::get_cm_instance($cmid);
+        try {
+            $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+            if ($pokrecord) {
+
+                $data = new \stdclass;
+                $data->certid = $pokrecord->get('id');
+                $data->userid = $user->id;
+                $data->status = true;
+                $data->templateid = $pokrecord->get('templateid');
+                $data->certificateurl = $emitcertificate->viewUrl;
+                $data->timecreated = time();
+
+                $pokcertificateissues = new pokcertificate_issues(0, $data);
+                $pokcertificateissues->create();
+            }
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     /**

@@ -59,6 +59,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
         $mform->setDefault('lang', $lang);
 
         if (!empty($pokfields)) {
+
             foreach ($pokfields as $field) {
                 $fieldname = $field->get('userfield');
 
@@ -153,17 +154,26 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
     }
 
 
+    /**
+     * get_profile_fields
+     *
+     * @param  mixed $mform
+     * @param  mixed $pokfields
+     * @param  mixed $userid
+     * @return void
+     */
     public function get_profile_fields(&$mform, $pokfields, $userid) {
         $categories = profile_get_user_fields_with_data_by_category($userid);
         foreach ($categories as $categoryid => $fields) {
             // Check first if *any* fields will be displayed.
             $fieldstodisplay = [];
-
-            foreach ($pokfields as $field) {
-                $fieldname = $field->get('userfield');
-                foreach ($fields as $formfield) {
-                    if ($formfield->inputname == $fieldname && $formfield->is_editable()) {
-                        $fieldstodisplay[] = $formfield;
+            if (!empty($pokfields)) {
+                foreach ($pokfields as $field) {
+                    $fieldname = $field->get('userfield');
+                    foreach ($fields as $formfield) {
+                        if ($formfield->inputname == $fieldname && $formfield->is_editable()) {
+                            $fieldstodisplay[] = $formfield;
+                        }
                     }
                 }
             }

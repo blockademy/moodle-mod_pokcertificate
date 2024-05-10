@@ -138,8 +138,6 @@ $string['notverified'] = 'Not Verified';
 $string['verified'] = 'Verified';
 $string['free'] = 'Free';
 $string['paid'] = 'Paid';
-$string['incompletestudent'] = 'Incomplete Student Profile';
-$string['generalcertificate'] = 'General Certificate Status';
 $string['studentname'] = 'Student Name';
 $string['surname'] = 'Surname';
 $string['email'] = 'Email';
@@ -172,7 +170,7 @@ $string['helpmanualsdata'] = '
             <tr>
                 <td>studentname</td>
                 <td>Please enter studentname.</td>
-                
+
             </tr>
             <tr>
                 <td>surname</td>
@@ -222,5 +220,7 @@ $string['lastname_help'] = 'Surname which will be displayed on certificate.';
 $string['email_help'] = 'Email which will be displayed on certificate.';
 $string['idnumber'] = 'Student ID';
 $string['idnumber_help'] = 'Student ID which will be displayed on certificate.';
-$string['institution_help_help'] = 'This field will be displayed on the certificates to be issued';
+$string['institution_help_help'] = 'This field will be displayed on the certificates to be issued
+<br> (Please verify authentication token in settings inorder to get institution name.)';
 $string['title_help'] = 'This field will be displayed on the certificates to be issued';
+$string['participants'] = 'Course Particpants';

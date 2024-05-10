@@ -56,8 +56,9 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         if (get_config('mod_pokcertificate', 'institution')) {
             $mform->setDefault('institution', get_config('mod_pokcertificate', 'institution'));
         }
+        $mform->setType('institution', PARAM_TEXT);
         $mform->addRule('institution', null, 'required', null, 'client');
-        $mform->addHelpButton('authtoken', 'authtoken', 'pokcertificate');
+        $mform->addHelpButton('institution', 'institution_help', 'pokcertificate');
 
         $mform->addElement('text', 'title', get_string('title', 'pokcertificate'), ['size' => '48']);
         if (!empty($CFG->formatstringstriptags)) {
@@ -72,11 +73,13 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         $this->standard_intro_elements();
 
         $mform->addElement('header', 'appearancehdr', get_string('appearance'));
-
+        $options = [];
         if ($this->current->instance) {
             $options = resourcelib_get_displayoptions(explode(',', $config->displayoptions), $this->current->display);
         } else {
-            $options = resourcelib_get_displayoptions(explode(',', $config->displayoptions));
+            if (isset($config->displayoptions)) {
+                $options = resourcelib_get_displayoptions(explode(',', $config->displayoptions));
+            }
         }
         if (count($options) == 1) {
             $mform->addElement('hidden', 'display');
@@ -104,10 +107,10 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
             $mform->setDefault('popupheight', $config->popupheight);
         }
 
-        $mform->addElement('advcheckbox', 'printintro', get_string('printintro', 'pokcertificate'));
+        /*         $mform->addElement('advcheckbox', 'printintro', get_string('printintro', 'pokcertificate'));
         $mform->setDefault('printintro', $config->printintro);
         $mform->addElement('advcheckbox', 'printlastmodified', get_string('printlastmodified', 'pokcertificate'));
-        $mform->setDefault('printlastmodified', $config->printlastmodified);
+        $mform->setDefault('printlastmodified', $config->printlastmodified); */
 
         // Add legacy files flag only if used.
         if (isset($this->current->legacyfiles) && $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {

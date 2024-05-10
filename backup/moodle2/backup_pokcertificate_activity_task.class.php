@@ -20,7 +20,7 @@
  *
  * @package   mod_pokcertificate
  * @category  backup
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright 2024 Moodle India Information Solutions Pvt Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -55,15 +55,15 @@ class backup_pokcertificate_activity_task extends backup_activity_task {
     static public function encode_content_links($content) {
         global $CFG;
 
-        $base = preg_quote($CFG->wwwroot,"/");
+        $base = preg_quote($CFG->wwwroot, "/");
 
         // Link to the list of pokcertificates
-        $search="/(".$base."\/mod\/pokcertificate\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@PAGEINDEX*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/pokcertificate\/index.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$POKCERTIFICATEINDEX*$2@$', $content);
 
         // Link to pokcertificate view by moduleid
-        $search="/(".$base."\/mod\/pokcertificate\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@PAGEVIEWBYID*$2@$', $content);
+        $search = "/(" . $base . "\/mod\/pokcertificate\/view.php\?id\=)([0-9]+)/";
+        $content = preg_replace($search, '$@POKCERTIFICATEVIEWBYID*$2@$', $content);
 
         return $content;
     }

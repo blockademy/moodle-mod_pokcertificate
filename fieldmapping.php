@@ -55,13 +55,10 @@ $PAGE->set_activity_record($pokcertificate);
 echo $OUTPUT->header();
 // Save selected template definition.
 if ($tempname) {
-    $existstemplate = pokcertificate_templates::get_record(['id' => $pokcertificate->id]);
-    if ($existstemplate->get('templatename') != base64_decode($tempname)) {
-        $templateinfo = new \stdclass;
-        $templateinfo->template = base64_decode($tempname);
-        $templateinfo->templatetype = $temptype;
-        $data = pok::save_template_definition($templateinfo, $cm);
-    }
+    $templateinfo = new \stdclass;
+    $templateinfo->template = base64_decode($tempname);
+    $templateinfo->templatetype = $temptype;
+    $data = pok::save_template_definition($templateinfo, $cm);
 }
 
 $remotefields = get_externalfield_list($tempname);

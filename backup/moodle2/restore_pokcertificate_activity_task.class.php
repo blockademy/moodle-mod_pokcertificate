@@ -17,8 +17,8 @@
 
 /**
  * @package   mod_pokcertificate
- * @category  backup
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @category  restore
+ * @copyright 2024 Moodle India Information Solutions Pvt Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -54,7 +54,7 @@ class restore_pokcertificate_activity_task extends restore_activity_task {
     static public function define_decode_contents() {
         $contents = array();
 
-        $contents[] = new restore_decode_content('pokcertificate', array('intro', 'content'), 'pokcertificate');
+        $contents[] = new restore_decode_content('pokcertificate', array('intro'), 'pokcertificate');
 
         return $contents;
     }
@@ -66,11 +66,10 @@ class restore_pokcertificate_activity_task extends restore_activity_task {
     static public function define_decode_rules() {
         $rules = array();
 
-        $rules[] = new restore_decode_rule('PAGEVIEWBYID', '/mod/pokcertificate/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('PAGEINDEX', '/mod/pokcertificate/index.php?id=$1', 'course');
+        $rules[] = new restore_decode_rule('POKCERTIFICATEVIEWBYID', '/mod/pokcertificate/view.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('POKCERTIFICATEINDEX', '/mod/pokcertificate/index.php?id=$1', 'course');
 
         return $rules;
-
     }
 
     /**

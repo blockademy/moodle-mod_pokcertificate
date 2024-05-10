@@ -18,16 +18,11 @@
 /**
  * @package   mod_pokcertificate
  * @category  backup
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright 2024 Moodle India Information Solutions Pvt Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die;
-
-/**
- * Define all the backup steps that will be used by the backup_pokcertificate_activity_task
- */
-
 /**
  * Define the complete pokcertificate structure for backup, with file and id annotations
  */
@@ -39,25 +34,79 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated
-        $pokcertificate = new backup_nested_element('pokcertificate', array('id'), array(
-            'name', 'intro', 'introformat', 'content', 'contentformat',
-            'legacyfiles', 'legacyfileslast', 'display', 'displayoptions',
-            'revision', 'timemodified'));
+        $pokcertificate = new backup_nested_element(
+            'pokcertificate',
+            ['id'],
+            [
+                'name', 'course', 'intro', 'introformat', 'title', 'orgname', 'orgid',
+                'templateid', 'display', 'displayoptions',
+                'usercreated', 'usermodified', 'timecreated', 'timemodified'
+            ]
+        );
 
-        // Build the tree
-        // (love this)
+        $issues = new backup_nested_element('issues');
 
-        // Define sources
-        $pokcertificate->set_source_table('pokcertificate', array('id' => backup::VAR_ACTIVITYID));
+        $issue =  new backup_nested_element(
+            'issue',
+            ['id'],
+            ['certid', 'userid', 'status', 'templateid', 'certificateurl', 'timecreated']
+        );
 
+        $fieldmappings = new backup_nested_element('fieldmappings');
+
+        $fieldmapping =  new backup_nested_element(
+            'fieldmapping',
+            ['id'],
+            ['certid', 'templatefield', 'userfield', 'timecreated', 'timemodified']
+        );
+
+        $templates = new backup_nested_element('templates');
+
+        $template =  new backup_nested_element(
+            'template',
+            ['id'],
+            [
+                'pokid', 'templatetype', 'templatename', 'templatedefinition', 'responsevalue',
+                'usercreated', 'usermodified', 'timecreated', 'timemodified'
+            ]
+        );
+
+        // Remember that order is important, try moving this line to the end and compare XML
+        $pokcertificate->add_child($issues);
+        $issues->add_child($issue);
+
+        $pokcertificate->add_child($fieldmappings);
+        $fieldmappings->add_child($fieldmapping);
+
+        $pokcertificate->add_child($templates);
+        $templates->add_child($template);
+
+        $pokcertificate->set_source_table('pokcertificate', ['id' => backup::VAR_ACTIVITYID]);
+        if ($userinfo) {
+            $issue->set_source_sql(
+                'SELECT *
+            FROM {pokcertificate_issues}
+            WHERE certid = ?',
+                ['certid' => backup::VAR_PARENTID]
+            );
+        }
         // Define id annotations
-        // (none)
+        $issue->annotate_ids('user', 'userid');
 
-        // Define file annotations
-        $pokcertificate->annotate_files('mod_pokcertificate', 'intro', null); // This file areas haven't itemid
-        $pokcertificate->annotate_files('mod_pokcertificate', 'content', null); // This file areas haven't itemid
+        $fieldmapping->set_source_sql(
+            'SELECT *
+            FROM {pokcertificate_fieldmapping}
+            WHERE certid = ?',
+            ['certid' => backup::VAR_PARENTID]
+        );
 
-        // Return the root element (pokcertificate), wrapped into standard activity structure
+        $template->set_source_sql(
+            'SELECT *
+            FROM {pokcertificate_templates}
+            WHERE pokid = ?',
+            ['pokid' => backup::VAR_PARENTID]
+        );
+        // Return the root element (pokcertificate], wrapped into standard activity structure
         return $this->prepare_activity_structure($pokcertificate);
     }
 }

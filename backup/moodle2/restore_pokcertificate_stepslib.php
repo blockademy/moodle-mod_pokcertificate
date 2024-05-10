@@ -17,8 +17,8 @@
 
 /**
  * @package   mod_pokcertificate
- * @category  backup
- * @copyright 2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @category  restore
+ * @copyright 2024 Moodle India Information Solutions Pvt Ltd
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,9 +33,11 @@ class restore_pokcertificate_activity_structure_step extends restore_activity_st
 
     protected function define_structure() {
 
-        $paths = array();
+        $paths = [];
         $paths[] = new restore_path_element('pokcertificate', '/activity/pokcertificate');
-
+        $paths[] = new restore_path_element('pokcertificate_issue', '/activity/pokcertificate/issues/issue');
+        $paths[] = new restore_path_element('pokcertificate_fieldmapping', '/activity/pokcertificate/fieldmappings/fieldmapping');
+        $paths[] = new restore_path_element('pokcertificate_template', '/activity/pokcertificate/templates/template');
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
     }
@@ -46,19 +48,47 @@ class restore_pokcertificate_activity_structure_step extends restore_activity_st
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
-
-        // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
-        // See MDL-9367.
-
+        if (isset($data->templateid)) {
+            $data->templateid = $data->templateid;
+        }
         // insert the pokcertificate record
         $newitemid = $DB->insert_record('pokcertificate', $data);
         // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 
+    protected function process_pokcertificate_issue($data) {
+        global $DB;
+
+        $data = (object) $data;
+        $oldid = $data->id;
+        $data->certid = $this->get_new_parentid('pokcertificate');
+        $newitemid = $DB->insert_record('pokcertificate_issues', $data);
+        $this->set_mapping('pokcertificate_issues', $oldid, $newitemid);
+    }
+
+    protected function process_pokcertificate_fieldmapping($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->certid = $this->get_new_parentid('pokcertificate');
+        $newitemid = $DB->insert_record('pokcertificate_fieldmapping', $data);
+        $this->set_mapping('pokcertificate_fieldmapping', $oldid, $newitemid);
+    }
+
+    protected function process_pokcertificate_template($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $data->pokid = $this->get_new_parentid('pokcertificate');
+        $newitemid = $DB->insert_record('pokcertificate_templates', $data);
+        $this->set_mapping('pokcertificate_templates', $oldid, $newitemid);
+    }
+
     protected function after_execute() {
         // Add pokcertificate related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_pokcertificate', 'intro', null);
-        $this->add_related_files('mod_pokcertificate', 'content', null);
     }
 }
