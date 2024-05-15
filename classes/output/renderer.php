@@ -18,6 +18,7 @@ namespace mod_pokcertificate\output;
 
 use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate;
+use mod_pokcertificate\persistent\pokcertificate_issues;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 
 /**
@@ -213,14 +214,18 @@ class renderer extends \plugin_renderer_base {
         }
         $availablecredits = get_config('mod_pokcertificate', 'availablecertificates');
         if ($availablecredits >= 0) {
+            $cm = pok::get_cm_instance($cmid);
+            $certificateissue = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $user->id]);
             $emitcertificate = pok::emit_certificate($cmid, $user);
-            if (!empty($emitcertificate)) {
+            if (!empty($emitcertificate) && empty($certificateissue)) {
                 if ($emitcertificate->processing) {
                     $output = self::certificate_pending_message();
                 } else {
                     pok::save_issued_certificate($cmid, $user, $emitcertificate);
                     redirect($emitcertificate->viewUrl);
                 }
+            }else if(!empty($certificateissue)){
+                redirect($certificateissue->get('certificateurl'));
             }
         } else if ($availablecredits == 0) {
             $output = self::certificate_pending_message();
@@ -325,6 +330,19 @@ class renderer extends \plugin_renderer_base {
             return  $context;
         } else {
             return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
+        }
+    }
+    public function verify_authentication_check() {
+        global $CFG, $COURSE;
+        if (!get_config('mod_pokcertificate', 'pokverified')) {
+            if (is_siteadmin() || has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+                $errormsg = get_string('authenticationcheck','mod_pokcertificate');
+                $url = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
+            }else{
+                $errormsg = get_string('authenticationcheck_user','mod_pokcertificate');
+                $url = $CFG->wwwroot . '/course/view.php?id='.$COURSE->id;
+            }
+            print_error($errormsg, 'error', $url);
         }
     }
 }

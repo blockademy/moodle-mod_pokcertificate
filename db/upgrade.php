@@ -44,8 +44,8 @@
 
 
 function xmldb_pokcertificate_upgrade($oldversion) {
-    global $CFG;
-
+    global $DB, $CFG;
+	$dbman = $DB->get_manager();
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -57,6 +57,21 @@ function xmldb_pokcertificate_upgrade($oldversion) {
 
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
+    if ($oldversion <  2024041608.01) {
+        $table = new xmldb_table('pokcertificate_issues');
 
+        $field = new xmldb_field('pokcertificateid', XMLDB_TYPE_CHAR, '225', null, null, null, null);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $table = new xmldb_table('pokcertificate_log');
+
+        $field2 = new xmldb_field('api');
+        if ($dbman->field_exists($table, $field2)) {
+            $field2->set_attributes(XMLDB_TYPE_TEXT, null, null, null, null);
+            $dbman->change_field_type($table, $field2);
+        }
+        upgrade_mod_savepoint(true,2024041608.01, 'pokcertificate');
+    }
     return true;
 }

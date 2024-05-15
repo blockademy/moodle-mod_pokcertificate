@@ -224,3 +224,5 @@ $string['institution_help_help'] = 'This field will be displayed on the certific
 <br> (Please verify authentication token in settings inorder to get institution name.)';
 $string['title_help'] = 'This field will be displayed on the certificates to be issued';
 $string['participants'] = 'Course Particpants';
+$string['authenticationcheck_user'] = "Authentication was not verfied! Please contact Site Administartor";
+$string['authenticationcheck'] = "Authentication was not verfied! click continue to verify authentication";

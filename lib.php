@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -154,7 +153,7 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
         array('id' => $coursemodule->instance),
         'id, name, display, displayoptions, intro, introformat'
     )) {
-        return NULL;
+        return null;
     }
 
     $info = new cached_cm_info();
@@ -171,9 +170,10 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
 
     $fullurl = "$CFG->wwwroot/mod/pokcertificate/view.php?id=$coursemodule->id&amp;inpopup=1&amp;formedit=1";
     $options = empty($pokcertificate->displayoptions) ? [] : (array) unserialize_array($pokcertificate->displayoptions);
-    $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
+    $width  = empty($options['popupwidth']) ? 620 : $options['popupwidth'];
     $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
-    $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,directories=no,scrollbars=yes,resizable=yes";
+    $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,";
+    $wh .= "directories=no,scrollbars=yes,resizable=yes";
     $info->onclick = "window.open('$fullurl', '', '$wh'); return false;";
 
     return $info;
@@ -216,7 +216,7 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
     global $CFG;
 
     if (!has_capability('moodle/course:managefiles', $context)) {
-        // students can not peak here!
+        // Students can not peak here!
         return null;
     }
 
@@ -231,7 +231,7 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
             if ($filepath === '/' and $filename === '.') {
                 $storedfile = new virtual_root_file($context->id, 'mod_pokcertificate', 'content', 0);
             } else {
-                // not found
+                // Not found.
                 return null;
             }
         }
@@ -239,8 +239,7 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
         return new pokcertificate_content_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, true, false);
     }
 
-    // note: pokcertificate_intro handled in file_browser automatically
-
+// Note: pokcertificate_intro handled in file_browser automatically.
     return null;
 }
 
@@ -805,7 +804,7 @@ function generalcertificatelist($filtervalues) {
     return array('count' => $count, 'data' => $data);
 }
 
-//////For display on course participants page//////////
+//For display on course participants page.
 function courseparticipantslist($courseid, $filtervalues) {
     global $DB, $PAGE, $USER, $CFG, $OUTPUT;
     $systemcontext = \context_system::instance();
@@ -818,7 +817,6 @@ function courseparticipantslist($courseid, $filtervalues) {
                 WHERE e.courseid = " . $courseid . " AND u.deleted = 0 AND u.suspended = 0 AND u.id > 2 ";
 
     $queryparam = array();
-
 
     if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
         $concatsql .= " AND (u.idnumber LIKE :search1 )";

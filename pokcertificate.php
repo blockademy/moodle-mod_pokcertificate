@@ -76,8 +76,6 @@ if ($pokverified) {
     </div>
   </div>';
 }
-/* $renderer = $PAGE->get_renderer('mod_pokcertificate');
-echo $renderer->verify_auth_form($mform); */
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();

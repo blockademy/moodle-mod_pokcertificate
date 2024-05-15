@@ -264,17 +264,18 @@ class pok {
                         $mappedfield->delete();
                     }
                 }
-                for ($i = 0; $i < $data->option_repeats; $i++) {
-                    if (isset($data->templatefield[$i]) && isset($data->userfield[$i])) {
-
-                        $mappingfield = new \stdClass();
+                $fieldvalues = [];
+                foreach($data->templatefield as $key => $field){
+                    $fieldvalues[$field] = $data->userfield[$key];
+                }
+                foreach($fieldvalues as $field => $value){
+                    $mappingfield = new \stdClass();
                         $mappingfield->timecreated = time();
                         $mappingfield->certid = $data->certid;
-                        $mappingfield->templatefield = $data->templatefield[$i];
-                        $mappingfield->userfield = $data->userfield[$i];
+                        $mappingfield->templatefield = $field;
+                        $mappingfield->userfield = $value;
                         $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
-                        $fieldmapping->create();
-                    }
+                        $fieldmapping->create();              
                 }
                 return true;
             }
@@ -356,12 +357,12 @@ class pok {
 
                 $emitdata = self::get_emitcertificate_data($user, $template, $pokrecord);
                 $data = json_encode($emitdata);
-                // $emitcertificate = (new \mod_pokcertificate\api)->get_certificate($data);
-                if ($user->username == 'student1') {
-                    $emitcertificate = '{"processing": true, "viewUrl": "https://view.pok.tech/c/662d6a93-2dab-493c-be88-2c44e6076002"}';
-                } else {
-                    $emitcertificate = '{"processing": false, "viewUrl": "https://view.pok.tech/c/662d6a93-2dab-493c-be88-2c44e6076002"}';
-                }
+                $emitcertificate = (new \mod_pokcertificate\api)->get_certificate($data);
+                // if ($user->username == 'student1') {
+                //     $emitcertificate = '{"processing": true, "viewUrl": "https://view.pok.tech/c/662d6a93-2dab-493c-be88-2c44e6076002"}';
+                // } else {
+                //     $emitcertificate = '{"processing": false, "viewUrl": "https://view.pok.tech/c/662d6a93-2dab-493c-be88-2c44e6076002"}';
+                // }
                 $emitcertificate = json_decode($emitcertificate);
             }
         }
@@ -453,6 +454,7 @@ class pok {
                 $data->status = true;
                 $data->templateid = $pokrecord->get('templateid');
                 $data->certificateurl = $emitcertificate->viewUrl;
+                $data->pokcertificateid = $emitcertificate->id;
                 $data->timecreated = time();
 
                 $pokcertificateissues = new pokcertificate_issues(0, $data);

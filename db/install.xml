@@ -43,6 +43,7 @@
         <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true"  DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="templateid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="certificateurl" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="pokcertificateid" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int"  LENGTH="10" NOTNULL="false"  DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
@@ -61,7 +62,7 @@
     <TABLE NAME="pokcertificate_log" COMMENT="POK Certificate api log information">
        <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="api" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="api" TYPE="text" NOTNULL="true"  SEQUENCE="false"/>
         <FIELD NAME="response" TYPE="char" LENGTH="255" NOTNULL="false"  DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="responsecode" TYPE="int" LENGTH="10" NOTNULL="false"  DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="responsevalue" TYPE="text" NOTNULL="false" SEQUENCE="false"/>

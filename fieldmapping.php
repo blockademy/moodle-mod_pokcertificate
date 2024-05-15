@@ -52,7 +52,6 @@ $PAGE->set_heading($course->fullname);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);
 
-echo $OUTPUT->header();
 // Save selected template definition.
 if ($tempname) {
     $templateinfo = new \stdclass;
@@ -67,13 +66,13 @@ if ($remotefields) {
     $certid = $pokcertificate->id;
     $templateid = $pokcertificate->templateid;
     $fielddata = get_mapped_fields($certid);
-
+    
     $mform = new mod_pokcertificate_fieldmapping_form(
         $url,
         ['data' => $fielddata, 'id' => $id, 'template' => $tempname, 'templateid' => $templateid, 'certid' => $certid]
     );
     $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
-
+    
     if ($mform->is_cancelled()) {
         redirect($url);
     } else if ($data = $mform->get_data()) {
@@ -82,6 +81,7 @@ if ($remotefields) {
             redirect($redirecturl);
         }
     } else {
+        echo $OUTPUT->header();
         $mform->display();
     }
 } else {

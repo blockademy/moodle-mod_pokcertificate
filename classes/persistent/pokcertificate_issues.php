@@ -59,6 +59,10 @@ class pokcertificate_issues extends persistent {
                 'type' => PARAM_RAW,
                 'optional' => false,
             ],
+            'pokcertificateid' => [
+                'type' => PARAM_RAW,
+                'optional' => false,
+            ],
         ];
     }
 }

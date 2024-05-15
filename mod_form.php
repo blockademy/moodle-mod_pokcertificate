@@ -30,12 +30,14 @@ require_once($CFG->libdir . '/filelib.php');
 
 class mod_pokcertificate_mod_form extends moodleform_mod {
 
-    function definition() {
-        global $CFG;
+    public function definition() {
+        global $CFG, $PAGE;
 
         $mform = $this->_form;
 
         $config = get_config('mod_pokcertificate');
+        $renderer = $PAGE->get_renderer('mod_pokcertificate');
+        echo $renderer->verify_authentication_check();
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
         $mform->addElement('text', 'name', get_string('certificatename', 'pokcertificate'), ['size' => '48']);
@@ -106,11 +108,6 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
             $mform->setType('popupheight', PARAM_INT);
             $mform->setDefault('popupheight', $config->popupheight);
         }
-
-        /*         $mform->addElement('advcheckbox', 'printintro', get_string('printintro', 'pokcertificate'));
-        $mform->setDefault('printintro', $config->printintro);
-        $mform->addElement('advcheckbox', 'printlastmodified', get_string('printlastmodified', 'pokcertificate'));
-        $mform->setDefault('printlastmodified', $config->printlastmodified); */
 
         // Add legacy files flag only if used.
         if (isset($this->current->legacyfiles) && $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {

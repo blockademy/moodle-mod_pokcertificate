@@ -58,7 +58,6 @@ if ($id > 0) {
     $PAGE->add_body_class('limitedwidth');
     $PAGE->set_activity_record($pokcertificate);
 
-    echo $OUTPUT->header();
     if (!$user = $DB->get_record('user', ['id' => $userid])) {
         throw new \moodle_exception('invaliduserid');
     } else {
@@ -87,6 +86,7 @@ if ($id > 0) {
             $redirecturl = new moodle_url('/mod/pokcertificate/view.php', ['id' => $id, 'flag' => 1]);
             redirect($redirecturl);
         } else {
+            echo $OUTPUT->header();
             $mform->display();
         }
     }
@@ -98,8 +98,6 @@ if ($id > 0) {
     $PAGE->set_title(get_string('profile', 'mod_pokcertificate'));
     $PAGE->set_heading(get_string('profile', 'mod_pokcertificate'));
 
-    echo $OUTPUT->header();
-
     if (!$user = $DB->get_record('user', ['id' => $userid])) {
         throw new \moodle_exception('invaliduserid');
     } else {
@@ -110,7 +108,6 @@ if ($id > 0) {
         profile_load_data($user);
         $mform = new mod_pokcertificate_editprofile_form($url, ['user' => $user]);
         $redirecturl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
-
         if ($mform->is_cancelled()) {
             redirect($redirecturl);
         } else if ($userdata = $mform->get_data()) {
@@ -121,6 +118,7 @@ if ($id > 0) {
             profile_save_data($userdata);
             redirect($redirecturl);
         } else {
+            echo $OUTPUT->header();
             $mform->display();
         }
     }

@@ -68,35 +68,44 @@ if ($inpopup && $pokcertificate->display == RESOURCELIB_DISPLAY_POPUP) {
     }
 }
 $PAGE->activityheader->set_attrs($activityheader);
-echo $OUTPUT->header();
 
 if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'])) {
     $strlastmodified = get_string("lastmodified");
     echo html_writer::div("$strlastmodified: " . userdate($pokcertificate->timemodified), 'modified');
 }
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
-
+$renderer->verify_authentication_check();
+$adminview = false;
+$studentview = false;
 if ($id) {
     pok::set_cmid($id);
     // Getting certificate template view for admin.
     if (is_siteadmin()  || has_capability('mod/pokcertificate:manageinstance', $context)) {
         $preview = pok::preview_template($id);
         if ($preview) {
+            $adminview = true;
             $params = ['id' => $id];
             $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
-            redirect($url);
         }
     }
     // Getting certificate template view for student.
     if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', $context)) {
         if ($flag) {
-            echo $renderer->emit_certificate_templates($id, $USER);
+            $studentview = true;
         } else {
             $params = ['cmid' => $id, 'id' => $USER->id];
             $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
-            redirect($url);
         }
     }
 }
+if ($adminview) {
+    redirect($url);
+}
+if ($studentview) {
+    echo $renderer->emit_certificate_templates($id, $USER);
+} else if (!is_siteadmin()) {
+    redirect($url);
+}
+echo $OUTPUT->header();
 echo $renderer->show_certificate_templates($id);
 echo $OUTPUT->footer();

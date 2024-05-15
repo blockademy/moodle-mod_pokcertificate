@@ -85,9 +85,6 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
         $mform->setDefault('cmid', $cmid);
 
         self::get_profile_fields($mform, $pokfields, $userid);
-
-        // profile_definition($mform, $userid);
-
         $this->add_action_buttons(true, get_string('updatemyprofile'));
 
         $this->set_data($user);
