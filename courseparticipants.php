@@ -1,46 +1,36 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-/**
- * index to view incomplete student profile.
- *
- * @package   mod_pokcertificate
- * @copyright 2024 Moodle India Information Solutions Pvt Ltd
- * @author    2024 Narendra.Patel <narendra.patel@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
+global $CFG;
+// use mod_pokcertificate\form\mod_pokcertificate_searchfilter_form;
 require_once('../../config.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/searchfilter_form.php');
 require_login();
 
-$context = \context_system::instance();
-$url = new moodle_url('/mod/pokcertificate/courseparticipants.php', []);
+// Set up page context and heading
+$context = context_system::instance();
+$courseid = required_param('courseid', PARAM_INT);
+$studentid = optional_param('studentid', '', PARAM_RAW);
+$senttopok = optional_param('senttopok', '', PARAM_RAW);
+$coursestatus = optional_param('coursestatus', '', PARAM_RAW);
+$url = new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $courseid]);
 $heading = get_string('courseparticipants', 'mod_pokcertificate');
-$PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
 
-
+global $DB, $OUTPUT;
 echo $OUTPUT->header();
-$renderer = $PAGE->get_renderer('mod_pokcertificate');
-$filterparams = $renderer->get_courseparticipantslist(true);
-$filterparams['submitid'] = 'form#filteringform';
-$filterparams['placeholder'] = get_string('studentid', 'mod_pokcertificate');
-echo $OUTPUT->render_from_template('mod_pokcertificate/global_filter', $filterparams);
-echo $renderer->get_courseparticipantslist();
+$mform = new \searchfilter_form('', ['viewtype' => 'participaints']);
+$mform->set_data(['courseid' => $courseid, 'studentid' => $studentid, 'senttopok' => $senttopok, 'coursestatus' => $coursestatus]);
+if ($mform->is_cancelled()) {
+    redirect(new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $courseid]));
+} else if ($userdata = $mform->get_data()) {
 
+    redirect(new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $userdata->courseid, 'studentid' => $userdata->studentid, 'senttopok' => $userdata->senttopok, 'coursestatus' => $userdata->coursestatus]));
+} else {
+    $mform->display();
+}
+$renderer = $PAGE->get_renderer('mod_pokcertificate');
+$records = $renderer->get_courseparticipantslist();
+echo $records['recordlist'];
+echo $records['pagination'];
 echo $OUTPUT->footer();

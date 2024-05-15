@@ -13,44 +13,51 @@
 
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
-
-    ddd
-
 }}
-{{#response}}
-    {{#viewtypeCard}}
-        <table class="generaltable dataTable no-footer" id="skill_repository" role="grid" aria-describedby="skill_repository">
-            <thead>
-                <tr role="row">
-                    <th>{{#str}}studentname,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}email,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}studentid,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}coursename,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}enrolldate,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}completedate,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}coursestatus,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}typeofcerti,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}certificatestatus,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}previewcerti,mod_pokcertificate{{/str}}</th>
+{{#showdata}}
+    <table class="generaltable dataTable no-footer" id="courseparticipants" role="grid" aria-describedby="courseparticipants">
+        <thead>
+            <tr role="row">
+                <th>{{#str}}studentname,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}email,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}studentid,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}coursename,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}enrolldate,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}completedate,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}coursestatus,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}typeofcerti,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}senttopok,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}checkstatus,mod_pokcertificate{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#data}}
+                <tr>
+                    <td>{{firstname}}</td>
+                    <td>{{email}}</td>
+                    <td>{{studentid}}</td>
+                    <td>{{coursename}}</td>
+                    <td>{{enrolldate}}</td>
+                    <td>{{completedate}}</td>
+                    <td>{{coursestatus}}</td>
+                    <td>{{certificatetype}}</td>
+                    <td>{{senttopok}}</td>
+                    {{#checkstatus}}
+                        <td>
+                            <input type="checkbox" id="myCheckbox" name="myCheckbox">
+                            <!-- <label for="myCheckbox">Checkbox Label</label> -->
+                        </td>
+                    {{/checkstatus}}
+                    {{^checkstatus}}
+                        <td>-</td>
+                    {{/checkstatus}}
                 </tr>
-            </thead>
-            <tbody>
-                {{#records}}
-                    <tr>
-                        <td>{{firstname}}</td>
-                        <td>{{email}}</td>
-                        <td>{{studentid}}</td>
-                        <td>{{lastname}}</td>
-                        <td>{{program}}</td>
-                        <td>{{firstname}}</td>
-                        <td>{{email}}</td>
-                        <td>{{studentid}}</td>
-                        <td>{{lastname}}</td>
-                        <td>{{program}}</td>
-                    </tr>
-                {{/records}}
-            </tbody>
-        </table>
-    {{/viewtypeCard}}
-{{/response}}
+            {{/data}}
+        </tbody>
+    </table>
+{{/showdata}}
+{{^showdata}}
+    <div class="alert alert-info alert-block fade in  alert-dismissible" role="alert" data-aria-autofocus="true">
+        No Record Available
+    </div>
+{{/showdata}}

@@ -33,39 +33,9 @@ class mod_pokcertificate_userupload_form extends moodleform {
         $authoptions = array();
         $cannotchangepass = array();
         $cannotchangeusername = array();
-        // foreach ($auths as $auth => $unused) {
-        //     if ($auth == 'nologin') 
-        //         continue;
-        //         $authinst = get_auth_plugin($auth);
-            
-
-        //     if (!$authinst->is_internal()) {
-        //         $cannotchangeusername[] = $auth;
-        //     }
-
-        //     $passwordurl = $authinst->change_password_url();
-        //     if (!($authinst->can_change_password() && empty($passwordurl))) {
-        //         if ($userid < 1 && $authinst->is_internal()) {
-        //             // This is unlikely but we can not create account without password.
-        //             // When plugin uses passwords, we need to set it initially at least.
-        //         } else {
-        //             $cannotchangepass[] = $auth;
-                
-        //     }
-        //     if (is_enabled_auth($auth)) {
-        //         $authoptions[$auth] = get_string('pluginname', "auth_{$auth}");
-        //     }
-        // }
 
         $mform->addElement('filepicker', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');
-
-		// $mform->addElement('select', 'enrollmentmethod', get_string('authenticationmethods', 'mod_pokcertificate'), $authoptions);
-        // $mform->addRule('enrollmentmethod', null, 'required', null, 'client');
-		// $mform->setType('enrollmentmethod', PARAM_TEXT);
-        // $mform->setDefault('enrollmentmethod', 'manual');
-
-        // $mform->addElement('advcheckbox', 'createpassword', get_string('createpassword', 'auth'));
 
         $mform->addElement('hidden',  'delimiter_name');
         $mform->setType('delimiter_name', PARAM_TEXT);

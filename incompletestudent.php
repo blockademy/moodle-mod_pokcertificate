@@ -24,6 +24,7 @@
  */
 
 require_once('../../config.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/searchfilter_form.php');
 require_login();
 
 $context = \context_system::instance();
@@ -33,14 +34,23 @@ $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
+$studentid = optional_param('studentid', '', PARAM_RAW);
+
 
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
-$filterparams = $renderer->get_incompletestudentprofile(true);
 echo $renderer->userbulkupload();
-$filterparams['submitid'] = 'form#filteringform';
-$filterparams['placeholder'] = get_string('studentid', 'mod_pokcertificate');
-echo $OUTPUT->render_from_template('mod_pokcertificate/global_filter', $filterparams);
-echo $renderer->get_incompletestudentprofile();
+$mform = new \searchfilter_form();
+$mform->set_data(['studentid' => $studentid]);
+if ($mform->is_cancelled()) {
+    redirect(new \moodle_url('/mod/pokcertificate/incompletestudent.php'));
+} else if ($userdata = $mform->get_data()) {
 
+    redirect(new \moodle_url('/mod/pokcertificate/incompletestudent.php', ['studentid' => $userdata->studentid,]));
+} else {
+    $mform->display();
+}
+$records = $renderer->get_incompletestudentprofile();
+echo $records['recordlist'];
+echo $records['pagination'];
 echo $OUTPUT->footer();

@@ -138,6 +138,8 @@ $string['notverified'] = 'Not Verified';
 $string['verified'] = 'Verified';
 $string['free'] = 'Free';
 $string['paid'] = 'Paid';
+$string['incompletestudent'] = 'Incomplete Student Profile';
+$string['generalcertificate'] = 'General Certificate Status';
 $string['studentname'] = 'Student Name';
 $string['surname'] = 'Surname';
 $string['email'] = 'Email';
@@ -151,10 +153,11 @@ $string['bulkupload'] = 'Bulk Upload';
 $string['coursename'] = 'Course Name';
 $string['enrolldate'] = 'Enroll Date';
 $string['completedate'] = 'Complete Date';
-$string['coursestatus'] = 'Course Status';
+$string['senttopok'] = 'Sent to POK';
 $string['typeofcerti'] = 'Type of certificate';
 $string['certificatestatus'] = 'Certificate status';
-$string['previewcerti'] = 'Preview Certifcate';
+$string['checkstatus'] = 'Check Status';
+$string['coursestatus'] = 'Course Status';
 $string['courseparticipants'] = 'Course Participants';
 $string['helpmanualsdata'] = '
     <div class="field_type font-weight-bold" style="text-align:left;"></div>
@@ -170,7 +173,6 @@ $string['helpmanualsdata'] = '
             <tr>
                 <td>studentname</td>
                 <td>Please enter studentname.</td>
-
             </tr>
             <tr>
                 <td>surname</td>
