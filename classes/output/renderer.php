@@ -247,13 +247,13 @@ class renderer extends \plugin_renderer_base {
         return $this->render_from_template('mod_pokcertificate/action_bar', $data);
     }
 
-    public function get_incompletestudentprofile($filter = false) {
+    public function get_incompletestudentprofile() {
         global $USER;
         $systemcontext = \context_system::instance();
         $page = optional_param('page', 0, PARAM_INT);
         $url = new \moodle_url('/mod/pokcertificate/incompletestudent.php', []);
         $studentid = optional_param('studentid', '', PARAM_RAW);
-        $record_per_page = 2;
+        $record_per_page = 10;
         $offset = $page * $record_per_page;
         $records = incompletestudentprofilelist($studentid, $record_per_page, $offset);
         $records['showdata'] = $records['data'] ? true : false;
@@ -276,7 +276,7 @@ class renderer extends \plugin_renderer_base {
         $coursestatus = optional_param('coursestatus', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
         $url = new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $courseid, 'studentid' => $studentid, 'senttopok' => $senttopok, 'coursestatus' => $coursestatus]);
-        $record_per_page = 2;
+        $record_per_page = 10;
         $offset = $page * $record_per_page;
         $records = courseparticipantslist($courseid, $studentid, $senttopok, $coursestatus, $record_per_page, $offset);
         $records['courseid'] = $courseid;
@@ -292,27 +292,16 @@ class renderer extends \plugin_renderer_base {
     public function get_generalcertificate($filter = false) {
         global $USER;
         $systemcontext = \context_system::instance();
-        $options = array('targetID' => 'view_generalcertificate', 'perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
-
-        $options['methodName'] = 'mod_pokcertificate_generalcertificate_view';
-        $options['templateName'] = 'mod_pokcertificate/awardedcertificatestatus';
-        $options = json_encode($options);
-
-        $dataoptions = json_encode(array('contextid' => $systemcontext->id));
-        $filterdata = json_encode(array());
-
-        $context = [
-            'targetID' => 'view_generalcertificate',
-            'options' => $options,
-            'dataoptions' => $dataoptions,
-            'filterdata' => $filterdata
-        ];
-
-        if ($filter) {
-            return  $context;
-        } else {
-            return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
-        }
+        $page = optional_param('page', 0, PARAM_INT);
+        $url = new \moodle_url('/mod/pokcertificate/generalcertificate.php', []);
+        $studentid = optional_param('studentid', '', PARAM_RAW);
+        $record_per_page = 10;
+        $offset = $page * $record_per_page;
+        $records = awardgeneralcertificatelist($studentid, $record_per_page, $offset);
+        $records['showdata'] = $records['data'] ? true : false;
+        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/awardedcertificatestatus', $records);
+        $return['pagination'] = $this->paging_bar($records['count'], $page, $record_per_page, $url);
+        return $return;
     }
 
     public function verify_authentication_check() {

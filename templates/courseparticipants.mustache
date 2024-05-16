@@ -25,6 +25,7 @@
                 <th>{{#str}}enrolldate,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}completedate,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}coursestatus,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}activity,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}typeofcerti,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}senttopok,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}checkstatus,mod_pokcertificate{{/str}}</th>
@@ -40,17 +41,21 @@
                     <td>{{enrolldate}}</td>
                     <td>{{completedate}}</td>
                     <td>{{coursestatus}}</td>
+                    <td>{{activity}}</td>
                     <td>{{certificatetype}}</td>
                     <td>{{senttopok}}</td>
-                    {{#checkstatus}}
+                    {{#certificateurl}}
                         <td>
-                            <input type="checkbox" id="myCheckbox" name="myCheckbox">
-                            <!-- <label for="myCheckbox">Checkbox Label</label> -->
+                            <a href="{{certificateurl}}">
+                                <span class='viewcertificate'>
+                                    <i class="fa fa-certificate" aria-hidden="true"></i>
+                                </span>
+                            </a>
                         </td>
-                    {{/checkstatus}}
-                    {{^checkstatus}}
+                    {{/certificateurl}}
+                    {{^certificateurl}}
                         <td>-</td>
-                    {{/checkstatus}}
+                    {{/certificateurl}}
                 </tr>
             {{/data}}
         </tbody>

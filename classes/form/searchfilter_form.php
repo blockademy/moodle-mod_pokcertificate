@@ -34,7 +34,7 @@ class searchfilter_form extends moodleform {
         $viewtype = $this->_customdata['viewtype'];
 
         // Text input field
-        $mform->addElement('text', 'studentid', '');
+        $mform->addElement('text', 'studentid', get_string('studentid','mod_pokcertificate'));
         $mform->setType('studentid', PARAM_RAW);
 
         if($viewtype == 'participaints') {

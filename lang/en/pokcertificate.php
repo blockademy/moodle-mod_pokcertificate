@@ -228,3 +228,4 @@ $string['title_help'] = 'This field will be displayed on the certificates to be 
 $string['participants'] = 'Course Particpants';
 $string['authenticationcheck_user'] = "Authentication was not verfied! Please contact Site Administartor";
 $string['authenticationcheck'] = "Authentication was not verfied! click continue to verify authentication";
+$string['activity'] = "Activity";

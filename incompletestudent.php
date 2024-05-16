@@ -35,8 +35,11 @@ $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
 $studentid = optional_param('studentid', '', PARAM_RAW);
-
-
+if (empty($studentid)) {
+    $show = '';
+} else {
+    $show = 'show';
+}
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 echo $renderer->userbulkupload();
@@ -48,7 +51,15 @@ if ($mform->is_cancelled()) {
 
     redirect(new \moodle_url('/mod/pokcertificate/incompletestudent.php', ['studentid' => $userdata->studentid,]));
 } else {
-    $mform->display();
+    echo '<a class = "btn-link btn-sm" data-toggle = "collapse" data-target = "#mod_pokcertificate-filter_collapse" aria-expanded = "false"
+    aria-controls = "mod_pokcertificate-filter_collapse">
+            <i class = "m-0 fa fa-sliders fa-2x" aria-hidden = "true"></i>
+          </a>';
+    echo  '<div class = "mt-2 mb-2 collapse '.$show.'" id = "mod_pokcertificate-filter_collapse">
+                <div id = "filters_form" class = "card card-body p-2">';
+                    $mform->display();
+    echo        '</div>
+            </div>';
 }
 $records = $renderer->get_incompletestudentprofile();
 echo $records['recordlist'];
