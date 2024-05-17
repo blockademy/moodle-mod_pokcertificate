@@ -32,30 +32,74 @@ require_once($CFG->dirroot . '/admin/tool/uploaduser/locallib.php');
 use html_writer;
 use stdClass;
 
-class syncfunctionality
-{
+/**
+ * Class syncfunctionality
+ *
+ * This class handles synchronization functionality for importing user data from HRMS files
+ * into Moodle for the mod_pokcertificate module.
+ */
+class syncfunctionality {
+
+    /**
+     * @var mixed The data to be synchronized.
+     */
     private $data;
+
+    /**
+     * @var array Stores error messages encountered during synchronization.
+     */
     private $errors = [];
+
+    /**
+     * @var array Stores fields that have validation errors.
+     */
     private $mfields = [];
+
+    /**
+     * @var int Stores the count of errors encountered during synchronization.
+     */
     private $errorcount = 0;
-    private $updatedcount = 0;   
+
+    /**
+     * @var int Stores the count of successfully updated records during synchronization.
+     */
+    private $updatedcount = 0;
+
+    /**
+     * @var mixed Stores information about existing users during synchronization.
+     */
     private $existinguser;
 
+    /**
+     * Constructor for syncfunctionality class.
+     *
+     * @param mixed $data The data to be synchronized.
+     */
     public function __construct($data = null) {
         $this->data = $data;
-    } // end of constructor
+    } // End of constructor.
 
+    /**
+     * Main method for HRMS frontend form submission.
+     *
+     * This method processes the submitted HRMS file data and performs various validation
+     * checks before updating user records in Moodle.
+     *
+     * @param object $cir The file reader object.
+     * @param array $filecolumns The columns present in the HRMS file.
+     * @param mixed $formdata Additional form data.
+     */
     public function main_hrms_frontendform_method($cir, $filecolumns, $formdata) {
         global $DB, $CFG;
-    
+
         $linenum = 1;
         $mandatoryfields = [
-            'username',
-            'studentname',
-            'surname',
-            'email',
-            'studentid'
-        ];
+                                'username',
+                                'studentname',
+                                'surname',
+                                'email',
+                                'studentid',
+                            ];
         $this->mandatoryfieldcount = 0;
         while ($line = $cir->next()) {
             $linenum++;
@@ -67,7 +111,6 @@ class syncfunctionality
                 $key = $filecolumns[$keynum];
                 $user->$key = trim($value);
             }
-      
             $this->errors = [];
             $this->mfields = [];
             $this->excellinenumber = $linenum;
@@ -79,7 +122,7 @@ class syncfunctionality
             }
             // To check for existing user record.
             $sql = "SELECT u.id,u.username
-                      FROM {user} u 
+                      FROM {user} u
                      WHERE u.username = :username AND u.deleted = 0 ";
             $params = [];
             $params['username'] = $user->username;
@@ -104,27 +147,44 @@ class syncfunctionality
             }
         }
 
-        $upload_info = '<div class="critera_error1"><h3 style="text-decoration: underline;">'
+        $uploadinfo = '<div class="critera_error1"><h3 style="text-decoration: underline;">'
             . get_string('empfile_syncstatus', 'mod_pokcertificate') . '</h3>';
-        
-        $upload_info .= '<div class=local_users_sync_success>' . get_string(
+        $uploadinfo .= '<div class=local_users_sync_success>' . get_string(
             'updatedusers_msg',
             'mod_pokcertificate',
             $this->updatedcount
         ) . '</div>';
-        $upload_info .= '<div class=local_users_sync_error>' . get_string(
+        $uploadinfo .= '<div class=local_users_sync_error>' . get_string(
             'errorscount_msg',
             'mod_pokcertificate',
             $this->errorcount
         ) . '</div>
             </div>';
-        
-        $button = html_writer::tag('button', get_string('continue'), array('class' => 'btn btn-primary'));
-        $link = html_writer::tag('a', $button, array('href' => $CFG->wwwroot . '/mod/pokcertificate/incompletestudent.php'));
-        $upload_info .= '<div class="w-full pull-left text-xs-center">' . $link . '</div>';
-        mtrace($upload_info);
-    } //end of main_hrms_frontendform_method
+        $button = html_writer::tag('button', get_string('continue'),
+            [
+                'class' => 'btn btn-primary',
+            ]);
+        $link = html_writer::tag(
+            'a',
+            $button,
+            [
+                'href' => $CFG->wwwroot . '/mod/pokcertificate/incompletestudent.php',
+            ],
+        );
+        $uploadinfo .= '<div class="w-full pull-left text-xs-center">' . $link . '</div>';
+        mtrace($uploadinfo);
+    } // End of main_hrms_frontendform_method.
 
+    /**
+     * Prepares the user object from Excel data.
+     *
+     * This method prepares a user object from the Excel data, including the firstname,
+     * lastname, email, and idnumber fields. It also processes any custom profile fields.
+     *
+     * @param object $excel The Excel data for a user.
+     * @param mixed $formdata Additional form data.
+     * @return object The prepared user object.
+     */
     public function preparing_users_object($excel, $formdata = null) {
         $user = new \stdclass();
         $user->firstname    = $excel->studentname;
@@ -132,16 +192,24 @@ class syncfunctionality
         $user->email        = strtolower($excel->email);
         $user->idnumber     = $excel->studentid;
         $result = preg_grep("/profile_field_/", array_keys((array)$excel));
-        
+
         if (count($result) > 0) {
             foreach ($result as $key => $val) {
                 $user->$val = $excel->$val;
-            }            
+            }
         }
         return $user;
-    } // end of  preparing_users_object method
+    } // End of  preparing_users_object method.
 
-    // Condition to get the userid to update the data.
+    /**
+     * Updates a user record.
+     *
+     * This method updates a user record in Moodle with the provided Excel data and form data.
+     *
+     * @param object $excel The Excel data for a user.
+     * @param object $userobject The prepared user object.
+     * @param mixed $formdata Additional form data.
+     */
     public function update_row($excel, $userobject, $formdata) {
         global $USER;
         $userid = $this->existinguser->id;
@@ -153,9 +221,16 @@ class syncfunctionality
             user_update_user($user, false);
             $this->updatedcount++;
         }
-    } // end of  update_row method
+    } // End of  update_row method.
 
-    // validation for mandatory missing fields
+    /**
+     * Validates mandatory missing fields.
+     *
+     * This method validates whether mandatory fields are missing in the provided Excel data.
+     *
+     * @param object $user The user object.
+     * @param string $field The field to be validated.
+     */
     public function mandatory_field_validation($user, $field) {
         if (empty(trim($user->$field))) {
             $strings = new stdClass;
@@ -167,9 +242,16 @@ class syncfunctionality
             $this->mfields[] = $field;
             $this->errorcount++;
         }
-    } //end of mandatory_field_validation method
+    } //End of mandatory_field_validation method.
 
-    // massage for no user exist
+    /**
+     * Handles the case where no user record exists.
+     *
+     * This method is called when no corresponding user record is found for the provided Excel data.
+     * It displays an error message indicating the missing user record.
+     *
+     * @param object $excel The Excel data for a user.
+     */
     public function nouserexist($excel) {
         $strings = new stdClass;
         $strings->linenumber = $this->excellinenumber;
@@ -177,8 +259,16 @@ class syncfunctionality
         echo "<div class='local_users_sync_error'>" . get_string('nouserrecord', 'mod_pokcertificate', $strings) . "</div>";
         $this->errors[] = get_string('nouserrecord', 'mod_pokcertificate', $strings);
         $this->errorcount++;
-    } // end of nouserexist method
+    } // End of nouserexist method.
 
+    /**
+     * Validates the email field.
+     *
+     * This method validates the email field in the provided Excel data. It checks for valid email
+     * format and also verifies if the email already exists in the database.
+     *
+     * @param object $excel The Excel data for a user.
+     */
     public function email_validation($excel) {
         global $DB;
         $strings = new StdClass();
@@ -205,8 +295,16 @@ class syncfunctionality
             $this->mfields[] = 'email';
             $this->errorcount++;
         }
-    } // end of email_validation method
+    } // End of email_validation method.
 
+    /**
+     * Validates the student ID field.
+     *
+     * This method validates the student ID field in the provided Excel data. It checks for numeric
+     * format and also verifies if the student ID already exists in the database.
+     *
+     * @param object $excel The Excel data for a user.
+     */
     public function studentid_validation($excel) {
         global $DB;
         $strings = new stdClass();
@@ -240,5 +338,5 @@ class syncfunctionality
             $this->mfields[] = "studentid";
             $this->errorcount++;
         }
-    } // end of class studentid_validation method
-} // end of class
+    } // End of class studentid_validation method.
+} // End of class.

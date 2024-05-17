@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * User bulk upload form
+ *
+ * @package     mod_pokcertificate
+ * @copyright   2024 Moodle India Information Solutions Pvt Ltd
+ * @author      2024 Narendra.Patel <narendra.patel@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -24,15 +32,21 @@ use csv_import_reader;
 use core_text;
 define('ADD_UPDATE', 3);
 
+/**
+ * Form class for uploading users in the Pokcertificate module.
+ */
 class mod_pokcertificate_userupload_form extends moodleform {
+    /**
+     * Defines the elements and structure of the user upload form.
+     */
     public function definition() {
         $mform = $this->_form;
         $auths = \core_component::get_plugin_list('auth');
         $enabled = get_string('pluginenabled', 'core_plugin');
         $disabled = get_string('plugindisabled', 'core_plugin');
-        $authoptions = array();
-        $cannotchangepass = array();
-        $cannotchangeusername = array();
+        $authoptions = [];
+        $cannotchangepass = [];
+        $cannotchangeusername = [];
 
         $mform->addElement('filepicker', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');

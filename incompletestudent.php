@@ -24,6 +24,7 @@
  */
 
 require_once('../../config.php');
+global $CFG, $PAGE, $OUTPUT;
 require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/searchfilter_form.php');
 require_login();
 
@@ -48,18 +49,20 @@ $mform->set_data(['studentid' => $studentid]);
 if ($mform->is_cancelled()) {
     redirect(new \moodle_url('/mod/pokcertificate/incompletestudent.php'));
 } else if ($userdata = $mform->get_data()) {
-
-    redirect(new \moodle_url('/mod/pokcertificate/incompletestudent.php', ['studentid' => $userdata->studentid,]));
+    redirect(new \moodle_url('/mod/pokcertificate/incompletestudent.php',
+        ['studentid' => $userdata->studentid]
+    ));
 } else {
-    echo '<a class = "btn-link btn-sm" data-toggle = "collapse" data-target = "#mod_pokcertificate-filter_collapse" aria-expanded = "false"
-    aria-controls = "mod_pokcertificate-filter_collapse">
+    echo '<a class = "btn-link btn-sm" data-toggle = "collapse"
+        data-target = "#mod_pokcertificate-filter_collapse"
+        aria-expanded = "false" aria-controls = "mod_pokcertificate-filter_collapse">
             <i class = "m-0 fa fa-sliders fa-2x" aria-hidden = "true"></i>
-          </a>';
-    echo  '<div class = "mt-2 mb-2 collapse '.$show.'" id = "mod_pokcertificate-filter_collapse">
-                <div id = "filters_form" class = "card card-body p-2">';
+        </a>';
+    echo '<div class = "mt-2 mb-2 collapse '.$show.'" id = "mod_pokcertificate-filter_collapse">
+            <div id = "filters_form" class = "card card-body p-2">';
                     $mform->display();
-    echo        '</div>
-            </div>';
+    echo    '</div>
+        </div>';
 }
 $records = $renderer->get_incompletestudentprofile();
 echo $records['recordlist'];

@@ -26,31 +26,63 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
+/**
+ * Class searchfilter_form
+ *
+ * This class defines a search filter form for the mod_pokcertificate module.
+ * It extends the moodleform class to provide a custom form for filtering
+ * student certificates or course participants based on various criteria.
+ */
 class searchfilter_form extends moodleform {
+
+    /**
+     * Defines the form elements.
+     *
+     * This function sets up the form elements based on the view type specified
+     * in the custom data. It includes fields for student ID, and if the view type
+     * is 'participants', additional fields for filtering by whether the record
+     * was sent to POK and the course status. It also adds a submit button.
+     */
     public function definition() {
         $mform = $this->_form;
 
-        // customdata values
-        $viewtype = $this->_customdata['viewtype'];
+        // Customdata values.
+        $viewtype = isset($this->_customdata['viewtype']);
+        $courseid = isset($this->_customdata['viewtype']);
 
-        // Text input field
-        $mform->addElement('text', 'studentid', get_string('studentid','mod_pokcertificate'));
+        // Text input field.
+        $mform->addElement('text', 'studentid', get_string('studentid', 'mod_pokcertificate'));
         $mform->setType('studentid', PARAM_RAW);
 
-        if($viewtype == 'participaints') {
-            // Autocomplete input field 1
-            $mform->addElement('select', 'senttopok', get_string('senttopok','mod_pokcertificate'), array('' => 'select', 'yes' => 'yes', 'no' => 'no')); 
+        if ($viewtype == 'participaints') {
+            // Autocomplete input field 1.
+            $mform->addElement('select',
+                               'senttopok',
+                               get_string('senttopok', 'mod_pokcertificate'),
+                               [
+                                    '' => 'select',
+                                    'yes' => 'yes',
+                                    'no' => 'no',
+                                ]);
             $mform->setType('senttopok', PARAM_RAW);
 
-            // Autocomplete input field 2
-            $mform->addElement('select', 'coursestatus', get_string('coursestatus','mod_pokcertificate'), array('' => 'select', 'completed' => 'completed', 'inprogress' => 'inprogress'));
+            // Autocomplete input field 2.
+            $mform->addElement('select',
+                               'coursestatus',
+                               get_string('coursestatus', 'mod_pokcertificate'),
+                               [
+                                    '' => 'select',
+                                    'completed' => 'completed',
+                                    'inprogress' => 'inprogress',
+                                ]);
             $mform->setType('coursestatus', PARAM_RAW);
 
-            // hidden field
+            // Hidden field.
             $mform->addElement('hidden', 'courseid', $courseid);
+            $mform->setType('courseid', PARAM_INT);
         }
 
-        // Add submit button
+        // Add submit button.
         $this->add_action_buttons(true, get_string('submit'));
     }
 }

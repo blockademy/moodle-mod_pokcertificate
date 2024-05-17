@@ -187,7 +187,7 @@ class mod_pokcertificate_external extends external_api {
 
         $result = [
             'pokcertificates' => $returnedpokcertificates,
-            'warnings' => $warnings
+            'warnings' => $warnings,
         ];
         return $result;
     }
@@ -309,97 +309,5 @@ class mod_pokcertificate_external extends external_api {
 
     public static function show_certificate_templates_returns() {
         return new external_value(PARAM_RAW, 'return');
-    }
-
-    public static function generalcertificate_view_parameters() {
-        return new external_function_parameters([
-            'options' => new external_value(PARAM_RAW, 'The paging data for the service'),
-            'dataoptions' => new external_value(PARAM_RAW, 'The data for the service'),
-            'offset' => new external_value(PARAM_INT, 'Number of items to skip from the begging of the result set', VALUE_DEFAULT, 0),
-            'limit' => new external_value(PARAM_INT, 'Maximum number of results to return', VALUE_DEFAULT, 0),
-            'contextid' => new external_value(PARAM_INT, 'contextid'),
-            'filterdata' => new external_value(PARAM_RAW, 'The data for the service'),
-        ]);
-    }
-
-    /**
-     * Gets the list of users based on the login user
-     *
-     * @param int $options need to give options targetid,viewtype,perpage,cardclass
-     * @param int $dataoptions need to give data which you need to get records
-     * @param int $limit Maximum number of results to return
-     * @param int $offset Number of items to skip from the beginning of the result set.
-     * @param int $filterdata need to pass filterdata.
-     * @return array The list of users and total users count.
-     */
-    public static function generalcertificate_view(
-        $options,
-        $dataoptions,
-        $offset = 0,
-        $limit = 0,
-        $contextid,
-        $filterdata
-    ) {
-        global $OUTPUT, $CFG, $USER, $PAGE;
-        require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
-        require_login();
-        $PAGE->set_url('/mod/pokcertificate/incompletestudent.php', array());
-        $PAGE->set_context($contextid);
-        // Parameter validation.
-        $params = self::validate_parameters(
-            self::generalcertificate_view_parameters(),
-            [
-                'options' => $options,
-                'dataoptions' => $dataoptions,
-                'offset' => $offset,
-                'limit' => $limit,
-                'contextid' => $contextid,
-                'filterdata' => $filterdata
-            ]
-        );
-        $offset = $params['offset'];
-        $limit = $params['limit'];
-        $decodedata = json_decode($params['dataoptions']);
-        $filtervalues = json_decode($filterdata);
-        $stable = new \stdClass();
-        $stable->thead = true;
-        $stable->start = $offset;
-        $stable->length = $limit;
-        $incompletestudent = generalcertificatelist($filtervalues);
-        $totalcount = $incompletestudent['count'];
-        $data = $incompletestudent['data'];
-        return [
-            'is_admin' => is_siteadmin(),
-            'totalcount' => $totalcount,
-            'records' => $data,
-            'options' => $options,
-            'dataoptions' => $dataoptions,
-            'filterdata' => $filterdata,
-        ];
-    }
-
-    /**
-     * Returns description of method result value.
-     */
-    public static function  generalcertificate_view_returns() {
-        return new external_single_structure([
-            'options' => new external_value(PARAM_RAW, 'The paging data for the service'),
-            'dataoptions' => new external_value(PARAM_RAW, 'The data for the service'),
-            'filterdata' => new external_value(PARAM_RAW, 'The data for the service'),
-            'is_admin' => new external_value(PARAM_BOOL, 'Is user an admin flag'),
-            'totalcount' => new external_value(PARAM_INT, 'total number of custom_category in result set'),
-            'records' => new external_multiple_structure(
-                new external_single_structure(
-                    array(
-                        'id' => new external_value(PARAM_RAW, 'id in custom_category', VALUE_OPTIONAL),
-                        'firstname' => new external_value(PARAM_RAW, 'custom_category', VALUE_OPTIONAL),
-                        'lastname' => new external_value(PARAM_RAW, 'shortname of custom_category', VALUE_OPTIONAL),
-                        'email' => new external_value(PARAM_RAW, 'childs in custom_category'),
-                        'studentid' => new external_value(PARAM_INT, 'childcount in custom_category'),
-                        'program' => new external_value(PARAM_RAW, 'childs in custom_category'),
-                    )
-                )
-            )
-        ]);
     }
 }

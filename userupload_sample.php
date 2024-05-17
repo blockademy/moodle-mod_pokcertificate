@@ -1,31 +1,32 @@
 <?php
-/*
- * This file is part of eAbyas
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * pokcertificate User bulk update
  *
- * Copyright eAbyas Info Solutons Pvt Ltd, India
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @author eabyas  <info@eabyas.in>
- * @package BizLMS
- * @subpackage local_users
+ * @package     mod_pokcertificate
+ * @copyright   2024 Moodle India Information Solutions Pvt Ltd
+ * @author      2024 Narendra.Patel <narendra.patel@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__) . '/../../config.php');
-require_once($CFG->libdir . '/adminlib.php');
-$format = optional_param('format', 'csv', PARAM_ALPHA);
+require_once('../../config.php');
+require_login();
 
+$format = optional_param('format', 'csv', PARAM_ALPHA);
 $systemcontext = \context_system::instance();
 if ($format) {
     $fields = [
@@ -33,7 +34,7 @@ if ($format) {
         'studentname'   => 'studentname',
         'surname'       => 'surname',
         'email'         => 'email',
-        'studentid'     => 'studentid'
+        'studentid'     => 'studentid',
     ];
 
     switch ($format) {
@@ -42,6 +43,12 @@ if ($format) {
     die;
 }
 
+/**
+ * Generates a CSV file containing user data based on the provided fields array and prompts the user to download it.
+ *
+ * @param array $fields An array containing the fields to include in the CSV file.
+ * @return void
+ */
 function user_download_csv($fields) {
     global $CFG, $DB;
     require_once($CFG->libdir . '/csvlib.class.php');
@@ -49,14 +56,24 @@ function user_download_csv($fields) {
     $csvexport = new csv_export_writer();
     $csvexport->set_filename($filename);
     $csvexport->add_data($fields);
-    $users = $DB->get_records_sql('SELECT id, username, firstname, lastname, email, idnumber FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2');
-    foreach($users as $user) {
+    $sql = "SELECT id,
+                   username,
+                   firstname,
+                   lastname,
+                   email,
+                   idnumber
+              FROM {user}
+             WHERE deleted = 0
+                   AND suspended = 0
+                   AND id > 2";
+    $users = $DB->get_records_sql($sql);
+    foreach ($users as $user) {
         $userprofiledata = [
             $user->username,
             $user->firstname,
             $user->lastname,
             $user->email,
-            $user->idnumber
+            $user->idnumber,
         ];
         $csvexport->add_data($userprofiledata);
     }

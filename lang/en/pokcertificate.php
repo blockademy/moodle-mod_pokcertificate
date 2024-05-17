@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,9 +17,9 @@
 /**
  * Strings for component 'pokcertificate', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   mod_pokcertificate
- * @copyright 2024 Moodle India Information Solutions Pvt Ltd
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_pokcertificate
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['configdisplayoptions'] = 'Select all options that should be available, existing settings are not modified. Hold CTRL key to select multiple fields.';
@@ -65,11 +64,9 @@ $string['search:activity'] = 'Page';
 $string['printheading'] = 'Display pokcertificate name';
 $string['printheadingexplain'] = 'Display pokcertificate name above content?';
 
+// Newly added string for POK.
 
-
-//Newly added string for POK
-
-//Settings
+// Settings.
 $string['modulename'] = 'POK Certificate';
 $string['modulenameplural'] = 'POK Certificates';
 
@@ -85,14 +82,12 @@ A pokcertificate may be used
 * To embed several videos or sound files together with some explanatory text';
 $string['pluginname'] = 'POK Certificate';
 
-//settings
+// Settings.
 $string['templateapiurl'] = 'TEMPLATE_MANAGER_ROOT API URL';
 $string['minterapiurl'] = 'MINTER_ROOT API URL';
 $string['apikeysurl'] = 'API_KEYS_ROOT API URL';
 $string['rbacapiurl'] = 'RBAC_ROOT API URL';
 $string['custodianapisurl'] = 'CUSTODIAN_ROOT API URL';
-
-//
 $string['linkpokdetails'] = 'Link POI Account Details';
 $string['institution'] = 'Institution';
 $string['institution_help'] = 'Institution Name';
@@ -112,7 +107,7 @@ $string['verifyauth'] = 'To verify authentication token';
 $string['connecterror'] = 'API Connection error';
 $string['fail'] = 'Failed';
 
-//capabilities
+// Capabilities.
 $string['pokcertificate:view'] = 'View pokcertificate content';
 $string['pokcertificate:addinstance'] = 'Add a new pokcertificate resource';
 $string['pokcertificate:editinstance'] = 'Edit pokcertificate resource';
@@ -128,7 +123,7 @@ $string['fieldmapping'] = 'Field Mapping';
 $string['apifields'] = 'POK fields';
 $string['userfields'] = 'Moodle fields';
 $string['add'] = 'Add Mapping Field';
-$string['previewnotexists'] = 'Certifcate preview doesn`t exists';
+$string['previewnotexists'] = 'Certifcate preview doesn\'t exists';
 $string['invalidcoursemodule'] = 'Invalid course module Id';
 $string['previewcertificate'] = 'Preview Certificate';
 $string['issuecertificate'] = 'Issue Certificate';

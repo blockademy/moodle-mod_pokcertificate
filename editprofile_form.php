@@ -30,10 +30,18 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 require_once($CFG->dirroot . '/lib/formslib.php');
 require_once($CFG->dirroot . '/user/editlib.php');
 /**
- *form shown while adding activity.
+ * form shown while adding activity.
  */
 class mod_pokcertificate_editprofile_form extends \moodleform {
 
+    /**
+     * Defines the form elements for editing a user profile.
+     *
+     * This method sets up the form elements required for editing a user profile.
+     * It includes fields for the user's name, email, ID number, and other customisable profile fields.
+     *
+     * @return void
+     */
     public function definition() {
         global $USER;
         $mform = $this->_form;
@@ -86,7 +94,7 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
 
         $mform = $this->_form;
         if ($userid = $mform->getElementValue('id')) {
-            $user = $DB->get_record('user', array('id' => $userid));
+            $user = $DB->get_record('user', ['id' => $userid]);
         } else {
             $user = false;
         }
@@ -96,52 +104,6 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
             $mform->applyFilter($field, 'trim');
         }
 
-        // if ($user) {
-
-        //     // Disable fields that are locked by auth plugins.
-        //     $fields = get_user_fieldnames();
-        //     $authplugin = get_auth_plugin($user->auth);
-        //     $customfields = $authplugin->get_custom_user_profile_fields();
-        //     $customfieldsdata = profile_user_record($userid, false);
-        //     $fields = array_merge($fields, $customfields);
-        //     foreach ($fields as $field) {
-        //         if ($field === 'description') {
-        //             // Hard coded hack for description field. See MDL-37704 for details.
-        //             $formfield = 'description_editor';
-        //         } else {
-        //             $formfield = $field;
-        //         }
-        //         if (!$mform->elementExists($formfield)) {
-        //             continue;
-        //         }
-
-        //         // Get the original value for the field.
-        //         if (in_array($field, $customfields)) {
-        //             $key = str_replace('profile_field_', '', $field);
-        //             $value = isset($customfieldsdata->{$key}) ? $customfieldsdata->{$key} : '';
-        //         } else {
-        //             $value = $user->{$field};
-        //         }
-
-        //         $configvariable = 'field_lock_' . $field;
-        //         if (isset($authplugin->config->{$configvariable})) {
-        //             if ($authplugin->config->{$configvariable} === 'locked') {
-        //                 $mform->hardFreeze($formfield);
-        //                 $mform->setConstant($formfield, $value);
-        //             } else if ($authplugin->config->{$configvariable} === 'unlockedifempty' and $value != '') {
-        //                 $mform->hardFreeze($formfield);
-        //                 $mform->setConstant($formfield, $value);
-        //             }
-        //         }
-        //     }
-
-        //     // Next the customisable profile fields.
-        //     profile_definition_after_data($mform, $user->id);
-        // } else {
-        //     profile_definition_after_data($mform, 0);
-        // }
-
-        
         // Print picture.
         if ($user) {
             $context = context_user::instance($user->id, MUST_EXIST);
@@ -149,18 +111,27 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
             $hasuploadedpicture = ($fs->file_exists($context->id,
                 'user', 'icon', 0, '/', 'f2.png') || $fs->file_exists(
                 $context->id, 'user', 'icon', 0, '/', 'f2.jpg'));
-            // print_r($hasuploadedpicture); die;
             if (!empty($user->picture) && $hasuploadedpicture) {
-                $imagevalue = $OUTPUT->user_picture($user, array('courseid' => SITEID, 'size' => 66, 'link' => false));
+                $imagevalue = $OUTPUT->user_picture($user, ['courseid' => SITEID, 'size' => 66, 'link' => false]);
             } else {
                 $imagevalue = get_string('none');
             }
         }
-        
+
         $imageelement = $mform->getElement('currentpicture');
         $imageelement->setValue($imagevalue);
     }
 
+    /**
+     * Validates the form data submitted by the user.
+     *
+     * This method is responsible for validating the form data submitted by the user.
+     * It performs necessary validation checks on the data and files provided.
+     *
+     * @param array $data An associative array containing the form data submitted by the user.
+     * @param array $files An associative array containing any files uploaded via the form.
+     * @return array|bool An array of validation errors, or true if validation succeeds.
+     */
     public function validation($data, $files) {
     }
 }

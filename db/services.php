@@ -34,13 +34,14 @@ $functions = [
         'description'   => 'Simulate the view.php web interface pokcertificate: trigger events, completion, etc...',
         'type'          => 'write',
         'capabilities'  => 'mod/pokcertificate:view',
-        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 
     'mod_pokcertificate_get_pokcertificates_by_courses' => [
         'classname'     => 'mod_pokcertificate_external',
         'methodname'    => 'get_pokcertificates_by_courses',
-        'description'   => 'Returns a list of pokcertificates in a provided list of courses, if no list is provided all pokcertificates that the user
+        'description'   => 'Returns a list of pokcertificates in a provided list of courses,
+                            if no list is provided all pokcertificates that the user
                             can view will be returned.',
         'type'          => 'read',
         'capabilities'  => 'mod/pokcertificate:view',
@@ -61,15 +62,5 @@ $functions = [
         'description'   => 'Retieve the certificate templates',
         'ajax' => true,
         'type' => 'write',
-    ],
-
-    'mod_pokcertificate_generalcertificate_view' => [
-        'classname'   => 'mod_pokcertificate_external',
-        'methodname'  => 'generalcertificate_view',
-        'classpath'   => 'mod/pokcertificate/classes/external.php',
-        'description' => 'Display the generalcertificate Page',
-        'type'        => 'write',
-        'ajax' => true,
-        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
 ];
