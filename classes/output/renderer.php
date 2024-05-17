@@ -285,7 +285,6 @@ class renderer extends \plugin_renderer_base {
      */
     public function userbulkupload() {
         global $CFG;
-        
         $categorycontext = \context_system::instance();
         return $this->render_from_template('mod_pokcertificate/userbulkuploadbutton',
             ['contextid' => $categorycontext->id]);
@@ -307,6 +306,8 @@ class renderer extends \plugin_renderer_base {
         global $USER, $CFG;
         $courseid = required_param('courseid', PARAM_INT);
         $studentid = optional_param('studentid', '', PARAM_RAW);
+        $studentname = optional_param('studentname', '', PARAM_RAW);
+        $email = optional_param('email', '', PARAM_RAW);
         $senttopok = optional_param('senttopok', '', PARAM_RAW);
         $coursestatus = optional_param('coursestatus', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
@@ -319,11 +320,16 @@ class renderer extends \plugin_renderer_base {
                             ]);
         $recordperpage = 10;
         $offset = $page * $recordperpage;
-        $records = courseparticipantslist($courseid, $studentid, $senttopok, $coursestatus, $recordperpage, $offset);
-        $records['courseid'] = $courseid;
-        $records['studentid'] = $studentid;
-        $records['senttopok'] = $senttopok;
-        $records['coursestatus'] = $coursestatus;
+        $records = courseparticipantslist(
+            $courseid,
+            $studentid,
+            $studentname,
+            $email,
+            $senttopok,
+            $coursestatus,
+            $recordperpage,
+            $offset
+        );
         $records['showdata'] = $records['data'] ? true : false;
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/courseparticipants', $records);
         $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);

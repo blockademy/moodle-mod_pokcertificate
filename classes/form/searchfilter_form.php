@@ -50,19 +50,28 @@ class searchfilter_form extends moodleform {
         $viewtype = isset($this->_customdata['viewtype']);
         $courseid = isset($this->_customdata['viewtype']);
 
-        // Text input field.
+        // Text input field studentid.
         $mform->addElement('text', 'studentid', get_string('studentid', 'mod_pokcertificate'));
         $mform->setType('studentid', PARAM_RAW);
 
         if ($viewtype == 'participaints') {
+
+            // Text input field studentname.
+            $mform->addElement('text', 'studentname', get_string('studentname', 'mod_pokcertificate'));
+            $mform->setType('studentname', PARAM_RAW);
+
+            // Text input field email.
+            $mform->addElement('text', 'email', get_string('email', 'mod_pokcertificate'));
+            $mform->setType('email', PARAM_RAW);
+
             // Autocomplete input field 1.
             $mform->addElement('select',
                                'senttopok',
                                get_string('senttopok', 'mod_pokcertificate'),
                                [
-                                    '' => 'select',
-                                    'yes' => 'yes',
-                                    'no' => 'no',
+                                    '' => get_string('select'),
+                                    'yes' => get_string('yes'),
+                                    'no' => get_string('no'),
                                 ]);
             $mform->setType('senttopok', PARAM_RAW);
 
@@ -71,9 +80,9 @@ class searchfilter_form extends moodleform {
                                'coursestatus',
                                get_string('coursestatus', 'mod_pokcertificate'),
                                [
-                                    '' => 'select',
-                                    'completed' => 'completed',
-                                    'inprogress' => 'inprogress',
+                                    '' => get_string('select'),
+                                    'completed' => get_string('completed'),
+                                    'inprogress' => get_string('inprogress'),
                                 ]);
             $mform->setType('coursestatus', PARAM_RAW);
 

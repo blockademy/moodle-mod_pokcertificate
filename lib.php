@@ -807,7 +807,7 @@ function incompletestudentprofilelist($studentid, $perpage, $offset) {
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted participant data.
  */
-function courseparticipantslist($courseid, $studentid, $senttopok, $coursestatus, $perpage, $offset) {
+function courseparticipantslist($courseid, $studentid, $studentname, $email, $senttopok, $coursestatus, $perpage, $offset) {
     global $DB;
     $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
     $stdroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
@@ -847,6 +847,14 @@ function courseparticipantslist($courseid, $studentid, $senttopok, $coursestatus
     if ($studentid) {
         $fromsql .= "AND u.idnumber LIKE :studentid ";
         $queryparam['studentid'] = '%' . trim($studentid) . '%';
+    }
+    if ($studentname) {
+        $fromsql .= "AND u.firstname LIKE :firstname ";
+        $queryparam['firstname'] = '%' . trim($studentname) . '%';
+    }
+    if ($email) {
+        $fromsql .= "AND u.email LIKE :email ";
+        $queryparam['email'] = '%' . trim($email) . '%';
     }
 
     if ($coursestatus == 'completed') {

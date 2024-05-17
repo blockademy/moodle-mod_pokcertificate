@@ -39,22 +39,33 @@ $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
 $PAGE->set_url($url);
 $studentid = optional_param('studentid', '', PARAM_RAW);
+$studentname = optional_param('studentname', '', PARAM_RAW);
+$email = optional_param('email', '', PARAM_RAW);
 $senttopok = optional_param('senttopok', '', PARAM_RAW);
 $coursestatus = optional_param('coursestatus', '', PARAM_RAW);
-if (!empty($studentid)||!empty($senttopok)||!empty($coursestatus)) {
+if (!empty($studentid)||!empty($studentname)||!empty($email)||!empty($senttopok)||!empty($coursestatus)) {
     $show = 'show';
 } else {
     $show = '';
 }
 echo $OUTPUT->header();
 $mform = new \searchfilter_form('', ['viewtype' => 'participaints', 'courseid' => $courseid]);
-$mform->set_data(['courseid' => $courseid, 'studentid' => $studentid, 'senttopok' => $senttopok, 'coursestatus' => $coursestatus]);
+$mform->set_data([
+    'courseid' => $courseid,
+    'studentid' => $studentid,
+    'studentname' => $studentname,
+    'email' => $email,
+    'senttopok' => $senttopok,
+    'coursestatus' => $coursestatus,
+]);
 if ($mform->is_cancelled()) {
     redirect(new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $courseid]));
 } else if ($userdata = $mform->get_data()) {
     redirect(new \moodle_url('/mod/pokcertificate/courseparticipants.php',
         ['courseid' => $userdata->courseid,
         'studentid' => $userdata->studentid,
+        'studentname' => $studentname,
+        'email' => $email,
         'senttopok' => $userdata->senttopok,
         'coursestatus' => $userdata->coursestatus]
     ));
