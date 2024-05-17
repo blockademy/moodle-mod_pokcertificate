@@ -133,5 +133,20 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
      * @return array|bool An array of validation errors, or true if validation succeeds.
      */
     public function validation($data, $files) {
+        $errors = [];
+        $errors = parent::validation($data, $files);
+        if (!validate_email($data['email'])) {
+            $errors['email'] = get_string('invalidemail', 'mod_pokcertificate');
+        }
+        if (preg_match('/[^a-zA-Z0-9]/', trim($data['idnumber']))) {
+            $errors['idnumber'] = get_string('invalidspechar', 'mod_pokcertificate');
+        }
+        if (preg_match('/[^a-zA-Z0-9]/', trim($data['firstname']))) {
+            $errors['firstname'] = get_string('invalidspechar', 'mod_pokcertificate');
+        }
+        if (preg_match('/[^a-zA-Z0-9]/', trim($data['lastname']))) {
+            $errors['lastname'] = get_string('invalidspechar', 'mod_pokcertificate');
+        }
+        return $errors;
     }
 }

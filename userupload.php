@@ -44,14 +44,12 @@ $PAGE->set_context($systemcontext);
 global $USER, $DB , $OUTPUT;
 
 $returnurl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
-
+$PAGE->set_pagelayout('admin');
 $PAGE->set_url('/mod/pokcertificate/userupload.php');
 $PAGE->set_heading(get_string('bulkupload', 'mod_pokcertificate'));
 $strheading = get_string('bulkupload', 'mod_pokcertificate');
 $PAGE->set_title($strheading);
 $returnurl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
-$PAGE->navbar->add(get_string('incompletestudent', 'mod_pokcertificate'), $returnurl);
-$PAGE->navbar->add(get_string('bulkupload', 'mod_pokcertificate'));
 
 $stdfields = [
     'username'      => 'username',

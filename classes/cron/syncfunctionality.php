@@ -129,10 +129,15 @@ class syncfunctionality {
             $existinguser = $DB->get_records_sql($sql, $params);
             if (count($existinguser) == 1) {
                 $this->existinguser = array_values($existinguser)[0];
+                if (!empty($user->studentname)) {
+                    $this->studentname_validation($user);
+                }
+                if (!empty($user->surname)) {
+                    $this->surname_validation($user);
+                }
                 if (!empty($user->email)) {
                     $this->email_validation($user);
                 }
-
                 if (!empty($user->studentid)) {
                     $this->studentid_validation($user);
                 }
@@ -187,10 +192,10 @@ class syncfunctionality {
      */
     public function preparing_users_object($excel, $formdata = null) {
         $user = new \stdclass();
-        $user->firstname    = $excel->studentname;
-        $user->lastname     = $excel->surname;
-        $user->email        = strtolower($excel->email);
-        $user->idnumber     = $excel->studentid;
+        $user->firstname    = trim($excel->studentname);
+        $user->lastname     = trim($excel->surname);
+        $user->email        = strtolower(trim($excel->email));
+        $user->idnumber     = trim($excel->studentid);
         $result = preg_grep("/profile_field_/", array_keys((array)$excel));
 
         if (count($result) > 0) {
@@ -262,6 +267,56 @@ class syncfunctionality {
     } // End of nouserexist method.
 
     /**
+     * Validates the studentname field.
+     *
+     * This method validates the studentname field in the provided Excel data. It checks for valid studentname
+     *
+     * @param object $excel The Excel data for a user.
+     */
+    public function studentname_validation($excel) {
+        global $DB;
+        $strings = new StdClass();
+        $strings->linenumber = $this->excellinenumber;
+        $strings->data = $excel->studentname;
+        $strings->field = 'studentname';
+        if (preg_match('/[^a-zA-Z0-9]/', trim($excel->studentname))) {
+            echo '<div class="local_users_sync_error">' . get_string(
+                'invalidsapecialcharecter',
+                'mod_pokcertificate',
+                $strings
+            ) . '</div>';
+            $this->errors[] = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
+            $this->mfields[] = 'studentname';
+            $this->errorcount++;
+        }
+    } // End of studentname_validation method.
+
+    /**
+     * Validates the surname field.
+     *
+     * This method validates the surname field in the provided Excel data. It checks for valid surname
+     *
+     * @param object $excel The Excel data for a user.
+     */
+    public function surname_validation($excel) {
+        global $DB;
+        $strings = new StdClass();
+        $strings->linenumber = $this->excellinenumber;
+        $strings->data = $excel->surname;
+        $strings->field = 'surname';
+        if (preg_match('/[^a-zA-Z0-9]/', trim($excel->surname))) {
+            echo '<div class="local_users_sync_error">'
+            . get_string('invalidsapecialcharecter',
+                         'mod_pokcertificate',
+                         $strings) .
+            '</div>';
+            $this->errors[] = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
+            $this->mfields[] = 'surname';
+            $this->errorcount++;
+        }
+    } // End of surname_validation method.
+
+    /**
      * Validates the email field.
      *
      * This method validates the email field in the provided Excel data. It checks for valid email
@@ -311,13 +366,13 @@ class syncfunctionality {
         $strings->linenumber = $this->excellinenumber;
         $strings->data = $excel->studentid;
         $strings->field = 'studentid';
-        if (!is_numeric($excel->studentid)) {
+        if (preg_match('/[^a-zA-Z0-9]/', trim($excel->studentid))) {
             echo '<div class="local_users_sync_error">' . get_string(
-                'invalidstudentid',
+                'invalidsapecialcharecter',
                 'mod_pokcertificate',
                 $strings
             ) . '</div>';
-            $this->errors[] = get_string('invalidstudentid', 'mod_pokcertificate', $strings);
+            $this->errors[] = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
             $this->mfields[] = "studentid";
             $this->errorcount++;
         }
@@ -338,5 +393,5 @@ class syncfunctionality {
             $this->mfields[] = "studentid";
             $this->errorcount++;
         }
-    } // End of class studentid_validation method.
+    } // End of studentid_validation method.
 } // End of class.

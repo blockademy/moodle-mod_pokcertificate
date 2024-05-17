@@ -809,6 +809,8 @@ function incompletestudentprofilelist($studentid, $perpage, $offset) {
  */
 function courseparticipantslist($courseid, $studentid, $senttopok, $coursestatus, $perpage, $offset) {
     global $DB;
+    $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
+    $stdroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
     $countsql = "SELECT count(u.id) ";
     $selectsql = "SELECT UUID(),
                          pc.name as activity,
@@ -824,6 +826,8 @@ function courseparticipantslist($courseid, $studentid, $senttopok, $coursestatus
                 JOIN {user_enrolments} ue ON u.id = ue.userid
                 JOIN {enrol} e ON ue.enrolid = e.id
                 JOIN {course} c ON e.courseid = c.id
+                JOIN {context} ctx ON (c.id = ctx.instanceid AND ctx.contextlevel = 50)
+                JOIN {role_assignments} ra ON (ctx.id = ra.contextid AND u.id = ra.userid)
                 JOIN {pokcertificate} pc ON c.id = pc.course
                 JOIN {course_modules} cm ON (c.id = cm.course AND pc.id = cm.instance)
            LEFT JOIN {pokcertificate_templates} pct ON cm.instance = pct.pokid
@@ -833,10 +837,13 @@ function courseparticipantslist($courseid, $studentid, $senttopok, $coursestatus
                      AND u.deleted = 0
                      AND u.suspended = 0
                      AND u.id > 2
-                     AND cm.module = 24
-                     AND cm.deletioninprogress = 0 ";
+                     AND cm.module = :pokmoduleid
+                     AND cm.deletioninprogress = 0
+                     AND ra.roleid = :stdroleid ";
     $queryparam = [];
     $queryparam['courseid'] = $courseid;
+    $queryparam['pokmoduleid'] = $pokmoduleid;
+    $queryparam['stdroleid'] = $stdroleid;
     if ($studentid) {
         $fromsql .= "AND u.idnumber LIKE :studentid ";
         $queryparam['studentid'] = '%' . trim($studentid) . '%';
@@ -859,7 +866,6 @@ function courseparticipantslist($courseid, $studentid, $senttopok, $coursestatus
     }
 
     $concatsql = "ORDER BY u.id DESC ";
-
     $totalusers = $DB->count_records_sql($countsql . $fromsql, $queryparam);
     $users = $DB->get_records_sql($selectsql . $fromsql . $concatsql, $queryparam, $offset, $perpage);
     $list = [];
@@ -937,7 +943,7 @@ function awardgeneralcertificatelist($studentid, $perpage, $offset) {
  */
 function mod_pokcertificate_extend_navigation_course(navigation_node $navigation) {
     global $PAGE;
-    $node = navigation_node::create(get_string('participants', 'mod_pokcertificate'),
+    $node = navigation_node::create(get_string('coursecertificatestatus', 'mod_pokcertificate'),
         new moodle_url('/mod/pokcertificate/courseparticipants.php',
         ['courseid' => $PAGE->course->id]),
         navigation_node::TYPE_SETTING,

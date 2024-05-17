@@ -30,6 +30,7 @@ require_login();
 $context = \context_system::instance();
 $url = new moodle_url('/mod/pokcertificate/generalcertificate.php', []);
 $heading = get_string('generalcertificate', 'mod_pokcertificate');
+$PAGE->set_pagelayout('admin');
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_heading($heading);

@@ -167,19 +167,19 @@ $string['helpmanualsdata'] = '
             </tr>
             <tr>
                 <td>studentname</td>
-                <td>Please enter studentname.</td>
+                <td>Please enter/modify studentname.</td>
             </tr>
             <tr>
                 <td>surname</td>
-                <td>Please enter surname.</td>
+                <td>Please enter/modify surname.</td>
             </tr>
             <tr>
                 <td>email</td>
-                <td>Please enter email.</td>
+                <td>Please enter/modify email.</td>
             </tr>
             <tr>
                 <td>studentid</td>
-                <td>Please enter studentid.</td>
+                <td>Please enter/modify studentid.</td>
             </tr>
         </table>
     </div>';
@@ -197,7 +197,7 @@ $string['coursecertificatestatus'] = 'Course Certificate Status';
 $string['generalcertificate'] = 'Award General Certificates';
 $string['contact'] = 'Contact POK';
 $string['invalidemail_msg'] = 'Invalid email at line {$a->linenumber}.';
-$string['invalidstudentid'] = 'Invalid studerntid at line {$a->linenumber}. Enter only numeric.';
+$string['invalidsapecialcharecter'] = 'Invalid {$a->field} at line {$a->linenumber}. Enter without special charecters.';
 $string['invalidfieldname'] = '\'{$a}\' is not a valid field name.';
 $string['duplicatefieldname'] = 'Duplicate field name \'{$a}\' detected.';
 $string['cannotreadtmpfile'] = 'Uploaded file is empty. Please upload a valid file.';
@@ -224,3 +224,5 @@ $string['participants'] = 'Course Particpants';
 $string['authenticationcheck_user'] = "Authentication was not verfied! Please contact Site Administartor";
 $string['authenticationcheck'] = "Authentication was not verfied! click continue to verify authentication";
 $string['activity'] = "Activity";
+$string['invalidemail'] = "Please enter a correct email";
+$string['invalidspechar'] = "Please do not use special charecters";

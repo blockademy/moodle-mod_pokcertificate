@@ -33,6 +33,7 @@ $PAGE->set_url($url);
 $PAGE->set_context($systemcontext);
 
 $strheading = get_string('pluginname', 'mod_pokcertificate');
+$PAGE->set_pagelayout('admin');
 $PAGE->set_heading(get_string('helpmanual', 'mod_pokcertificate', $strheading));
 $PAGE->set_title($strheading);
 

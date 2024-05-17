@@ -28,8 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 use moodleform;
-use csv_import_reader;
-use core_text;
 define('ADD_UPDATE', 3);
 
 /**

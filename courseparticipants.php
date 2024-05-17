@@ -33,6 +33,7 @@ $context = context_system::instance();
 $courseid = required_param('courseid', PARAM_INT);
 $url = new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $courseid]);
 $heading = get_string('courseparticipants', 'mod_pokcertificate');
+$PAGE->set_pagelayout('admin');
 $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
