@@ -88,13 +88,8 @@ $string['minterapiurl'] = 'MINTER_ROOT API URL';
 $string['apikeysurl'] = 'API_KEYS_ROOT API URL';
 $string['rbacapiurl'] = 'RBAC_ROOT API URL';
 $string['custodianapisurl'] = 'CUSTODIAN_ROOT API URL';
-<<<<<<< HEAD
-
-//
 $string['linkpokdetails'] = 'Link POK Account Details';
-=======
 $string['linkpokdetails'] = 'Link POI Account Details';
->>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
 $string['institution'] = 'Institution';
 $string['institution_help'] = 'Institution Name';
 $string['domain'] = 'Domain Name';
@@ -232,3 +227,4 @@ $string['authenticationcheck'] = "Authentication was not verfied! click continue
 $string['activity'] = "Activity";
 $string['invalidemail'] = "Please enter a correct email";
 $string['invalidspechar'] = "Please do not use special charecters";
+$string['inprogress'] = "Inprogress";
