@@ -45,7 +45,7 @@ class mod_pokcertificate_verifyauth_form extends moodleform {
         $mform->setDefault('prodtype', 1);
         $mform->addHelpButton('prodtype', 'prodtype', 'pokcertificate');
 
-        $mform->addElement('password', 'authtoken', get_string('authtoken', 'pokcertificate'), 'size="35"');
+        $mform->addElement('passwordunmask', 'authtoken', get_string('authtoken', 'pokcertificate'), 'size="35"');
         $mform->setType('authtoken', PARAM_RAW);
         $mform->addHelpButton('authtoken', 'authtoken', 'pokcertificate');
         if (get_config('mod_pokcertificate', 'authenticationtoken')) {

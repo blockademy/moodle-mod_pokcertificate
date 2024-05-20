@@ -63,18 +63,14 @@ if ($id > 0) {
     } else {
 
         $cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
-        // if (!profile_has_required_custom_fields_set($user->id)) {
         $pokfields = pok::get_mapping_fields($user, $cm);
-
         // Load user preferences.
         useredit_load_preferences($user);
-
         // Load custom profile fields data.
         profile_load_data($user);
         $mform = new mod_pokcertificate_updateprofile_form($url, ['pokfields' => $pokfields, 'user' => $user, 'cmid' => $id]);
         $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
         $renderer = $PAGE->get_renderer('mod_pokcertificate');
-
         if ($mform->is_cancelled()) {
             redirect($redirecturl);
         } else if ($userdata = $mform->get_data()) {

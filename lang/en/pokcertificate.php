@@ -93,7 +93,7 @@ $string['rbacapiurl'] = 'RBAC_ROOT API URL';
 $string['custodianapisurl'] = 'CUSTODIAN_ROOT API URL';
 
 //
-$string['linkpokdetails'] = 'Link POI Account Details';
+$string['linkpokdetails'] = 'Link POK Account Details';
 $string['institution'] = 'Institution';
 $string['institution_help'] = 'Institution Name';
 $string['domain'] = 'Domain Name';

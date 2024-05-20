@@ -40,21 +40,4 @@ if ($ADMIN->fulltree) {
         )
     );
 }
-/* defined('MOODLE_INTERNAL') || die();
-require_once(dirname(__FILE__) . '/lib.php');
 
-$ADMIN->add('modsettings', new admin_category(
-    'pokcertificatesettings',
-    get_string('modulename', 'pokcertificate'),
-    $module->is_enabled() === false
-));
-
-$ADMIN->add(
-    'pokcertificatesettings',
-    new admin_externalpage(
-        'pokcertificate_settings',
-        get_string('verifyauth', 'pokcertificate'),
-        new moodle_url('/mod/pokcertificate/pokcertificate.php'),
-        'mod/pokcertificate:manageinstance'
-    )
-); */

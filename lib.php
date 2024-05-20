@@ -239,7 +239,7 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
         return new pokcertificate_content_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, true, false);
     }
 
-// Note: pokcertificate_intro handled in file_browser automatically.
+    // Note: pokcertificate_intro handled in file_browser automatically.
     return null;
 }
 
@@ -271,14 +271,14 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
     }
 
     if ($filearea !== 'content') {
-        // intro is handled automatically in pluginfile.php
+        // Intro is handled automatically in pluginfile.php.
         return false;
     }
 
-    // $arg could be revision number or index.html
+    // Could be $arg  revision number or index.html.
     $arg = array_shift($args);
     if ($arg == 'index.html' || $arg == 'index.htm') {
-        // serve pokcertificate content
+        // Serve pokcertificate content.
         $filename = $arg;
 
         if (!$pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), '*', MUST_EXIST)) {
@@ -323,15 +323,16 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
             if ($pokcertificate->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
                 return false;
             }
-            if (!$file = resourcelib_try_file_migration('/' . $relativepath, $cm->id, $cm->course, 'mod_pokcertificate', 'content', 0)) {
+            $file = resourcelib_try_file_migration('/' . $relativepath, $cm->id, $cm->course, 'mod_pokcertificate', 'content', 0);
+            if (!$file) {
                 return false;
             }
-            //file migrate - update flag
+            // File migrate - update flag.
             $pokcertificate->legacyfileslast = time();
             $DB->update_record('pokcertificate', $pokcertificate);
         }
 
-        // finally send the file
+        // Finally send the file.
         send_stored_file($file, null, 0, $forcedownload, $options);
     }
 }
@@ -343,8 +344,9 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
  * @param stdClass $currentcontext Current context of block
  */
 function pokcertificate_pokcertificate_type_list($pokcertificatetype, $parentcontext, $currentcontext) {
-    $module_pokcertificatetype = array('mod-pokcertificate-*' => get_string('pokcertificate-mod-pokcertificate-x', 'pokcertificate'));
-    return $module_pokcertificatetype;
+    $pokcertificatetypestr = get_string('pokcertificate-mod-pokcertificate-x', 'pokcertificate');
+    $modulepokcertificatetype = array('mod-pokcertificate-*' => $pokcertificatetypestr);
+    return $modulepokcertificatetype;
 }
 
 /**
@@ -359,16 +361,19 @@ function pokcertificate_export_contents($cm, $baseurl) {
 
     $pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), '*', MUST_EXIST);
 
-    // pokcertificate contents
+    // Pokcertificate contents.
     $fs = get_file_storage();
     $files = $fs->get_area_files($context->id, 'mod_pokcertificate', 'content', 0, 'sortorder DESC, id ASC', false);
+    $urlbase = "$CFG->wwwroot/" . $baseurl;
     foreach ($files as $fileinfo) {
         $file = array();
         $file['type']         = 'file';
         $file['filename']     = $fileinfo->get_filename();
         $file['filepath']     = $fileinfo->get_filepath();
         $file['filesize']     = $fileinfo->get_filesize();
-        $file['fileurl']      = file_encode_url("$CFG->wwwroot/" . $baseurl, '/' . $context->id . '/mod_pokcertificate/content/' . $pokcertificate->revision . $fileinfo->get_filepath() . $fileinfo->get_filename(), true);
+        $path = '/' . $context->id . '/mod_pokcertificate/content/' . $pokcertificate->revision;
+        $path .= $fileinfo->get_filepath() . $fileinfo->get_filename();
+        $file['fileurl']      = file_encode_url($urlbase, $path, true);
         $file['timecreated']  = $fileinfo->get_timecreated();
         $file['timemodified'] = $fileinfo->get_timemodified();
         $file['sortorder']    = $fileinfo->get_sortorder();
@@ -383,17 +388,18 @@ function pokcertificate_export_contents($cm, $baseurl) {
         $contents[] = $file;
     }
 
-    // pokcertificate html conent
+    // Pokcertificate html conent.
     $filename = 'index.html';
     $pokcertificatefile = array();
     $pokcertificatefile['type']         = 'file';
     $pokcertificatefile['filename']     = $filename;
     $pokcertificatefile['filepath']     = '/';
     $pokcertificatefile['filesize']     = 0;
-    $pokcertificatefile['fileurl']      = file_encode_url("$CFG->wwwroot/" . $baseurl, '/' . $context->id . '/mod_pokcertificate/content/' . $filename, true);
+    $path = '/' . $context->id . '/mod_pokcertificate/content/' . $filename;
+    $pokcertificatefile['fileurl']      = file_encode_url($urlbase, $path, true);
     $pokcertificatefile['timecreated']  = null;
     $pokcertificatefile['timemodified'] = $pokcertificate->timemodified;
-    // make this file as main file
+    // Make this file as main file.
     $pokcertificatefile['sortorder']    = 1;
     $pokcertificatefile['userid']       = null;
     $pokcertificatefile['author']       = null;
@@ -734,7 +740,7 @@ function mod_pokcertificate_cm_info_view(cm_info $cm) {
     }
 } */
 
-//////For display on incomplete student profile page//////////
+// For display on incomplete student profile page.
 function incompletestudentprofilelist($filtervalues) {
     global $DB, $PAGE, $USER, $CFG, $OUTPUT;
     $systemcontext = \context_system::instance();
@@ -769,7 +775,7 @@ function incompletestudentprofilelist($filtervalues) {
     return array('count' => $count, 'data' => $data);
 }
 
-//////For display on general certificate status page//////////
+// For display on general certificate status page.
 function generalcertificatelist($filtervalues) {
     global $DB, $PAGE, $USER, $CFG, $OUTPUT;
     $systemcontext = \context_system::instance();
@@ -777,7 +783,6 @@ function generalcertificatelist($filtervalues) {
     $selectsql = "SELECT * FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
 
     $queryparam = array();
-
 
     if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
         $concatsql .= " AND (idnumber LIKE :search1 )";
@@ -804,12 +809,13 @@ function generalcertificatelist($filtervalues) {
     return array('count' => $count, 'data' => $data);
 }
 
-//For display on course participants page.
+// For display on course participants page.
 function courseparticipantslist($courseid, $filtervalues) {
     global $DB, $PAGE, $USER, $CFG, $OUTPUT;
     $systemcontext = \context_system::instance();
     $countsql = "SELECT count(u.id) ";
-    $selectsql = "SELECT u.id, u.username, u.firstname, u.lastname, FROM_UNIXTIME(ue.timecreated) AS enrolment_date, FROM_UNIXTIME(cc.timecompleted) AS completion_date ";
+    $selectsql = "SELECT u.id, u.username, u.firstname, u.lastname, FROM_UNIXTIME(ue.timecreated) AS enrolment_date, ";
+    $selectsql .= " FROM_UNIXTIME(cc.timecompleted) AS completion_date ";
     $fromsql = "FROM mdl_user AS u
                 JOIN mdl_user_enrolments AS ue ON u.id = ue.userid
                 JOIN mdl_enrol AS e ON ue.enrolid = e.id

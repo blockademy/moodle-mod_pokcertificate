@@ -379,7 +379,13 @@ class pok {
      */
     public static function get_emitcertificate_data($user, $template, $pokrecord) {
         global $USER;
-        $templatedefinition = json_decode($template->get('templatedefinition'));
+        $templatename = $template->get('templatename');
+        $resptemplatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templatename);
+        if(!empty($resptemplatedefinition)){
+            $templatedefinition = json_decode($resptemplatedefinition);
+        }else{
+            $templatedefinition = json_decode($template->get('templatedefinition'));
+        }
         if ($templatedefinition) {
             foreach ($templatedefinition->params as $param) {
                 if ($param->name == 'institution') {

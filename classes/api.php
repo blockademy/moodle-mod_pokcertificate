@@ -165,7 +165,7 @@ class api {
             throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
         }
         // Insert the API log here.
-        $response = NULL;
+        $response = null;
         if ($curl->get_info()['http_code'] == 200) {
             $response = get_string('success');
         } else {
