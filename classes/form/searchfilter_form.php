@@ -82,7 +82,7 @@ class searchfilter_form extends moodleform {
                                [
                                     '' => get_string('select'),
                                     'completed' => get_string('completed'),
-                                    'inprogress' => get_string('inprogress'),
+                                    'inprogress' => get_string('inprogress', 'mod_pokcertificate'),
                                 ]);
             $mform->setType('coursestatus', PARAM_RAW);
 

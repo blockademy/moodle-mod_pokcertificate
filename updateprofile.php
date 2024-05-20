@@ -63,10 +63,7 @@ if ($id > 0) {
     } else {
 
         $cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
-<<<<<<< HEAD
-=======
 
->>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
         $pokfields = pok::get_mapping_fields($user, $cm);
         // Load user preferences.
         useredit_load_preferences($user);

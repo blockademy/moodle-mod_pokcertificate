@@ -203,14 +203,46 @@
     color: white;
     background: red;
     margin-left:42%;
- }
+}
 
  #page-mod-pokcertificate-view .generalbox .certmessage {
     text-align: justify!important;
     text-justify: inter-word;
- }
+}
  #page-mod-pokcertificate-view .generalbox .faicon{
     color: green;
     margin-left: 50%;
- }
+}
+
+.blue-enrolldate {
+    color: #007acc;
+}
+
+.blue-completedate {
+    color: #007acc;
+}
+
+.Completed-coursestatus {
+    color: #004d00;
+}
+
+.Inprogress-coursestatus {
+    color: #e62e00;
+}
+
+.Free-certificatetype {
+    color: #004d00;
+}
+
+.Paid-certificatetype {
+    color: #007acc;
+}
+
+.Yes-senttopok {
+    color: #004d00;
+}
+
+.No-senttopok {
+    color: #cc0000;
+}
 

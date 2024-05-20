@@ -751,11 +751,6 @@ function mod_pokcertificate_cm_info_view(cm_info $cm) {
     }
 } */
 
-<<<<<<< HEAD
-// For display on incomplete student profile page.
-function incompletestudentprofilelist($filtervalues) {
-    global $DB, $PAGE, $USER, $CFG, $OUTPUT;
-=======
 /**
  * Retrieve a list of incomplete student profiles.
  *
@@ -770,7 +765,6 @@ function incompletestudentprofilelist($filtervalues) {
  */
 function incompletestudentprofilelist($studentid, $perpage, $offset) {
     global $DB;
->>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
     $systemcontext = \context_system::instance();
     $countsql = "SELECT count(id) ";
     $selectsql = "SELECT * ";
@@ -804,14 +798,6 @@ function incompletestudentprofilelist($studentid, $perpage, $offset) {
     return ['count' => $count, 'data' => $data];
 }
 
-<<<<<<< HEAD
-// For display on general certificate status page.
-function generalcertificatelist($filtervalues) {
-    global $DB, $PAGE, $USER, $CFG, $OUTPUT;
-    $systemcontext = \context_system::instance();
-    $countsql = "SELECT count(id) FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
-    $selectsql = "SELECT * FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
-=======
 /**
  * Retrieve a list of course participants with relevant details.
  *
@@ -880,24 +866,17 @@ function courseparticipantslist($courseid, $studentid, $studentname, $email, $se
     if ($coursestatus == 'completed') {
         $fromsql .= "AND cc.timecompleted > 0 ";
     }
->>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
 
     if ($coursestatus == 'inprogress') {
         $fromsql .= "AND (cc.timecompleted = 0 OR cc.timecompleted IS NULL) ";
     }
 
-<<<<<<< HEAD
-    if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
-        $concatsql .= " AND (idnumber LIKE :search1 )";
-        $queryparam['search1'] = '%' . trim($filtervalues->search_query) . '%';
-=======
     if ($senttopok == 'yes') {
         $fromsql .= "AND pci.certificateurl IS NOT NULL ";
     }
 
     if ($senttopok == 'no') {
         $fromsql .= "AND pci.certificateurl IS NULL ";
->>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
     }
 
     $concatsql = "ORDER BY u.id DESC ";
@@ -915,7 +894,7 @@ function courseparticipantslist($courseid, $studentid, $studentname, $email, $se
             $list['coursename'] = $c->coursename;
             $list['enrolldate'] = date('d M Y', $c->enrolldate);
             $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
-            $list['coursestatus'] = $c->completiondate ? get_string('completed') : get_string('inprogress');
+            $list['coursestatus'] = $c->completiondate ? get_string('completed') : get_string('inprogress', 'mod_pokcertificate');
             $list['senttopok'] = $c->certificateurl ? get_string('yes') : get_string('no');
             $list['certificatetype'] = $c->templatetype == 0 ? 'Free' : 'Paid';
             $list['certificateurl'] = $c->certificateurl;
@@ -926,26 +905,6 @@ function courseparticipantslist($courseid, $studentid, $studentname, $email, $se
     return ['count' => $totalusers, 'data' => $data];
 }
 
-<<<<<<< HEAD
-// For display on course participants page.
-function courseparticipantslist($courseid, $filtervalues) {
-    global $DB, $PAGE, $USER, $CFG, $OUTPUT;
-    $systemcontext = \context_system::instance();
-    $countsql = "SELECT count(u.id) ";
-    $selectsql = "SELECT u.id, u.username, u.firstname, u.lastname, FROM_UNIXTIME(ue.timecreated) AS enrolment_date, ";
-    $selectsql .= " FROM_UNIXTIME(cc.timecompleted) AS completion_date ";
-    $fromsql = "FROM mdl_user AS u
-                JOIN mdl_user_enrolments AS ue ON u.id = ue.userid
-                JOIN mdl_enrol AS e ON ue.enrolid = e.id
-           LEFT JOIN mdl_course_completions AS cc ON (cc.userid = u.id AND cc.course = e.courseid)
-                WHERE e.courseid = " . $courseid . " AND u.deleted = 0 AND u.suspended = 0 AND u.id > 2 ";
-
-    $queryparam = array();
-
-    if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
-        $concatsql .= " AND (u.idnumber LIKE :search1 )";
-        $queryparam['search1'] = '%' . trim($filtervalues->search_query) . '%';
-=======
 /**
  * Retrieve a list of users for awarding general certificates.
  *
@@ -969,7 +928,6 @@ function awardgeneralcertificatelist($studentid, $perpage, $offset) {
     if ($studentid) {
         $fromsql .= "AND idnumber LIKE :studentid ";
         $queryparam['studentid'] = '%' . trim($studentid) . '%';
->>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
     }
     $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
     $records = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
