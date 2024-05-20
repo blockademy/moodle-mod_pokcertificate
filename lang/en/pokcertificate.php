@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,9 +17,9 @@
 /**
  * Strings for component 'pokcertificate', language 'en', branch 'MOODLE_20_STABLE'
  *
- * @package   mod_pokcertificate
- * @copyright 2024 Moodle India Information Solutions Pvt Ltd
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_pokcertificate
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['configdisplayoptions'] = 'Select all options that should be available, existing settings are not modified. Hold CTRL key to select multiple fields.';
@@ -65,11 +64,9 @@ $string['search:activity'] = 'Page';
 $string['printheading'] = 'Display pokcertificate name';
 $string['printheadingexplain'] = 'Display pokcertificate name above content?';
 
+// Newly added string for POK.
 
-
-//Newly added string for POK
-
-//Settings
+// Settings.
 $string['modulename'] = 'POK Certificate';
 $string['modulenameplural'] = 'POK Certificates';
 
@@ -85,15 +82,19 @@ A pokcertificate may be used
 * To embed several videos or sound files together with some explanatory text';
 $string['pluginname'] = 'POK Certificate';
 
-//settings
+// Settings.
 $string['templateapiurl'] = 'TEMPLATE_MANAGER_ROOT API URL';
 $string['minterapiurl'] = 'MINTER_ROOT API URL';
 $string['apikeysurl'] = 'API_KEYS_ROOT API URL';
 $string['rbacapiurl'] = 'RBAC_ROOT API URL';
 $string['custodianapisurl'] = 'CUSTODIAN_ROOT API URL';
+<<<<<<< HEAD
 
 //
 $string['linkpokdetails'] = 'Link POK Account Details';
+=======
+$string['linkpokdetails'] = 'Link POI Account Details';
+>>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
 $string['institution'] = 'Institution';
 $string['institution_help'] = 'Institution Name';
 $string['domain'] = 'Domain Name';
@@ -112,7 +113,7 @@ $string['verifyauth'] = 'To verify authentication token';
 $string['connecterror'] = 'API Connection error';
 $string['fail'] = 'Failed';
 
-//capabilities
+// Capabilities.
 $string['pokcertificate:view'] = 'View pokcertificate content';
 $string['pokcertificate:addinstance'] = 'Add a new pokcertificate resource';
 $string['pokcertificate:editinstance'] = 'Edit pokcertificate resource';
@@ -128,7 +129,7 @@ $string['fieldmapping'] = 'Field Mapping';
 $string['apifields'] = 'POK fields';
 $string['userfields'] = 'Moodle fields';
 $string['add'] = 'Add Mapping Field';
-$string['previewnotexists'] = 'Certifcate preview doesn`t exists';
+$string['previewnotexists'] = 'Certifcate preview doesn\'t exists';
 $string['invalidcoursemodule'] = 'Invalid course module Id';
 $string['previewcertificate'] = 'Preview Certificate';
 $string['issuecertificate'] = 'Issue Certificate';
@@ -138,6 +139,8 @@ $string['notverified'] = 'Not Verified';
 $string['verified'] = 'Verified';
 $string['free'] = 'Free';
 $string['paid'] = 'Paid';
+$string['incompletestudent'] = 'Incomplete Student Profile';
+$string['generalcertificate'] = 'General Certificate Status';
 $string['studentname'] = 'Student Name';
 $string['surname'] = 'Surname';
 $string['email'] = 'Email';
@@ -151,10 +154,11 @@ $string['bulkupload'] = 'Bulk Upload';
 $string['coursename'] = 'Course Name';
 $string['enrolldate'] = 'Enroll Date';
 $string['completedate'] = 'Complete Date';
-$string['coursestatus'] = 'Course Status';
+$string['senttopok'] = 'Sent to POK';
 $string['typeofcerti'] = 'Type of certificate';
 $string['certificatestatus'] = 'Certificate status';
-$string['previewcerti'] = 'Preview Certifcate';
+$string['checkstatus'] = 'Check Status';
+$string['coursestatus'] = 'Course Status';
 $string['courseparticipants'] = 'Course Participants';
 $string['helpmanualsdata'] = '
     <div class="field_type font-weight-bold" style="text-align:left;"></div>
@@ -169,20 +173,19 @@ $string['helpmanualsdata'] = '
             </tr>
             <tr>
                 <td>studentname</td>
-                <td>Please enter studentname.</td>
-
+                <td>Please enter/modify studentname.</td>
             </tr>
             <tr>
                 <td>surname</td>
-                <td>Please enter surname.</td>
+                <td>Please enter/modify surname.</td>
             </tr>
             <tr>
                 <td>email</td>
-                <td>Please enter email.</td>
+                <td>Please enter/modify email.</td>
             </tr>
             <tr>
                 <td>studentid</td>
-                <td>Please enter studentid.</td>
+                <td>Please enter/modify studentid.</td>
             </tr>
         </table>
     </div>';
@@ -200,7 +203,7 @@ $string['coursecertificatestatus'] = 'Course Certificate Status';
 $string['generalcertificate'] = 'Award General Certificates';
 $string['contact'] = 'Contact POK';
 $string['invalidemail_msg'] = 'Invalid email at line {$a->linenumber}.';
-$string['invalidstudentid'] = 'Invalid studerntid at line {$a->linenumber}. Enter only numeric.';
+$string['invalidsapecialcharecter'] = 'Invalid {$a->field} at line {$a->linenumber}. Enter without special charecters.';
 $string['invalidfieldname'] = '\'{$a}\' is not a valid field name.';
 $string['duplicatefieldname'] = 'Duplicate field name \'{$a}\' detected.';
 $string['cannotreadtmpfile'] = 'Uploaded file is empty. Please upload a valid file.';
@@ -226,3 +229,6 @@ $string['title_help'] = 'This field will be displayed on the certificates to be 
 $string['participants'] = 'Course Particpants';
 $string['authenticationcheck_user'] = "Authentication was not verfied! Please contact Site Administartor";
 $string['authenticationcheck'] = "Authentication was not verfied! click continue to verify authentication";
+$string['activity'] = "Activity";
+$string['invalidemail'] = "Please enter a correct email";
+$string['invalidspechar'] = "Please do not use special charecters";

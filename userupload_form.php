@@ -14,58 +14,40 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * User bulk upload form
+ *
+ * @package     mod_pokcertificate
+ * @copyright   2024 Moodle India Information Solutions Pvt Ltd
+ * @author      2024 Narendra.Patel <narendra.patel@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
 
 use moodleform;
-use csv_import_reader;
-use core_text;
 define('ADD_UPDATE', 3);
 
+/**
+ * Form class for uploading users in the Pokcertificate module.
+ */
 class mod_pokcertificate_userupload_form extends moodleform {
+    /**
+     * Defines the elements and structure of the user upload form.
+     */
     public function definition() {
         $mform = $this->_form;
         $auths = \core_component::get_plugin_list('auth');
         $enabled = get_string('pluginenabled', 'core_plugin');
         $disabled = get_string('plugindisabled', 'core_plugin');
-        $authoptions = array();
-        $cannotchangepass = array();
-        $cannotchangeusername = array();
-        // foreach ($auths as $auth => $unused) {
-        //     if ($auth == 'nologin') 
-        //         continue;
-        //         $authinst = get_auth_plugin($auth);
-            
-
-        //     if (!$authinst->is_internal()) {
-        //         $cannotchangeusername[] = $auth;
-        //     }
-
-        //     $passwordurl = $authinst->change_password_url();
-        //     if (!($authinst->can_change_password() && empty($passwordurl))) {
-        //         if ($userid < 1 && $authinst->is_internal()) {
-        //             // This is unlikely but we can not create account without password.
-        //             // When plugin uses passwords, we need to set it initially at least.
-        //         } else {
-        //             $cannotchangepass[] = $auth;
-                
-        //     }
-        //     if (is_enabled_auth($auth)) {
-        //         $authoptions[$auth] = get_string('pluginname', "auth_{$auth}");
-        //     }
-        // }
+        $authoptions = [];
+        $cannotchangepass = [];
+        $cannotchangeusername = [];
 
         $mform->addElement('filepicker', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');
-
-		// $mform->addElement('select', 'enrollmentmethod', get_string('authenticationmethods', 'mod_pokcertificate'), $authoptions);
-        // $mform->addRule('enrollmentmethod', null, 'required', null, 'client');
-		// $mform->setType('enrollmentmethod', PARAM_TEXT);
-        // $mform->setDefault('enrollmentmethod', 'manual');
-
-        // $mform->addElement('advcheckbox', 'createpassword', get_string('createpassword', 'auth'));
 
         $mform->addElement('hidden',  'delimiter_name');
         $mform->setType('delimiter_name', PARAM_TEXT);

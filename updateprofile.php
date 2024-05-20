@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/mod/pokcertificate/editprofile_form.php');
 
 require_login();
 
-global $USER;
+global $USER, $PAGE;
 
 $id  = optional_param('cmid', 0, PARAM_INT);
 $userid  = required_param('id', PARAM_INT);
@@ -63,6 +63,10 @@ if ($id > 0) {
     } else {
 
         $cm = get_coursemodule_from_id('pokcertificate', $id, 0, false, MUST_EXIST);
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
         $pokfields = pok::get_mapping_fields($user, $cm);
         // Load user preferences.
         useredit_load_preferences($user);
@@ -89,8 +93,9 @@ if ($id > 0) {
 } else {
 
     $url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['userid' => $userid]);
-
+    $context = context_system::instance();
     $PAGE->set_url($url);
+    $PAGE->set_context($context);
     $PAGE->set_title(get_string('profile', 'mod_pokcertificate'));
     $PAGE->set_heading(get_string('profile', 'mod_pokcertificate'));
 

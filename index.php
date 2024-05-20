@@ -91,7 +91,7 @@ foreach ($pokcertificates as $pokcertificate) {
     $table->data[] = [
         $printsection,
         "<a $class href=\"view.php?id=$cm->id\">" . format_string($pokcertificate->name) . "</a>",
-        format_module_intro('pokcertificate', $pokcertificate, $cm->id,)
+        format_module_intro('pokcertificate', $pokcertificate, $cm->id),
     ];
 }
 

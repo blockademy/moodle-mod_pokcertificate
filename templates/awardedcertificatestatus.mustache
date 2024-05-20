@@ -15,29 +15,34 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 }}
-{{#response}}
-    {{#viewtypeCard}}
-        <table class="generaltable dataTable no-footer" id="skill_repository" role="grid" aria-describedby="skill_repository">
-            <thead>
-                <tr role="row">
-                    <th>{{#str}}studentname,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}surname,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}email,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}studentid,mod_pokcertificate{{/str}}</th>
-                    <th>{{#str}}program,mod_pokcertificate{{/str}}</th>
+
+{{#showdata}}
+    <table class="generaltable dataTable no-footer" id="skill_repository" role="grid" aria-describedby="skill_repository">
+        <thead>
+            <tr role="row">
+                <th>{{#str}}studentname,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}surname,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}email,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}studentid,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}program,mod_pokcertificate{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#data}}
+                <tr>
+                    <td>{{firstname}}</td>
+                    <td>{{lastname}}</td>
+                    <td>{{email}}</td>
+                    <td>{{studentid}}</td>
+                    <td>{{program}}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {{#records}}
-                    <tr>
-                        <td>{{firstname}}</td>
-                        <td>{{lastname}}</td>
-                        <td>{{email}}</td>
-                        <td>{{studentid}}</td>
-                        <td>{{program}}</td>
-                    </tr>
-                {{/records}}
-            </tbody>
-        </table>
-    {{/viewtypeCard}}
-{{/response}}
+            {{/data}}
+        </tbody>
+    </table>
+{{/showdata}}
+{{^showdata}}
+    <div class="alert alert-info alert-block fade in  alert-dismissible" role="alert" data-aria-autofocus="true">
+        No Record Available
+    </div>
+{{/showdata}}
+

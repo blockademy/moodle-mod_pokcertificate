@@ -17,13 +17,13 @@
 /**
  * TODO describe file help
  *
- * @package    mod_pokcertificate
- * @copyright  2024 Moodle India Information Solutions Pvt Ltd
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     mod_pokcertificate
+ * @copyright   2024 Moodle India Information Solutions Pvt Ltd
+ * @author      2024 Narendra.Patel <narendra.patel@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require('../../config.php');
-
 require_login();
 
 $url = new moodle_url('/mod/pokcertifcate/help.php', []);
@@ -33,6 +33,7 @@ $PAGE->set_url($url);
 $PAGE->set_context($systemcontext);
 
 $strheading = get_string('pluginname', 'mod_pokcertificate');
+$PAGE->set_pagelayout('admin');
 $PAGE->set_heading(get_string('helpmanual', 'mod_pokcertificate', $strheading));
 $PAGE->set_title($strheading);
 

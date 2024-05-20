@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package mod_pokcertificate
+ * librery file
+ *
+ * @package    mod_pokcertificate
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -85,7 +87,7 @@ function pokcertificate_reset_userdata($data) {
  * @return array
  */
 function pokcertificate_get_view_actions() {
-    return array('view', 'view all');
+    return ['view', 'view all'];
 }
 
 /**
@@ -99,7 +101,7 @@ function pokcertificate_get_view_actions() {
  * @return array
  */
 function pokcertificate_get_post_actions() {
-    return array('update', 'add');
+    return ['update', 'add'];
 }
 
 /**
@@ -150,7 +152,7 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
 
     if (!$pokcertificate = $DB->get_record(
         'pokcertificate',
-        array('id' => $coursemodule->instance),
+        ['id' => $coursemodule->instance],
         'id, name, display, displayoptions, intro, introformat'
     )) {
         return null;
@@ -191,7 +193,7 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
  * @return array
  */
 function pokcertificate_get_file_areas($course, $cm, $context) {
-    $areas = array();
+    $areas = [];
     $areas['content'] = get_string('content', 'pokcertificate');
     return $areas;
 }
@@ -228,7 +230,7 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
 
         $urlbase = $CFG->wwwroot . '/pluginfile.php';
         if (!$storedfile = $fs->get_file($context->id, 'mod_pokcertificate', 'content', 0, $filepath, $filename)) {
-            if ($filepath === '/' and $filename === '.') {
+            if ($filepath === '/' && $filename === '.') {
                 $storedfile = new virtual_root_file($context->id, 'mod_pokcertificate', 'content', 0);
             } else {
                 // Not found.
@@ -236,7 +238,16 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
             }
         }
         require_once("$CFG->dirroot/mod/pokcertificate/locallib.php");
-        return new pokcertificate_content_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, true, false);
+        return new pokcertificate_content_file_info($browser,
+                                                    $context,
+                                                    $storedfile,
+                                                    $urlbase,
+                                                    $areas[$filearea],
+                                                    true,
+                                                    true,
+                                                    true,
+                                                    false,
+                                                );
     }
 
     // Note: pokcertificate_intro handled in file_browser automatically.
@@ -257,7 +268,7 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
  * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - just send the file
  */
-function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
@@ -356,7 +367,7 @@ function pokcertificate_pokcertificate_type_list($pokcertificatetype, $parentcon
  */
 function pokcertificate_export_contents($cm, $baseurl) {
     global $CFG, $DB;
-    $contents = array();
+    $contents = [];
     $context = context_module::instance($cm->id);
 
     $pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), '*', MUST_EXIST);
@@ -366,7 +377,7 @@ function pokcertificate_export_contents($cm, $baseurl) {
     $files = $fs->get_area_files($context->id, 'mod_pokcertificate', 'content', 0, 'sortorder DESC, id ASC', false);
     $urlbase = "$CFG->wwwroot/" . $baseurl;
     foreach ($files as $fileinfo) {
-        $file = array();
+        $file = [];
         $file['type']         = 'file';
         $file['filename']     = $fileinfo->get_filename();
         $file['filepath']     = $fileinfo->get_filepath();
@@ -390,7 +401,7 @@ function pokcertificate_export_contents($cm, $baseurl) {
 
     // Pokcertificate html conent.
     $filename = 'index.html';
-    $pokcertificatefile = array();
+    $pokcertificatefile = [];
     $pokcertificatefile['type']         = 'file';
     $pokcertificatefile['filename']     = $filename;
     $pokcertificatefile['filepath']     = '/';
@@ -489,7 +500,7 @@ function pokcertificate_view($pokcertificate, $course, $cm, $context) {
  * @return stdClass an object with the different type of areas indicating if they were updated or not
  * @since Moodle 3.2
  */
-function pokcertificate_check_updates_since(cm_info $cm, $from, $filter = array()) {
+function pokcertificate_check_updates_since(cm_info $cm, $from, $filter = []) {
     $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
     return $updates;
 }
@@ -570,20 +581,20 @@ function pokcertificate_validate_apikey($key) {
     $params = '';
     set_pokcertificate_settings();
     $curl = new \curl();
-    $options = array(
-        'CURLOPT_HTTPHEADER' => array(
+    $options = [
+        'CURLOPT_HTTPHEADER' => [
             'Authorization: ApiKey ' . $key
-        ),
+        ],
         'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
         'CURLOPT_RETURNTRANSFER' => true,
         'CURLOPT_ENCODING' => '',
         'CURLOPT_CUSTOMREQUEST' => 'GET',
         'CURLOPT_SSL_VERIFYPEER' => false
-    );
+    ];
     $result = $curl->post($location, $params, $options);
 
     if ($curl->get_errno()) {
-        throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
+        throw new moodle_exception('connecterror', 'mod_pokcertificate', '', ['url' => $location]);
     }
     if ($curl->get_info()['http_code'] == 200) {
         $result = json_decode($result);
@@ -629,7 +640,7 @@ function get_pokcertificate_settings() {
     $incompletestudentprofiles = get_config('mod_pokcertificate', 'incompletestudentprofiles');
 
 
-    $data = array(
+    $data = [
         'authenticationtoken' => $authtoken,
         'wallet' => $wallet,
         'domainname'  => $domainname,
@@ -639,7 +650,7 @@ function get_pokcertificate_settings() {
         'issuedcertificates' => $issuedcertificates,
         'incompletestudentprofiles' => $incompletestudentprofiles,
         'endofservices' => $endofservices,
-    );
+    ];
 
     return $data;
 }
@@ -740,75 +751,182 @@ function mod_pokcertificate_cm_info_view(cm_info $cm) {
     }
 } */
 
+<<<<<<< HEAD
 // For display on incomplete student profile page.
 function incompletestudentprofilelist($filtervalues) {
     global $DB, $PAGE, $USER, $CFG, $OUTPUT;
+=======
+/**
+ * Retrieve a list of incomplete student profiles.
+ *
+ * This function retrieves a list of student profiles from the database where the profiles are
+ * considered incomplete. It filters users based on the provided student ID (if any) and prepares
+ * the data for displaying in a list format.
+ *
+ * @param string|null $studentid The student ID to search for (optional).
+ * @param int $perpage The number of records to display per page.
+ * @param int $offset The offset for pagination.
+ * @return array An associative array containing the total count of records and the formatted student profile data.
+ */
+function incompletestudentprofilelist($studentid, $perpage, $offset) {
+    global $DB;
+>>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
     $systemcontext = \context_system::instance();
-    $countsql = "SELECT count(id) FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
-    $selectsql = "SELECT * FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
+    $countsql = "SELECT count(id) ";
+    $selectsql = "SELECT * ";
+    $fromsql = "FROM {user}
+               WHERE deleted = 0
+                     AND suspended = 0
+                     AND id > 2 ";
 
-    $queryparam = array();
-
-
-    if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
-        $concatsql .= " AND (idnumber LIKE :search1 )";
-        $queryparam['search1'] = '%' . trim($filtervalues->search_query) . '%';
+    $queryparam = [];
+    if ($studentid) {
+        $fromsql .= "AND idnumber LIKE :studentid ";
+        $queryparam['studentid'] = '%' . trim($studentid) . '%';
     }
-    $count = $DB->count_records_sql($countsql . $concatsql, $queryparam);
-    $concatsql .= " order by id desc";
-    $records = $DB->get_records_sql($selectsql . $concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
+    $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
+    $records = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
 
-    $list = array();
-    $data = array();
+    $list = [];
+    $data = [];
     if ($records) {
         foreach ($records as $c) {
-            $list = array();
+            $list = [];
             $list['id'] = $c->id;
             $list['firstname'] = $c->firstname;
             $list['lastname'] = $c->lastname;
             $list['email'] = $c->email;
-            $list['studentid'] = $c->idnumber ? $c->idnumber : 10;
+            $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
             $list['language'] = 'English';
             $data[] = $list;
         }
     }
-    return array('count' => $count, 'data' => $data);
+    return ['count' => $count, 'data' => $data];
 }
 
+<<<<<<< HEAD
 // For display on general certificate status page.
 function generalcertificatelist($filtervalues) {
     global $DB, $PAGE, $USER, $CFG, $OUTPUT;
     $systemcontext = \context_system::instance();
     $countsql = "SELECT count(id) FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
     $selectsql = "SELECT * FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
+=======
+/**
+ * Retrieve a list of course participants with relevant details.
+ *
+ * This function retrieves a list of course participants from the database based on the provided parameters,
+ * such as course ID, student ID, completion status, etc. It prepares the data with relevant information
+ * for displaying in the course participants list.
+ *
+ * @param int $courseid The ID of the course to retrieve participants from.
+ * @param string $studentid The student ID to search for (optional).
+ * @param string $senttopok Indicates whether certificates have been sent to Pokcertificate (optional).
+ * @param string $coursestatus The completion status of the course (optional).
+ * @param int $perpage The number of records to display per page.
+ * @param int $offset The offset for pagination.
+ * @return array An associative array containing the total count of records and the formatted participant data.
+ */
+function courseparticipantslist($courseid, $studentid, $studentname, $email, $senttopok, $coursestatus, $perpage, $offset) {
+    global $DB;
+    $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
+    $stdroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
+    $countsql = "SELECT count(u.id) ";
+    $selectsql = "SELECT UUID(),
+                         pc.name as activity,
+                         u.firstname,
+                         u.idnumber,
+                         u.email,
+                         c.fullname as coursename,
+                         ue.timecreated as enrolldate,
+                         cc.timecompleted as completiondate,
+                         pci.certificateurl,
+                         pct.templatetype ";
+    $fromsql = "FROM {user} u
+                JOIN {user_enrolments} ue ON u.id = ue.userid
+                JOIN {enrol} e ON ue.enrolid = e.id
+                JOIN {course} c ON e.courseid = c.id
+                JOIN {context} ctx ON (c.id = ctx.instanceid AND ctx.contextlevel = 50)
+                JOIN {role_assignments} ra ON (ctx.id = ra.contextid AND u.id = ra.userid)
+                JOIN {pokcertificate} pc ON c.id = pc.course
+                JOIN {course_modules} cm ON (c.id = cm.course AND pc.id = cm.instance)
+           LEFT JOIN {pokcertificate_templates} pct ON cm.instance = pct.pokid
+           LEFT JOIN {course_completions} cc ON (cc.userid = u.id AND cc.course = e.courseid)
+           LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.certid)
+               WHERE e.courseid = :courseid
+                     AND u.deleted = 0
+                     AND u.suspended = 0
+                     AND u.id > 2
+                     AND cm.module = :pokmoduleid
+                     AND cm.deletioninprogress = 0
+                     AND ra.roleid = :stdroleid ";
+    $queryparam = [];
+    $queryparam['courseid'] = $courseid;
+    $queryparam['pokmoduleid'] = $pokmoduleid;
+    $queryparam['stdroleid'] = $stdroleid;
+    if ($studentid) {
+        $fromsql .= "AND u.idnumber LIKE :studentid ";
+        $queryparam['studentid'] = '%' . trim($studentid) . '%';
+    }
+    if ($studentname) {
+        $fromsql .= "AND u.firstname LIKE :firstname ";
+        $queryparam['firstname'] = '%' . trim($studentname) . '%';
+    }
+    if ($email) {
+        $fromsql .= "AND u.email LIKE :email ";
+        $queryparam['email'] = '%' . trim($email) . '%';
+    }
 
-    $queryparam = array();
+    if ($coursestatus == 'completed') {
+        $fromsql .= "AND cc.timecompleted > 0 ";
+    }
+>>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
 
+    if ($coursestatus == 'inprogress') {
+        $fromsql .= "AND (cc.timecompleted = 0 OR cc.timecompleted IS NULL) ";
+    }
+
+<<<<<<< HEAD
     if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
         $concatsql .= " AND (idnumber LIKE :search1 )";
         $queryparam['search1'] = '%' . trim($filtervalues->search_query) . '%';
+=======
+    if ($senttopok == 'yes') {
+        $fromsql .= "AND pci.certificateurl IS NOT NULL ";
     }
-    $count = $DB->count_records_sql($countsql . $concatsql, $queryparam);
-    $concatsql .= " order by id desc";
-    $records = $DB->get_records_sql($selectsql . $concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
 
-    $list = array();
-    $data = array();
-    if ($records) {
-        foreach ($records as $c) {
-            $list = array();
-            $list['id'] = $c->id;
+    if ($senttopok == 'no') {
+        $fromsql .= "AND pci.certificateurl IS NULL ";
+>>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
+    }
+
+    $concatsql = "ORDER BY u.id DESC ";
+    $totalusers = $DB->count_records_sql($countsql . $fromsql, $queryparam);
+    $users = $DB->get_records_sql($selectsql . $fromsql . $concatsql, $queryparam, $offset, $perpage);
+    $list = [];
+    $data = [];
+
+    if ($users) {
+        foreach ($users as $c) {
+            $list = [];
             $list['firstname'] = $c->firstname;
-            $list['lastname'] = $c->lastname;
             $list['email'] = $c->email;
-            $list['studentid'] = $c->idnumber ? $c->idnumber : 10;
-            $list['program'] = 'Program Name';
+            $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
+            $list['coursename'] = $c->coursename;
+            $list['enrolldate'] = date('d M Y', $c->enrolldate);
+            $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
+            $list['coursestatus'] = $c->completiondate ? get_string('completed') : get_string('inprogress');
+            $list['senttopok'] = $c->certificateurl ? get_string('yes') : get_string('no');
+            $list['certificatetype'] = $c->templatetype == 0 ? 'Free' : 'Paid';
+            $list['certificateurl'] = $c->certificateurl;
+            $list['activity'] = $c->activity;
             $data[] = $list;
         }
     }
-    return array('count' => $count, 'data' => $data);
+    return ['count' => $totalusers, 'data' => $data];
 }
 
+<<<<<<< HEAD
 // For display on course participants page.
 function courseparticipantslist($courseid, $filtervalues) {
     global $DB, $PAGE, $USER, $CFG, $OUTPUT;
@@ -827,24 +945,66 @@ function courseparticipantslist($courseid, $filtervalues) {
     if (isset($filtervalues->search_query) && trim($filtervalues->search_query) != '') {
         $concatsql .= " AND (u.idnumber LIKE :search1 )";
         $queryparam['search1'] = '%' . trim($filtervalues->search_query) . '%';
-    }
-    $count = $DB->count_records_sql($countsql . $fromsql . $concatsql, $queryparam);
-    $concatsql .= " order by u.id desc";
-    $records = $DB->get_records_sql($selectsql . $fromsql . $concatsql, $queryparam, $tablelimits->start, $tablelimits->length);
+=======
+/**
+ * Retrieve a list of users for awarding general certificates.
+ *
+ * This function retrieves a list of users from the database based on the provided parameters,
+ * such as student ID, pagination settings, and offset. It prepares the data for awarding general certificates
+ * by selecting relevant user information and formatting it appropriately.
+ *
+ * @param string $studentid The student ID to search for (optional).
+ * @param int $perpage The number of records to display per page.
+ * @param int $offset The offset for pagination.
+ * @return array An associative array containing the total count of records and the formatted user data.
+ */
+function awardgeneralcertificatelist($studentid, $perpage, $offset) {
+    global $DB;
+    $systemcontext = \context_system::instance();
+    $countsql = "SELECT count(id) ";
+    $selectsql = "SELECT * ";
+    $fromsql = "FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
 
-    $list = array();
-    $data = array();
+    $queryparam = [];
+    if ($studentid) {
+        $fromsql .= "AND idnumber LIKE :studentid ";
+        $queryparam['studentid'] = '%' . trim($studentid) . '%';
+>>>>>>> 2554db9a6be3941a2d9e2a7562c19e4c9e015d75
+    }
+    $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
+    $records = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
+
+    $list = [];
+    $data = [];
     if ($records) {
         foreach ($records as $c) {
-            $list = array();
+            $list = [];
             $list['id'] = $c->id;
             $list['firstname'] = $c->firstname;
-            $list['email'] = $c->email;
-            $list['studentid'] = $c->idnumber ? $c->idnumber : 10;
             $list['lastname'] = $c->lastname;
+            $list['email'] = $c->email;
+            $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
             $list['program'] = 'Program Name';
             $data[] = $list;
         }
     }
-    return array('count' => $count, 'data' => $data);
+    return ['count' => $count, 'data' => $data];
+}
+
+/**
+ * Extends the course navigation with a link to the Pokcertificate module participants page.
+ *
+ * @param navigation_node $navigation The course navigation node.
+ * @return void
+ */
+function mod_pokcertificate_extend_navigation_course(navigation_node $navigation) {
+    global $PAGE;
+    $node = navigation_node::create(get_string('coursecertificatestatus', 'mod_pokcertificate'),
+        new moodle_url('/mod/pokcertificate/courseparticipants.php',
+        ['courseid' => $PAGE->course->id]),
+        navigation_node::TYPE_SETTING,
+        null,
+        null,
+        new pix_icon('i/competencies', ''));
+    $navigation->add_node($node);
 }

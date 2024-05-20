@@ -15,12 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_pokcertificate\output;
+defined('MOODLE_INTERNAL') || die();
 
 use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_issues;
 use mod_pokcertificate\persistent\pokcertificate_templates;
-
+require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 /**
  * Renderer for POK Certificate
  *
@@ -224,7 +225,7 @@ class renderer extends \plugin_renderer_base {
                     pok::save_issued_certificate($cmid, $user, $emitcertificate);
                     redirect($emitcertificate->viewUrl);
                 }
-            }else if(!empty($certificateissue)){
+            } else if (!empty($certificateissue)) {
                 redirect($certificateissue->get('certificateurl'));
             }
         } else if ($availablecredits == 0) {
@@ -240,109 +241,141 @@ class renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl The page url.
      * @return string The HTML for the action bar.
      */
-
     public function action_bar(int $id,  \moodle_url $pageurl): string {
         $actionbar = new action_bar($id, $pageurl);
         $data = $actionbar->export_for_template($this);
         return $this->render_from_template('mod_pokcertificate/action_bar', $data);
     }
 
-    public function get_incompletestudentprofile($filter = false) {
+    /**
+     * Retrieves the list of students with incomplete profiles.
+     *
+     * This function fetches a paginated list of students who have incomplete profiles,
+     * optionally filtered by student ID. It prepares the data for rendering using the
+     * 'mod_pokcertificate/incompletestudentprofile_view' template and generates the
+     * pagination for the student records.
+     *
+     * @return array An associative array containing:
+     *               - 'recordlist': The rendered HTML content for the incomplete student profiles.
+     *               - 'pagination': The HTML content for the pagination controls.
+     */
+    public function get_incompletestudentprofile() {
         global $USER;
         $systemcontext = \context_system::instance();
-        $options = array('targetID' => 'viewincompletestudent', 'perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
-
-        $options['methodName'] = 'mod_pokcertificate_incompletestudentprofile_view';
-        $options['templateName'] = 'mod_pokcertificate/incompletestudentprofile_view';
-        $options = json_encode($options);
-
-        $dataoptions = json_encode(array('contextid' => $systemcontext->id));
-        $filterdata = json_encode(array());
-
-        $context = [
-            'targetID' => 'viewincompletestudent',
-            'options' => $options,
-            'dataoptions' => $dataoptions,
-            'filterdata' => $filterdata
-        ];
-
-        if ($filter) {
-            return  $context;
-        } else {
-            return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
-        }
+        $page = optional_param('page', 0, PARAM_INT);
+        $url = new \moodle_url('/mod/pokcertificate/incompletestudent.php', []);
+        $studentid = optional_param('studentid', '', PARAM_RAW);
+        $recordperpage = 10;
+        $offset = $page * $recordperpage;
+        $records = incompletestudentprofilelist($studentid, $recordperpage, $offset);
+        $records['showdata'] = $records['data'] ? true : false;
+        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/incompletestudentprofile_view', $records);
+        $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);
+        return $return;
     }
 
+    /**
+     * Renders the user bulk upload button.
+     *
+     * This function prepares and returns the HTML content for a button that allows
+     * bulk uploading of users. It uses the 'mod_pokcertificate/userbulkuploadbutton'
+     * template for rendering.
+     *
+     * @return string The rendered HTML content for the bulk upload button.
+     */
     public function userbulkupload() {
         global $CFG;
-        $systemcontext = \context_system::instance();
-        return $this->render_from_template('mod_pokcertificate/userbulkuploadbutton', array('contextid' => $categorycontext->id));
+        $categorycontext = \context_system::instance();
+        return $this->render_from_template('mod_pokcertificate/userbulkuploadbutton',
+            ['contextid' => $categorycontext->id]);
     }
 
+    /**
+     * Retrieves the list of course participants with optional filters.
+     *
+     * This function fetches a paginated list of participants in a course, optionally filtered by
+     * student ID, whether the record was sent to POK, and the course status. It prepares the data
+     * for rendering using the 'mod_pokcertificate/courseparticipants' template and generates the
+     * pagination for the participant records.
+     *
+     * @return array An associative array containing:
+     *               - 'recordlist': The rendered HTML content for the participant records.
+     *               - 'pagination': The HTML content for the pagination controls.
+     */
+    public function get_courseparticipantslist() {
+        global $USER, $CFG;
+        $courseid = required_param('courseid', PARAM_INT);
+        $studentid = optional_param('studentid', '', PARAM_RAW);
+        $studentname = optional_param('studentname', '', PARAM_RAW);
+        $email = optional_param('email', '', PARAM_RAW);
+        $senttopok = optional_param('senttopok', '', PARAM_RAW);
+        $coursestatus = optional_param('coursestatus', '', PARAM_RAW);
+        $page = optional_param('page', 0, PARAM_INT);
+        $url = new \moodle_url('/mod/pokcertificate/courseparticipants.php',
+                            [
+                                'courseid' => $courseid,
+                                'studentid' => $studentid,
+                                'senttopok' => $senttopok,
+                                'coursestatus' => $coursestatus,
+                            ]);
+        $recordperpage = 10;
+        $offset = $page * $recordperpage;
+        $records = courseparticipantslist(
+            $courseid,
+            $studentid,
+            $studentname,
+            $email,
+            $senttopok,
+            $coursestatus,
+            $recordperpage,
+            $offset
+        );
+        $records['showdata'] = $records['data'] ? true : false;
+        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/courseparticipants', $records);
+        $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);
+        return $return;
+    }
 
+    /**
+     * Retrieves the list of general certificates with optional filtering.
+     *
+     * This function fetches a paginated list of general certificates awarded to students,
+     * optionally filtered by student ID. It prepares the data for rendering using the
+     * 'mod_pokcertificate/awardedcertificatestatus' template and generates the pagination
+     * for the certificate records.
+     *
+     * @param bool $filter Whether to apply a filter on the certificate records. Default is false.
+     * @return array An associative array containing:
+     *               - 'recordlist': The rendered HTML content for the certificate records.
+     *               - 'pagination': The HTML content for the pagination controls.
+     */
     public function get_generalcertificate($filter = false) {
         global $USER;
         $systemcontext = \context_system::instance();
-        $options = array('targetID' => 'view_generalcertificate', 'perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
-
-        $options['methodName'] = 'mod_pokcertificate_generalcertificate_view';
-        $options['templateName'] = 'mod_pokcertificate/awardedcertificatestatus';
-        $options = json_encode($options);
-
-        $dataoptions = json_encode(array('contextid' => $systemcontext->id));
-        $filterdata = json_encode(array());
-
-        $context = [
-            'targetID' => 'view_generalcertificate',
-            'options' => $options,
-            'dataoptions' => $dataoptions,
-            'filterdata' => $filterdata
-        ];
-
-        if ($filter) {
-            return  $context;
-        } else {
-            return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
-        }
+        $page = optional_param('page', 0, PARAM_INT);
+        $url = new \moodle_url('/mod/pokcertificate/generalcertificate.php', []);
+        $studentid = optional_param('studentid', '', PARAM_RAW);
+        $recordperpage = 10;
+        $offset = $page * $recordperpage;
+        $records = awardgeneralcertificatelist($studentid, $recordperpage, $offset);
+        $records['showdata'] = $records['data'] ? true : false;
+        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/awardedcertificatestatus', $records);
+        $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);
+        return $return;
     }
 
-    public function get_courseparticipantslist($filter = false) {
-
-        $courseid = required_param('courseid', PARAM_INT);
-        $systemcontext = \context_system::instance();
-        $options = array('targetID' => 'view_courseparticipants', 'perPage' => 10, 'cardClass' => 'w_oneintwo', 'viewType' => 'table');
-
-        $options['methodName'] = 'mod_pokcertificate_courseparticipants_view';
-        $options['templateName'] = 'mod_pokcertificate/courseparticipants';
-        $options = json_encode($options);
-
-        $dataoptions = json_encode(array('contextid' => $systemcontext->id, 'courseid' => $courseid));
-        $filterdata = json_encode(array());
-
-        $context = [
-            'targetID' => 'view_courseparticipants',
-            'options' => $options,
-            'dataoptions' => $dataoptions,
-            'filterdata' => $filterdata
-        ];
-
-        if ($filter) {
-            return  $context;
-        } else {
-            return  $this->render_from_template('mod_pokcertificate/cardPaginate', $context);
-        }
-    }
     public function verify_authentication_check() {
         global $CFG, $COURSE;
         if (!get_config('mod_pokcertificate', 'pokverified')) {
             if (is_siteadmin() || has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-                $errormsg = get_string('authenticationcheck','mod_pokcertificate');
+                $errormsg = get_string('authenticationcheck', 'mod_pokcertificate');
                 $url = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
-            }else{
-                $errormsg = get_string('authenticationcheck_user','mod_pokcertificate');
+            } else {
+                $errormsg = get_string('authenticationcheck_user', 'mod_pokcertificate');
                 $url = $CFG->wwwroot . '/course/view.php?id='.$COURSE->id;
             }
             print_error($errormsg, 'error', $url);
         }
     }
+
 }
