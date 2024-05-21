@@ -198,6 +198,52 @@ class renderer extends \plugin_renderer_base {
         $output .= $this->box_end();
         return $output;
     }
+    public function certificate_success_message($certificateurl) {
+        global $CFG, $USER, $COURSE;
+        require_once("{$CFG->libdir}/completionlib.php");
+        $attributes = [
+            'role' => 'promptdialog',
+            'aria-labelledby' => 'modal-header',
+            'aria-describedby' => 'modal-body',
+            'aria-modal' => 'true',
+        ];
+        $output = $this->box_start('generalbox modal modal-dialog modal-in-page show', 'notice', $attributes);
+        $output .= $this->box_start('modal-content', 'modal-content');
+        $output .= $this->box_start('modal-header p-x-1', 'modal-header');
+        $output .= \html_writer::tag('h6', get_string('certificatesuccess', 'mod_pokcertificate'));
+        /*  $output .= \html_writer::tag(
+            'input',
+            '',
+            ['type' => 'button', 'class' => 'close', 'data-dismiss' => 'modal']
+        ); */
+        $output .= $this->box_end();
+        $attributes = [
+            'role' => 'prompt',
+            'data-aria-autofocus' => 'true',
+            'class' => 'certificatestatus',
+        ];
+
+        /*  $cinfo = new \completion_info($COURSE);
+        $iscomplete = $cinfo->is_course_complete($USER->id); */
+
+        $output .= $this->box_start('modal-body', 'modal-body', $attributes);
+
+        $output .= \html_writer::tag('i', '', ['class' => ' faicon fa-solid fa-envelope-open fa-xl']);
+        $output .= \html_writer::tag('p', get_string('congratulations', 'mod_pokcertificate'), ['class' => 'success-mainheading']);
+        $output .= \html_writer::tag('p', get_string('certificatesuccessmsg', 'mod_pokcertificate',$USER->email), ['class' => 'success-complheading']);
+        $output .= \html_writer::start_tag('p', ['class' => 'text-center']);
+        $output .= $this->action_link(
+            $certificateurl,
+            'View Certificate',
+            null,
+            array('class' => 'btn btn-secondary text-center'),
+        );
+        $output .= \html_writer::end_tag('p');
+        $output .= $this->box_end();
+        $output .= $this->box_end();
+        $output .= $this->box_end();
+        return $output;
+    }
 
     /**
      * emit_certificate_templates
@@ -226,7 +272,8 @@ class renderer extends \plugin_renderer_base {
                     $output = self::certificate_pending_message();
                 } else {
                     pok::save_issued_certificate($cmid, $user, $emitcertificate);
-                    redirect($emitcertificate->viewUrl);
+                    // redirect($emitcertificate->viewUrl);
+                    $output = self::certificate_success_message($emitcertificate->viewUrl);
                 }
             } else if (!empty($certificateissue)) {
                 redirect($certificateissue->get('certificateurl'));

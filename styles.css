@@ -188,17 +188,25 @@
 #page-mod-pokcertificate-view .generalbox .mainheading{
     color:green;
     margin-left:45%;
+    margin-top:10px;
 }
-
+#page-mod-pokcertificate-view .generalbox .success-mainheading{
+    color:green;
+    text-align: center;
+    margin-top:10px;
+}
 #page-mod-pokcertificate-view div#notice {
-    max-width: fit-content;
+    /* max-width: fit-content; */
 }
 
 #page-mod-pokcertificate-view .generalbox .complheading{
     color:#0072ffcc;
     margin-left:38%;
 }
-
+#page-mod-pokcertificate-view .generalbox .success-complheading{
+    color:#0072ffcc;
+    text-align: center;
+}
 #page-mod-pokcertificate-view .generalbox input[type="button"] {
     color: white;
     background: red;
@@ -211,7 +219,7 @@
 }
  #page-mod-pokcertificate-view .generalbox .faicon{
     color: green;
-    margin-left: 50%;
+    margin-left: 46%;
 }
 
 .blue-enrolldate {

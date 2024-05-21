@@ -227,3 +227,5 @@ $string['invalidspechar'] = "Please do not use special charecters";
 $string['usethistemplate'] = "Use this Template";
 $string['inprogress'] = "Inprogress";
 $string['invalidtemplatedef'] = 'Invalid Template Definition';
+$string['certificatesuccess'] = 'Account Details Verification';
+$string['certificatesuccessmsg'] = 'certificate sent to your email <br/> <b><center>{$a}</center></b>';

@@ -86,7 +86,7 @@ if ($id) {
             $studentview = true;
         } else {
             $exists = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $USER->id]);
-            if(!empty($exists)){
+            if(empty($exists)){
                 $params = ['cmid' => $id, 'id' => $USER->id];
                 $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
             }else{
@@ -99,7 +99,10 @@ if ($adminview) {
     redirect($url);
 }
 if ($studentview) {
+    echo $OUTPUT->header();
     echo $renderer->emit_certificate_templates($id, $USER);
+    echo $OUTPUT->footer();
+    die;
 } else if (!is_siteadmin()) {
     redirect($url);
 }
