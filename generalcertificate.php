@@ -26,6 +26,7 @@
 require_once('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/searchfilter_form.php');
 require_login();
+global $OUTPUT, $PAGE;
 
 $context = \context_system::instance();
 $url = new moodle_url('/mod/pokcertificate/generalcertificate.php', []);
@@ -41,8 +42,6 @@ if (empty($studentid)) {
 } else {
     $show = 'show';
 }
-global $OUTPUT;
-echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $mform = new \searchfilter_form();
 $mform->set_data(['studentid' => $studentid]);
@@ -52,18 +51,21 @@ if ($mform->is_cancelled()) {
     redirect(new \moodle_url('/mod/pokcertificate/generalcertificate.php',
         ['studentid' => $userdata->studentid]
     ));
-} else {
-    echo '<a class = "btn-link btn-sm" data-toggle = "collapse"
-            data-target = "#mod_pokcertificate-filter_collapse"
-            aria-expanded = "false" aria-controls = "mod_pokcertificate-filter_collapse">
-            <i class = "m-0 fa fa-sliders fa-2x" aria-hidden = "true"></i>
-        </a>';
-    echo '<div class="mt-2 mb-2 collapse '.$show.'" id="mod_pokcertificate-filter_collapse">
-            <div id = "filters_form" class = "card card-body p-2">';
-                $mform->display();
-    echo    '</div>
-        </div>';
 }
+
+echo $OUTPUT->header();
+
+echo '<a class = "btn-link btn-sm" data-toggle = "collapse"
+        data-target = "#mod_pokcertificate-filter_collapse"
+        aria-expanded = "false" aria-controls = "mod_pokcertificate-filter_collapse">
+        <i class = "m-0 fa fa-sliders fa-2x" aria-hidden = "true"></i>
+    </a>';
+echo '<div class="mt-2 mb-2 collapse '.$show.'" id="mod_pokcertificate-filter_collapse">
+        <div id = "filters_form" class = "card card-body p-2">';
+            $mform->display();
+echo    '</div>
+    </div>';
+
 $records = $renderer->get_generalcertificate();
 echo $records['recordlist'];
 echo $records['pagination'];
