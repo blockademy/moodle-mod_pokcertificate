@@ -270,7 +270,7 @@ class renderer extends \plugin_renderer_base {
         $studentid = optional_param('studentid', '', PARAM_RAW);
         $recordperpage = 10;
         $offset = $page * $recordperpage;
-        $records = incompletestudentprofilelist($studentid, $recordperpage, $offset);
+        $records = pokcertificate_incompletestudentprofilelist($studentid, $recordperpage, $offset);
         $records['showdata'] = $records['data'] ? true : false;
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/incompletestudentprofile_view', $records);
         $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);
@@ -327,7 +327,7 @@ class renderer extends \plugin_renderer_base {
         );
         $recordperpage = 10;
         $offset = $page * $recordperpage;
-        $records = courseparticipantslist(
+        $records = pokcertificate_courseparticipantslist(
             $courseid,
             $studentid,
             $studentname,
@@ -364,7 +364,7 @@ class renderer extends \plugin_renderer_base {
         $studentid = optional_param('studentid', '', PARAM_RAW);
         $recordperpage = 10;
         $offset = $page * $recordperpage;
-        $records = awardgeneralcertificatelist($studentid, $recordperpage, $offset);
+        $records = pokcertificate_awardgeneralcertificatelist($studentid, $recordperpage, $offset);
         $records['showdata'] = $records['data'] ? true : false;
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/awardedcertificatestatus', $records);
         $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);
