@@ -676,8 +676,11 @@ function get_externalfield_list($template, $pokid) {
         foreach ($templatedefinition->params as $param) {
             $pos = strpos($param->name, 'custom:');
             if ($pos !== false) {
-                $var = substr($param->name, strlen('custom:'));
-                $templatefields[$var] = $var;
+                // $var = substr($param->name, strlen('custom:'));
+                $var = explode(':', $param->name);
+                if($var[2]){
+                    $templatefields[$var[2]] = $var[2];
+                }
             }
         }
     }

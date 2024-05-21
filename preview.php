@@ -38,7 +38,7 @@ $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/pokcertificate:view', $context);
-
+$PAGE->navbar->add(get_string('preview'));
 $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
 $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);

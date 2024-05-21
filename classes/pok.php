@@ -384,6 +384,7 @@ class pok {
         } else {
             $templatedefinition = json_decode($template->get('templatedefinition'));
         }
+        $customparams = [];
         if ($templatedefinition) {
             foreach ($templatedefinition->params as $param) {
                 if ($param->name == 'institution') {
@@ -406,14 +407,16 @@ class pok {
 
                     if ($pokfields) {
                         foreach ($pokfields as $field) {
-                            $varname = substr($param->name, strlen('custom:'));
+                            $varname = explode(':', $param->name);
 
-                            if ($field->get('templatefield') == $varname) {
+                            if ($field->get('templatefield') == $varname[2]) {
                                 $userfield =  $field->get('userfield');
                                 if (strpos($field->get('userfield'), 'profile_field_') === 0) {
                                     $userprofilefield = substr($field->get('userfield'), strlen('profile_field_'));
+                                    $customparams[$param->name] = $USER->profile[$userprofilefield];
                                     $param->value = $USER->profile[$userprofilefield];
                                 } else {
+                                    $customparams[$param->name] = $USER->$userfield;
                                     $param->value = $USER->$userfield;
                                 }
                             }
@@ -435,6 +438,7 @@ class pok {
         $emitdata->free = ($template->get('templatetype') == 0) ? 'free' : 'paid';
         $emitdata->wallet = get_config('mod_pokcertificate', 'wallet');
         $emitdata->language_tag = $user->lang;
+        $emitdata->custom_params = $customparams;
         return $emitdata;
     }
 
