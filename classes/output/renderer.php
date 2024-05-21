@@ -15,12 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_pokcertificate\output;
+
 defined('MOODLE_INTERNAL') || die();
 
 use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_issues;
 use mod_pokcertificate\persistent\pokcertificate_templates;
+
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 /**
  * Renderer for POK Certificate
@@ -286,8 +288,10 @@ class renderer extends \plugin_renderer_base {
     public function userbulkupload() {
         global $CFG;
         $categorycontext = \context_system::instance();
-        return $this->render_from_template('mod_pokcertificate/userbulkuploadbutton',
-            ['contextid' => $categorycontext->id]);
+        return $this->render_from_template(
+            'mod_pokcertificate/userbulkuploadbutton',
+            ['contextid' => $categorycontext->id]
+        );
     }
 
     /**
@@ -311,13 +315,15 @@ class renderer extends \plugin_renderer_base {
         $senttopok = optional_param('senttopok', '', PARAM_RAW);
         $coursestatus = optional_param('coursestatus', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
-        $url = new \moodle_url('/mod/pokcertificate/courseparticipants.php',
-                            [
-                                'courseid' => $courseid,
-                                'studentid' => $studentid,
-                                'senttopok' => $senttopok,
-                                'coursestatus' => $coursestatus,
-                            ]);
+        $url = new \moodle_url(
+            '/mod/pokcertificate/courseparticipants.php',
+            [
+                'courseid' => $courseid,
+                'studentid' => $studentid,
+                'senttopok' => $senttopok,
+                'coursestatus' => $coursestatus,
+            ]
+        );
         $recordperpage = 10;
         $offset = $page * $recordperpage;
         $records = courseparticipantslist(
@@ -369,15 +375,28 @@ class renderer extends \plugin_renderer_base {
         if (!get_config('mod_pokcertificate', 'pokverified')) {
             $data = [];
             if (is_siteadmin() || has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-                $data['errormsg'] = get_string('authenticationcheck','mod_pokcertificate');
+                $data['errormsg'] = get_string('authenticationcheck', 'mod_pokcertificate');
                 $data['url'] = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
-            }else{
-                $data['errormsg'] = get_string('authenticationcheck_user','mod_pokcertificate');
-                $data['url'] = $CFG->wwwroot . '/course/view.php?id='.$COURSE->id;
+            } else {
+                $data['errormsg'] = get_string('authenticationcheck_user', 'mod_pokcertificate');
+                $data['url'] = $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id;
             }
             return  $this->render_from_template('mod_pokcertificate/errormsg', $data);
             die;
         }
     }
 
+    public function display_notif_message($cmid, $url, $msg) {
+        global $OUTPUT;
+        echo \core\notification::error($msg);
+        $button = $OUTPUT->single_button(
+            $url,
+            get_string('continue'),
+            'get',
+            []
+        );
+
+        $output = \html_writer::div($button);
+        return $output;
+    }
 }

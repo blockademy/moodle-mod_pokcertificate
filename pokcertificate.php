@@ -26,6 +26,7 @@ require('../../config.php');
 
 require_login();
 require_once($CFG->dirroot . '/mod/pokcertificate/verifyauth_form.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 $url = new moodle_url('/mod/pokcertificate/pokcertificate.php', []);
 $PAGE->set_url($url);
@@ -33,6 +34,8 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_heading($SITE->fullname);
 
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
+// Restrict normal user to access this page
+admin_externalpage_setup('managemodules');
 
 echo $OUTPUT->header();
 echo $OUTPUT->container_start();

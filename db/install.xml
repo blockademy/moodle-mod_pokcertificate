@@ -114,7 +114,6 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="pokid" UNIQUE="false" FIELDS="pokid"/>
-        <INDEX NAME="templatedefinition" UNIQUE="false" FIELDS="templatedefinition"/>
         <INDEX NAME="templatename" UNIQUE="false" FIELDS="templatename"/>
       </INDEXES>
     </TABLE>

@@ -160,7 +160,7 @@ class api {
             $options['CURLOPT_HTTPHEADER'][] = 'Content-Type: application/json';
         }
         $result = $curl->{$method}($location, $params, $options);
-
+        $apiresult = null;
         if ($curl->get_errno()) {
             throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
         }
@@ -168,10 +168,10 @@ class api {
         $response = null;
         if ($curl->get_info()['http_code'] == 200) {
             $response = get_string('success');
+            $apiresult = $result;
         } else {
             $response = get_string('fail', 'pokcertificate');
         }
-
 
         $log = new \stdClass();
         $log->api = $location . '?' . $params;
@@ -180,6 +180,6 @@ class api {
         $log->responsevalue = $result;
         $logdata = new pokcertificate_log(0, $log);
         $logdata->create();
-        return $result;
+        return $apiresult;
     }
 }

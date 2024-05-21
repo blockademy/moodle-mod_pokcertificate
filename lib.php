@@ -207,7 +207,7 @@ function pokcertificate_get_file_areas($course, $cm, $context) {
  * @param stdClass $areas file areas
  * @param stdClass $course course object
  * @param stdClass $cm course module object
- * @param stdClass $context context object
+ * @param [stdClass] $context context object
  * @param string $filearea file area
  * @param int $itemid item ID
  * @param string $filepath file path
@@ -238,16 +238,17 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
             }
         }
         require_once("$CFG->dirroot/mod/pokcertificate/locallib.php");
-        return new pokcertificate_content_file_info($browser,
-                                                    $context,
-                                                    $storedfile,
-                                                    $urlbase,
-                                                    $areas[$filearea],
-                                                    true,
-                                                    true,
-                                                    true,
-                                                    false,
-                                                );
+        return new pokcertificate_content_file_info(
+            $browser,
+            $context,
+            $storedfile,
+            $urlbase,
+            $areas[$filearea],
+            true,
+            true,
+            true,
+            false,
+        );
     }
 
     // Note: pokcertificate_intro handled in file_browser automatically.
@@ -261,7 +262,7 @@ function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, 
  * @category files
  * @param stdClass $course course object
  * @param stdClass $cm course module object
- * @param stdClass $context context object
+ * @param [stdClass] $context context object
  * @param string $filearea file area
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
@@ -957,12 +958,16 @@ function awardgeneralcertificatelist($studentid, $perpage, $offset) {
  */
 function mod_pokcertificate_extend_navigation_course(navigation_node $navigation) {
     global $PAGE;
-    $node = navigation_node::create(get_string('coursecertificatestatus', 'mod_pokcertificate'),
-        new moodle_url('/mod/pokcertificate/courseparticipants.php',
-        ['courseid' => $PAGE->course->id]),
+    $node = navigation_node::create(
+        get_string('coursecertificatestatus', 'mod_pokcertificate'),
+        new moodle_url(
+            '/mod/pokcertificate/courseparticipants.php',
+            ['courseid' => $PAGE->course->id]
+        ),
         navigation_node::TYPE_SETTING,
         null,
         null,
-        new pix_icon('i/competencies', ''));
+        new pix_icon('i/competencies', '')
+    );
     $navigation->add_node($node);
 }

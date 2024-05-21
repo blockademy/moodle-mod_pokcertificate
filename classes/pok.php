@@ -128,7 +128,6 @@ class pok {
         require_once("$CFG->libdir/resourcelib.php");
 
         $cmid        = $data->coursemodule;
-        $draftitemid = $data->pokcertificate['itemid'];
 
         $data->orgname = get_config('mod_pokcertificate', 'institution');
         $data->orgid = get_config('mod_pokcertificate', 'orgid');
@@ -136,7 +135,6 @@ class pok {
         $data->usermodified = $USER->id;
         $data->timemodified = time();
         $data->id           = $data->instance;
-        $data->revision++;
 
         $displayoptions = [];
         if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
@@ -151,7 +149,9 @@ class pok {
         $pokcertificate->update();
 
         $context = \context_module::instance($cmid);
-        if ($draftitemid) {
+        if ($mform && !empty($data->pokcertificate['itemid'])) {
+            $draftitemid = $data->pokcertificate['itemid'];
+
             $data->content = file_save_draft_area_files(
                 $draftitemid,
                 $context->id,
@@ -167,6 +167,7 @@ class pok {
 
         $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
         \core_completion\api::update_completion_date_event($cmid, 'pokcertificate', $data->id, $completiontimeexpected);
+
         return true;
     }
 
@@ -206,43 +207,49 @@ class pok {
         $templateid = 0;
         $template = $templateinfo->template;
         $templatetype = $templateinfo->templatetype;
-        $templatedefdata = new \stdClass();
         $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($template);
         $pokid = pokcertificate::get_field('id', ['id' => $cm->instance]);
+        try {
+            if ($templatedefinition) {
+                $templatedefdata = new \stdclass;
+                $templateexists = pokcertificate_templates::get_record(['templatename' => $template]);
 
-        if ($templatedefinition) {
-            $templatedefdata = new \stdclass;
-            $templateexists = pokcertificate_templates::get_record(['templatename' => $template]);
+                if ($templateexists) {
+                    $templateid = $templateexists->get('id');
+                    $templatedata = new pokcertificate_templates($templateexists->get('id'));
+                    $templatedata->set('pokid', $pokid);
+                    $templatedata->set('templatetype', $templatetype);
+                    $templatedata->set('templatename', $template);
+                    $templatedata->set('templatedefinition', $templatedefinition);
+                    $templatedata->set('usermodified', $USER->id);
+                    $templatedata->set('timemodified', time());
+                    $templatedata->update();
+                } else {
+                    $templatedefdata->pokid = $pokid;
+                    $templatedefdata->templatetype = $templatetype;
+                    $templatedefdata->templatename = $template;
+                    $templatedefdata->templatedefinition = $templatedefinition;
+                    $templatedefdata->usercreated = $USER->id;
+                    $templatedata = new pokcertificate_templates(0, $templatedefdata);
+                    $newtemplate = $templatedata->create();
+                    $templateid = $newtemplate->get('id');
+                }
+                if ($templateid != 0) {
 
-            if ($templateexists) {
-                $templateid = $templateexists->get('id');
-                $templatedata = new pokcertificate_templates($templateexists->get('id'));
-                $templatedata->set('pokid', $pokid);
-                $templatedata->set('templatetype', $templatetype);
-                $templatedata->set('templatename', $template);
-                $templatedata->set('templatedefinition', $templatedefinition);
-                $templatedata->set('usermodified', $USER->id);
-                $templatedata->set('timemodified', time());
-                $templatedata->update();
+                    $pokdata = new pokcertificate($pokid);
+                    $pokdata->set('templateid', $templateid);
+                    $pokdata->set('usermodified', $USER->id);
+                    $pokdata->update();
+                }
+                return ['certid' => $pokid, 'templateid' => $templateid];
             } else {
-                $templatedefdata->pokid = $pokid;
-                $templatedefdata->templatetype = $templatetype;
-                $templatedefdata->templatename = $template;
-                $templatedefdata->templatedefinition = $templatedefinition;
-                $templatedefdata->usercreated = $USER->id;
-                $templatedata = new pokcertificate_templates(0, $templatedefdata);
-                $newtemplate = $templatedata->create();
-                $templateid = $newtemplate->get('id');
+                //debugging('Invalid template definition', DEBUG_DEVELOPER);
+                return;
             }
-            if ($templateid != 0) {
-
-                $pokdata = new pokcertificate($pokid);
-                $pokdata->set('templateid', $templateid);
-                $pokdata->set('usermodified', $USER->id);
-                $pokdata->update();
-            }
+        } catch (\moodle_exception $e) {
+            print_r($e);
+            return;
         }
-        return ['certid' => $pokid, 'templateid' => $templateid];
     }
 
     /**
@@ -265,17 +272,17 @@ class pok {
                     }
                 }
                 $fieldvalues = [];
-                foreach($data->templatefield as $key => $field){
+                foreach ($data->templatefield as $key => $field) {
                     $fieldvalues[$field] = $data->userfield[$key];
                 }
-                foreach($fieldvalues as $field => $value){
+                foreach ($fieldvalues as $field => $value) {
                     $mappingfield = new \stdClass();
-                        $mappingfield->timecreated = time();
-                        $mappingfield->certid = $data->certid;
-                        $mappingfield->templatefield = $field;
-                        $mappingfield->userfield = $value;
-                        $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
-                        $fieldmapping->create();              
+                    $mappingfield->timecreated = time();
+                    $mappingfield->certid = $data->certid;
+                    $mappingfield->templatefield = $field;
+                    $mappingfield->userfield = $value;
+                    $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
+                    $fieldmapping->create();
                 }
                 return true;
             }
@@ -381,9 +388,9 @@ class pok {
         global $USER;
         $templatename = $template->get('templatename');
         $resptemplatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templatename);
-        if(!empty($resptemplatedefinition)){
+        if (!empty($resptemplatedefinition)) {
             $templatedefinition = json_decode($resptemplatedefinition);
-        }else{
+        } else {
             $templatedefinition = json_decode($template->get('templatedefinition'));
         }
         if ($templatedefinition) {
@@ -428,10 +435,10 @@ class pok {
         $emitdata = new \stdclass;
         $emitdata->email = $user->email;
         $emitdata->institution = get_config('mod_pokcertificate', 'institution');
-        $emitdata->identification = '0123456789';
+        $emitdata->identification = $USER->idnumber;
         $emitdata->first_name = $user->firstname;
         $emitdata->last_name = $user->lastname;
-        $emitdata->title = "Course Completion";
+        $emitdata->title = $pokrecord->get('title');
         $emitdata->template_base64 = base64_encode($templatedefinition);
         $emitdata->date = time();
         $emitdata->free = ($template->get('templatetype') == 0) ? 'free' : 'paid';
