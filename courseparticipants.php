@@ -24,18 +24,19 @@
  */
 
 require_once('../../config.php');
-global $OUTPUT, $PAGE, $CFG;
+global $OUTPUT, $PAGE, $CFG, $DB;
 require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/searchfilter_form.php');
-require_login();
 
 // Set up page context and heading.
 $courseid = required_param('courseid', PARAM_INT);
+$course = $DB->get_record('course', array('id' => $courseid));
+require_login($course);
 $context = context_course::instance($courseid, MUST_EXIST);
 $url = new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $courseid]);
 $heading = get_string('courseparticipants', 'mod_pokcertificate');
-$PAGE->set_pagelayout('course');
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_context($context);
-$PAGE->set_heading($heading);
+$PAGE->set_heading($course->fullname);
 $PAGE->set_title($heading);
 $PAGE->set_url($url);
 $studentid = optional_param('studentid', '', PARAM_RAW);
