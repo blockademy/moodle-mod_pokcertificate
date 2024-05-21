@@ -764,7 +764,7 @@ function mod_pokcertificate_cm_info_view(cm_info $cm) {
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted student profile data.
  */
-function incompletestudentprofilelist($studentid, $perpage, $offset) {
+function pokcertificate_incompletestudentprofilelist($studentid, $perpage, $offset) {
     global $DB;
     $systemcontext = \context_system::instance();
     $countsql = "SELECT count(id) ";
@@ -814,7 +814,7 @@ function incompletestudentprofilelist($studentid, $perpage, $offset) {
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted participant data.
  */
-function courseparticipantslist($courseid, $studentid, $studentname, $email, $senttopok, $coursestatus, $perpage, $offset) {
+function pokcertificate_courseparticipantslist($courseid, $studentid, $studentname, $email, $senttopok, $coursestatus, $perpage, $offset) {
     global $DB;
     $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
     $countsql = "SELECT count(ra.id) ";
@@ -909,7 +909,7 @@ function courseparticipantslist($courseid, $studentid, $studentname, $email, $se
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted user data.
  */
-function awardgeneralcertificatelist($studentid, $perpage, $offset) {
+function pokcertificate_awardgeneralcertificatelist($studentid, $perpage, $offset) {
     global $DB;
     $systemcontext = \context_system::instance();
     $countsql = "SELECT count(id) ";

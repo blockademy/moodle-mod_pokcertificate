@@ -29,11 +29,11 @@ require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/searchfilter_form
 require_login();
 
 // Set up page context and heading.
-$context = context_system::instance();
 $courseid = required_param('courseid', PARAM_INT);
+$context = context_course::instance($courseid, MUST_EXIST);
 $url = new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $courseid]);
 $heading = get_string('courseparticipants', 'mod_pokcertificate');
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('course');
 $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
