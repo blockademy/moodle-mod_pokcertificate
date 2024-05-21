@@ -58,15 +58,6 @@ if (empty($options['printintro'])) {
 $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);
 
-if ($inpopup && $pokcertificate->display == RESOURCELIB_DISPLAY_POPUP) {
-    $PAGE->set_pagelayout('popup');
-} else {
-    $PAGE->add_body_class('limitedwidth');
-    $PAGE->set_activity_record($pokcertificate);
-    if (!$PAGE->activityheader->is_title_allowed()) {
-        $activityheader['title'] = "";
-    }
-}
 $PAGE->activityheader->set_attrs($activityheader);
 
 if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'])) {

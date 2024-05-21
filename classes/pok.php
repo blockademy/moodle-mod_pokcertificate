@@ -335,7 +335,8 @@ class pok {
      */
     public static function preview_template($cmid) {
         $cm = self::get_cm_instance($cmid);
-        if (!empty($cm) && has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+        $context = \context_module::instance($cm->id);
+        if (!empty($cm) && has_capability('mod/pokcertificate:manageinstance', $context)) {
             $templateid = pokcertificate::get_field(
                 'templateid',
                 ['id' => $cm->instance, 'course' => $cm->course]

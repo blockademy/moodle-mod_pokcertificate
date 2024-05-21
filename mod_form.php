@@ -37,7 +37,7 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
 
         $config = get_config('mod_pokcertificate');
         $renderer = $PAGE->get_renderer('mod_pokcertificate');
-        echo $renderer->verify_authentication_check();
+        $renderer->verify_authentication_check();
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
         $mform->addElement('text', 'name', get_string('certificatename', 'pokcertificate'), ['size' => '48']);

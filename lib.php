@@ -971,3 +971,68 @@ function mod_pokcertificate_extend_navigation_course(navigation_node $navigation
     );
     $navigation->add_node($node);
 }
+
+/**
+ * Terminate the current script with a fatal error.
+ *
+ * Adapted from core_renderer's fatal_error() method. Needed because throwing errors with HTML links in them will convert links
+ * to text using htmlentities. See MDL-66161 - Reflected XSS possible from some fatal error messages.
+ *
+ * So need custom error handler for fatal Zoom errors that have links to help people.
+ *
+ * @param string $errorcode The name of the string from error.php to print
+ * @param string $module name of module
+ * @param string $continuelink The url where the user will be prompted to continue.
+ *                             If no url is provided the user will be directed to
+ *                             the site index page.
+ * @param mixed $a Extra words and phrases that might be required in the error string
+ */
+function pokcertificate_fatal_error($errorcode, $module = '', $continuelink = '', $a = null) {
+    global $CFG, $COURSE, $OUTPUT, $PAGE;
+
+    $output = '';
+    $obbuffer = '';
+
+    // Assumes that function is run before output is generated.
+    if ($OUTPUT->has_started()) {
+        // If not then have to default to standard error.
+        throw new moodle_exception($errorcode, $module, $continuelink, $a);
+    }
+
+    $PAGE->set_heading($COURSE->fullname);
+    $output .= $OUTPUT->header();
+
+    // Output message without messing with HTML content of error.
+    $message = '<p class="errormessage">' . get_string($errorcode, $module, $a) . '</p>';
+
+    $output .= $OUTPUT->box($message, 'errorbox alert alert-danger', null, ['data-rel' => 'fatalerror']);
+
+    if ($CFG->debugdeveloper) {
+        if (!empty($debuginfo)) {
+            $debuginfo = s($debuginfo); // Removes all nasty JS.
+            $debuginfo = str_replace("\n", '<br />', $debuginfo); // Keep newlines.
+            $output .= $OUTPUT->notification('<strong>Debug info:</strong> ' . $debuginfo, 'notifytiny');
+        }
+
+        if (!empty($backtrace)) {
+            $output .= $OUTPUT->notification('<strong>Stack trace:</strong> ' . format_backtrace($backtrace), 'notifytiny');
+        }
+
+        if ($obbuffer !== '') {
+            $output .= $OUTPUT->notification('<strong>Output buffer:</strong> ' . s($obbuffer), 'notifytiny');
+        }
+    }
+
+    if (!empty($continuelink)) {
+        $output .= $OUTPUT->continue_button($continuelink);
+    }
+
+    $output .= $OUTPUT->footer();
+
+    // Padding to encourage IE to display our error page, rather than its own.
+    $output .= str_repeat(' ', 512);
+
+    echo $output;
+
+    exit(1); // General error code.
+}

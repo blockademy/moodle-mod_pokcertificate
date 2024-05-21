@@ -73,11 +73,12 @@ class renderer extends \plugin_renderer_base {
     public function show_certificate_templates(int $id) {
         global $DB;
         $output = '';
+        $context = \context_module::instance($id);
         $recexists = $DB->record_exists('course_modules', ['id' => $id]);
         if (get_config('mod_pokcertificate', 'pokverified')) {
             if ($recexists) {
 
-                if (has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+                if (has_capability('mod/pokcertificate:manageinstance', $context)) {
 
                     $certificatetemplatecontent = pok::get_certificate_templates($id);
                     if ($certificatetemplatecontent) {
@@ -92,7 +93,7 @@ class renderer extends \plugin_renderer_base {
             } else {
                 echo get_string('invalidcoursemodule', 'mod_pokcertificate');
             }
-        } else if (has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+        } else if (has_capability('mod/pokcertificate:manageinstance', $context)) {
             echo self::verify_authentication();
         }
     }
@@ -373,20 +374,20 @@ class renderer extends \plugin_renderer_base {
     public function verify_authentication_check() {
         global $CFG, $COURSE;
         if (!get_config('mod_pokcertificate', 'pokverified')) {
-            $data = [];
             if (is_siteadmin() || has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-                $data['errormsg'] = get_string('authenticationcheck', 'mod_pokcertificate');
-                $data['url'] = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
+                $errormsg = 'authenticationcheck';
+                $url = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
             } else {
-                $data['errormsg'] = get_string('authenticationcheck_user', 'mod_pokcertificate');
-                $data['url'] = $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id;
+                $errormsg = 'authenticationcheck_user';
+                $url = $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id;
             }
-            return  $this->render_from_template('mod_pokcertificate/errormsg', $data);
-            die;
+            return pokcertificate_fatal_error($errormsg,
+           'mod_pokcertificate',
+           $url);
         }
     }
 
-    public function display_notif_message($cmid, $url, $msg) {
+    public function display_notif_message($url, $msg) {
         global $OUTPUT;
         echo \core\notification::error($msg);
         $button = $OUTPUT->single_button(
