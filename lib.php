@@ -44,7 +44,7 @@ function pokcertificate_supports($feature) {
         case FEATURE_GROUPINGS:
             return false;
         case FEATURE_MOD_INTRO:
-            return true;
+            return false;
         case FEATURE_COMPLETION_TRACKS_VIEWS:
             return true;
         case FEATURE_GRADE_HAS_GRADE:
@@ -623,38 +623,6 @@ function set_pokcertificate_settings() {
     set_config('issuedcertificates', '', 'mod_pokcertificate');
 }
 
-/**
- * Returns the plugin settings array with values.
- *
- * @return [array]
- */
-function get_pokcertificate_settings() {
-
-    $authtoken = get_config('mod_pokcertificate', 'authenticationtoken');
-    $wallet = get_config('mod_pokcertificate', 'wallet');
-    $domainname = get_config('mod_pokcertificate', 'domainname');
-    $institution = get_config('mod_pokcertificate', 'institution');
-    $availablecertificate = get_config('mod_pokcertificate', 'availablecertificate');
-    $pendingcertificates = get_config('mod_pokcertificate', 'pendingcertificates');
-    $issuedcertificates = get_config('mod_pokcertificate', 'issuedcertificates');
-    $endofservices = get_config('mod_pokcertificate', 'endofservices');
-    $incompletestudentprofiles = get_config('mod_pokcertificate', 'incompletestudentprofiles');
-
-
-    $data = [
-        'authenticationtoken' => $authtoken,
-        'wallet' => $wallet,
-        'domainname'  => $domainname,
-        'institution' => $institution,
-        'availablecertificate' => $availablecertificate,
-        'pendingcertificates' => $pendingcertificates,
-        'issuedcertificates' => $issuedcertificates,
-        'incompletestudentprofiles' => $incompletestudentprofiles,
-        'endofservices' => $endofservices,
-    ];
-
-    return $data;
-}
 
 function get_mapped_fields(int $certid) {
 
@@ -695,14 +663,14 @@ function get_internalfield_list() {
 /* Get all template definition fields
 *
 * @param string $template
+* @param int $pokid
 * @return array
 */
-function get_externalfield_list($template) {
+function get_externalfield_list($template, $pokid) {
 
     $templatefields = [];
     $template = base64_decode($template);
-    $templatedefinition = pokcertificate_templates::get_field('templatedefinition', ['templatename' => $template]);
-
+    $templatedefinition = pokcertificate_templates::get_field('templatedefinition', ['pokid' => $pokid, 'templatename' => $template]);
     $templatedefinition = json_decode($templatedefinition);
     if ($templatedefinition) {
         foreach ($templatedefinition->params as $param) {
@@ -829,7 +797,7 @@ function pokcertificate_courseparticipantslist($courseid, $studentid, $studentna
                          pci.certificateurl ";
     $fromsql = "FROM {pokcertificate} as pc
                 JOIN {course_modules} cm ON pc.id = cm.instance
-                JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_COURSE.")
+                JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSE . ")
                 JOIN {role_assignments} ra ON ctx.id = ra.contextid
                 JOIN {role} r ON (ra.roleid = r.id AND r.shortname = 'student')
                 JOIN {user} u ON ra.userid = u.id

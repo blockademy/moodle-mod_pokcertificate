@@ -53,7 +53,7 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $mform->addGroup($groupelem, '', '', [' '], false, ['class' => 'mappingheaders']);
 
         $localfields = get_internalfield_list();
-        $remotefields = get_externalfield_list($templatename);
+        $remotefields = get_externalfield_list($templatename, $certid);
 
         $repeatarray = [
             $mform->createElement('hidden', 'fieldmapping', 'fieldmapping'),
