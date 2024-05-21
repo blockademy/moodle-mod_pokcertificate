@@ -20,6 +20,7 @@ use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 use mod_pokcertificate\persistent\pokcertificate_issues;
+use mod_pokcertificate\event\template_updated;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -167,7 +168,8 @@ class pok {
 
         $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
         \core_completion\api::update_completion_date_event($cmid, 'pokcertificate', $data->id, $completiontimeexpected);
-
+        $eventparams = array('context' => $context);
+        template_updated::create($eventparams)->trigger();
         return true;
     }
 

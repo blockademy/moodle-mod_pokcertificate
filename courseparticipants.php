@@ -62,12 +62,14 @@ if ($mform->is_cancelled()) {
     redirect(new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $courseid]));
 } else if ($userdata = $mform->get_data()) {
     redirect(new \moodle_url('/mod/pokcertificate/courseparticipants.php',
-        ['courseid' => $userdata->courseid,
-        'studentid' => $userdata->studentid,
-        'studentname' => $studentname,
-        'email' => $email,
-        'senttopok' => $userdata->senttopok,
-        'coursestatus' => $userdata->coursestatus]
+        [
+            'courseid' => $userdata->courseid,
+            'studentid' => $userdata->studentid,
+            'studentname' => $studentname,
+            'email' => $email,
+            'senttopok' => $userdata->senttopok,
+            'coursestatus' => $userdata->coursestatus,
+        ]
     ));
 } else {
     echo '<a class = "btn-link btn-sm" data-toggle = "collapse"

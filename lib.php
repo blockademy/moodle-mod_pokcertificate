@@ -817,40 +817,32 @@ function incompletestudentprofilelist($studentid, $perpage, $offset) {
 function courseparticipantslist($courseid, $studentid, $studentname, $email, $senttopok, $coursestatus, $perpage, $offset) {
     global $DB;
     $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
-    $stdroleid = $DB->get_field('role', 'id', ['shortname' => 'student']);
-    $countsql = "SELECT count(u.id) ";
+    $countsql = "SELECT count(ra.id) ";
     $selectsql = "SELECT UUID(),
                          pc.name as activity,
                          u.firstname,
                          u.idnumber,
                          u.email,
-                         c.fullname as coursename,
-                         ue.timecreated as enrolldate,
                          cc.timecompleted as completiondate,
-                         pci.certificateurl,
-                         pct.templatetype ";
-    $fromsql = "FROM {user} u
+                         ue.timecreated as enrolldate,
+                         pct.templatetype,
+                         pci.certificateurl ";
+    $fromsql = "FROM {pokcertificate} as pc
+                JOIN {course_modules} cm ON pc.id = cm.instance
+                JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = ".CONTEXT_COURSE.")
+                JOIN {role_assignments} ra ON ctx.id = ra.contextid
+                JOIN {role} r ON (ra.roleid = r.id AND r.shortname = 'student')
+                JOIN {user} u ON ra.userid = u.id
                 JOIN {user_enrolments} ue ON u.id = ue.userid
-                JOIN {enrol} e ON ue.enrolid = e.id
-                JOIN {course} c ON e.courseid = c.id
-                JOIN {context} ctx ON (c.id = ctx.instanceid AND ctx.contextlevel = 50)
-                JOIN {role_assignments} ra ON (ctx.id = ra.contextid AND u.id = ra.userid)
-                JOIN {pokcertificate} pc ON c.id = pc.course
-                JOIN {course_modules} cm ON (c.id = cm.course AND pc.id = cm.instance)
+           LEFT JOIN {course_completions} cc ON (u.id = cc.userid AND pc.course = cc.course)
            LEFT JOIN {pokcertificate_templates} pct ON cm.instance = pct.pokid
-           LEFT JOIN {course_completions} cc ON (cc.userid = u.id AND cc.course = e.courseid)
            LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.certid)
-               WHERE e.courseid = :courseid
-                     AND u.deleted = 0
-                     AND u.suspended = 0
-                     AND u.id > 2
-                     AND cm.module = :pokmoduleid
+               WHERE pc.course = :courseid
                      AND cm.deletioninprogress = 0
-                     AND ra.roleid = :stdroleid ";
+                     AND cm.module = :pokmoduleid ";
     $queryparam = [];
     $queryparam['courseid'] = $courseid;
     $queryparam['pokmoduleid'] = $pokmoduleid;
-    $queryparam['stdroleid'] = $stdroleid;
     if ($studentid) {
         $fromsql .= "AND u.idnumber LIKE :studentid ";
         $queryparam['studentid'] = '%' . trim($studentid) . '%';
@@ -880,26 +872,25 @@ function courseparticipantslist($courseid, $studentid, $studentname, $email, $se
         $fromsql .= "AND pci.certificateurl IS NULL ";
     }
 
-    $concatsql = "ORDER BY u.id DESC ";
+    $concatsql = "ORDER BY ra.id DESC ";
     $totalusers = $DB->count_records_sql($countsql . $fromsql, $queryparam);
-    $users = $DB->get_records_sql($selectsql . $fromsql . $concatsql, $queryparam, $offset, $perpage);
+    $certificates = $DB->get_records_sql($selectsql . $fromsql . $concatsql, $queryparam, $offset, $perpage);
     $list = [];
     $data = [];
 
-    if ($users) {
-        foreach ($users as $c) {
+    if ($certificates) {
+        foreach ($certificates as $c) {
             $list = [];
+            $list['activity'] = $c->activity;
             $list['firstname'] = $c->firstname;
             $list['email'] = $c->email;
             $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
-            $list['coursename'] = $c->coursename;
             $list['enrolldate'] = date('d M Y', $c->enrolldate);
             $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
             $list['coursestatus'] = $c->completiondate ? get_string('completed') : get_string('inprogress', 'mod_pokcertificate');
-            $list['senttopok'] = $c->certificateurl ? get_string('yes') : get_string('no');
             $list['certificatetype'] = $c->templatetype == 0 ? 'Free' : 'Paid';
+            $list['senttopok'] = $c->certificateurl ? get_string('yes') : get_string('no');
             $list['certificateurl'] = $c->certificateurl;
-            $list['activity'] = $c->activity;
             $data[] = $list;
         }
     }

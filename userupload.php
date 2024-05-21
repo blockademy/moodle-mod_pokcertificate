@@ -26,7 +26,7 @@
 require('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/userupload_form.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/userupload_form.php');
 $iid = optional_param('iid', '', PARAM_INT);
 @set_time_limit(60 * 60); // 1 hour should be enough
 raise_memory_limit(MEMORY_HUGE);
@@ -62,7 +62,7 @@ $stdfields = [
 
 $rpffields = [];
 // If variable $iid equal to zero,it allows enter into the form.
-$mform1 = new mod_pokcertificate_userupload_form();
+$mform1 = new \mod_pokcertificate_userupload_form();
 if ($mform1->is_cancelled()) {
     redirect($returnurl);
 }
