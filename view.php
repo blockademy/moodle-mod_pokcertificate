@@ -23,6 +23,7 @@
  */
 
 use mod_pokcertificate\pok;
+use mod_pokcertificate\persistent\pokcertificate_issues;
 
 require('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
@@ -84,8 +85,13 @@ if ($id) {
         if ($flag) {
             $studentview = true;
         } else {
-            $params = ['cmid' => $id, 'id' => $USER->id];
-            $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
+            $exists = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $USER->id]);
+            if(!empty($exists)){
+                $params = ['cmid' => $id, 'id' => $USER->id];
+                $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
+            }else{
+                $studentview = true;
+            }
         }
     }
 }
