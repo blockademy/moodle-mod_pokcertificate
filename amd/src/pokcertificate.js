@@ -24,7 +24,6 @@ import $ from 'jquery';
 import * as Str from 'core/str';
 import Notification from 'core/notification';
 import Ajax from 'core/ajax';
-import Modal from 'core/modal';
 import Templates from 'core/templates';
 import LoadingIcon from 'core/loadingicon';
 
@@ -57,10 +56,6 @@ const verify = function(e){
     $("#verify_response").css("display", "none");
     Str.get_strings([
         {key: 'confirm'},
-        {key: 'tryagain',component: 'mod_pokcertificate'},
-        {key: 'done',component: 'mod_pokcertificate'},
-        {key: 'failed', component: 'mod_pokcertificate'},
-        {key: 'successful', component: 'mod_pokcertificate'},
         {key: 'notverified', component: 'mod_pokcertificate'},
         {key: 'verified', component: 'mod_pokcertificate'},
     ]).then(function(s) {
@@ -75,29 +70,16 @@ const verify = function(e){
                loadingIcon.resolve();
 
                 if(data.status == 1){
-                    var msg = s[3];
-                    var footerbtn = s[1];
+
                     $("#verifyresponse").html('<i class="notverified fa-solid fa-circle-xmark"></i>' +
-                                                '<span">' +s[5]+'</span>');
+                                                '<span">' +s[1]+'</span>');
                 }else{
-                    var msg = s[4];
-                    var footerbtn = s[2];
+
                     $("#verifyresponse").html('<i class="verified fa-solid fa-circle-check"></i>' +
-                                                '<span>' +s[6]+ '</span>');
+                                                '<span>' +s[2]+ '</span>');
                     var resp = JSON.parse(data.response);
                     $("#id_institution").val(resp.name);
                 }
-                Modal.create({
-                    title: Str.get_string('verification', 'mod_pokcertificate'),
-                    body: msg,
-                    footer: '<button type="button" class="btn btn-primary" data-action="save">'+footerbtn+'</button>&nbsp;'
-                }).then(function(modal) {
-                    this.modal = modal;
-                    modal.getRoot().find('[data-action="save"]').on('click', function() {
-                        modal.destroy();
-                    }.bind(this));
-                    modal.show();
-                }.bind(this));
 
             }).fail(Notification.exception);
 
