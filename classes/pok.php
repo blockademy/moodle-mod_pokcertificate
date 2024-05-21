@@ -75,10 +75,7 @@ class pok {
 
         $data->timemodified = time();
         $displayoptions = [];
-        if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
-            $displayoptions['popupwidth']  = $data->popupwidth;
-            $displayoptions['popupheight'] = $data->popupheight;
-        }
+
         $displayoptions['printintro']   = $data->printintro;
         $displayoptions['printlastmodified'] = $data->printlastmodified;
         $data->displayoptions = serialize($displayoptions);
@@ -138,10 +135,6 @@ class pok {
         $data->id           = $data->instance;
 
         $displayoptions = [];
-        if ($data->display == RESOURCELIB_DISPLAY_POPUP) {
-            $displayoptions['popupwidth']  = $data->popupwidth;
-            $displayoptions['popupheight'] = $data->popupheight;
-        }
         $displayoptions['printintro']   = $data->printintro;
         $displayoptions['printlastmodified'] = $data->printlastmodified;
         $data->displayoptions = serialize($displayoptions);
@@ -368,11 +361,6 @@ class pok {
                 $emitdata = self::get_emitcertificate_data($user, $template, $pokrecord);
                 $data = json_encode($emitdata);
                 $emitcertificate = (new \mod_pokcertificate\api)->get_certificate($data);
-                // if ($user->username == 'student1') {
-                //     $emitcertificate = '{"processing": true, "viewUrl": "https://view.pok.tech/c/662d6a93-2dab-493c-be88-2c44e6076002"}';
-                // } else {
-                //     $emitcertificate = '{"processing": false, "viewUrl": "https://view.pok.tech/c/662d6a93-2dab-493c-be88-2c44e6076002"}';
-                // }
                 $emitcertificate = json_decode($emitcertificate);
             }
         }
