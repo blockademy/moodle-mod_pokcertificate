@@ -24,18 +24,19 @@
  */
 
 require_once('../../config.php');
-global $OUTPUT, $PAGE, $CFG;
+global $OUTPUT, $PAGE, $CFG, $DB;
 require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/searchfilter_form.php');
-require_login();
 
 // Set up page context and heading.
 $courseid = required_param('courseid', PARAM_INT);
+$course = $DB->get_record('course', ['id' => $courseid]);
+require_login($course);
 $context = context_course::instance($courseid, MUST_EXIST);
 $url = new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $courseid]);
 $heading = get_string('courseparticipants', 'mod_pokcertificate');
-$PAGE->set_pagelayout('course');
+$PAGE->set_pagelayout('incourse');
 $PAGE->set_context($context);
-$PAGE->set_heading($heading);
+$PAGE->set_heading($course->fullname);
 $PAGE->set_title($heading);
 $PAGE->set_url($url);
 $studentid = optional_param('studentid', '', PARAM_RAW);
@@ -48,7 +49,7 @@ if (!empty($studentid)||!empty($studentname)||!empty($email)||!empty($senttopok)
 } else {
     $show = '';
 }
-echo $OUTPUT->header();
+
 $mform = new \searchfilter_form('', ['viewtype' => 'participaints', 'courseid' => $courseid]);
 $mform->set_data([
     'courseid' => $courseid,
@@ -58,6 +59,7 @@ $mform->set_data([
     'senttopok' => $senttopok,
     'coursestatus' => $coursestatus,
 ]);
+
 if ($mform->is_cancelled()) {
     redirect(new \moodle_url('/mod/pokcertificate/courseparticipants.php', ['courseid' => $courseid]));
 } else if ($userdata = $mform->get_data()) {
@@ -71,21 +73,26 @@ if ($mform->is_cancelled()) {
             'coursestatus' => $userdata->coursestatus,
         ]
     ));
-} else {
-    echo '<a class = "btn-link btn-sm" data-toggle = "collapse"
-        data-target = "#mod_pokcertificate-filter_collapse"
-        aria-expanded = "false" aria-controls = "mod_pokcertificate-filter_collapse">
-            <i class = "m-0 fa fa-sliders fa-2x" aria-hidden = "true"></i>
-        </a>';
-    echo '<div class = "mt-2 mb-2 collapse '.$show.'"
-        id = "mod_pokcertificate-filter_collapse">
-            <div id = "filters_form" class = "card card-body p-2">';
-                $mform->display();
-    echo    '</div>
-        </div>';
 }
+
+echo $OUTPUT->header();
+
+
+echo '<a class = "btn-link btn-sm" data-toggle = "collapse"
+    data-target = "#mod_pokcertificate-filter_collapse"
+    aria-expanded = "false" aria-controls = "mod_pokcertificate-filter_collapse">
+        <i class = "m-0 fa fa-sliders fa-2x" aria-hidden = "true"></i>
+    </a>';
+echo '<div class = "mt-2 mb-2 collapse '.$show.'"
+    id = "mod_pokcertificate-filter_collapse">
+        <div id = "filters_form" class = "card card-body p-2">';
+            $mform->display();
+echo    '</div>
+    </div>';
+
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $records = $renderer->get_courseparticipantslist();
 echo $records['recordlist'];
 echo $records['pagination'];
+
 echo $OUTPUT->footer();

@@ -791,11 +791,11 @@ function pokcertificate_courseparticipantslist($courseid, $studentid, $studentna
     $countsql = "SELECT count(ra.id) ";
     $selectsql = "SELECT UUID(),
                          pc.name as activity,
+                         u.id as userid,
                          u.firstname,
                          u.idnumber,
                          u.email,
                          cc.timecompleted as completiondate,
-                         ue.timecreated as enrolldate,
                          pct.templatetype,
                          pci.certificateurl ";
     $fromsql = "FROM {pokcertificate} as pc
@@ -804,13 +804,13 @@ function pokcertificate_courseparticipantslist($courseid, $studentid, $studentna
                 JOIN {role_assignments} ra ON ctx.id = ra.contextid
                 JOIN {role} r ON (ra.roleid = r.id AND r.shortname = 'student')
                 JOIN {user} u ON ra.userid = u.id
-                JOIN {user_enrolments} ue ON u.id = ue.userid
            LEFT JOIN {course_completions} cc ON (u.id = cc.userid AND pc.course = cc.course)
            LEFT JOIN {pokcertificate_templates} pct ON cm.instance = pct.pokid
            LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.certid)
                WHERE pc.course = :courseid
                      AND cm.deletioninprogress = 0
                      AND cm.module = :pokmoduleid ";
+
     $queryparam = [];
     $queryparam['courseid'] = $courseid;
     $queryparam['pokmoduleid'] = $pokmoduleid;
@@ -846,6 +846,7 @@ function pokcertificate_courseparticipantslist($courseid, $studentid, $studentna
     $concatsql = "ORDER BY ra.id DESC ";
     $totalusers = $DB->count_records_sql($countsql . $fromsql, $queryparam);
     $certificates = $DB->get_records_sql($selectsql . $fromsql . $concatsql, $queryparam, $offset, $perpage);
+
     $list = [];
     $data = [];
 
@@ -856,7 +857,7 @@ function pokcertificate_courseparticipantslist($courseid, $studentid, $studentna
             $list['firstname'] = $c->firstname;
             $list['email'] = $c->email;
             $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
-            $list['enrolldate'] = date('d M Y', $c->enrolldate);
+            $list['enrolldate'] = pokcertificate_courseenrollmentdate($courseid, $c->userid);
             $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
             $list['coursestatus'] = $c->completiondate ? get_string('completed') : get_string('inprogress', 'mod_pokcertificate');
             $list['certificatetype'] = $c->templatetype == 0 ? 'Free' : 'Paid';
@@ -997,4 +998,39 @@ function pokcertificate_fatal_error($errorcode, $module = '', $continuelink = ''
     echo $output;
 
     exit(1); // General error code.
+}
+
+/**
+ * Retrieves the enrollment date of a user in a specific course.
+ *
+ * This function queries the database to find the enrollment date
+ * of a user in a specific course by joining the user_enrolments and enrol tables.
+ *
+ * @param int $courseid The ID of the course.
+ * @param int $userid The ID of the user.
+ * @return int|false The timestamp of the enrollment date if found, otherwise false.
+ */
+function pokcertificate_courseenrollmentdate($courseid, $userid) {
+    global $DB;
+
+    // SQL query to join user_enrolments and enrol tables to get the enrollment date.
+    $sql = "SELECT ue.timecreated
+            FROM {user_enrolments} ue
+            JOIN {enrol} e ON ue.enrolid = e.id
+            WHERE e.courseid = :courseid AND ue.userid = :userid";
+
+    $params = [
+        'courseid' => $courseid,
+        'userid' => $userid,
+    ];
+
+    // Execute the query.
+    $enrollment = $DB->get_record_sql($sql, $params);
+
+    // Return the enrollment date if found, otherwise return false.
+    if ($enrollment) {
+        return date('d M Y', $enrollment->timecreated);
+    } else {
+        return false;
+    }
 }
