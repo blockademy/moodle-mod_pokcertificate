@@ -26,7 +26,7 @@ use mod_pokcertificate\pok;
 
 require('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/updateprofile_form.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/editprofile_form.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/editprofile_form.php');
 
 require_login();
 
@@ -104,7 +104,7 @@ if ($id > 0) {
 
         // Load custom profile fields data.
         profile_load_data($user);
-        $mform = new mod_pokcertificate_editprofile_form($url, ['user' => $user]);
+        $mform = new \mod_pokcertificate_editprofile_form($url, ['user' => $user]);
         $redirecturl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
         if ($mform->is_cancelled()) {
             redirect($redirecturl);
