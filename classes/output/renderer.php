@@ -367,14 +367,16 @@ class renderer extends \plugin_renderer_base {
     public function verify_authentication_check() {
         global $CFG, $COURSE;
         if (!get_config('mod_pokcertificate', 'pokverified')) {
+            $data = [];
             if (is_siteadmin() || has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-                $errormsg = get_string('authenticationcheck', 'mod_pokcertificate');
-                $url = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
-            } else {
-                $errormsg = get_string('authenticationcheck_user', 'mod_pokcertificate');
-                $url = $CFG->wwwroot . '/course/view.php?id='.$COURSE->id;
+                $data['errormsg'] = get_string('authenticationcheck','mod_pokcertificate');
+                $data['url'] = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
+            }else{
+                $data['errormsg'] = get_string('authenticationcheck_user','mod_pokcertificate');
+                $data['url'] = $CFG->wwwroot . '/course/view.php?id='.$COURSE->id;
             }
-            print_error($errormsg, 'error', $url);
+            return  $this->render_from_template('mod_pokcertificate/errormsg', $data);
+            die;
         }
     }
 

@@ -69,7 +69,7 @@ class action_bar {
 
         $menu = [];
 
-        $menu[null] = get_string('select');
+        $menu[null] = get_string('previewcertificate','mod_pokcertificate');
         if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
             $certificateslink = new \moodle_url('/mod/pokcertificate/certificates.php', ['id' => $this->cmid]);
             $menu[$certificateslink->out(false)] = get_string('certificateslist', 'mod_pokcertificate');
