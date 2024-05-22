@@ -24,17 +24,29 @@
     }
 }}
 
-
 <div class="row certtemplatedata">
     {{#certdata}}
-   
+        <div class="">
+          <div class="pokcertificate_img_container">
+            <img src="{{certimage}}" alt="" class="">
+            <div class="d-flex align-items-center justify-content-end">
+              <button class="btn btn-primary">Select</button>
+            </div>
+          </div>
+        </div>
+    {{/certdata}}
+</div>
+<!-- <div class="row certtemplatedata">
+    {{#certdata}}
+    <div class="">
+    </div>
     <div class=" cc-selector column">
         <input {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} id="{{name}}" type="radio" name="templates" value="{{config.wwwroot}}/mod/pokcertificate/fieldmapping.php?id={{cmid}}&temp={{tempname}}&type={{temptype}}" />
-        <label class="drinkcard-cc" for="{{name}}" style ="background-image:url({{certimage}})" ">{{name}}</label>
+        <label class="drinkcard-cc" for="{{name}}" style ="background-image:url({{certimage}})" >{{name}}</label>
     </div>
     {{/certdata}}
     <a href class="btn btn-secondary certbutton" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</a>
-</div>  
+</div>  -->
 
 {{#js}}
   document.getElementById("certbutton").onclick = function() {

@@ -128,7 +128,9 @@ class renderer extends \plugin_renderer_base {
                 $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
                 if ($templatepreview) {
                     $temppreview = trim($templatepreview, '"');
+                    $output .= \html_writer::start_tag('div',['class'=>'pokcertificate_img_container']);
                     $output .= \html_writer::tag('img', '', ['src' => $temppreview, 'alt' => "Snow"]);
+                    $output .= \html_writer::end_tag('div');
                     $output .= \html_writer::tag('br', '');
                     $output .= \html_writer::tag(
                         'a',
