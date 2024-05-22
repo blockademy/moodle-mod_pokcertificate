@@ -40,7 +40,8 @@ class mod_pokcertificate_generator extends testing_module_generator {
      * create_instance
      *
      * @param  mixed $record
-     * @param  mixed $options
+     * @param  array $options
+     *
      * @return [object]
      */
     public function create_instance($record = null, array $options = null) {

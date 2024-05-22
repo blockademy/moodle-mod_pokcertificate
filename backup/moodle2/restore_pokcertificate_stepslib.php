@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -38,7 +37,7 @@ class restore_pokcertificate_activity_structure_step extends restore_activity_st
         $paths[] = new restore_path_element('pokcertificate_issue', '/activity/pokcertificate/issues/issue');
         $paths[] = new restore_path_element('pokcertificate_fieldmapping', '/activity/pokcertificate/fieldmappings/fieldmapping');
         $paths[] = new restore_path_element('pokcertificate_template', '/activity/pokcertificate/templates/template');
-        // Return the paths wrapped into standard activity structure
+        // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
     }
 
@@ -46,14 +45,13 @@ class restore_pokcertificate_activity_structure_step extends restore_activity_st
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
         $data->course = $this->get_courseid();
         if (isset($data->templateid)) {
             $data->templateid = $data->templateid;
         }
-        // insert the pokcertificate record
+        // Insert the pokcertificate record.
         $newitemid = $DB->insert_record('pokcertificate', $data);
-        // immediately after inserting "activity" record, call this
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
@@ -88,7 +86,7 @@ class restore_pokcertificate_activity_structure_step extends restore_activity_st
     }
 
     protected function after_execute() {
-        // Add pokcertificate related files, no need to match by itemname (just internally handled context)
+        // Add pokcertificate related files, no need to match by itemname (just internally handled context).
         $this->add_related_files('mod_pokcertificate', 'intro', null);
     }
 }

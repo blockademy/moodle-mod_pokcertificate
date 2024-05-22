@@ -213,7 +213,7 @@ $string['firstname_help'] = 'Student name which will be displayed on certificate
 $string['lastname'] = 'Surname';
 $string['lastname_help'] = 'Surname which will be displayed on certificate.';
 $string['email_help'] = 'Email which will be displayed on certificate.';
-$string['idnumber'] = 'Student ID/IDnumber';
+$string['idnumber'] = 'Student ID / IDnumber';
 $string['idnumber_help'] = 'IDnumber itself is Student ID which will be displayed on certificate.';
 $string['institution_help_help'] = 'This field will be displayed on the certificates to be issued
 <br> (Please verify authentication token in settings inorder to get institution name.)';

@@ -42,8 +42,7 @@
     display: inline-block;
     margin-bottom: 1.5rem;
     margin-right: 3.5em;
-    /*margin-top: 1.5em;*/
-    margin-left: 1.5em;
+    margin-left: -0.5em;
 }
 
 #page-mod-pokcertificate-view .certbutton{

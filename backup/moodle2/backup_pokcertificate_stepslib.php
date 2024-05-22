@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,7 +21,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
 /**
  * Define the complete pokcertificate structure for backup, with file and id annotations
  */
@@ -30,23 +28,23 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
 
     protected function define_structure() {
 
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separated
+        // Define each element separated.
         $pokcertificate = new backup_nested_element(
             'pokcertificate',
             ['id'],
             [
                 'name', 'course', 'intro', 'introformat', 'title', 'orgname', 'orgid',
                 'templateid', 'display', 'displayoptions',
-                'usercreated', 'usermodified', 'timecreated', 'timemodified'
+                'usercreated', 'usermodified', 'timecreated', 'timemodified',
             ]
         );
 
         $issues = new backup_nested_element('issues');
 
-        $issue =  new backup_nested_element(
+        $issue = new backup_nested_element(
             'issue',
             ['id'],
             ['certid', 'userid', 'status', 'templateid', 'certificateurl', 'timecreated']
@@ -54,7 +52,7 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
 
         $fieldmappings = new backup_nested_element('fieldmappings');
 
-        $fieldmapping =  new backup_nested_element(
+        $fieldmapping = new backup_nested_element(
             'fieldmapping',
             ['id'],
             ['certid', 'templatefield', 'userfield', 'timecreated', 'timemodified']
@@ -62,16 +60,16 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
 
         $templates = new backup_nested_element('templates');
 
-        $template =  new backup_nested_element(
+        $template = new backup_nested_element(
             'template',
             ['id'],
             [
                 'pokid', 'templatetype', 'templatename', 'templatedefinition', 'responsevalue',
-                'usercreated', 'usermodified', 'timecreated', 'timemodified'
+                'usercreated', 'usermodified', 'timecreated', 'timemodified',
             ]
         );
 
-        // Remember that order is important, try moving this line to the end and compare XML
+        // Remember that order is important, try moving this line to the end and compare XML.
         $pokcertificate->add_child($issues);
         $issues->add_child($issue);
 
@@ -90,7 +88,7 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
                 ['certid' => backup::VAR_PARENTID]
             );
         }
-        // Define id annotations
+        // Define id annotations.
         $issue->annotate_ids('user', 'userid');
 
         $fieldmapping->set_source_sql(
@@ -106,7 +104,7 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
             WHERE pokid = ?',
             ['pokid' => backup::VAR_PARENTID]
         );
-        // Return the root element (pokcertificate], wrapped into standard activity structure
+        // Return the root element (pokcertificate], wrapped into standard activity structure.
         return $this->prepare_activity_structure($pokcertificate);
     }
 }

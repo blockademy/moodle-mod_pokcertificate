@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * POK certificate conversion handler
  */
@@ -33,11 +31,10 @@ class moodle1_mod_pokcertificate_handler extends moodle1_mod_handler {
     /** @var int cmid */
     protected $moduleid = null;
 
-
     /**
      * Declare the paths in moodle.xml we are able to convert
      *
-     * The method returns list of {@link convert_path} instances.
+     * The method returns list of convert_path instances.
      * For each path returned, the corresponding conversion method must be
      * defined.
      *
@@ -45,19 +42,19 @@ class moodle1_mod_pokcertificate_handler extends moodle1_mod_handler {
      * actually exist in the file. The last element with the module name was
      * appended by the moodle1_converter class.
      *
-     * @return array of {@link convert_path} instances
+     * @return array of convert_path instances
      */
     public function get_paths() {
-        return array(
+        return [
             new convert_path(
                 'pokcertificate',
                 '/MOODLE_BACKUP/COURSE/MODULES/MOD/POKCERTIFICATE',
-                array(
-                    'renamefields' => array(
+                [
+                    'renamefields' => [
                         'description' => 'intro',
                         'format' => 'introformat',
-                    )
-                )
+                    ],
+                ],
             ),
             new convert_path(
                 'pokcertificate_issues',
@@ -84,43 +81,31 @@ class moodle1_mod_pokcertificate_handler extends moodle1_mod_handler {
                 '/MOODLE_BACKUP/COURSE/MODULES/MOD/POKCERTIFICATE/TEMPLATES/TEMPLATE'
             ),
 
-        );
+        ];
     }
 
     /**
      * This is executed every time we have one /MOODLE_BACKUP/COURSE/MODULES/MOD/POKCERTIFICATE
      * data available
+     *
+     * @param  mixed $data
+     * @return mixed $data
      */
     public function process_pokcertificate($data) {
-        global $CFG;
 
-        // get the course module id and context id
+        // Get the course module id and context id.
         $instanceid     = $data['id'];
         $cminfo         = $this->get_cminfo($instanceid);
         $this->moduleid = $cminfo['id'];
         $contextid      = $this->converter->get_contextid(CONTEXT_MODULE, $this->moduleid);
 
-        // get a fresh new file manager for this instance
-        $this->fileman = $this->converter->get_file_manager($contextid, 'mod_pokcertificate');
-
-        // convert course files embedded into the intro
-        $this->fileman->filearea = 'intro';
-        $this->fileman->itemid   = 0;
-        $data['intro'] = moodle1_converter::migrate_referenced_files($data['intro'], $this->fileman);
-
-        // convert the introformat if necessary
-        if ($CFG->texteditors !== 'textarea') {
-            $data['intro'] = text_to_html($data['intro'], false, false, true);
-            $data['introformat'] = FORMAT_HTML;
-        }
-
-        // start writing pokcertificate.xml
+        // Start writing pokcertificate.xml.
         $this->open_xml_writer("activities/pokcertificate{$this->moduleid}/pokcertificate.xml");
-        $this->xmlwriter->begin_tag('activity', array(
+        $this->xmlwriter->begin_tag('activity', [
             'id' => $instanceid, 'moduleid' => $this->moduleid,
-            'modulename' => 'pokcertificate', 'contextid' => $contextid
-        ));
-        $this->xmlwriter->begin_tag('pokcertificate', array('id' => $instanceid));
+            'modulename' => 'pokcertificate', 'contextid' => $contextid,
+        ]);
+        $this->xmlwriter->begin_tag('pokcertificate', ['id' => $instanceid]);
 
         foreach ($data as $field => $value) {
             if ($field <> 'id') {
@@ -135,7 +120,7 @@ class moodle1_mod_pokcertificate_handler extends moodle1_mod_handler {
     }
 
     public function process_pokcertificate_issues($data) {
-        $this->write_xml('issue', $data, array('/issue/id'));
+        $this->write_xml('issue', $data, ['/issue/id']);
     }
 
     public function on_pokcertificate_issues_end() {
@@ -147,7 +132,7 @@ class moodle1_mod_pokcertificate_handler extends moodle1_mod_handler {
     }
 
     public function process_pokcertificate_fieldmapping($data) {
-        $this->write_xml('fieldmapping', $data, array('/fieldmapping/id'));
+        $this->write_xml('fieldmapping', $data, ['/fieldmapping/id']);
     }
 
     public function on_pokcertificate_fieldmappings_end() {
@@ -159,7 +144,7 @@ class moodle1_mod_pokcertificate_handler extends moodle1_mod_handler {
     }
 
     public function process_pokcertificate_templates($data) {
-        $this->write_xml('template', $data, array('/template/id'));
+        $this->write_xml('template', $data, ['/template/id']);
     }
 
     public function on_pokcertificate_templates_end() {
@@ -173,16 +158,8 @@ class moodle1_mod_pokcertificate_handler extends moodle1_mod_handler {
         $this->xmlwriter->end_tag('activity');
         $this->close_xml_writer();
 
-        // write inforef.xml
+        // Write inforef.xml.
         $this->open_xml_writer("activities/pokcertificate_{$this->moduleid}/inforef.xml");
-        $this->xmlwriter->begin_tag('inforef');
-        $this->xmlwriter->begin_tag('fileref');
-        foreach ($this->fileman->get_fileids() as $fileid) {
-            $this->write_xml('file', array('id' => $fileid));
-        }
-        $this->xmlwriter->end_tag('fileref');
-        $this->xmlwriter->end_tag('inforef');
-
         $this->close_xml_writer();
     }
 }
