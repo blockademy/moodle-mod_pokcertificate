@@ -157,6 +157,19 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
     public function data_preprocessing(&$defaultvalues) {
     }
 
+    /**
+     * validation
+     *
+     * @param  mixed $data
+     * @param  mixed $files
+     * @return void
+     */
     public function validation($data, $files) {
+
+        $errors = parent::validation($data, $files);
+        if (!isset($data['fieldmapping']) || count($data['fieldmapping']) == 0) {
+            $errors['fieldmapping'] = 'Fields to be mapped';
+        }
+        return $errors;
     }
 }

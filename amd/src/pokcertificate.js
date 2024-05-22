@@ -102,23 +102,12 @@ export const loadtemplates = function(e){
     }]);
     promise[0].done(function(data) {
         var resp = JSON.parse(data);
-        if(resp){
-            var content = Templates.render('mod_pokcertificate/certificatetemplates', resp);
-            content.then(function (html) {
-                $('.certtemplatedata').html(html);
-            });
-        }
+        var content = Templates.render('mod_pokcertificate/certificatetemplates', resp);
+        content.then(function (html) {
+            $('.certtemplatedata').html(html);
+        });
     }).fail(function() {
     });
- };
-
-/**
-* Field mapping
-*
-*
-*/
-export const fieldmapping = function(){
-   alert();
 };
 
 
@@ -132,8 +121,8 @@ export const init = () => {
         verify(e);
     });
 
-    $(SELECTORS.CERTIFICATETEMPLATETYPE).on('change', function(e) {
+   /*  $(SELECTORS.CERTIFICATETEMPLATETYPE).on('change', function(e) {
         e.preventDefault();
         loadtemplates(e);
-    });
+    }); */
 };

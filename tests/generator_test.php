@@ -17,7 +17,6 @@
 namespace mod_pokcertificate;
 
 use mod_pokcertificate\persistent\pokcertificate_templates;
-use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\pok;
 
 /**
@@ -45,17 +44,13 @@ class generator_test extends \advanced_testcase {
         $eventsink = $this->redirectEvents();
 
         /** @var mod_pokcertificate_generator $generator */
-        /* $generator = $this->getDataGenerator()->get_plugin_generator('mod_pokcertificate');
-        $this->assertInstanceOf('mod_pokcertificate_generator', $generator);
-        $this->assertEquals('pokcertificate', $generator->get_modulename()); */
-
         $course = $this->getDataGenerator()->create_course();
 
-        $this->assertEquals(0, pokcertificate::count_records());
+        $this->assertEquals(0, $DB->count_records('pokcertificate'));
         $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course]);
-        $this->assertEquals(1, pokcertificate::count_records(['id' => $pokcertificate->id]));
+        $this->assertEquals(1, $DB->count_records('pokcertificate', ['id' => $pokcertificate->id]));
         $this->assertTrue($DB->record_exists('pokcertificate', ['course' => $course->id]));
-        $this->assertTrue(pokcertificate::record_exists(['id' => $pokcertificate->id]));
+        $this->assertTrue($DB->record_exists('pokcertificate', ['id' => $pokcertificate->id]));
 
         $cm = get_coursemodule_from_instance('pokcertificate', $pokcertificate->id);
         $this->assertEquals($pokcertificate->id, $cm->instance);
@@ -87,12 +82,12 @@ class generator_test extends \advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
 
-        $this->assertEquals(0, pokcertificate::count_records());
+        $this->assertEquals(0, $DB->count_records('pokcertificate'));
         $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course]);
-        $this->assertEquals(1, pokcertificate::count_records(['id' => $pokcertificate->id]));
+        $this->assertEquals(1, $DB->count_records('pokcertificate', ['id' => $pokcertificate->id]));
         // Check if the records created.
         $this->assertTrue($DB->record_exists('pokcertificate', ['course' => $course->id]));
-        $this->assertTrue(pokcertificate::record_exists(['id' => $pokcertificate->id]));
+        $this->assertTrue($DB->record_exists('pokcertificate', ['id' => $pokcertificate->id]));
 
         // Check the course module exists.
         $cm = get_coursemodule_from_instance('pokcertificate', $pokcertificate->id);
@@ -137,13 +132,13 @@ class generator_test extends \advanced_testcase {
         // Start event capturing.
         $eventsink = $this->redirectEvents();
         $course = $this->getDataGenerator()->create_course();
-        $this->assertEquals(0, pokcertificate::count_records());
+        $this->assertEquals(0, $DB->count_records('pokcertificate'));
         // Crate pokcertificate dummy data.
         $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course]);
-        $this->assertEquals(1, pokcertificate::count_records(['id' => $pokcertificate->id]));
+        $this->assertEquals(1, $DB->count_records('pokcertificate', ['id' => $pokcertificate->id]));
         // Check if the records created.
         $this->assertTrue($DB->record_exists('pokcertificate', ['course' => $course->id]));
-        $this->assertTrue(pokcertificate::record_exists(['id' => $pokcertificate->id]));
+        $this->assertTrue($DB->record_exists('pokcertificate', ['id' => $pokcertificate->id]));
 
         // Delete pokcertificate.
         $delete = pokcertificate_delete_instance($pokcertificate->id);
@@ -168,13 +163,13 @@ class generator_test extends \advanced_testcase {
         $eventsink = $this->redirectEvents();
         $course = $this->getDataGenerator()->create_course();
 
-        $this->assertEquals(0, pokcertificate::count_records());
+        $this->assertEquals(0, $DB->count_records('pokcertificate'));
         // Create pokcertificate dummy data.
         $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course]);
-        $this->assertEquals(1, pokcertificate::count_records(['id' => $pokcertificate->id]));
+        $this->assertEquals(1, $DB->count_records('pokcertificate', ['id' => $pokcertificate->id]));
         // Check if the records created.
         $this->assertTrue($DB->record_exists('pokcertificate', ['course' => $course->id]));
-        $this->assertTrue(pokcertificate::record_exists(['id' => $pokcertificate->id]));
+        $this->assertTrue($DB->record_exists('pokcertificate', ['id' => $pokcertificate->id]));
 
         // Check the course module exists.
         $cm = get_coursemodule_from_instance('pokcertificate', $pokcertificate->id);
@@ -203,10 +198,9 @@ class generator_test extends \advanced_testcase {
 
         $poktemplatedata = pokcertificate_templates::get_record(['id' => $poktemplate['templateid']]);
 
-        $templatename = base64_decode($poktemplatedata->get('templatename'));
+        $templatename = base64_encode($poktemplatedata->get('templatename'));
         $apifields = get_externalfield_list($templatename, $pokcertificate->id);
         if ($apifields) {
-
             $data = $generator->get_fieldmapping_data($cm->id, $pokcertificate->id, $templatename, $poktemplate['templateid']);
             pok::save_fieldmapping_data($data);
             $this->assertTrue($DB->record_exists('pokcertificate_fieldmapping', ['certid' => $pokcertificate->id]));

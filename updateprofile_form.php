@@ -48,13 +48,17 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
 
         $mandatoryfields = ['firstname', 'lastname', 'email', 'idnumber'];
         foreach ($mandatoryfields as $fullname) {
-
-            $mform->addElement('text', $fullname,  get_string($fullname, 'mod_pokcertificate'),  'maxlength="100" size="30"');
+            $style = '';
+            if (!empty($user->$fullname)) {
+                $style = 'readonly="readonly"';
+            }
+            $mform->addElement('text', $fullname,  get_string($fullname, 'mod_pokcertificate'),  'maxlength="100" size="30"' . $style);
             $mform->addRule($fullname, '', 'required', null, 'client');
             $mform->setType($fullname, PARAM_RAW);
+            $mform->addHelpButton($fullname, $fullname, 'pokcertificate');
         }
         $translations = get_string_manager()->get_list_of_translations();
-        $mform->addElement('select', 'lang', get_string('preferredlanguage'), $translations);
+        $mform->addElement('select', 'lang', get_string('preferredlanguage'), $translations, 'disabled');
         $lang = empty($user->lang) ? $CFG->lang : $user->lang;
         $mform->setDefault('lang', $lang);
 
@@ -64,15 +68,33 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
                 $fieldname = $field->get('userfield');
 
                 if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') === false)) {
+
                     $purpose = user_edit_map_field_purpose($user->id, $fieldname);
-                    $mform->addElement('text', $fieldname,  get_string($fieldname),  'maxlength="100" size="30"' . $purpose);
-                    if ($stringman->string_exists('missing' . $fieldname, 'core')) {
-                        $strmissingfield = get_string('missing' . $fieldname, 'core');
-                    } else {
-                        $strmissingfield = $strrequired;
+                    $style = '';
+                    if (!empty($user->$fieldname)) {
+                        $style = 'readonly="readonly"';
                     }
-                    $mform->addRule($fieldname, $strmissingfield, 'required', null, 'client');
-                    $mform->setType($fieldname, PARAM_NOTAGS);
+                    if ($fieldname == 'country') {
+                        $choices = get_string_manager()->get_list_of_countries();
+                        $choices = ['' => get_string('selectacountry') . '...'] + $choices;
+                        $disabled = '';
+                        if (!empty($user->$fieldname)) {
+                            $disabled = 'disabled';
+                        }
+                        $mform->addElement('select', 'country', get_string('selectacountry'), $choices, $purpose . $disabled);
+                        if (!empty($CFG->country)) {
+                            $mform->setDefault('country', core_user::get_property_default('country'));
+                        }
+                    } else {
+                        $mform->addElement('text', $fieldname,  get_string($fieldname),  'maxlength="100" size="30"' . $purpose . $style);
+                        if ($stringman->string_exists('missing' . $fieldname, 'core')) {
+                            $strmissingfield = get_string('missing' . $fieldname, 'core');
+                        } else {
+                            $strmissingfield = $strrequired;
+                        }
+                        $mform->addRule($fieldname, $strmissingfield, 'required', null, 'client');
+                        $mform->setType($fieldname, PARAM_NOTAGS);
+                    }
                 }
             }
         }
@@ -84,7 +106,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
         $mform->setType('cmid', PARAM_INT);
         $mform->setDefault('cmid', $cmid);
 
-        self::get_profile_fields($mform, $pokfields, $userid);
+        self::get_profile_fields($mform, $pokfields, $user);
         $this->add_action_buttons(true, get_string('updatemyprofile'));
 
         $this->set_data($user);
@@ -159,8 +181,8 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
      * @param  mixed $userid
      * @return void
      */
-    public function get_profile_fields(&$mform, $pokfields, $userid) {
-        $categories = profile_get_user_fields_with_data_by_category($userid);
+    public function get_profile_fields(&$mform, $pokfields, $user) {
+        $categories = profile_get_user_fields_with_data_by_category($user->id);
         foreach ($categories as $categoryid => $fields) {
             // Check first if *any* fields will be displayed.
             $fieldstodisplay = [];
@@ -169,6 +191,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
                     $fieldname = $field->get('userfield');
                     foreach ($fields as $formfield) {
                         if ($formfield->inputname == $fieldname && $formfield->is_editable()) {
+
                             $fieldstodisplay[] = $formfield;
                         }
                     }
@@ -182,6 +205,12 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
             // Display the header and the fields.
             foreach ($fieldstodisplay as $formfield) {
                 $formfield->edit_field($mform);
+
+                if ($mform->elementExists($formfield->inputname)) {
+                    if ($formfield->data) {
+                        $mform->hardFreeze($formfield->inputname);
+                    }
+                }
             }
         }
     }

@@ -69,7 +69,7 @@ class action_bar {
 
         $menu = [];
 
-        $menu[null] = get_string('previewcertificate','mod_pokcertificate');
+        $menu[null] = get_string('previewcertificate', 'mod_pokcertificate');
         if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
             $certificateslink = new \moodle_url('/mod/pokcertificate/certificates.php', ['id' => $this->cmid]);
             $menu[$certificateslink->out(false)] = get_string('certificateslist', 'mod_pokcertificate');
@@ -83,8 +83,10 @@ class action_bar {
                 '/mod/pokcertificate/fieldmapping.php',
                 ['id' => $this->cmid, 'temp' => base64_encode($template)]
             );
-            $remotefields = get_externalfield_list($template);
-            if($remotefields){
+            $pokid = pokcertificate::get_field('id', ['id' => $cm->instance]);
+            $remotefields = get_externalfield_list(base64_encode($template), $pokid);
+
+            if ($remotefields) {
                 $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');
             }
         }

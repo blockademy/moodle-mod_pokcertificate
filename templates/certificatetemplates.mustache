@@ -23,38 +23,34 @@
     {
     }
 }}
-
+<div class="row ">
+    <label class="radio-inline">
+        <input type="radio" name="optradio" data-value = "0" {{^temptype}}checked="checked" {{/temptype}} data-action = "templatetype" checked="checked">{{#str}}free,pokcertificate{{/str}}
+    </label>
+    <label class="radio-inline">
+        <input type="radio" name="optradio" data-value = "1"  {{#temptype}}checked="checked" {{/temptype}} data-action = "templatetype">{{#str}}paid,pokcertificate{{/str}}
+    </label>
+</div>
 <div class="row certtemplatedata">
     {{#certdata}}
-        <div class="">
-          <div class="pokcertificate_img_container">
-            <img src="{{certimage}}" alt="" class="">
-            <div class="d-flex align-items-center justify-content-end">
-              <button class="btn btn-primary">Select</button>
-            </div>
-          </div>
-        </div>
-    {{/certdata}}
-</div>
-<!-- <div class="row certtemplatedata">
-    {{#certdata}}
-    <div class="">
-    </div>
+
     <div class=" cc-selector column">
-        <input {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} id="{{name}}" type="radio" name="templates" value="{{config.wwwroot}}/mod/pokcertificate/fieldmapping.php?id={{cmid}}&temp={{tempname}}&type={{temptype}}" />
-        <label class="drinkcard-cc" for="{{name}}" style ="background-image:url({{certimage}})" >{{name}}</label>
+        <input id="{{name}}" type="radio" name="templates" {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} value="{{config.wwwroot}}/mod/pokcertificate/fieldmapping.php?id={{cmid}}&temp={{tempname}}" />
+        <label class="drinkcard-cc" for="{{name}}" style ="background-image:url({{certimage}})" ">{{name}}</label>
     </div>
     {{/certdata}}
-    <a href class="btn btn-secondary certbutton" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</a>
-</div>  -->
+
+</div>
+  <a href class="btn btn-secondary certbutton" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</a>
 
 {{#js}}
   document.getElementById("certbutton").onclick = function() {
     var templateurl = $("input[type='radio'][name='templates']:checked").val();
+    var type = $("input[type='radio'][name='optradio']:checked").attr('data-value');
     if(templateurl){
-         window.location.href = templateurl; 
+        window.location.href = templateurl+'&type='+type;
     }else{
-         window.location.href = 'javascript:void(0)'; 
+        window.location.href = 'javascript:void(0)';
     }
     return false;
   };

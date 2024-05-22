@@ -648,8 +648,15 @@ function get_internalfield_list() {
     global $DB;
     $usercolumns = $DB->get_columns('user');
     $localfields = [];
+    $validfields = [
+        'id', 'username', 'firstname', 'lastname', 'middlename',
+        'idnumber', 'email', 'lang', 'phone1', 'phone2', 'department', 'institution',
+        'city', 'address', 'country'
+    ];
     foreach ((array)$usercolumns as $key => $field) {
-        $localfields[$key] = $field->name;
+        if (in_array($key, $validfields)) {
+            $localfields[$key] = $field->name;
+        }
     }
 
     $allcustomfields = profile_get_custom_fields();
@@ -667,7 +674,6 @@ function get_internalfield_list() {
 * @return array
 */
 function get_externalfield_list($template, $pokid) {
-
     $templatefields = [];
     $template = base64_decode($template);
     $templatedefinition = pokcertificate_templates::get_field('templatedefinition', ['pokid' => $pokid, 'templatename' => $template]);
@@ -676,10 +682,9 @@ function get_externalfield_list($template, $pokid) {
         foreach ($templatedefinition->params as $param) {
             $pos = strpos($param->name, 'custom:');
             if ($pos !== false) {
-                // $var = substr($param->name, strlen('custom:'));
-                $var = explode(':', $param->name);
-                if($var[2]){
-                    $templatefields[$var[2]] = $var[2];
+                $var = substr($param->name, strrpos($param->name, ':') + 1);
+                if ($var) {
+                    $templatefields[$var] = $var;
                 }
             }
         }

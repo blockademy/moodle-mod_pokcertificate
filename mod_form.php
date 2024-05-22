@@ -35,7 +35,6 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
 
         $mform = $this->_form;
 
-        $config = get_config('mod_pokcertificate');
         $renderer = $PAGE->get_renderer('mod_pokcertificate');
         $renderer->verify_authentication_check();
 
@@ -74,50 +73,6 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements();
 
-        $mform->addElement('header', 'appearancehdr', get_string('appearance'));
-        $options = [];
-        if ($this->current->instance) {
-            $options = resourcelib_get_displayoptions(explode(',', $config->displayoptions), $this->current->display);
-        } else {
-            if (isset($config->displayoptions)) {
-                $options = resourcelib_get_displayoptions(explode(',', $config->displayoptions));
-            }
-        }
-        if (count($options) == 1) {
-            $mform->addElement('hidden', 'display');
-            $mform->setType('display', PARAM_INT);
-            reset($options);
-            $mform->setDefault('display', key($options));
-        } else {
-            $mform->addElement('select', 'display', get_string('displayselect', 'pokcertificate'), $options);
-            $mform->setDefault('display', $config->display);
-        }
-
-        if (array_key_exists(RESOURCELIB_DISPLAY_POPUP, $options)) {
-            $mform->addElement('text', 'popupwidth', get_string('popupwidth', 'pokcertificate'), ['size' => 3]);
-            if (count($options) > 1) {
-                $mform->hideIf('popupwidth', 'display', 'noteq', RESOURCELIB_DISPLAY_POPUP);
-            }
-            $mform->setType('popupwidth', PARAM_INT);
-            $mform->setDefault('popupwidth', $config->popupwidth);
-
-            $mform->addElement('text', 'popupheight', get_string('popupheight', 'pokcertificate'), ['size' => 3]);
-            if (count($options) > 1) {
-                $mform->hideIf('popupheight', 'display', 'noteq', RESOURCELIB_DISPLAY_POPUP);
-            }
-            $mform->setType('popupheight', PARAM_INT);
-            $mform->setDefault('popupheight', $config->popupheight);
-        }
-
-        // Add legacy files flag only if used.
-        if (isset($this->current->legacyfiles) && $this->current->legacyfiles != RESOURCELIB_LEGACYFILES_NO) {
-            $options = [
-                RESOURCELIB_LEGACYFILES_DONE   => get_string('legacyfilesdone', 'pokcertificate'),
-                RESOURCELIB_LEGACYFILES_ACTIVE => get_string('legacyfilesactive', 'pokcertificate')
-            ];
-            $mform->addElement('select', 'legacyfiles', get_string('legacyfiles', 'pokcertificate'), $options);
-            $mform->setAdvanced('legacyfiles', 1);
-        }
 
         $this->standard_coursemodule_elements();
 
@@ -135,35 +90,5 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
      * @return void
      **/
     public function data_preprocessing(&$defaultvalues) {
-
-        if ($this->current->instance) {
-            $draftitemid = file_get_submitted_draft_itemid('pokcertificate');
-            $defaultvalues['pokcertificate']['format'] = $defaultvalues['contentformat'];
-            $defaultvalues['pokcertificate']['text']   = file_prepare_draft_area(
-                $draftitemid,
-                $this->context->id,
-                'mod_pokcertificate',
-                'content',
-                0,
-                pokcertificate_get_editor_options($this->context),
-                $defaultvalues['content']
-            );
-            $defaultvalues['pokcertificate']['itemid'] = $draftitemid;
-        }
-        if (!empty($defaultvalues['displayoptions'])) {
-            $displayoptions = (array) unserialize_array($defaultvalues['displayoptions']);
-            if (isset($displayoptions['printintro'])) {
-                $defaultvalues['printintro'] = $displayoptions['printintro'];
-            }
-            if (isset($displayoptions['printlastmodified'])) {
-                $defaultvalues['printlastmodified'] = $displayoptions['printlastmodified'];
-            }
-            if (!empty($displayoptions['popupwidth'])) {
-                $defaultvalues['popupwidth'] = $displayoptions['popupwidth'];
-            }
-            if (!empty($displayoptions['popupheight'])) {
-                $defaultvalues['popupheight'] = $displayoptions['popupheight'];
-            }
-        }
     }
 }

@@ -52,11 +52,15 @@ class pokcertificate extends persistent {
             ],
             'intro' => [
                 'type' => PARAM_RAW,
-                'optional' => false,
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ],
             'introformat' => [
                 'type' => PARAM_RAW,
-                'optional' => false,
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ],
 
             'orgname' => [

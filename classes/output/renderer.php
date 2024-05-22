@@ -82,7 +82,6 @@ class renderer extends \plugin_renderer_base {
 
                     $certificatetemplatecontent = pok::get_certificate_templates($id);
                     if ($certificatetemplatecontent) {
-                        $output = $this->render_certificate_types($id);
                         $output .= $this->render_from_template(
                             'mod_pokcertificate/certificatetemplates',
                             $certificatetemplatecontent
@@ -128,7 +127,7 @@ class renderer extends \plugin_renderer_base {
                 $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
                 if ($templatepreview) {
                     $temppreview = trim($templatepreview, '"');
-                    $output .= \html_writer::start_tag('div',['class'=>'pokcertificate_img_container']);
+                    $output .= \html_writer::start_tag('div', ['class' => 'pokcertificate_img_container']);
                     $output .= \html_writer::tag('img', '', ['src' => $temppreview, 'alt' => "Snow"]);
                     $output .= \html_writer::end_tag('div');
                     $output .= \html_writer::tag('br', '');
@@ -232,7 +231,7 @@ class renderer extends \plugin_renderer_base {
 
         $output .= \html_writer::tag('i', '', ['class' => ' faicon fa-solid fa-envelope-open fa-xl']);
         $output .= \html_writer::tag('p', get_string('congratulations', 'mod_pokcertificate'), ['class' => 'success-mainheading']);
-        $output .= \html_writer::tag('p', get_string('certificatesuccessmsg', 'mod_pokcertificate',$USER->email), ['class' => 'success-complheading']);
+        $output .= \html_writer::tag('p', get_string('certificatesuccessmsg', 'mod_pokcertificate', $USER->email), ['class' => 'success-complheading']);
         $output .= \html_writer::start_tag('p', ['class' => 'text-center']);
         $output .= $this->action_link(
             $certificateurl,
@@ -430,9 +429,11 @@ class renderer extends \plugin_renderer_base {
                 $errormsg = 'authenticationcheck_user';
                 $url = $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id;
             }
-            return pokcertificate_fatal_error($errormsg,
-           'mod_pokcertificate',
-           $url);
+            return pokcertificate_fatal_error(
+                $errormsg,
+                'mod_pokcertificate',
+                $url
+            );
         }
     }
 

@@ -95,7 +95,7 @@ class mod_pokcertificate_generator extends testing_module_generator {
     public function create_pok_template($cm = null) {
 
         $templateinfo = new \stdclass;
-        $templateinfo->template = 'Artistic';
+        $templateinfo->template = 'Crossed Paths';
         $templateinfo->templatetype = 0;
 
         $data = pok::save_template_definition($templateinfo, $cm);

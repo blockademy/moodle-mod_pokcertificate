@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/mod/pokcertificate/fieldmapping_form.php');
 
 $id = required_param('id', PARAM_INT); // Course module id.
 $tempname = required_param('temp', PARAM_RAW);
-$temptype = optional_param('type', '', PARAM_INT);
+$temptype = optional_param('type', 0, PARAM_INT);
 
 if ($id && !$cm = get_coursemodule_from_id('pokcertificate', $id)) {
     throw new \moodle_exception('invalidcoursemodule');

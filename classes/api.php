@@ -98,20 +98,6 @@ class api {
      */
     private function emit_certificate($data = '') {
         $location = MINTER_ROOT . '/mint';
-        /*'{
-            "email": "johngalt@pok.tech",
-            "institution": "Ohio State University",
-            "identification": "0123456789",
-            "first_name": "John",
-            "last_name": "Galt",
-            "title": "Engineer",
-            "template_base64": "{\'version\':1}",
-            "date": 1706497200000,
-            "free": true,
-            "wallet": "0x8cd7c619a1685a1f6e991946af6295ca05210af7",
-            "language_tag": "en"
-            }
-            ';*/
         return $this->execute_command($location, $data, 'post');
     }
 
