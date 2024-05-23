@@ -42,7 +42,6 @@ if (empty($studentid)) {
     $show = 'show';
 }
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
-echo $renderer->userbulkupload();
 $mform = new \searchfilter_form();
 $mform->set_data(['studentid' => $studentid]);
 if ($mform->is_cancelled()) {
@@ -53,6 +52,8 @@ if ($mform->is_cancelled()) {
     ));
 }
 echo $OUTPUT->header();
+
+echo $renderer->userbulkupload();
 
 echo '<a class = "btn-link btn-sm" data-toggle = "collapse"
     data-target = "#mod_pokcertificate-filter_collapse"
