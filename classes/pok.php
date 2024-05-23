@@ -362,24 +362,48 @@ class pok {
      *
      * @param  mixed $cmid
      * @param  mixed $user
-     * @return [void]
+     * @return [bool]
      */
     public static function emit_certificate($cmid, $user) {
         $cm = self::get_cm_instance($cmid);
-        $emitcertificate = '';
-        if (!empty($cm) && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
-            $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
-            if ($pokrecord && $pokrecord->get('templateid')) {
-                $template = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
+        $emitcertificate = new \stdClass();
+        try {
+            if (!empty($cm) && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+                $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+                if ($pokrecord && $pokrecord->get('templateid')) {
+                    $template = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
 
-                $emitdata = self::get_emitcertificate_data($template, $pokrecord);
-                $data = json_encode($emitdata);
+                    $emitdata = self::get_emitcertificate_data($template, $pokrecord);
+                    $data = json_encode($emitdata);
 
-                $emitcertificate = (new \mod_pokcertificate\api)->get_certificate($data);
-                $emitcertificate = json_decode($emitcertificate);
+                    $emitcertificate = (new \mod_pokcertificate\api)->emit_certificate($data);
+                    $emitcertificate = json_decode($emitcertificate);
+                    if ($emitcertificate) {
+                        $emitcertificate->status = false;
+                        self::save_issued_certificate($cmid, $user, $emitcertificate);
+                        return true;
+                    }
+                }
             }
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
         }
-        return $emitcertificate;
+    }
+
+    /**
+     * issue_certificate
+     *
+     * @param  mixed $emitcertificate
+     * @return object
+     */
+    public static function issue_certificate($emitcertificate) {
+        $data = $emitcertificate->to_record();
+        if (!empty($data->pokcertificateid)) {
+            $issuecertificate = (new \mod_pokcertificate\api)->get_certificate($data->pokcertificateid);
+            $issuecertificate = json_decode($issuecertificate);
+            return $issuecertificate;
+        }
+        return '';
     }
 
     /**
@@ -470,20 +494,25 @@ class pok {
     public static function save_issued_certificate($cmid, $user, $emitcertificate) {
         $cm = self::get_cm_instance($cmid);
         try {
+
             $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
-            if ($pokrecord) {
+            $pokissuedataexists = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $user->id]);
 
-                $data = new \stdclass;
-                $data->certid = $pokrecord->get('id');
-                $data->userid = $user->id;
-                $data->status = true;
-                $data->templateid = $pokrecord->get('templateid');
-                $data->certificateurl = $emitcertificate->viewUrl;
-                $data->pokcertificateid = $emitcertificate->id;
+            $data = new \stdClass;
+            $data->certid = $pokrecord->get('id');
+            $data->userid = $user->id;
+            $data->status = ($emitcertificate->status) ? $emitcertificate->status : false;
+            $data->templateid = $pokrecord->get('templateid');
+            $data->certificateurl = (isset($emitcertificate->viewUrl)) ? $emitcertificate->viewUrl : '';
+            $data->pokcertificateid = $emitcertificate->id;
+            if ($pokissuedataexists) {
+                $data->id = $pokissuedataexists->get('id');
+                $issues = new pokcertificate_issues(0, $data);
+                $issues->update();
+            } else {
                 $data->timecreated = time();
-
-                $pokcertificateissues = new pokcertificate_issues(0, $data);
-                $pokcertificateissues->create();
+                $issues = new pokcertificate_issues(0, $data);
+                $issues->create();
             }
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());

@@ -234,3 +234,4 @@ $string['pokcertificate:bulkupdateincompleteprofile'] = 'Bulk update incomplete 
 $string['pokcertificate:awardcertificate'] = 'Award Certificate';
 $string['pokcertificate:viewstatusreport'] = 'View status report';
 $string['pokcertificate:selfupdateincompleteprofile'] = 'Self update incomplete profile';
+$string['templateupdated'] = 'Template updated for POK certificate';
