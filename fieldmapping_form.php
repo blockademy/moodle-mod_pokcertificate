@@ -33,6 +33,9 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
  */
 class mod_pokcertificate_fieldmapping_form extends moodleform {
 
+    /**
+     * Definition method for the form.
+     */
     public function definition() {
 
         $mform = $this->_form;
@@ -100,19 +103,6 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $mform->setType('optionid', PARAM_INT);
 
         $repeatno = 1;
-        /* if (!empty($id)) {
-            $count = pokcertificate_fieldmapping::count_records(
-                ['certid' => $certid]
-            );
-            if ($count > 0) {
-                $repeatno = $count;
-            }
-        } else {
-            $count = count($remotefields);
-            if ($count > 0) {
-                $repeatno = $count;
-            }
-        } */
         $count = count($remotefields);
         if ($count > 0) {
             $repeatno = $count;

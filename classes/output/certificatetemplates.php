@@ -29,7 +29,13 @@ use templatable;
  */
 class certificatetemplates implements templatable, renderable {
 
+    /**
+     * Sample data for internal use within the class.
+     *
+     * @var mixed
+     */
     private $sampledata;
+
     /** @var int */
     protected int $cmid;
 

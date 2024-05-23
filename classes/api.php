@@ -24,6 +24,8 @@
 
 namespace mod_pokcertificate;
 
+defined('MOODLE_INTERNAL') || die();
+
 use moodle_exception;
 use mod_pokcertificate\persistent\pokcertificate_log;
 
@@ -31,10 +33,25 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
 
 defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Class api
+ *
+ * Represents an API class for handling certain functionalities.
+ */
 class api {
 
+    /**
+     * Authentication token for API access.
+     *
+     * @var string
+     */
     protected $authenticationtoken = '';
+
+    /**
+     * Wallet information for API operations.
+     *
+     * @var mixed
+     */
     protected $wallet = '';
 
     /**
@@ -132,15 +149,15 @@ class api {
      */
     private function execute_command($location, $params, $method = 'get') {
         $curl = new \curl();
-        $options = array(
-            'CURLOPT_HTTPHEADER' => array(
+        $options = [
+            'CURLOPT_HTTPHEADER' => [
                 'Authorization: ApiKey ' . $this->authenticationtoken,
-            ),
+            ],
             'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
             'CURLOPT_RETURNTRANSFER' => true,
             'CURLOPT_ENCODING' => '',
-            'CURLOPT_SSL_VERIFYPEER' => false
-        );
+            'CURLOPT_SSL_VERIFYPEER' => false,
+        ];
 
         if ($method == 'post') {
             $options['CURLOPT_HTTPHEADER'][] = 'Content-Type: application/json';
@@ -148,7 +165,7 @@ class api {
         $result = $curl->{$method}($location, $params, $options);
         $apiresult = null;
         if ($curl->get_errno()) {
-            throw new moodle_exception('connecterror', 'mod_pokcertificate', '', array('url' => $location));
+            throw new moodle_exception('connecterror', 'mod_pokcertificate', '', ['url' => $location]);
         }
         // Insert the API log here.
         $response = null;

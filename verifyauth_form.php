@@ -30,9 +30,12 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
 
 /**
- * form shown while adding activity.
+ * Form shown while adding activity.
  */
 class mod_pokcertificate_verifyauth_form extends moodleform {
+    /**
+     * Form elements defnations.
+     */
     public function definition() {
         $data  = $this->_customdata['data'];
         $mform = $this->_form;
@@ -87,6 +90,9 @@ class mod_pokcertificate_verifyauth_form extends moodleform {
         $this->set_data($data);
     }
 
+    /**
+     * Form elements validations.
+     */
     public function validation($data, $files) {
     }
 }

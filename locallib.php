@@ -34,12 +34,28 @@ require_once("$CFG->dirroot/mod/pokcertificate/lib.php");
  * File browsing support class
  */
 class pokcertificate_content_file_info extends file_info_stored {
+
+    /**
+     * Get the parent file information.
+     *
+     * Overrides the parent method to handle special cases.
+     *
+     * @return file_info The parent file information.
+     */
     public function get_parent() {
         if ($this->lf->get_filepath() === '/' && $this->lf->get_filename() === '.') {
             return $this->browser->get_file_info($this->context);
         }
         return parent::get_parent();
     }
+
+    /**
+     * Get the visible name of the file.
+     *
+     * Overrides the parent method to handle special cases.
+     *
+     * @return string The visible name of the file.
+     */
     public function get_visible_name() {
         if ($this->lf->get_filepath() === '/' && $this->lf->get_filename() === '.') {
             return $this->topvisiblename;
@@ -48,10 +64,18 @@ class pokcertificate_content_file_info extends file_info_stored {
     }
 }
 
+/**
+ * Get editor options for the POK certificate module.
+ *
+ * This function retrieves options used for configuring the editor in the POK certificate module.
+ *
+ * @param context $context The context in which the editor is being used.
+ * @return array An array of editor options.
+ */
 function pokcertificate_get_editor_options($context) {
     global $CFG;
     return [
         'subdirs' => 1, 'maxbytes' => $CFG->maxbytes, 'maxfiles' => -1,
-        'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0
+        'changeformat' => 1, 'context' => $context, 'noclean' => 1, 'trusttext' => 0,
     ];
 }

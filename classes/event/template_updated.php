@@ -23,7 +23,6 @@
  */
 
 namespace mod_pokcertificate\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The mod_pokcertificate course module viewed event class.
@@ -44,20 +43,40 @@ class template_updated extends \core\event\base {
         $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
+    /**
+     * Get the name of the template_updated.
+     *
+     * @return string The name of the template_updated.
+     */
     public static function get_name() {
         return get_string('templateupdated', 'mod_pokcertificate');
     }
 
+    /**
+     * Get the description of the template_updated.
+     *
+     * @return string The description of the template_updated.
+     */
     public function get_description() {
         return "The user with id '$this->userid' attached the template with id '{$this->objectid}' ";
     }
 
+    /**
+     * Get the URL associated with the template_updated.
+     *
+     * @return moodle_url The URL associated with the template_updated.
+     */
     public function get_url() {
         return new \moodle_url('/mod/pokcertificate/view.php', [
-            'cmid' => $this->contextinstanceid
+            'cmid' => $this->contextinstanceid,
         ]);
     }
 
+    /**
+     * Validate data for the template_updated operation.
+     *
+     * @throws coding_exception If required data is not set.
+     */
     protected function validate_data() {
         parent::validate_data();
 
@@ -78,7 +97,15 @@ class template_updated extends \core\event\base {
         }
     }
 
+    /**
+     * Get mapping for the object id.
+     *
+     * @return array The mapping for the object id.
+     */
     public static function get_objectid_mapping() {
-        return array('db' => 'pokcertificate', 'restore' => 'pokcertificate');
+        return [
+            'db' => 'pokcertificate',
+            'restore' => 'pokcertificate',
+        ];
     }
 }

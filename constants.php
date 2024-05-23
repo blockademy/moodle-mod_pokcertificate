@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 
 $prodtype = get_config('mod_pokcertificate', 'prodtype');
 
-$tempurl = ($prodtype == 2 ? 'https://templates.pok.tech' :  'https://templates.credentity.xyz');
+$tempurl = ($prodtype == 2 ? 'https://templates.pok.tech' : 'https://templates.credentity.xyz');
 define('TEMPLATE_MANAGER_ROOT', $tempurl);
 
 $minturl = ($prodtype == 2 ? 'https://mint.pok.tech' : 'https://minter.credentity.xyz');

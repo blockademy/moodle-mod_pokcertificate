@@ -33,14 +33,37 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
  */
 class renderer extends \plugin_renderer_base {
 
+    /**
+     * Display the navigation tabs for the plugin.
+     *
+     * This function renders the tabs using the 'viewdata' template.
+     *
+     * @return string HTML content for the tabs.
+     */
     public function display_tabs() {
         return $this->render_from_template('mod_pokcertificate/viewdata', []);
     }
 
+    /**
+     * Render the certificate types template with the provided course module ID.
+     *
+     * This function renders the certificate types using the 'certificatetypes' template.
+     *
+     * @param int $cmid The course module ID.
+     * @return string HTML content for the certificate types.
+     */
     public function render_certificate_types(int $cmid) {
         return $this->render_from_template('mod_pokcertificate/certificatetypes', ['cmid' => $cmid]);
     }
 
+    /**
+     * Display the authentication verification section.
+     *
+     * This function returns HTML content for the authentication verification section,
+     * including a link to the authentication page.
+     *
+     * @return string HTML content for the authentication verification section.
+     */
     public function verify_authentication() {
         global $CFG;
         return '<div class="verifyauth" >' . get_string('verifyauth', 'pokcertificate') . '
@@ -109,7 +132,7 @@ class renderer extends \plugin_renderer_base {
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
         $output = '';
         $recexists = $DB->record_exists('course_modules', ['id' => $cmid]);
-        if ($recexists) { // has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+        if ($recexists) {
             $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
             $pokcertificate = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
             if ($pokcertificate && $pokcertificate->get('templateid')) {
@@ -144,6 +167,15 @@ class renderer extends \plugin_renderer_base {
         return $output;
     }
 
+    /**
+     * Displays a modal dialog indicating that the certificate is pending.
+     *
+     * This function generates the HTML content for a modal dialog to inform the user
+     * that their certificate is pending. It includes various elements like headers,
+     * icons, and messages with appropriate attributes for accessibility.
+     *
+     * @return string HTML content for the certificate pending message modal dialog.
+     */
     public function certificate_pending_message() {
         global $CFG, $USER, $COURSE;
         require_once("{$CFG->libdir}/completionlib.php");
@@ -158,20 +190,12 @@ class renderer extends \plugin_renderer_base {
         $output .= $this->box_start('modal-content', 'modal-content');
         $output .= $this->box_start('modal-header p-x-1', 'modal-header');
         $output .= \html_writer::tag('h6', get_string('certificatepending', 'mod_pokcertificate'));
-        /*  $output .= \html_writer::tag(
-            'input',
-            '',
-            ['type' => 'button', 'class' => 'close', 'data-dismiss' => 'modal']
-        ); */
         $output .= $this->box_end();
         $attributes = [
             'role' => 'prompt',
             'data-aria-autofocus' => 'true',
             'class' => 'certificatestatus',
         ];
-
-        /*  $cinfo = new \completion_info($COURSE);
-        $iscomplete = $cinfo->is_course_complete($USER->id); */
 
         $output .= $this->box_start('modal-body', 'modal-body', $attributes);
 
@@ -199,6 +223,17 @@ class renderer extends \plugin_renderer_base {
         $output .= $this->box_end();
         return $output;
     }
+
+    /**
+     * Displays a modal dialog indicating the certificate has been successfully generated.
+     *
+     * This function generates the HTML content for a modal dialog to inform the user
+     * that their certificate has been successfully generated. It includes various
+     * elements like headers, icons, and messages with appropriate attributes for accessibility.
+     *
+     * @param moodle_url|string $certificateurl The URL to view the certificate.
+     * @return string HTML content for the certificate success message modal dialog.
+     */
     public function certificate_success_message($certificateurl) {
         global $CFG, $USER, $COURSE;
         require_once("{$CFG->libdir}/completionlib.php");
@@ -212,11 +247,6 @@ class renderer extends \plugin_renderer_base {
         $output .= $this->box_start('modal-content', 'modal-content');
         $output .= $this->box_start('modal-header p-x-1', 'modal-header');
         $output .= \html_writer::tag('h6', get_string('certificatesuccess', 'mod_pokcertificate'));
-        /*  $output .= \html_writer::tag(
-            'input',
-            '',
-            ['type' => 'button', 'class' => 'close', 'data-dismiss' => 'modal']
-        ); */
         $output .= $this->box_end();
         $attributes = [
             'role' => 'prompt',
@@ -224,20 +254,25 @@ class renderer extends \plugin_renderer_base {
             'class' => 'certificatestatus',
         ];
 
-        /*  $cinfo = new \completion_info($COURSE);
-        $iscomplete = $cinfo->is_course_complete($USER->id); */
-
         $output .= $this->box_start('modal-body', 'modal-body', $attributes);
 
         $output .= \html_writer::tag('i', '', ['class' => ' faicon fa-solid fa-envelope-open fa-xl']);
         $output .= \html_writer::tag('p', get_string('congratulations', 'mod_pokcertificate'), ['class' => 'success-mainheading']);
-        $output .= \html_writer::tag('p', get_string('certificatesuccessmsg', 'mod_pokcertificate', $USER->email), ['class' => 'success-complheading']);
+        $output .= \html_writer::tag(
+            'p',
+            get_string('certificatesuccessmsg', 'mod_pokcertificate', $USER->email),
+            [
+                'class' => 'success-complheading',
+            ]
+        );
         $output .= \html_writer::start_tag('p', ['class' => 'text-center']);
         $output .= $this->action_link(
             $certificateurl,
             'View Certificate',
             null,
-            array('class' => 'btn btn-secondary text-center'),
+            [
+                'class' => 'btn btn-secondary text-center',
+            ],
         );
         $output .= \html_writer::end_tag('p');
         $output .= $this->box_end();
@@ -273,7 +308,6 @@ class renderer extends \plugin_renderer_base {
                     $output = self::certificate_pending_message();
                 } else {
                     pok::save_issued_certificate($cmid, $user, $emitcertificate);
-                    // redirect($emitcertificate->viewUrl);
                     $output = self::certificate_success_message($emitcertificate->viewUrl);
                 }
             } else if (!empty($certificateissue)) {
@@ -419,6 +453,15 @@ class renderer extends \plugin_renderer_base {
         return $return;
     }
 
+    /**
+     * Verifies authentication check for the POK certificate module.
+     *
+     * This function checks if the 'pokverified' configuration is set for the POK certificate module.
+     * If not, it verifies if the user is a site admin or has the capability to manage the POK certificate instance.
+     * Based on the user's permissions, it sets the appropriate error message and URL to redirect.
+     *
+     * @return void Returns a fatal error with the appropriate message and URL if the 'pokverified' config is not set.
+     */
     public function verify_authentication_check() {
         global $CFG, $COURSE;
         if (!get_config('mod_pokcertificate', 'pokverified')) {
@@ -437,10 +480,19 @@ class renderer extends \plugin_renderer_base {
         }
     }
 
+    /**
+     * Displays a notification message with a continue button.
+     *
+     * This function displays an error notification with the provided message and
+     * renders a continue button that redirects to the specified URL.
+     *
+     * @param moodle_url|string $url The URL to redirect to when the continue button is clicked.
+     * @param string $msg The error message to be displayed in the notification.
+     * @return string The HTML output containing the notification and the continue button.
+     */
     public function display_notif_message($url, $msg) {
-        global $OUTPUT;
         echo \core\notification::error($msg);
-        $button = $OUTPUT->single_button(
+        $button = $this->output->single_button(
             $url,
             get_string('continue'),
             'get',

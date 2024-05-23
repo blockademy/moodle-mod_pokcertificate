@@ -28,8 +28,15 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
 
+/**
+ * Class mod_pokcertificate_mod_form
+ *
+ * Represents the form for configuring the mod_pokcertificate module instance.
+ */
 class mod_pokcertificate_mod_form extends moodleform_mod {
-
+    /**
+     * Definition method for the form.
+     */
     public function definition() {
         global $CFG, $PAGE;
 
@@ -72,7 +79,6 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         $mform->addHelpButton('title', 'title', 'pokcertificate');
 
         $this->standard_intro_elements();
-
 
         $this->standard_coursemodule_elements();
 

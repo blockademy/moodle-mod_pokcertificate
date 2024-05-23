@@ -293,7 +293,7 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
         // Serve pokcertificate content.
         $filename = $arg;
 
-        if (!$pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), '*', MUST_EXIST)) {
+        if (!$pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST)) {
             return false;
         }
 
@@ -312,8 +312,7 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
         $formatoptions->context = $context;
         $content = format_text($content, $pokcertificate->contentformat, $formatoptions);
 
-        // Remove @@PLUGINFILE@@/.
-        $options = array('reverse' => true);
+        $options = ['reverse' => true];
         $content = file_rewrite_pluginfile_urls(
             $content,
             'webservice/pluginfile.php',
@@ -330,8 +329,8 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
         $fs = get_file_storage();
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_pokcertificate/$filearea/0/$relativepath";
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            $pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), 'id, legacyfiles', MUST_EXIST);
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
+            $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], 'id, legacyfiles', MUST_EXIST);
             if ($pokcertificate->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
                 return false;
             }
@@ -357,7 +356,7 @@ function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $fo
  */
 function pokcertificate_pokcertificate_type_list($pokcertificatetype, $parentcontext, $currentcontext) {
     $pokcertificatetypestr = get_string('pokcertificate-mod-pokcertificate-x', 'pokcertificate');
-    $modulepokcertificatetype = array('mod-pokcertificate-*' => $pokcertificatetypestr);
+    $modulepokcertificatetype = ['mod-pokcertificate-*' => $pokcertificatetypestr];
     return $modulepokcertificatetype;
 }
 
@@ -371,7 +370,7 @@ function pokcertificate_export_contents($cm, $baseurl) {
     $contents = [];
     $context = context_module::instance($cm->id);
 
-    $pokcertificate = $DB->get_record('pokcertificate', array('id' => $cm->instance), '*', MUST_EXIST);
+    $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
 
     // Pokcertificate contents.
     $fs = get_file_storage();
@@ -426,10 +425,16 @@ function pokcertificate_export_contents($cm, $baseurl) {
  * @return array containing details of the files / types the mod can handle
  */
 function pokcertificate_dndupload_register() {
-    return array('types' => array(
-        array('identifier' => 'text/html', 'message' => get_string('createpokcertificate', 'pokcertificate')),
-        array('identifier' => 'text', 'message' => get_string('createpokcertificate', 'pokcertificate'))
-    ));
+    return ['types' => [
+        [
+            'identifier' => 'text/html',
+            'message' => get_string('createpokcertificate', 'pokcertificate'),
+        ],
+        [
+            'identifier' => 'text',
+            'message' => get_string('createpokcertificate', 'pokcertificate')],
+        ],
+    ];
 }
 
 /**
@@ -476,10 +481,10 @@ function pokcertificate_dndupload_handle($uploadinfo) {
 function pokcertificate_view($pokcertificate, $course, $cm, $context) {
 
     // Trigger course_module_viewed event.
-    $params = array(
+    $params = [
         'context' => $context,
-        'objectid' => $pokcertificate->id
-    );
+        'objectid' => $pokcertificate->id,
+    ];
 
     $event = \mod_pokcertificate\event\course_module_viewed::create($params);
     $event->add_record_snapshot('course_modules', $cm);
@@ -502,7 +507,7 @@ function pokcertificate_view($pokcertificate, $course, $cm, $context) {
  * @since Moodle 3.2
  */
 function pokcertificate_check_updates_since(cm_info $cm, $from, $filter = []) {
-    $updates = course_check_module_updates_since($cm, $from, array('content'), $filter);
+    $updates = course_check_module_updates_since($cm, $from, ['content'], $filter);
     return $updates;
 }
 
@@ -584,13 +589,13 @@ function pokcertificate_validate_apikey($key) {
     $curl = new \curl();
     $options = [
         'CURLOPT_HTTPHEADER' => [
-            'Authorization: ApiKey ' . $key
+            'Authorization: ApiKey ' . $key,
         ],
         'CURLOPT_HTTP_VERSION' => CURL_HTTP_VERSION_1_1,
         'CURLOPT_RETURNTRANSFER' => true,
         'CURLOPT_ENCODING' => '',
         'CURLOPT_CUSTOMREQUEST' => 'GET',
-        'CURLOPT_SSL_VERIFYPEER' => false
+        'CURLOPT_SSL_VERIFYPEER' => false,
     ];
     $result = $curl->post($location, $params, $options);
 
@@ -612,6 +617,13 @@ function pokcertificate_validate_apikey($key) {
     }
 }
 
+/**
+ * Set default configuration settings for the POK certificate module.
+ *
+ * This function initializes the default configuration settings for the POK certificate module.
+ *
+ * @return void
+ */
 function set_pokcertificate_settings() {
     set_config('pokverified', false, 'mod_pokcertificate');
     set_config('wallet', '', 'mod_pokcertificate');
@@ -623,7 +635,14 @@ function set_pokcertificate_settings() {
     set_config('issuedcertificates', '', 'mod_pokcertificate');
 }
 
-
+/**
+ * Get mapped fields for a given certificate ID.
+ *
+ * This function retrieves the field mappings for a given certificate ID.
+ *
+ * @param int $certid The ID of the certificate.
+ * @return stdClass An object containing the mapped fields.
+ */
 function get_mapped_fields(int $certid) {
 
     $fields = pokcertificate_fieldmapping::fieldmapping_records(['certid' => $certid], 'id');
@@ -640,10 +659,18 @@ function get_mapped_fields(int $certid) {
         }
         $data->optionid = $optionid;
     }
-
     return $data;
 }
 
+/**
+ * Get a list of internal user fields.
+ *
+ * This function retrieves a list of internal user fields from the 'user' table
+ * and combines them with custom profile fields. Only valid fields are included
+ * in the final list.
+ *
+ * @return array An associative array of local fields where the key is the field name and the value is the field label.
+ */
 function get_internalfield_list() {
     global $DB;
     $usercolumns = $DB->get_columns('user');
@@ -651,7 +678,7 @@ function get_internalfield_list() {
     $validfields = [
         'id', 'username', 'firstname', 'lastname', 'middlename',
         'idnumber', 'email', 'lang', 'phone1', 'phone2', 'department', 'institution',
-        'city', 'address', 'country'
+        'city', 'address', 'country',
     ];
     foreach ((array)$usercolumns as $key => $field) {
         if (in_array($key, $validfields)) {
@@ -667,16 +694,19 @@ function get_internalfield_list() {
     return $localfields;
 }
 
-/* Get all template definition fields
-*
-* @param string $template
-* @param int $pokid
-* @return array
-*/
+/** Get all template definition fields
+ *
+ * @param string $template
+ * @param int $pokid
+ * @return array
+ */
 function get_externalfield_list($template, $pokid) {
     $templatefields = [];
     $template = base64_decode($template);
-    $templatedefinition = pokcertificate_templates::get_field('templatedefinition', ['pokid' => $pokid, 'templatename' => $template]);
+    $templatedefinition = pokcertificate_templates::get_field(
+        'templatedefinition',
+        ['pokid' => $pokid, 'templatename' => $template]
+    );
     $templatedefinition = json_decode($templatedefinition);
     if ($templatedefinition) {
         foreach ($templatedefinition->params as $param) {
@@ -692,41 +722,6 @@ function get_externalfield_list($template, $pokid) {
 
     return $templatefields;
 }
-
-/**
- * Adding pokcertificate view button in the course-module content
- *  *
- * @param cm_info $cm
- */
-/*
-function mod_pokcertificate_cm_info_view(cm_info $cm) {
-    global $CFG;
-    require_once($CFG->dirroot . '/mod/resource/locallib.php');
-    $customdata = $cm->customdata;
-
-
-    if ($cm->availability) {
-        if (has_capability('mod/pokcertificate:manageinstance', context_system::instance())) {
-            $cm->set_after_link(' ' . html_writer::tag(
-                'a',
-                get_string('previewcertificate', 'mod_pokcertificate'),
-                [
-                    'href' => $CFG->wwwroot . '/mod/pokcertificate/preview.php?id=' . $cm->id,
-                    'class' => 'btn btn-primary certbutton', 'aria-selected' => "true"
-                ]
-            ));
-        } else {
-            $cm->set_after_link(' ' . html_writer::tag(
-                'a',
-                get_string('issuecertificate', 'mod_pokcertificate'),
-                [
-                    'href' => $CFG->wwwroot . '/mod/pokcertificate/issue.php?id=' . $cm->id,
-                    'class' => 'btn btn-primary certbutton', 'aria-selected' => "true"
-                ]
-            ));
-        }
-    }
-} */
 
 /**
  * Retrieve a list of incomplete student profiles.
@@ -790,7 +785,15 @@ function pokcertificate_incompletestudentprofilelist($studentid, $perpage, $offs
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted participant data.
  */
-function pokcertificate_courseparticipantslist($courseid, $studentid, $studentname, $email, $senttopok, $coursestatus, $perpage, $offset) {
+function pokcertificate_courseparticipantslist(
+    $courseid,
+    $studentid,
+    $studentname,
+    $email,
+    $senttopok,
+    $coursestatus,
+    $perpage,
+    $offset) {
     global $DB;
     $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
     $countsql = "SELECT count(ra.id) ";
@@ -803,7 +806,7 @@ function pokcertificate_courseparticipantslist($courseid, $studentid, $studentna
                          cc.timecompleted as completiondate,
                          pct.templatetype,
                          pci.certificateurl ";
-    $fromsql = "FROM {pokcertificate} as pc
+    $fromsql = "FROM {pokcertificate} pc
                 JOIN {course_modules} cm ON pc.id = cm.instance
                 JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSE . ")
                 JOIN {role_assignments} ra ON ctx.id = ra.contextid

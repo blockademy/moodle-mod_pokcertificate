@@ -23,7 +23,7 @@ use mod_pokcertificate\pok;
  * PHPUnit data generator testcase
  *
  * @package    mod_pokcertificate
- * @category   phpunit
+ * @category   test
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,7 +43,6 @@ class generator_test extends \advanced_testcase {
         // Start event capturing.
         $eventsink = $this->redirectEvents();
 
-        /** @var mod_pokcertificate_generator $generator */
         $course = $this->getDataGenerator()->create_course();
 
         $this->assertEquals(0, $DB->count_records('pokcertificate'));

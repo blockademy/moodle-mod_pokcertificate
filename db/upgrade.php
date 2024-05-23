@@ -42,10 +42,18 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
+/**
+ * Upgrade script for the mod_pokcertificate module.
+ *
+ * This function handles the upgrade steps for the POK certificate module.
+ * It is executed whenever the version of the module is upgraded.
+ *
+ * @param int $oldversion The previous version of the module.
+ * @return bool True on successful upgrade.
+ */
 function xmldb_pokcertificate_upgrade($oldversion) {
     global $DB, $CFG;
-	$dbman = $DB->get_manager();
+    $dbman = $DB->get_manager();
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -57,7 +65,7 @@ function xmldb_pokcertificate_upgrade($oldversion) {
 
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
-    if ($oldversion <  2024041608.01) {
+    if ($oldversion < 2024041608.01) {
         $table = new xmldb_table('pokcertificate_issues');
 
         $field = new xmldb_field('pokcertificateid', XMLDB_TYPE_CHAR, '225', null, null, null, null);
@@ -71,7 +79,7 @@ function xmldb_pokcertificate_upgrade($oldversion) {
             $field2->set_attributes(XMLDB_TYPE_TEXT, null, null, null, null);
             $dbman->change_field_type($table, $field2);
         }
-        upgrade_mod_savepoint(true,2024041608.01, 'pokcertificate');
+        upgrade_mod_savepoint(true, 2024041608.01, 'pokcertificate');
     }
     return true;
 }

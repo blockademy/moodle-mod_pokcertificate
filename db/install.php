@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -28,8 +27,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
+/**
+ * Function xmldb_pokcertificate_install
+ *
+ * Installs the pokcertificate module.
+ *
+ * This function is responsible for installing the pokcertificate module. It can include
+ * actions such as creating database tables, inserting initial data, or performing any other
+ * necessary setup tasks.
+ *
+ * @return void
+ */
 function xmldb_pokcertificate_install() {
     global $CFG;
 }

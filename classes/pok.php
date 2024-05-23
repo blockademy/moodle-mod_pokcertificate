@@ -34,6 +34,10 @@ require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pok {
+
+    /**
+     * @var int $cmid The course module ID.
+     */
     protected static $cmid;
 
     /**
@@ -234,12 +238,18 @@ class pok {
                     $pokdata->set('usermodified', $USER->id);
                     $pokdata->update();
                     $context = \context_module::instance($cm->id);
-                    $eventparams = ['context' => $context, 'objectid' => $cm->id, 'other' => ['pokcertificateid' => $pokid, 'templateid' => $templateid]];
+                    $eventparams = [
+                        'context' => $context,
+                        'objectid' => $cm->id,
+                        'other' => [
+                            'pokcertificateid' => $pokid,
+                            'templateid' => $templateid,
+                        ],
+                    ];
                     template_updated::create($eventparams)->trigger();
                 }
                 return ['certid' => $pokid, 'templateid' => $templateid];
             } else {
-                //debugging('Invalid template definition', DEBUG_DEVELOPER);
                 return;
             }
         } catch (\moodle_exception $e) {
@@ -412,11 +422,9 @@ class pok {
 
                     if ($pokfields) {
                         foreach ($pokfields as $field) {
-
-                            //$varname = explode(':', $param->name);
                             $varname = substr($param->name, strrpos($param->name, ':') + 1);
                             if ($field->get('templatefield') == $varname) {
-                                $userfield =  $field->get('userfield');
+                                $userfield = $field->get('userfield');
                                 if (strpos($field->get('userfield'), 'profile_field_') === 0) {
                                     $userprofilefield = substr($field->get('userfield'), strlen('profile_field_'));
                                     $customparams[$param->name] = $USER->profile[$userprofilefield];

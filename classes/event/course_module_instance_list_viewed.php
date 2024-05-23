@@ -23,7 +23,6 @@
  */
 
 namespace mod_pokcertificate\event;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The mod_pokcertificate instance list viewed event class.

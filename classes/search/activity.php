@@ -24,8 +24,6 @@
 
 namespace mod_pokcertificate\search;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Search area for mod_pokcertificate activities.
  *

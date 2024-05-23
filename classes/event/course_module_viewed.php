@@ -24,8 +24,6 @@
 
 namespace mod_pokcertificate\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The mod_pokcertificate course module viewed event class.
  *
@@ -45,6 +43,9 @@ class course_module_viewed extends \core\event\course_module_viewed {
         $this->data['objecttable'] = 'pokcertificate';
     }
 
+    /**
+     * get_objectid_mapping method.
+     */
     public static function get_objectid_mapping() {
         return ['db' => 'pokcertificate', 'restore' => 'pokcertificate'];
     }

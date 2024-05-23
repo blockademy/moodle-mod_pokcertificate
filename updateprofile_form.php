@@ -33,7 +33,9 @@ require_once($CFG->dirroot . '/user/editlib.php');
  * form shown while adding activity.
  */
 class mod_pokcertificate_updateprofile_form extends \moodleform {
-
+    /**
+     * Definition method for the form.
+     */
     public function definition() {
         global $CFG;
         $mform = $this->_form;
@@ -52,7 +54,12 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
             if (!empty($user->$fullname)) {
                 $style = 'readonly="readonly"';
             }
-            $mform->addElement('text', $fullname,  get_string($fullname, 'mod_pokcertificate'),  'maxlength="100" size="30"' . $style);
+            $mform->addElement(
+                'text',
+                $fullname,
+                get_string($fullname, 'mod_pokcertificate'),
+                'maxlength="100" size="30"' . $style
+            );
             $mform->addRule($fullname, '', 'required', null, 'client');
             $mform->setType($fullname, PARAM_RAW);
             $mform->addHelpButton($fullname, $fullname, 'pokcertificate');
@@ -86,7 +93,12 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
                             $mform->setDefault('country', core_user::get_property_default('country'));
                         }
                     } else {
-                        $mform->addElement('text', $fieldname,  get_string($fieldname),  'maxlength="100" size="30"' . $purpose . $style);
+                        $mform->addElement(
+                            'text',
+                            $fieldname,
+                            get_string($fieldname),
+                            'maxlength="100" size="30"' . $purpose . $style
+                        );
                         if ($stringman->string_exists('missing' . $fieldname, 'core')) {
                             $strmissingfield = get_string('missing' . $fieldname, 'core');
                         } else {
@@ -215,6 +227,9 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
         }
     }
 
+    /**
+     * Validation method for the form.
+     */
     public function validation($data, $files) {
     }
 }

@@ -222,6 +222,11 @@ class mod_pokcertificate_external extends external_api {
         );
     }
 
+    /**
+     * Get parameters for verifying authentication.
+     *
+     * @return external_function_parameters The parameters for verifying authentication.
+     */
     public static function verify_authentication_parameters() {
         return new external_function_parameters(
             [
@@ -274,6 +279,11 @@ class mod_pokcertificate_external extends external_api {
         }
     }
 
+    /**
+     * Get parameters for verifying authentication returns.
+     *
+     * @return external_single_structure The parameters for verifying authentication returns.
+     */
     public static function verify_authentication_returns() {
         return new external_single_structure(
             [
@@ -284,6 +294,11 @@ class mod_pokcertificate_external extends external_api {
         );
     }
 
+    /**
+     * Get parameters for showing certificate templates.
+     *
+     * @return external_function_parameters The parameters for showing certificate templates.
+     */
     public static function show_certificate_templates_parameters() {
         return new external_function_parameters(
             [
@@ -293,6 +308,13 @@ class mod_pokcertificate_external extends external_api {
         );
     }
 
+    /**
+     * Show certificate templates.
+     *
+     * @param string $type The type.
+     * @param int $cmid The course module id.
+     * @return string JSON-encoded certificate template content.
+     */
     public static function show_certificate_templates($type, $cmid) {
         global $CFG;
 
@@ -307,6 +329,11 @@ class mod_pokcertificate_external extends external_api {
         return json_encode($certificatetemplatecontent);
     }
 
+    /**
+     * Get returns for showing certificate templates.
+     *
+     * @return external_value The returns for showing certificate templates.
+     */
     public static function show_certificate_templates_returns() {
         return new external_value(PARAM_RAW, 'return');
     }

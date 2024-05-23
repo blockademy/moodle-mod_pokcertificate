@@ -34,7 +34,7 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_heading($SITE->fullname);
 
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
-// Restrict normal user to access this page
+// Restrict normal user to access this page.
 admin_externalpage_setup('managemodules');
 
 echo $OUTPUT->header();
