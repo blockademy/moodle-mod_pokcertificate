@@ -113,7 +113,7 @@ class api {
      * Final Certificate of the user
      * @return string API response, in json encoded format
      */
-    private function emit_certificate($data = '') {
+    public function emit_certificate($data = '') {
         $location = MINTER_ROOT . '/mint';
         return $this->execute_command($location, $data, 'post');
     }
@@ -122,10 +122,8 @@ class api {
      * The actual certificate of the student
      * @return string certificate url
      */
-    public function get_certificate($data = '') {
-        $response = $this->emit_certificate($data);
-        $cert = json_decode($response);
-        $location = MINTER_ROOT . '/certificate/' . $cert->id . '/details';
+    public function get_certificate($certid = '') {
+        $location = MINTER_ROOT . '/certificate/' . $certid . '/details';
         return $this->execute_command($location, '');
     }
 

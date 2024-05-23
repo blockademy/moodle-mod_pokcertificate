@@ -69,6 +69,7 @@ $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 $adminview = false;
 $studentview = false;
+
 if ($id) {
     pok::set_cmid($id);
     // Getting certificate template view for admin.
@@ -82,15 +83,19 @@ if ($id) {
     }
     // Getting certificate template view for student.
     if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', $context)) {
+
         if ($flag) {
             $studentview = true;
         } else {
             $certificateissued = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $USER->id]);
-            if (empty($certificateissued)) {
+            if (
+                !empty($certificateissued) && $certificateissued->get('status') &&
+                !empty($certificateissued->get('certificateurl'))
+            ) {
+                redirect($certificateissued->get('certificateurl'));
+            } else {
                 $params = ['cmid' => $id, 'id' => $USER->id];
                 $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
-            } else {
-                redirect($certificateissued->get('certificateurl'));
             }
         }
     }

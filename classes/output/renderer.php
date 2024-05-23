@@ -231,11 +231,11 @@ class renderer extends \plugin_renderer_base {
      * that their certificate has been successfully generated. It includes various
      * elements like headers, icons, and messages with appropriate attributes for accessibility.
      *
-     * @param moodle_url|string $certificateurl The URL to view the certificate.
+     * @param object $cm Course module instance.
      * @return string HTML content for the certificate success message modal dialog.
      */
-    public function certificate_success_message($certificateurl) {
-        global $CFG, $USER, $COURSE;
+    public function certificate_mail_message($cm) {
+        global $CFG, $USER;
         require_once("{$CFG->libdir}/completionlib.php");
         $attributes = [
             'role' => 'promptdialog',
@@ -267,7 +267,7 @@ class renderer extends \plugin_renderer_base {
         );
         $output .= \html_writer::start_tag('p', ['class' => 'text-center']);
         $output .= $this->action_link(
-            $certificateurl,
+            new \moodle_url('/mod/pokcertificate/view.php', ['id' => $cm->id, 'flag' => true]),
             'View Certificate',
             null,
             [
@@ -282,7 +282,7 @@ class renderer extends \plugin_renderer_base {
     }
 
     /**
-     * emit_certificate_templates
+     * This method issues the certificate to student.
      *
      * @param  mixed $cmid
      * @param  mixed $user
@@ -298,22 +298,35 @@ class renderer extends \plugin_renderer_base {
                 set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
             }
         }
-        $availablecredits = get_config('mod_pokcertificate', 'availablecertificates');
-        if ($availablecredits >= 0) {
+
+        if ($credits->pokCredits >= 0) {
             $cm = pok::get_cm_instance($cmid);
-            $certificateissue = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $user->id]);
-            $emitcertificate = pok::emit_certificate($cmid, $user);
-            if (!empty($emitcertificate) && empty($certificateissue)) {
-                if ($emitcertificate->processing) {
-                    $output = self::certificate_pending_message();
-                } else {
-                    pok::save_issued_certificate($cmid, $user, $emitcertificate);
-                    $output = self::certificate_success_message($emitcertificate->viewUrl);
+            $pokissuerec = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $user->id]);
+            if (empty($pokissuerec)) {
+                $emitcertificate = pok::emit_certificate($cmid, $user);
+                if ($emitcertificate) {
+                    $output = self::certificate_mail_message($cm);
                 }
-            } else if (!empty($certificateissue)) {
-                redirect($certificateissue->get('certificateurl'));
+            } else {
+                if ($pokissuerec->get('status') && $pokissuerec->get('certificateurl')) {
+                    redirect($pokissuerec->get('certificateurl'));
+                } else if (!empty($pokissuerec->get('pokcertificateid'))) {
+
+                    $issuecertificate = pok::issue_certificate($pokissuerec);
+                    if (!empty($issuecertificate) && $issuecertificate->emitted) {
+                        if ($issuecertificate->processing) {
+                            $output = self::certificate_pending_message();
+                        } else {
+                            $issuecertificate->status = true;
+                            pok::save_issued_certificate($cmid, $user, $issuecertificate);
+                            redirect($issuecertificate->viewUrl);
+                        }
+                    } else {
+                        $output = self::certificate_mail_message($cm);
+                    }
+                }
             }
-        } else if ($availablecredits == 0) {
+        } else {
             $output = self::certificate_pending_message();
         }
         return $output;
@@ -345,8 +358,6 @@ class renderer extends \plugin_renderer_base {
      *               - 'pagination': The HTML content for the pagination controls.
      */
     public function get_incompletestudentprofile() {
-        global $USER;
-        $systemcontext = \context_system::instance();
         $page = optional_param('page', 0, PARAM_INT);
         $url = new \moodle_url('/mod/pokcertificate/incompletestudent.php', []);
         $studentid = optional_param('studentid', '', PARAM_RAW);
@@ -369,7 +380,7 @@ class renderer extends \plugin_renderer_base {
      * @return string The rendered HTML content for the bulk upload button.
      */
     public function userbulkupload() {
-        global $CFG;
+
         $categorycontext = \context_system::instance();
         return $this->render_from_template(
             'mod_pokcertificate/userbulkuploadbutton',
@@ -390,7 +401,7 @@ class renderer extends \plugin_renderer_base {
      *               - 'pagination': The HTML content for the pagination controls.
      */
     public function get_coursecertificatestatuslist() {
-        global $USER, $CFG;
+
         $courseid = required_param('courseid', PARAM_INT);
         $studentid = optional_param('studentid', '', PARAM_RAW);
         $studentname = optional_param('studentname', '', PARAM_RAW);
@@ -439,8 +450,7 @@ class renderer extends \plugin_renderer_base {
      *               - 'pagination': The HTML content for the pagination controls.
      */
     public function get_generalcertificate($filter = false) {
-        global $USER;
-        $systemcontext = \context_system::instance();
+
         $page = optional_param('page', 0, PARAM_INT);
         $url = new \moodle_url('/mod/pokcertificate/generalcertificate.php', []);
         $studentid = optional_param('studentid', '', PARAM_RAW);

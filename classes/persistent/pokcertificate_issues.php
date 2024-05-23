@@ -48,7 +48,7 @@ class pokcertificate_issues extends persistent {
                 'optional' => false,
             ],
             'status' => [
-                'type' => PARAM_INT,
+                'type' => PARAM_BOOL,
                 'optional' => false,
             ],
             'templateid' => [
