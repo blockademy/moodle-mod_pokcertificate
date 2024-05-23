@@ -17,10 +17,9 @@
 /**
  * User bulk upload form
  *
- * @package     mod_pokcertificate
- * @copyright   2024 Moodle India Information Solutions Pvt Ltd
- * @author      2024 Narendra.Patel <narendra.patel@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_pokcertificate
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();

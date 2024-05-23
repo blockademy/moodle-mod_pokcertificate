@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'pokcertificate', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'pokcertificate', language 'en'
  *
  * @package    mod_pokcertificate
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd

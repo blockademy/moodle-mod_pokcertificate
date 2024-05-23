@@ -18,10 +18,8 @@
  * pokcertificate external functions and service definitions.
  *
  * @package    mod_pokcertificate
- * @category   external
- * @copyright   2024 Moodle India Information Solutions Pvt Ltd
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
  */
 
 defined('MOODLE_INTERNAL') || die;

@@ -14,22 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The mod_pokcertificate course module viewed event.
- *
- * @package    mod_pokcertificate
- * @copyright  2013 Ankit Agarwal
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_pokcertificate\event;
 
 /**
  * The mod_pokcertificate course module viewed event class.
  *
  * @package    mod_pokcertificate
- * @since      Moodle 2.6
- * @copyright  2013 Ankit Agarwal
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class template_updated extends \core\event\base {

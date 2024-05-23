@@ -18,7 +18,6 @@
  * Definition of log events
  *
  * @package    mod_pokcertificate
- * @category   log
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

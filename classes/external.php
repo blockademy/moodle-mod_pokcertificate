@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Page external API
- *
- * @package    mod_pokcertificate
- * @category   external
- * @copyright  2015 Juan Leyva <juan@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
- */
 
 use core_course\external\helper_for_get_mods_by_courses;
 use core_external\external_api;
@@ -40,10 +31,8 @@ use mod_pokcertificate\pok;
  * pokcertificate external functions
  *
  * @package    mod_pokcertificate
- * @category   external
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 3.0
  */
 class mod_pokcertificate_external extends external_api {
 

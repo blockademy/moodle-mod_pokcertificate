@@ -22,8 +22,8 @@
  *  - lib.php/modulename_install() post installation hook
  *  - partially defaults.php
  *
- * @package mod_pokcertificate
- * @copyright   2024 Moodle India Information Solutions Pvt Ltd
+ * @package    mod_pokcertificate
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

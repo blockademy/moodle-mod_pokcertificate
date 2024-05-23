@@ -14,21 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Search area for mod_pokcertificate activities.
- *
- * @package    mod_pokcertificate
- * @copyright  2015 David Monllao {@link http://www.davidmonllao.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_pokcertificate\search;
 
 /**
  * Search area for mod_pokcertificate activities.
  *
  * @package    mod_pokcertificate
- * @copyright  2015 David Monllao {@link http://www.davidmonllao.com}
+ * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class activity extends \core_search\base_activity {
