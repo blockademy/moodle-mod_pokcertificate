@@ -53,14 +53,14 @@ if ($mform->is_cancelled()) {
 }
 echo $OUTPUT->header();
 
-echo $renderer->userbulkupload();
 
 echo '<a class = "btn-link btn-sm" data-toggle = "collapse"
     data-target = "#mod_pokcertificate-filter_collapse"
     aria-expanded = "false" aria-controls = "mod_pokcertificate-filter_collapse">
-        <i class = "m-0 fa fa-sliders fa-2x" aria-hidden = "true"></i>
-    </a>';
-echo '<div class = "mt-2 mb-2 collapse '.$show.'" id = "mod_pokcertificate-filter_collapse">
+        <i class = "m-0 fa fa-sliders fa-2x" aria-hidden = "true"></i>';
+echo $renderer->userbulkupload();
+echo '</a>
+    <div class = "mt-2 mb-2 collapse '.$show.'" id = "mod_pokcertificate-filter_collapse">
         <div id = "filters_form" class = "card card-body p-2">';
             $mform->display();
 echo    '</div>
