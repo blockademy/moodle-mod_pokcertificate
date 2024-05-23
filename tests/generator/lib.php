@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 use mod_pokcertificate\pok;
 
 /**
@@ -104,10 +102,21 @@ class mod_pokcertificate_generator extends testing_module_generator {
         return $data;
     }
 
+    /**
+     * Get field mapping data.
+     *
+     * Retrieves field mapping data for a given course module ID, certificate ID, template name, and template ID.
+     *
+     * @param int $cmid The course module ID.
+     * @param int $certid The certificate ID.
+     * @param string $tempname The template name.
+     * @param int $tempid The template ID.
+     * @return stdClass The field mapping data.
+     */
     public function get_fieldmapping_data($cmid, $certid, $tempname, $tempid) {
         $data = new stdClass();
         $data->option_repeats = 3;
-        $data->fieldmapping =  [0 => 1, 1 => 2, 2 => 3];
+        $data->fieldmapping = [0 => 1, 1 => 2, 2 => 3];
         $data->templatefield = [0 => 'param1', 1 => 'param2', 2 => 'paramN'];
         $data->userfield = [0 => 'id', 1 => 'country', 2 => 'address'];
         $data->optionid = [0 => 0, 1 => 0, 2 => 0];
@@ -118,7 +127,18 @@ class mod_pokcertificate_generator extends testing_module_generator {
         return $data;
     }
 
-    function set_pokcertificate_settings() {
-        set_config('wallet', '0x8cd7c619a1685a1f6e991946af6295ca05210af7', 'mod_pokcertificate');
+    /**
+     * Set POK certificate settings.
+     *
+     * Sets the wallet configuration setting for the mod_pokcertificate module.
+     *
+     * @return void
+     */
+    public function set_pokcertificate_settings() {
+        set_config(
+            'wallet',
+            '0x8cd7c619a1685a1f6e991946af6295ca05210af7',
+            'mod_pokcertificate'
+        );
     }
 }

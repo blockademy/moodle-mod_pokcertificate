@@ -785,7 +785,7 @@ function pokcertificate_incompletestudentprofilelist($studentid, $perpage, $offs
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted participant data.
  */
-function pokcertificate_courseparticipantslist(
+function pokcertificate_coursecertificatestatuslist(
     $courseid,
     $studentid,
     $studentname,
@@ -929,18 +929,21 @@ function pokcertificate_awardgeneralcertificatelist($studentid, $perpage, $offse
  */
 function mod_pokcertificate_extend_navigation_course(navigation_node $navigation) {
     global $PAGE;
-    $node = navigation_node::create(
-        get_string('coursecertificatestatus', 'mod_pokcertificate'),
-        new moodle_url(
-            '/mod/pokcertificate/courseparticipants.php',
-            ['courseid' => $PAGE->course->id]
-        ),
-        navigation_node::TYPE_SETTING,
-        null,
-        null,
-        new pix_icon('i/competencies', '')
-    );
-    $navigation->add_node($node);
+    $context = context_system::instance();
+    if (has_capability('mod/pokcertificate:managecoursecertificatestatus', $context)) {
+        $node = navigation_node::create(
+            get_string('coursecertificatestatus', 'mod_pokcertificate'),
+            new moodle_url(
+                '/mod/pokcertificate/coursecertificatestatus.php',
+                ['courseid' => $PAGE->course->id]
+            ),
+            navigation_node::TYPE_SETTING,
+            null,
+            null,
+            new pix_icon('i/competencies', '')
+        );
+        $navigation->add_node($node);
+    }
 }
 
 /**

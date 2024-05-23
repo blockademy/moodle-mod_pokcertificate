@@ -382,14 +382,14 @@ class renderer extends \plugin_renderer_base {
      *
      * This function fetches a paginated list of participants in a course, optionally filtered by
      * student ID, whether the record was sent to POK, and the course status. It prepares the data
-     * for rendering using the 'mod_pokcertificate/courseparticipants' template and generates the
+     * for rendering using the 'mod_pokcertificate/coursecertificatestatus' template and generates the
      * pagination for the participant records.
      *
      * @return array An associative array containing:
      *               - 'recordlist': The rendered HTML content for the participant records.
      *               - 'pagination': The HTML content for the pagination controls.
      */
-    public function get_courseparticipantslist() {
+    public function get_coursecertificatestatuslist() {
         global $USER, $CFG;
         $courseid = required_param('courseid', PARAM_INT);
         $studentid = optional_param('studentid', '', PARAM_RAW);
@@ -399,7 +399,7 @@ class renderer extends \plugin_renderer_base {
         $coursestatus = optional_param('coursestatus', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
         $url = new \moodle_url(
-            '/mod/pokcertificate/courseparticipants.php',
+            '/mod/pokcertificate/coursecertificatestatus.php',
             [
                 'courseid' => $courseid,
                 'studentid' => $studentid,
@@ -409,7 +409,7 @@ class renderer extends \plugin_renderer_base {
         );
         $recordperpage = 10;
         $offset = $page * $recordperpage;
-        $records = pokcertificate_courseparticipantslist(
+        $records = pokcertificate_coursecertificatestatuslist(
             $courseid,
             $studentid,
             $studentname,
@@ -420,7 +420,7 @@ class renderer extends \plugin_renderer_base {
             $offset
         );
         $records['showdata'] = $records['data'] ? true : false;
-        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/courseparticipants', $records);
+        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/coursecertificatestatus', $records);
         $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);
         return $return;
     }
