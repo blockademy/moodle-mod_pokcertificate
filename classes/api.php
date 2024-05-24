@@ -104,6 +104,7 @@ class api {
      * @param  string $templatename Name of the template
      * @return string API response, in json encoded format
      */
+
     public function get_template_definition($templatename) {
         $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename;
         return $this->execute_command($location, '');
@@ -111,8 +112,11 @@ class api {
 
     /**
      * Final Certificate of the user
+     *
+     * @param  object $data
      * @return string API response, in json encoded format
      */
+
     public function emit_certificate($data = '') {
         $location = MINTER_ROOT . '/mint';
         return $this->execute_command($location, $data, 'post');
@@ -120,6 +124,7 @@ class api {
 
     /**
      * The actual certificate of the student
+     * @param  mixed $certid
      * @return string certificate url
      */
     public function get_certificate($certid = '') {
@@ -130,6 +135,7 @@ class api {
     /**
      * Preview the certificate
      * @param  string $templatename Name of the template
+     * @param  object $data
      * @return string API response, in json encoded format
      */
     public function preview_certificate($templatename, $data) {
@@ -141,7 +147,6 @@ class api {
      * Hit the API
      * @param  string $location   API URL
      * @param  string $params     URL parameters for the API
-     * @param  array  $apioptions Any specific options for the API
      * @param  string $method     GET or POST
      * @return string             API response, in json encoded format
      */

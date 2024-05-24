@@ -91,9 +91,19 @@ class mod_pokcertificate_verifyauth_form extends moodleform {
         $this->set_data($data);
     }
 
+
     /**
-     * Form elements validations.
+     * Validates the form data submitted by the user.
+     *
+     * This method is responsible for validating the form data submitted by the user.
+     * It performs necessary validation checks on the data and files provided.
+     *
+     * @param array $data An associative array containing the form data submitted by the user.
+     * @param array $files An associative array containing any files uploaded via the form.
+     * @return array|bool An array of validation errors, or true if validation succeeds.
      */
     public function validation($data, $files) {
+        $errors = parent::validation($data, $files);
+        return $errors;
     }
 }

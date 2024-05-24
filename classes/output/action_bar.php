@@ -33,9 +33,13 @@ class action_bar {
 
     /** @var moodle_url $pageurl The URL of the current page. */
     private $pageurl;
+
     /**
      * The class constructor.
      *
+     * @param  int $cmid
+     * @param  moodle_url $pageurl
+     * @return void
      */
     public function __construct(int $cmid, \moodle_url $pageurl) {
         $this->cmid = $cmid;

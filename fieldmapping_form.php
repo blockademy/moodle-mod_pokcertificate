@@ -146,12 +146,16 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
     public function data_preprocessing(&$defaultvalues) {
     }
 
+
     /**
-     * validation
+     * Validates the form data submitted by the user.
      *
-     * @param  mixed $data
-     * @param  mixed $files
-     * @return void
+     * This method is responsible for validating the form data submitted by the user.
+     * It performs necessary validation checks on the data and files provided.
+     *
+     * @param array $data An associative array containing the form data submitted by the user.
+     * @param array $files An associative array containing any files uploaded via the form.
+     * @return array|bool An array of validation errors, or true if validation succeeds.
      */
     public function validation($data, $files) {
 

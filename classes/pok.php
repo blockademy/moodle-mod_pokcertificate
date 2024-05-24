@@ -197,8 +197,8 @@ class pok {
     /**
      * Saves the selected template definition to the database.
      *
-     * @param [string] $template - template name
-     * @param [string] $cm - course module instance
+     * @param [object] $templateinfo - template information
+     * @param [object] $cm - course module instance
      *
      * @return [array] $certid -pok certificate id ,$templateid - template id
      */
@@ -432,7 +432,7 @@ class pok {
                     $param->value = get_config('mod_pokcertificate', 'institution');
                 }
                 if ($param->name == 'achiever') {
-                    $param->value =  $user->firstname . ' ' .  $user->lastname;
+                    $param->value = $user->firstname . ' ' . $user->lastname;
                 }
                 if ($param->name == 'title') {
                     $param->value = $pokrecord->get('title');
@@ -453,11 +453,11 @@ class pok {
                                 $userfield = $field->get('userfield');
                                 if (strpos($field->get('userfield'), 'profile_field_') === 0) {
                                     $userprofilefield = substr($field->get('userfield'), strlen('profile_field_'));
-                                    $customparams[$param->name] =  $user->profile[$userprofilefield];
-                                    $param->value =  $user->profile[$userprofilefield];
+                                    $customparams[$param->name] = $user->profile[$userprofilefield];
+                                    $param->value = $user->profile[$userprofilefield];
                                 } else {
-                                    $customparams[$param->name] =  $user->$userfield;
-                                    $param->value =  $user->$userfield;
+                                    $customparams[$param->name] = $user->$userfield;
+                                    $param->value = $user->$userfield;
                                 }
                             }
                         }
@@ -469,7 +469,7 @@ class pok {
         $emitdata = new \stdclass;
         $emitdata->email = $user->email;
         $emitdata->institution = get_config('mod_pokcertificate', 'institution');
-        $emitdata->identification =  $user->idnumber;
+        $emitdata->identification = $user->idnumber;
         $emitdata->first_name = $user->firstname;
         $emitdata->last_name = $user->lastname;
         $emitdata->title = $pokrecord->get('title');

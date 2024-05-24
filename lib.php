@@ -142,7 +142,7 @@ function pokcertificate_delete_instance($id) {
  * "extra" information that may be needed when printing
  * this activity in a course listing.
  *
- * See {@link course_modinfo::get_array_of_activities()}
+ * See {course_modinfo::get_array_of_activities()}
  *
  * @param stdClass $coursemodule
  * @return cached_cm_info Info to customise main pokcertificate display
@@ -479,7 +479,9 @@ function pokcertificate_incompletestudentprofilelist($studentid, $perpage, $offs
  * for displaying in the course participants list.
  *
  * @param int $courseid The ID of the course to retrieve participants from.
- * @param string $studentid The student ID to search for (optional).
+ * @param int $studentid The student ID to search for (optional).
+ * @param string $studentname The student name to search for (optional).
+ * @param string $email The student email to search for (optional).
  * @param string $senttopok Indicates whether certificates have been sent to Pokcertificate (optional).
  * @param string $coursestatus The completion status of the course (optional).
  * @param int $perpage The number of records to display per page.

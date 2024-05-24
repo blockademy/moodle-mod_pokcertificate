@@ -78,21 +78,20 @@ class renderer extends \plugin_renderer_base {
     /**
      * Render the view page.
      *
-     * @param view_page $page
      * @return [output]
      */
     public function display_message() {
         $output = \html_writer::tag('span', get_string('certificatepending', 'pokcertificate'), []);
         return $output;
     }
+
     /**
      * Renders the certifcate templates view.
      *
      * @param [int] $id course module id
-     * @param [bool] $formedit for redirection form hidden field to preview
-     *
      * @return [template] certificate templates view mustache file
      */
+
     public function show_certificate_templates(int $id) {
         global $DB;
         $output = '';
@@ -124,9 +123,10 @@ class renderer extends \plugin_renderer_base {
     /**
      * Renders the preview certifcate templates view.
      *
-     * @param [int] $cmid course module id
-     * @return [template] certificate templates view mustache file
+     * @param [int] $cmid course module id.     *
+     * @return [template] certificate templates view mustache file.
      */
+
     public function preview_certificate_template(int $cmid) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -310,7 +310,6 @@ class renderer extends \plugin_renderer_base {
             } else {
                 if ($pokissuerec->get('status') && $pokissuerec->get('certificateurl')) {
                     $output = '<script>window.open(' . $pokissuerec->get('certificateurl') . ',"_blank")</script>';
-                    //redirect($pokissuerec->get('certificateurl'));
                 } else if (!empty($pokissuerec->get('pokcertificateid'))) {
 
                     $issuecertificate = pok::issue_certificate($pokissuerec);
@@ -345,6 +344,7 @@ class renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl The page url.
      * @return string The HTML for the action bar.
      */
+
     public function action_bar(int $id,  \moodle_url $pageurl): string {
         $actionbar = new action_bar($id, $pageurl);
         $data = $actionbar->export_for_template($this);
