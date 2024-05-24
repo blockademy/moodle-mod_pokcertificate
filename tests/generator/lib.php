@@ -40,7 +40,7 @@ class mod_pokcertificate_generator extends testing_module_generator {
      * @param  mixed $record
      * @param  array $options
      *
-     * @return [object]
+     * @return object
      */
     public function create_instance($record = null, array $options = null) {
         global $CFG, $USER, $SITE;
@@ -89,7 +89,7 @@ class mod_pokcertificate_generator extends testing_module_generator {
      * create_pok_template
      *
      * @param  mixed $cm
-     * @return [object]
+     * @return object
      */
     public function create_pok_template($cm = null) {
 

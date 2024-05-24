@@ -57,7 +57,7 @@ if (empty($options['printintro'])) {
 }
 $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);
-
+$PAGE->add_body_class('limitedwidth');
 $PAGE->activityheader->set_attrs($activityheader);
 
 if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'])) {
@@ -69,6 +69,7 @@ $renderer->verify_authentication_check();
 
 pok::set_cmid($id);
 if ($pok = pokcertificate_preview_by_user($cm, $pokcertificate, $flag)) {
+
     if ($pok['url']) {
         redirect($pok['url']);
     } else if ($pok['student']) {

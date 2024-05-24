@@ -68,9 +68,9 @@ class pok {
 
     /**
      * Save pokcertificate instance.
-     * @param [stdClass] $data
-     * @param [mod_pokcertificate_mod_form] $mform
-     * @return [object] new pokcertificate instance
+     * @param object $data
+     * @param moodleform $mform
+     * @return object new pokcertificate instance
      */
     public static function save_pokcertificate_instance($data, $mform) {
         global $CFG, $DB, $USER;
@@ -121,9 +121,9 @@ class pok {
 
     /**
      * Update pokcertificate instance.
-     * @param [object] $data
-     * @param [object] $mform
-     * @return [bool] true
+     * @param object $data
+     * @param moodleform $mform
+     * @return bool true
      */
     public static function update_pokcertificate_instance($data, $mform) {
         global $CFG, $USER;
@@ -170,9 +170,9 @@ class pok {
 
 
     /**
-     * Delete pokcertificate instance.
-     * @param [int] $id
-     * @return [bool] true
+     * Delete pokcertificate instance and related data from other tables.
+     * @param int $id
+     * @return bool true
      */
     public static function delete_pokcertificate_instance($id) {
         global $DB;
@@ -197,10 +197,10 @@ class pok {
     /**
      * Saves the selected template definition to the database.
      *
-     * @param [object] $templateinfo - template information
-     * @param [object] $cm - course module instance
+     * @param object $templateinfo - template information
+     * @param object $cm - course module instance
      *
-     * @return [array] $certid -pok certificate id ,$templateid - template id
+     * @return mixed
      */
     public static function save_template_definition($templateinfo, $cm) {
         global $USER;
@@ -261,11 +261,11 @@ class pok {
     }
 
     /**
-     * Saves the fieldmapping fields.
+     * Save the fieldmapping data.
      *
-     * @param [object] $data - fieldmapping data
+     * @param object $data - fieldmapping data
      *
-     * @return [array]
+     * @return bool
      */
     public static function save_fieldmapping_data($data) {
 
@@ -301,10 +301,10 @@ class pok {
     }
 
     /**
-     * get_certificate_templates
+     * Get list of certificate templates.
      *
-     * @param  mixed $cmid
-     * @param  mixed $type
+     * @param  int $cmid
+     * @param  string $type
      * @return array
      */
     public static function get_certificate_templates($cmid, $type = 'free') {
@@ -338,9 +338,9 @@ class pok {
     }
 
     /**
-     * preview_template
+     * Preview the temlate to admin.
      *
-     * @param  mixed $cmid
+     * @param  int $cmid
      * @return bool
      */
     public static function preview_template($cmid) {
@@ -359,11 +359,12 @@ class pok {
     }
 
     /**
-     * emit_certificate
+     * Invoke emit certificate api by passing the template definition and saving
+     * the certificate id returned from api to issues tables.
      *
-     * @param  mixed $cmid
-     * @param  mixed $user
-     * @return [bool]
+     * @param  int $cmid
+     * @param  object $user
+     * @return bool
      */
     public static function emit_certificate($cmid, $user) {
         $user = \core_user::get_user($user->id);
@@ -388,15 +389,16 @@ class pok {
                 }
             }
         } catch (\Exception $e) {
+            print_R($e);
             throw new \Exception($e->getMessage());
         }
     }
 
     /**
-     * issue_certificate
+     * Invoke get_certificate api to issue certificate by passing the certificate id emitted.
      *
-     * @param  mixed $emitcertificate
-     * @return object
+     * @param  object $emitcertificate
+     * @return mixed
      */
     public static function issue_certificate($emitcertificate) {
         $data = $emitcertificate->to_record();
@@ -409,15 +411,19 @@ class pok {
     }
 
     /**
-     * get_emitcertificate_data
+     * Replace template defifnition values with user values and
+     * adding custom params if mapped to template.
      *
-     * @param  mixed $template
-     * @param  mixed $pokrecord
-     * @return [object]
+     * @param  object $template
+     * @param  object $pokrecord
+     * @return object
      */
     public static function get_emitcertificate_data($template, $pokrecord) {
         global $USER;
+
         $user = \core_user::get_user($USER->id);
+        profile_load_custom_fields($user);
+
         $templatename = $template->get('templatename');
         $resptemplatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templatename);
         if (!empty($resptemplatedefinition)) {
@@ -486,11 +492,11 @@ class pok {
     }
 
     /**
-     * save_issued_certificate
+     * Save the certificate details issued to user.
      *
-     * @param  mixed $cmid
-     * @param  mixed $user
-     * @param  mixed $emitcertificate
+     * @param  int $cmid
+     * @param  object $user
+     * @param  object $emitcertificate
      * @return [void]
      */
     public static function save_issued_certificate($cmid, $user, $emitcertificate) {
@@ -522,11 +528,11 @@ class pok {
     }
 
     /**
-     * get_mapping_fields
+     * Get fields that are mapped to course module.
      *
      * @param  mixed $user
      * @param  mixed $cm
-     * @return [object]
+     * @return object $pokfields fields data
      */
     public static function get_mapping_fields($user, $cm) {
         $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
@@ -535,10 +541,10 @@ class pok {
     }
 
     /**
-     * check_userfields_data
+     * Check if mapped user field has user data.
      *
-     * @param  mixed $cmid
-     * @param  mixed $user
+     * @param  int $cmid
+     * @param  object $user
      * @return bool
      */
     public static function check_userfields_data($cmid, $user) {

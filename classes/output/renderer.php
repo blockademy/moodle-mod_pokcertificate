@@ -78,7 +78,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Render the view page.
      *
-     * @return [output]
+     * @return string HTML to display.
      */
     public function display_message() {
         $output = \html_writer::tag('span', get_string('certificatepending', 'pokcertificate'), []);
@@ -88,8 +88,8 @@ class renderer extends \plugin_renderer_base {
     /**
      * Renders the certifcate templates view.
      *
-     * @param [int] $id course module id
-     * @return [template] certificate templates view mustache file
+     * @param int $id course module id
+     * @return string HTML certificate templates view.
      */
 
     public function show_certificate_templates(int $id) {
@@ -123,8 +123,9 @@ class renderer extends \plugin_renderer_base {
     /**
      * Renders the preview certifcate templates view.
      *
-     * @param [int] $cmid course module id.     *
-     * @return [template] certificate templates view mustache file.
+     * @param int $cmid course module id.
+     *
+     * @return string certificate templates HTML to display.
      */
 
     public function preview_certificate_template(int $cmid) {
@@ -285,8 +286,8 @@ class renderer extends \plugin_renderer_base {
     /**
      * This method issues the certificate to student.
      *
-     * @param  mixed $cmid
-     * @param  mixed $user
+     * @param  int $cmid
+     * @param  object $user
      * @return string
      */
     public function emit_certificate_templates($cmid, $user) {
@@ -309,17 +310,19 @@ class renderer extends \plugin_renderer_base {
                 }
             } else {
                 if ($pokissuerec->get('status') && $pokissuerec->get('certificateurl')) {
-                    $output = '<script>window.open(' . $pokissuerec->get('certificateurl') . ',"_blank")</script>';
+                    //redirect($pokissuerec->get('certificateurl'));
+                    $output = \html_writer::tag('p', '<script>window.open("' . $pokissuerec->get("certificateurl") . '","_self")</script>');
                 } else if (!empty($pokissuerec->get('pokcertificateid'))) {
-
                     $issuecertificate = pok::issue_certificate($pokissuerec);
                     if (!empty($issuecertificate) && $issuecertificate->emitted) {
+
                         if ($issuecertificate->processing) {
                             $output = self::certificate_pending_message();
                         } else {
                             $issuecertificate->status = true;
                             pok::save_issued_certificate($cmid, $user, $issuecertificate);
-                            $output = '<script>window.open(' . $issuecertificate->viewUrl . ',"_blank")</script>';
+                            $output = \html_writer::tag('p', '<script>window.open("' . $issuecertificate->viewUrl . '","_self")</script>');
+                            //redirect($pokissuerec->get('certificateurl'));
                         }
                     } else {
                         $output = self::certificate_mail_message($cm);

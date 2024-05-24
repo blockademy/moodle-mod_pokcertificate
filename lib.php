@@ -774,23 +774,19 @@ function pokcertificate_preview_by_user($cm, $pokcertificate, $flag) {
             $params = ['id' => $id];
             $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
         }
-    }
-    // Getting certificate template view for student.
-    if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', $context)) {
-
+    } else {
+        // Getting certificate template view for student.
+        $certificateissued = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $USER->id]);
         if ($flag) {
             $studentview = true;
+        } else if (
+            !empty($certificateissued) && $certificateissued->get('status') &&
+            !empty($certificateissued->get('certificateurl'))
+        ) {
+            $url = $certificateissued->get('certificateurl');
         } else {
-            $certificateissued = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $USER->id]);
-            if (
-                !empty($certificateissued) && $certificateissued->get('status') &&
-                !empty($certificateissued->get('certificateurl'))
-            ) {
-                $url = $certificateissued->get('certificateurl');
-            } else {
-                $params = ['cmid' => $id, 'id' => $USER->id];
-                $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
-            }
+            $params = ['cmid' => $id, 'id' => $USER->id];
+            $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
         }
     }
     return ['student' => $studentview, 'admin' => $adminview, 'url' => $url];

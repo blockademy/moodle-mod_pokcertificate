@@ -31,17 +31,20 @@
         <input type="radio" name="optradio" data-value = "1"  {{#temptype}}checked="checked" {{/temptype}} data-action = "templatetype">{{#str}}paid,pokcertificate{{/str}}
     </label>
 </div>
-<div class="row certtemplatedata">
-    {{#certdata}}
-
-    <div class=" cc-selector column">
-        <input id="{{name}}" type="radio" name="templates" {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} value="{{config.wwwroot}}/mod/pokcertificate/fieldmapping.php?id={{cmid}}&temp={{tempname}}" />
-        <label class="drinkcard-cc" for="{{name}}" style ="background-image:url({{certimage}})" ">{{name}}</label>
+<div class="row">
+    <div class="grid">
+        {{#certdata}}
+        <label class="card">
+            <input name="templates" class="certradio" type="radio" {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} value="{{config.wwwroot}}/mod/pokcertificate/fieldmapping.php?id={{cmid}}&temp={{tempname}}">
+            <span class="template-details">
+            <span class="template-name">{{name}}</span>
+            <img src="{{certimage}}" alt="" class="">
+            </span>
+        </label>
+        {{/certdata}}
+        <a href class="btn btn-primary" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</a>
     </div>
-    {{/certdata}}
-
 </div>
-  <a href class="btn btn-secondary certbutton" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</a>
 
 {{#js}}
   document.getElementById("certbutton").onclick = function() {
