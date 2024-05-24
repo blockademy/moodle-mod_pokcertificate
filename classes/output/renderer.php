@@ -162,7 +162,7 @@ class renderer extends \plugin_renderer_base {
                 }
             }
         } else {
-            echo get_string('previewnotexists', 'mod_pokcertificate');
+            $output = get_string('previewnotexists', 'mod_pokcertificate');
         }
         return $output;
     }
@@ -177,7 +177,7 @@ class renderer extends \plugin_renderer_base {
      * @return string HTML content for the certificate pending message modal dialog.
      */
     public function certificate_pending_message() {
-        global $CFG, $USER, $COURSE;
+        global $CFG;
         require_once("{$CFG->libdir}/completionlib.php");
 
         $attributes = [
@@ -236,6 +236,7 @@ class renderer extends \plugin_renderer_base {
      */
     public function certificate_mail_message($cm) {
         global $CFG, $USER;
+        $user = \core_user::get_user($USER->id);
         require_once("{$CFG->libdir}/completionlib.php");
         $attributes = [
             'role' => 'promptdialog',
@@ -260,7 +261,7 @@ class renderer extends \plugin_renderer_base {
         $output .= \html_writer::tag('p', get_string('congratulations', 'mod_pokcertificate'), ['class' => 'success-mainheading']);
         $output .= \html_writer::tag(
             'p',
-            get_string('certificatesuccessmsg', 'mod_pokcertificate', $USER->email),
+            get_string('certificatesuccessmsg', 'mod_pokcertificate', $user->email),
             [
                 'class' => 'success-complheading',
             ]
@@ -298,7 +299,6 @@ class renderer extends \plugin_renderer_base {
                 set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
             }
         }
-
         if ($credits->pokCredits >= 0) {
             $cm = pok::get_cm_instance($cmid);
             $pokissuerec = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $user->id]);
@@ -309,7 +309,8 @@ class renderer extends \plugin_renderer_base {
                 }
             } else {
                 if ($pokissuerec->get('status') && $pokissuerec->get('certificateurl')) {
-                    redirect($pokissuerec->get('certificateurl'));
+                    $output = '<script>window.open(' . $pokissuerec->get('certificateurl') . ',"_blank")</script>';
+                    //redirect($pokissuerec->get('certificateurl'));
                 } else if (!empty($pokissuerec->get('pokcertificateid'))) {
 
                     $issuecertificate = pok::issue_certificate($pokissuerec);
@@ -319,7 +320,7 @@ class renderer extends \plugin_renderer_base {
                         } else {
                             $issuecertificate->status = true;
                             pok::save_issued_certificate($cmid, $user, $issuecertificate);
-                            redirect($issuecertificate->viewUrl);
+                            $output = '<script>window.open(' . $issuecertificate->viewUrl . ',"_blank")</script>';
                         }
                     } else {
                         $output = self::certificate_mail_message($cm);
@@ -329,6 +330,11 @@ class renderer extends \plugin_renderer_base {
         } else {
             $output = self::certificate_pending_message();
         }
+        if (empty($output)) {
+            $url = new \moodle_url('/course/view.php', ['id' => $cm->course]);
+            $output = self::display_notif_message($url, get_string('no_data_available', 'pokcertificate'));
+        }
+
         return $output;
     }
 

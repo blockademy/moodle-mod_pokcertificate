@@ -23,7 +23,6 @@
  */
 
 use mod_pokcertificate\pok;
-use mod_pokcertificate\persistent\pokcertificate_issues;
 
 require('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
@@ -41,7 +40,7 @@ $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*'
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
-$context = context_module::instance($cm->id);
+$context = \context_module::instance($cm->id);
 require_capability('mod/pokcertificate:view', $context);
 
 // Completion and trigger events.
@@ -67,50 +66,17 @@ if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'
 }
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
-$adminview = false;
-$studentview = false;
 
-if ($id) {
-    pok::set_cmid($id);
-    // Getting certificate template view for admin.
-    if (is_siteadmin()  || has_capability('mod/pokcertificate:manageinstance', $context)) {
-        $preview = pok::preview_template($id);
-        if ($preview) {
-            $adminview = true;
-            $params = ['id' => $id];
-            $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
-        }
+pok::set_cmid($id);
+if ($pok = pokcertificate_preview_by_user($cm, $pokcertificate, $flag)) {
+    if ($pok['url']) {
+        redirect($pok['url']);
+    } else if ($pok['student']) {
+        echo $OUTPUT->header();
+        echo $renderer->emit_certificate_templates($id, $USER);
+        echo $OUTPUT->footer();
+        exit;
     }
-    // Getting certificate template view for student.
-    if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', $context)) {
-
-        if ($flag) {
-            $studentview = true;
-        } else {
-            $certificateissued = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $USER->id]);
-            if (
-                !empty($certificateissued) && $certificateissued->get('status') &&
-                !empty($certificateissued->get('certificateurl'))
-            ) {
-                redirect($certificateissued->get('certificateurl'));
-            } else {
-                $params = ['cmid' => $id, 'id' => $USER->id];
-                $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
-            }
-        }
-    }
-}
-
-if ($adminview) {
-    redirect($url);
-}
-if ($studentview) {
-    echo $OUTPUT->header();
-    echo $renderer->emit_certificate_templates($id, $USER);
-    echo $OUTPUT->footer();
-    exit;
-} else if (!is_siteadmin()) {
-    redirect($url);
 }
 echo $OUTPUT->header();
 echo $renderer->show_certificate_templates($id);

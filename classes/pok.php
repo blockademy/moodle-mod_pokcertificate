@@ -366,6 +366,7 @@ class pok {
      * @return [bool]
      */
     public static function emit_certificate($cmid, $user) {
+        $user = \core_user::get_user($user->id);
         $cm = self::get_cm_instance($cmid);
         $emitcertificate = new \stdClass();
         try {
@@ -416,7 +417,7 @@ class pok {
      */
     public static function get_emitcertificate_data($template, $pokrecord) {
         global $USER;
-
+        $user = \core_user::get_user($USER->id);
         $templatename = $template->get('templatename');
         $resptemplatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templatename);
         if (!empty($resptemplatedefinition)) {
@@ -431,7 +432,7 @@ class pok {
                     $param->value = get_config('mod_pokcertificate', 'institution');
                 }
                 if ($param->name == 'achiever') {
-                    $param->value = $USER->firstname . ' ' . $USER->lastname;
+                    $param->value =  $user->firstname . ' ' .  $user->lastname;
                 }
                 if ($param->name == 'title') {
                     $param->value = $pokrecord->get('title');
@@ -452,11 +453,11 @@ class pok {
                                 $userfield = $field->get('userfield');
                                 if (strpos($field->get('userfield'), 'profile_field_') === 0) {
                                     $userprofilefield = substr($field->get('userfield'), strlen('profile_field_'));
-                                    $customparams[$param->name] = $USER->profile[$userprofilefield];
-                                    $param->value = $USER->profile[$userprofilefield];
+                                    $customparams[$param->name] =  $user->profile[$userprofilefield];
+                                    $param->value =  $user->profile[$userprofilefield];
                                 } else {
-                                    $customparams[$param->name] = $USER->$userfield;
-                                    $param->value = $USER->$userfield;
+                                    $customparams[$param->name] =  $user->$userfield;
+                                    $param->value =  $user->$userfield;
                                 }
                             }
                         }
@@ -466,17 +467,17 @@ class pok {
         }
         $templatedefinition = json_encode($templatedefinition);
         $emitdata = new \stdclass;
-        $emitdata->email = $USER->email;
+        $emitdata->email = $user->email;
         $emitdata->institution = get_config('mod_pokcertificate', 'institution');
-        $emitdata->identification = $USER->idnumber;
-        $emitdata->first_name = $USER->firstname;
-        $emitdata->last_name = $USER->lastname;
+        $emitdata->identification =  $user->idnumber;
+        $emitdata->first_name = $user->firstname;
+        $emitdata->last_name = $user->lastname;
         $emitdata->title = $pokrecord->get('title');
         $emitdata->template_base64 = base64_encode($templatedefinition);
         $emitdata->date = time();
         $emitdata->free = ($template->get('templatetype') == 0) ? true : false;
         $emitdata->wallet = get_config('mod_pokcertificate', 'wallet');
-        $emitdata->language_tag = $USER->lang;
+        $emitdata->language_tag = $user->lang;
         if (!empty($customparams)) {
             $emitdata->custom_params = $customparams;
         }

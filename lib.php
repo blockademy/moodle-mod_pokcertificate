@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 use mod_pokcertificate\persistent\pokcertificate_templates;
+use mod_pokcertificate\persistent\pokcertificate_issues;
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -745,4 +746,50 @@ function pokcertificate_courseenrollmentdate($courseid, $userid) {
     } else {
         return false;
     }
+}
+
+/**
+ * Display the certificate preview to user or redirect the user.
+ *
+ * @param  object $cm
+ * @param  object $pokcertificate
+ * @param  bool $flag
+ *
+ * @return [array]
+ */
+function pokcertificate_preview_by_user($cm, $pokcertificate, $flag) {
+    global $USER;
+    $id = $cm->id;
+    $context = \context_module::instance($cm->id);
+    $url = '';
+    $adminview = false;
+    $studentview = false;
+    // Getting certificate template view for admin.
+    if (is_siteadmin()  || has_capability('mod/pokcertificate:manageinstance', $context)) {
+        $preview = pok::preview_template($id);
+        if ($preview) {
+            $adminview = true;
+            $params = ['id' => $id];
+            $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
+        }
+    }
+    // Getting certificate template view for student.
+    if (!is_siteadmin() && !has_capability('mod/pokcertificate:manageinstance', $context)) {
+
+        if ($flag) {
+            $studentview = true;
+        } else {
+            $certificateissued = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $USER->id]);
+            if (
+                !empty($certificateissued) && $certificateissued->get('status') &&
+                !empty($certificateissued->get('certificateurl'))
+            ) {
+                $url = $certificateissued->get('certificateurl');
+            } else {
+                $params = ['cmid' => $id, 'id' => $USER->id];
+                $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
+            }
+        }
+    }
+    return ['student' => $studentview, 'admin' => $adminview, 'url' => $url];
 }
