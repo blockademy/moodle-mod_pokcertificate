@@ -190,7 +190,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
      *
      * @param  mixed $mform
      * @param  mixed $pokfields
-     * @param  mixed $userid
+     * @param  mixed $user
      * @return void
      */
     public function get_profile_fields(&$mform, $pokfields, $user) {

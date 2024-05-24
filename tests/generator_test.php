@@ -33,10 +33,10 @@ class generator_test extends \advanced_testcase {
      * Test create pokkcertificate activity
      * @return void
      */
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB;
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
         // Turn off debugging.
         set_debugging(DEBUG_NONE);
 
@@ -72,7 +72,7 @@ class generator_test extends \advanced_testcase {
 
         require_once($CFG->dirroot . '/course/modlib.php');
 
-        $this->resetAfterTest(false);
+        $this->resetAfterTest();
         // Turn off debugging.
         set_debugging(DEBUG_NONE);
 

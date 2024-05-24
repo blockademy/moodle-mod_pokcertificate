@@ -187,6 +187,9 @@ class pok {
         // Note: all context files are deleted automatically.
 
         $DB->delete_records('pokcertificate', ['id' => $pokcertificate->id]);
+        $DB->delete_records('pokcertificate_templates', ['pokid' => $pokcertificate->id]);
+        $DB->delete_records('pokcertificate_fieldmapping', ['certid' => $pokcertificate->id]);
+        $DB->delete_records('pokcertificate_issues', ['certid' => $pokcertificate->id]);
         return true;
     }
 
@@ -253,7 +256,6 @@ class pok {
                 return;
             }
         } catch (\moodle_exception $e) {
-            print_r($e);
             return;
         }
     }
@@ -294,7 +296,6 @@ class pok {
             }
             return false;
         } catch (\moodle_exception $e) {
-            print_r($e);
             return false;
         }
     }

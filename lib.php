@@ -181,258 +181,21 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
     return $info;
 }
 
-
-/**
- * Lists all browsable file areas
- *
- * @package  mod_pokcertificate
- * @category files
- * @param stdClass $course course object
- * @param stdClass $cm course module object
- * @param stdClass $context context object
- * @return array
- */
-function pokcertificate_get_file_areas($course, $cm, $context) {
-    $areas = [];
-    $areas['content'] = get_string('content', 'pokcertificate');
-    return $areas;
-}
-
-/**
- * File browsing support for pokcertificate module content area.
- *
- * @package  mod_pokcertificate
- * @category files
- * @param file_browser $browser file browser instance
- * @param stdClass $areas file areas
- * @param stdClass $course course object
- * @param stdClass $cm course module object
- * @param [stdClass] $context context object
- * @param string $filearea file area
- * @param int $itemid item ID
- * @param string $filepath file path
- * @param string $filename file name
- * @return file_info instance or null if not found
- */
-function pokcertificate_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
-    global $CFG;
-
-    if (!has_capability('moodle/course:managefiles', $context)) {
-        // Students can not peak here!
-        return null;
-    }
-
-    $fs = get_file_storage();
-
-    if ($filearea === 'content') {
-        $filepath = is_null($filepath) ? '/' : $filepath;
-        $filename = is_null($filename) ? '.' : $filename;
-
-        $urlbase = $CFG->wwwroot . '/pluginfile.php';
-        if (!$storedfile = $fs->get_file($context->id, 'mod_pokcertificate', 'content', 0, $filepath, $filename)) {
-            if ($filepath === '/' && $filename === '.') {
-                $storedfile = new virtual_root_file($context->id, 'mod_pokcertificate', 'content', 0);
-            } else {
-                // Not found.
-                return null;
-            }
-        }
-        require_once("$CFG->dirroot/mod/pokcertificate/locallib.php");
-        return new pokcertificate_content_file_info(
-            $browser,
-            $context,
-            $storedfile,
-            $urlbase,
-            $areas[$filearea],
-            true,
-            true,
-            true,
-            false,
-        );
-    }
-
-    // Note: pokcertificate_intro handled in file_browser automatically.
-    return null;
-}
-
-/**
- * Serves the pokcertificate files.
- *
- * @package  mod_pokcertificate
- * @category files
- * @param stdClass $course course object
- * @param stdClass $cm course module object
- * @param [stdClass] $context context object
- * @param string $filearea file area
- * @param array $args extra arguments
- * @param bool $forcedownload whether or not force download
- * @param array $options additional options affecting the file serving
- * @return bool false if file not found, does not return if found - just send the file
- */
-function pokcertificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
-    global $CFG, $DB;
-    require_once("$CFG->libdir/resourcelib.php");
-
-    if ($context->contextlevel != CONTEXT_MODULE) {
-        return false;
-    }
-
-    require_course_login($course, true, $cm);
-    if (!has_capability('mod/pokcertificate:view', $context)) {
-        return false;
-    }
-
-    if ($filearea !== 'content') {
-        // Intro is handled automatically in pluginfile.php.
-        return false;
-    }
-
-    // Could be $arg  revision number or index.html.
-    $arg = array_shift($args);
-    if ($arg == 'index.html' || $arg == 'index.htm') {
-        // Serve pokcertificate content.
-        $filename = $arg;
-
-        if (!$pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST)) {
-            return false;
-        }
-
-        // We need to rewrite the pluginfile URLs so the media filters can work.
-        $content = file_rewrite_pluginfile_urls(
-            $pokcertificate->content,
-            'webservice/pluginfile.php',
-            $context->id,
-            'mod_pokcertificate',
-            'content',
-            $pokcertificate->revision
-        );
-        $formatoptions = new stdClass;
-        $formatoptions->noclean = true;
-        $formatoptions->overflowdiv = true;
-        $formatoptions->context = $context;
-        $content = format_text($content, $pokcertificate->contentformat, $formatoptions);
-
-        $options = ['reverse' => true];
-        $content = file_rewrite_pluginfile_urls(
-            $content,
-            'webservice/pluginfile.php',
-            $context->id,
-            'mod_pokcertificate',
-            'content',
-            $pokcertificate->revision,
-            $options
-        );
-        $content = str_replace('@@PLUGINFILE@@/', '', $content);
-
-        send_file($content, $filename, 0, 0, true, true);
-    } else {
-        $fs = get_file_storage();
-        $relativepath = implode('/', $args);
-        $fullpath = "/$context->id/mod_pokcertificate/$filearea/0/$relativepath";
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) || $file->is_directory()) {
-            $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], 'id, legacyfiles', MUST_EXIST);
-            if ($pokcertificate->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
-                return false;
-            }
-            $file = resourcelib_try_file_migration('/' . $relativepath, $cm->id, $cm->course, 'mod_pokcertificate', 'content', 0);
-            if (!$file) {
-                return false;
-            }
-            // File migrate - update flag.
-            $pokcertificate->legacyfileslast = time();
-            $DB->update_record('pokcertificate', $pokcertificate);
-        }
-
-        // Finally send the file.
-        send_stored_file($file, null, 0, $forcedownload, $options);
-    }
-}
-
-/**
- * Return a list of pokcertificate types
- * @param string $pokcertificatetype current pokcertificate type
- * @param stdClass $parentcontext Block's parent context
- * @param stdClass $currentcontext Current context of block
- */
-function pokcertificate_pokcertificate_type_list($pokcertificatetype, $parentcontext, $currentcontext) {
-    $pokcertificatetypestr = get_string('pokcertificate-mod-pokcertificate-x', 'pokcertificate');
-    $modulepokcertificatetype = ['mod-pokcertificate-*' => $pokcertificatetypestr];
-    return $modulepokcertificatetype;
-}
-
-/**
- * Export pokcertificate resource contents
- *
- * @return array of file content
- */
-function pokcertificate_export_contents($cm, $baseurl) {
-    global $CFG, $DB;
-    $contents = [];
-    $context = context_module::instance($cm->id);
-
-    $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
-
-    // Pokcertificate contents.
-    $fs = get_file_storage();
-    $files = $fs->get_area_files($context->id, 'mod_pokcertificate', 'content', 0, 'sortorder DESC, id ASC', false);
-    $urlbase = "$CFG->wwwroot/" . $baseurl;
-    foreach ($files as $fileinfo) {
-        $file = [];
-        $file['type']         = 'file';
-        $file['filename']     = $fileinfo->get_filename();
-        $file['filepath']     = $fileinfo->get_filepath();
-        $file['filesize']     = $fileinfo->get_filesize();
-        $path = '/' . $context->id . '/mod_pokcertificate/content/' . $pokcertificate->revision;
-        $path .= $fileinfo->get_filepath() . $fileinfo->get_filename();
-        $file['fileurl']      = file_encode_url($urlbase, $path, true);
-        $file['timecreated']  = $fileinfo->get_timecreated();
-        $file['timemodified'] = $fileinfo->get_timemodified();
-        $file['sortorder']    = $fileinfo->get_sortorder();
-        $file['userid']       = $fileinfo->get_userid();
-        $file['author']       = $fileinfo->get_author();
-        $file['license']      = $fileinfo->get_license();
-        $file['mimetype']     = $fileinfo->get_mimetype();
-        $file['isexternalfile'] = $fileinfo->is_external_file();
-        if ($file['isexternalfile']) {
-            $file['repositorytype'] = $fileinfo->get_repository_type();
-        }
-        $contents[] = $file;
-    }
-
-    // Pokcertificate html conent.
-    $filename = 'index.html';
-    $pokcertificatefile = [];
-    $pokcertificatefile['type']         = 'file';
-    $pokcertificatefile['filename']     = $filename;
-    $pokcertificatefile['filepath']     = '/';
-    $pokcertificatefile['filesize']     = 0;
-    $path = '/' . $context->id . '/mod_pokcertificate/content/' . $filename;
-    $pokcertificatefile['fileurl']      = file_encode_url($urlbase, $path, true);
-    $pokcertificatefile['timecreated']  = null;
-    $pokcertificatefile['timemodified'] = $pokcertificate->timemodified;
-    // Make this file as main file.
-    $pokcertificatefile['sortorder']    = 1;
-    $pokcertificatefile['userid']       = null;
-    $pokcertificatefile['author']       = null;
-    $pokcertificatefile['license']      = null;
-    $contents[] = $pokcertificatefile;
-
-    return $contents;
-}
-
 /**
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
 function pokcertificate_dndupload_register() {
-    return ['types' => [
-        [
-            'identifier' => 'text/html',
-            'message' => get_string('createpokcertificate', 'pokcertificate'),
-        ],
-        [
-            'identifier' => 'text',
-            'message' => get_string('createpokcertificate', 'pokcertificate')],
+    return [
+        'types' => [
+            [
+                'identifier' => 'text/html',
+                'message' => get_string('createpokcertificate', 'pokcertificate'),
+            ],
+            [
+                'identifier' => 'text',
+                'message' => get_string('createpokcertificate', 'pokcertificate'),
+            ],
         ],
     ];
 }
@@ -509,69 +272,6 @@ function pokcertificate_view($pokcertificate, $course, $cm, $context) {
 function pokcertificate_check_updates_since(cm_info $cm, $from, $filter = []) {
     $updates = course_check_module_updates_since($cm, $from, ['content'], $filter);
     return $updates;
-}
-
-/**
- * This function receives a calendar event and returns the action associated with it, or null if there is none.
- *
- * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
- * is not displayed on the block.
- *
- * @param calendar_event $event
- * @param \core_calendar\action_factory $factory
- * @return \core_calendar\local\event\entities\action_interface|null
- */
-function mod_pokcertificate_core_calendar_provide_event_action(
-    calendar_event $event,
-    \core_calendar\action_factory $factory,
-    $userid = 0
-) {
-    global $USER;
-
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-
-    $cm = get_fast_modinfo($event->courseid, $userid)->instances['pokcertificate'][$event->instance];
-
-    $completion = new \completion_info($cm->get_course());
-
-    $completiondata = $completion->get_data($cm, false, $userid);
-
-    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
-        return null;
-    }
-
-    return $factory->create_instance(
-        get_string('view'),
-        new \moodle_url('/mod/pokcertificate/view.php', ['id' => $cm->id]),
-        1,
-        true
-    );
-}
-
-/**
- * Given an array with a file path, it returns the itemid and the filepath for the defined filearea.
- *
- * @param  string $filearea The filearea.
- * @param  array  $args The path (the part after the filearea and before the filename).
- * @return array The itemid and the filepath inside the $args path, for the defined filearea.
- */
-function mod_pokcertificate_get_path_from_pluginfile(string $filearea, array $args): array {
-    // Page never has an itemid (the number represents the revision but it's not stored in database).
-    array_shift($args);
-
-    // Get the filepath.
-    if (empty($args)) {
-        $filepath = '/';
-    } else {
-        $filepath = '/' . implode('/', $args) . '/';
-    }
-
-    return [
-        'itemid' => 0,
-        'filepath' => $filepath,
-    ];
 }
 
 /**
@@ -793,7 +493,8 @@ function pokcertificate_coursecertificatestatuslist(
     $senttopok,
     $coursestatus,
     $perpage,
-    $offset) {
+    $offset
+) {
     global $DB;
     $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
     $countsql = "SELECT count(ra.id) ";

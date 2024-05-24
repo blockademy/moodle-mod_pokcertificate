@@ -25,7 +25,7 @@
 require('../../config.php');
 
 require_login();
-$id      = optional_param('id', 0, PARAM_INT); // Course Module ID.
+$id      = required_param('id', PARAM_INT); // Course Module ID.
 
 $url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
 if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {

@@ -227,12 +227,12 @@ class mod_pokcertificate_external extends external_api {
     }
 
     /**
-     * request to verify authentication
-     * @param  [type] $prodtype   [description]
-     * @param  [type] $authtoken   [description]
-     * @param  [type] $institution [description]
-     * @return [type]           [description]
-     * //7cb608d4-0bb6-4641-aa06-594f2fedf2a0
+     * verify authentication
+     *
+     * @param  mixed $prodtype
+     * @param  mixed $authtoken
+     * @param  mixed $institution
+     * @return array
      */
     public static function verify_authentication($prodtype, $authtoken, $institution) {
         global $CFG;

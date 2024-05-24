@@ -47,7 +47,7 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
         $issue = new backup_nested_element(
             'issue',
             ['id'],
-            ['certid', 'userid', 'status', 'templateid', 'certificateurl', 'timecreated']
+            ['certid', 'userid', 'status', 'templateid', 'certificateurl', 'pokcertificateid', 'timecreated']
         );
 
         $fieldmappings = new backup_nested_element('fieldmappings');
