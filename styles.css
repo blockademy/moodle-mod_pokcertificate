@@ -186,7 +186,6 @@
 
 #page-mod-pokcertificate-view .generalbox .mainheading{
     color:green;
-    margin-left:45%;
     margin-top:10px;
 }
 #page-mod-pokcertificate-view .generalbox .success-mainheading{
@@ -200,7 +199,6 @@
 
 #page-mod-pokcertificate-view .generalbox .complheading{
     color:#0072ffcc;
-    margin-left:38%;
 }
 #page-mod-pokcertificate-view .generalbox .success-complheading{
     color:#0072ffcc;
@@ -218,7 +216,6 @@
 }
  #page-mod-pokcertificate-view .generalbox .faicon{
     color: green;
-    margin-left: 16.5rem;
 }
 
 .blue-enrolldate {

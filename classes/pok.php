@@ -389,7 +389,6 @@ class pok {
                 }
             }
         } catch (\Exception $e) {
-            print_R($e);
             throw new \Exception($e->getMessage());
         }
     }

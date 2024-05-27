@@ -95,6 +95,10 @@ if ($tempname) {
     echo $OUTPUT->header();
     $url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
     $renderer = $PAGE->get_renderer('mod_pokcertificate');
-    echo $renderer->display_notif_message($url, get_string('invalidtemplatedef', 'pokcertificate'));
+    echo $renderer->display_message_fatal_error(
+        'invalidtemplatedef',
+        'mod_pokcertificate',
+        $url
+    );
 }
 echo $OUTPUT->footer();

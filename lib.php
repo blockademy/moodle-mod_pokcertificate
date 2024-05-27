@@ -66,7 +66,7 @@ function pokcertificate_supports($feature) {
 
 /**
  * This function is used by the reset_course_userdata function in moodlelib.
- * @param $data the data submitted from the reset course.
+ * @param object $data the data submitted from the reset course.
  * @return array status array
  */
 function pokcertificate_reset_userdata($data) {
@@ -779,13 +779,8 @@ function pokcertificate_preview_by_user($cm, $pokcertificate, $flag) {
         // Getting certificate template view for student.
         $certificateissued = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $USER->id]);
 
-        if ($flag || (!empty($certificateissued) && !empty($certificateissued->get('pokcertificateid')))) {
+        if ($flag || ($certificateissued && !empty($certificateissued->get('pokcertificateid')))) {
             $studentview = true;
-        } else if (
-            !empty($certificateissued) && $certificateissued->get('status') &&
-            !empty($certificateissued->get('certificateurl'))
-        ) {
-            $url = $certificateissued->get('certificateurl');
         } else {
             $params = ['cmid' => $id, 'id' => $USER->id];
             $url = new moodle_url('/mod/pokcertificate/updateprofile.php', $params);
