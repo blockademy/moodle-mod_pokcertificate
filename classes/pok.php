@@ -509,6 +509,7 @@ class pok {
             $data = new \stdClass;
             $data->certid = $pokrecord->get('id');
             $data->userid = $user->id;
+            $data->useremail = $user->email;
             $data->status = ($emitcertificate->status) ? $emitcertificate->status : false;
             $data->templateid = $pokrecord->get('templateid');
             $data->certificateurl = (isset($emitcertificate->viewUrl)) ? $emitcertificate->viewUrl : '';

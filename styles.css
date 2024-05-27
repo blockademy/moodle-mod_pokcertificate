@@ -206,7 +206,7 @@
     color:#0072ffcc;
     text-align: center;
 }
-#page-mod-pokcertificate-view .generalbox input[type="button"] {
+#page-mod-pokcertificate-view .generalbox .pendingbtn {
     color: white;
     background: red;
     margin-left:42%;
@@ -218,7 +218,7 @@
 }
  #page-mod-pokcertificate-view .generalbox .faicon{
     color: green;
-    margin-left: 46%;
+    margin-left: 16.5rem;
 }
 
 .blue-enrolldate {

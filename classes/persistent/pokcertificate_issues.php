@@ -46,6 +46,10 @@ class pokcertificate_issues extends persistent {
                 'type' => PARAM_INT,
                 'optional' => false,
             ],
+            'useremail' => [
+                'type' => PARAM_RAW,
+                'optional' => true,
+            ],
             'status' => [
                 'type' => PARAM_BOOL,
                 'optional' => false,

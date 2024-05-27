@@ -81,5 +81,16 @@ function xmldb_pokcertificate_upgrade($oldversion) {
         }
         upgrade_mod_savepoint(true, 2024041608.01, 'pokcertificate');
     }
+
+    if ($oldversion < 2024041608.03) {
+        $table = new xmldb_table('pokcertificate_issues');
+
+        $field = new xmldb_field('useremail', XMLDB_TYPE_CHAR, '225', null, null, null, null, 'userid');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2024041608.03, 'pokcertificate');
+    }
     return true;
 }

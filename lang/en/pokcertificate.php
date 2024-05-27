@@ -208,6 +208,9 @@ $string['completionmsg'] = 'You have completed the course';
 $string['pendingcertificatemsg'] = 'Your certificate is being issued by {$a->institution}.
 We would like to remind you that it is important for you to check your email in order
 to accept the certificate. For any questions please contact {$a->institution} . <br /><br />';
+$string['mailacceptancepending'] = 'Your certificate is currently being processed. You will receive an email with
+instructions on how to accept your certificate. For any questions please contact {$a->institution}.
+<br /><br />';
 $string['firstname'] = 'Student Name';
 $string['firstname_help'] = 'Student name which will be displayed on certificate.';
 $string['lastname'] = 'Surname';
