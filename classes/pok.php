@@ -510,10 +510,10 @@ class pok {
             $data->certid = $pokrecord->get('id');
             $data->userid = $user->id;
             $data->useremail = $user->email;
-            $data->status = ($emitcertificate->status) ? $emitcertificate->status : false;
+            $data->status = (isset($emitcertificate->status)) ? $emitcertificate->status : false;
             $data->templateid = $pokrecord->get('templateid');
             $data->certificateurl = (isset($emitcertificate->viewUrl)) ? $emitcertificate->viewUrl : '';
-            $data->pokcertificateid = $emitcertificate->id;
+            $data->pokcertificateid = (isset($emitcertificate->id)) ? $emitcertificate->id : 0;
             if ($pokissuedataexists) {
                 $data->id = $pokissuedataexists->get('id');
                 $issues = new pokcertificate_issues(0, $data);
