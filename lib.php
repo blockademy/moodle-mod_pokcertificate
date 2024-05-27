@@ -775,9 +775,11 @@ function pokcertificate_preview_by_user($cm, $pokcertificate, $flag) {
             $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
         }
     } else {
+
         // Getting certificate template view for student.
         $certificateissued = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $USER->id]);
-        if ($flag) {
+
+        if ($flag || (!empty($certificateissued) && !empty($certificateissued->get('pokcertificateid')))) {
             $studentview = true;
         } else if (
             !empty($certificateissued) && $certificateissued->get('status') &&
