@@ -50,6 +50,7 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
 
         $user = $this->_customdata['user'];
         $userid = $user->id;
+        $nameofstudent = $user->firstname.' '.$user->lastname;
 
         // Next the customisable profile fields.
 
@@ -57,6 +58,7 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
         $stringman = get_string_manager();
 
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
+        $mform->addElement('static', 'nameofstudent', '', $nameofstudent);
         // Add the necessary names.
         foreach (useredit_get_required_name_fields() as $fullname) {
             $purpose = user_edit_map_field_purpose($user->id, $fullname);
@@ -83,7 +85,7 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
 
         profile_definition($mform, $userid);
 
-        $this->add_action_buttons(true, get_string('updatemyprofile'));
+        $this->add_action_buttons(true, get_string('save'));
 
         $this->set_data($user);
     }

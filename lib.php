@@ -518,7 +518,7 @@ function pokcertificate_coursecertificatestatuslist(
                 JOIN {role} r ON (ra.roleid = r.id AND r.shortname = 'student')
                 JOIN {user} u ON ra.userid = u.id
            LEFT JOIN {course_completions} cc ON (u.id = cc.userid AND pc.course = cc.course)
-           LEFT JOIN {pokcertificate_templates} pct ON cm.instance = pct.pokid
+           LEFT JOIN {pokcertificate_templates} pct ON pc.templateid = pct.id
            LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.certid)
                WHERE pc.course = :courseid
                      AND cm.deletioninprogress = 0
