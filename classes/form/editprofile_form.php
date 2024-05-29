@@ -55,7 +55,6 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
         // Next the customisable profile fields.
 
         $strrequired = get_string('required');
-        $stringman = get_string_manager();
 
         $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
         $mform->addElement('static', 'nameofstudent', '', $nameofstudent);
@@ -63,12 +62,7 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
         foreach (useredit_get_required_name_fields() as $fullname) {
             $purpose = user_edit_map_field_purpose($user->id, $fullname);
             $mform->addElement('text', $fullname,  get_string($fullname, 'mod_pokcertificate'),  'maxlength="100" size="30"' . $purpose);
-            if ($stringman->string_exists('missing' . $fullname, 'core')) {
-                $strmissingfield = get_string('missing' . $fullname, 'core');
-            } else {
-                $strmissingfield = $strrequired;
-            }
-            $mform->addRule($fullname, $strmissingfield, 'required', null, 'client');
+            $mform->addRule($fullname, $strrequired, 'required', null, 'client');
             $mform->setType($fullname, PARAM_NOTAGS);
         }
 
@@ -77,6 +71,7 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
         $mform->setType('email', PARAM_RAW_TRIMMED);
 
         $mform->addElement('text', 'idnumber', get_string('studentid', 'mod_pokcertificate'), 'maxlength="255" size="25"');
+        $mform->addRule('idnumber', $strrequired, 'required', null, 'client');
         $mform->setType('idnumber', core_user::get_property_type('idnumber'));
 
         $mform->addElement('hidden', 'id');

@@ -464,7 +464,6 @@ function pokcertificate_incompletestudentprofilelist($studentid, $perpage, $offs
             $list['lastname'] = $c->lastname;
             $list['email'] = $c->email;
             $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
-            $list['language'] = 'English';
             $data[] = $list;
         }
     }
