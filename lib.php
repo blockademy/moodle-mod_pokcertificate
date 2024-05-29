@@ -509,6 +509,7 @@ function pokcertificate_coursecertificatestatuslist(
                          u.email,
                          cc.timecompleted as completiondate,
                          pct.templatetype,
+                         pci.status,
                          pci.certificateurl ";
     $fromsql = "FROM {pokcertificate} pc
                 JOIN {course_modules} cm ON pc.id = cm.instance
@@ -548,11 +549,11 @@ function pokcertificate_coursecertificatestatuslist(
     }
 
     if ($senttopok == 'yes') {
-        $fromsql .= "AND pci.certificateurl IS NOT NULL ";
+        $fromsql .= "AND (pci.certificateurl IS NOT NULL AND pci.status = 1) ";
     }
 
     if ($senttopok == 'no') {
-        $fromsql .= "AND pci.certificateurl IS NULL ";
+        $fromsql .= "AND (pci.certificateurl IS NULL OR pci.status = 0) ";
     }
 
     $concatsql = "ORDER BY ra.id DESC ";
@@ -573,7 +574,7 @@ function pokcertificate_coursecertificatestatuslist(
             $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
             $list['coursestatus'] = $c->completiondate ? get_string('completed') : get_string('inprogress', 'mod_pokcertificate');
             $list['certificatetype'] = $c->templatetype == 0 ? 'Free' : 'Paid';
-            $list['senttopok'] = $c->certificateurl ? get_string('yes') : get_string('no');
+            $list['senttopok'] = $c->status ? get_string('yes') : get_string('no');
             $list['certificateurl'] = $c->certificateurl;
             $data[] = $list;
         }
