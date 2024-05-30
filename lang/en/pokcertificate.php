@@ -240,3 +240,6 @@ $string['pokcertificate:selfupdateincompleteprofile'] = 'Self update incomplete 
 $string['templateupdated'] = 'Template updated for POK certificate';
 $string['displaycertificatemsg'] = 'Please click below link to view Certificate. <br/>';
 $string['viewcertificate'] = 'View Certificate';
+$string['issuecertificatestask'] = 'Issue POK Certificate to user task';
+$string['certificatenotconfigured'] = 'Certificate is not configured yet';
+$string['description'] = 'Description';
