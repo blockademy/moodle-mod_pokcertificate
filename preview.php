@@ -45,8 +45,9 @@ $PAGE->set_heading($course->fullname);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);
 
-echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
+$renderer->verify_authentication_check();
+echo $OUTPUT->header();
 echo $renderer->action_bar($id, $PAGE->url);
 echo $renderer->preview_certificate_template($id);
 

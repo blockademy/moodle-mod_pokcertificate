@@ -234,12 +234,42 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
      * This method is responsible for validating the form data submitted by the user.
      * It performs necessary validation checks on the data and files provided.
      *
-     * @param array $data An associative array containing the form data submitted by the user.
+     * @param array $user An associative array containing the form data submitted by the user.
      * @param array $files An associative array containing any files uploaded via the form.
      * @return array|bool An array of validation errors, or true if validation succeeds.
      */
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        return $errors;
+    public function validation($user, $files) {
+        global $DB, $CFG;
+        $errors = parent::validation($user, $files);
+        $user = (object)$user;
+        $user = $DB->get_record('user', ['id' => $user->id]);
+        $errors = [];
+
+        if (!$user or (isset($user->email) && $user->email !== $user->email)) {
+            if (!validate_email($user->email)) {
+                $errors['email'] = get_string('invalidemail');
+            } else if (empty($CFG->allowaccountssameemail)) {
+                // Make a case-insensitive query for the given email address.
+                $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid AND id <> :userid';
+                $params = [
+                    'email' => $user->email,
+                    'mnethostid' => $CFG->mnet_localhost_id,
+                    'userid' => $user->id
+                ];
+                // If there are other user(s) that already have the same email, show an error.
+                if ($DB->record_exists_select('user', $select, $params)) {
+                    $errors['email'] = get_string('emailexists');
+                }
+            }
+        }
+
+        // Next the customisable profile fields.
+        $errors += profile_validation($user, $files);
+
+        if (count($errors) == 0) {
+            return true;
+        } else {
+            return $errors;
+        }
     }
 }

@@ -24,10 +24,15 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use mod_pokcertificate\permission;
 use mod_pokcertificate\pok;
+use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\persistent\pokcertificate_issues;
+use core_availability\info_module;
+
+use function PHPUnit\Framework\isNull;
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -181,7 +186,64 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
 
     return $info;
 }
+/**
+ * Set visibility to user if certificate not configured properly
+ * mod_pokcertificate_cm_info_dynamic
+ *
+ * @param  object $cm
+ * @return void
+ */
+function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
+    global $DB, $USER, $PAGE, $OUTPUT;
+    $context = \context_module::instance($cm->id);
+    if (!permission::can_manage($context)) {
+        $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+        if ($pokrecord && !empty($pokrecord->get('templateid')) &&  $pokrecord->get('templateid') != 0) {
+            $poktemplate = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
+            $templatename = base64_encode($poktemplate->get('templatename'));;
 
+            $externalfields = get_externalfield_list($templatename, $pokrecord->get('id'));
+            if (!empty($externalfields)) {
+                $pokid = $pokrecord->get('id');
+                $pokfields = $DB->get_fieldset_sql("SELECT templatefield from {pokcertificate_fieldmapping} WHERE certid = $pokid");
+                foreach ($externalfields as $key => $value) {
+
+                    if (!in_array($key, $pokfields)) {
+                        $cm->set_user_visible(false);
+                    }
+                }
+            }
+
+            $modinfo = get_fast_modinfo($cm->get_course(), $USER->id);
+            $cmuser = $modinfo->get_cm($cm->id);
+
+            if ($cmuser && !empty($cmuser->uservisible) && !empty($cmuser->available)) {
+                if ($cmuser->uservisible && $cmuser->available) {
+                    $renderer = $PAGE->get_renderer('mod_pokcertificate');
+                    $pokissuerec = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $USER->id]);
+                    $link = $renderer->render_emit_certificate($cm, $USER, $pokissuerec);
+                    /*
+                    $url = new moodle_url(
+                        "/mod/pokcertificate/view.php",
+                        ['id' => $cm->id]
+                    );
+                    $link = html_writer::link($url, get_string('certificatesuccessmsg', 'mod_pokcertificate', $USER->email),);
+                    $link .= $OUTPUT->action_link(
+                    new \moodle_url('/course/view.php', ['id' => $cm->course]),
+                    get_string('done', 'pokcertificate'),
+                    null,
+                    [
+                        'class' => 'btn btn-primary text-center',
+                    ],
+                ); */
+                    $cm->set_after_link(' ' . $link);
+                }
+            }
+        } else {
+            $cm->set_user_visible(false);
+        }
+    }
+}
 /**
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
@@ -348,18 +410,20 @@ function get_mapped_fields(int $certid) {
 
     $fields = pokcertificate_fieldmapping::fieldmapping_records(['certid' => $certid], 'id');
     $data = new \stdClass;
-    if ($fields) {
-        $data->option_repeats = count($fields);
-        $key = 0;
+    $i = 0;
+    if (count($fields) > 0) {
 
         foreach ($fields as $field) {
-            $data->templatefield[$key] = $field->templatefield;
-            $data->userfield[$key] = $field->userfield;
-            $optionid[] = $field->id;
-            $key++;
+            if ($i < count($fields)) {
+                $templatefield = 'templatefield_' . $i;
+                $userfield = 'userfield_' . $i;
+                $data->$templatefield = $field->templatefield;
+                $data->$userfield = $field->userfield;
+                $i++;
+            }
         }
-        $data->optionid = $optionid;
     }
+
     return $data;
 }
 
@@ -377,9 +441,9 @@ function get_internalfield_list() {
     $usercolumns = $DB->get_columns('user');
     $localfields = [];
     $validfields = [
-        'id', 'username', 'firstname', 'lastname', 'middlename',
-        'idnumber', 'email', 'lang', 'phone1', 'phone2', 'department', 'institution',
-        'city', 'address', 'country',
+        'firstname', 'lastname',
+        'idnumber', 'email', 'phone1', 'department',
+        'city', 'country',
     ];
     foreach ((array)$usercolumns as $key => $field) {
         if (in_array($key, $validfields)) {
@@ -403,24 +467,25 @@ function get_internalfield_list() {
  */
 function get_externalfield_list($template, $pokid) {
     $templatefields = [];
-    $template = base64_decode($template);
-    $templatedefinition = pokcertificate_templates::get_field(
-        'templatedefinition',
-        ['pokid' => $pokid, 'templatename' => $template]
-    );
-    $templatedefinition = json_decode($templatedefinition);
-    if ($templatedefinition) {
-        foreach ($templatedefinition->params as $param) {
-            $pos = strpos($param->name, 'custom:');
-            if ($pos !== false) {
-                $var = substr($param->name, strrpos($param->name, ':') + 1);
-                if ($var) {
-                    $templatefields[$var] = $var;
+    if (isset($template) && !empty($template)) {
+        $template = base64_decode($template);
+        $templatedefinition = pokcertificate_templates::get_field(
+            'templatedefinition',
+            ['pokid' => $pokid, 'templatename' => $template]
+        );
+        $templatedefinition = json_decode($templatedefinition);
+        if ($templatedefinition) {
+            foreach ($templatedefinition->params as $param) {
+                $pos = strpos($param->name, 'custom:');
+                if ($pos !== false) {
+                    $var = substr($param->name, strrpos($param->name, ':') + 1);
+                    if ($var) {
+                        $templatefields[$var] = $var;
+                    }
                 }
             }
         }
     }
-
     return $templatefields;
 }
 
@@ -651,71 +716,6 @@ function mod_pokcertificate_extend_navigation_course(navigation_node $navigation
 }
 
 /**
- * Terminate the current script with a fatal error.
- *
- * Adapted from core_renderer's fatal_error() method. Needed because throwing errors with HTML links in them will convert links
- * to text using htmlentities. See MDL-66161 - Reflected XSS possible from some fatal error messages.
- *
- * So need custom error handler for fatal Zoom errors that have links to help people.
- *
- * @param string $errorcode The name of the string from error.php to print
- * @param string $module name of module
- * @param string $continuelink The url where the user will be prompted to continue.
- *                             If no url is provided the user will be directed to
- *                             the site index page.
- * @param mixed $a Extra words and phrases that might be required in the error string
- */
-function pokcertificate_fatal_error($errorcode, $module = '', $continuelink = '', $a = null) {
-    global $CFG, $COURSE, $OUTPUT, $PAGE;
-
-    $output = '';
-    $obbuffer = '';
-
-    // Assumes that function is run before output is generated.
-    if ($OUTPUT->has_started()) {
-        // If not then have to default to standard error.
-        throw new moodle_exception($errorcode, $module, $continuelink, $a);
-    }
-
-    $PAGE->set_heading($COURSE->fullname);
-    $output .= $OUTPUT->header();
-
-    // Output message without messing with HTML content of error.
-    $message = '<p class="errormessage">' . get_string($errorcode, $module, $a) . '</p>';
-
-    $output .= $OUTPUT->box($message, 'errorbox alert alert-danger', null, ['data-rel' => 'fatalerror']);
-
-    if ($CFG->debugdeveloper) {
-        if (!empty($debuginfo)) {
-            $debuginfo = s($debuginfo); // Removes all nasty JS.
-            $debuginfo = str_replace("\n", '<br />', $debuginfo); // Keep newlines.
-            $output .= $OUTPUT->notification('<strong>Debug info:</strong> ' . $debuginfo, 'notifytiny');
-        }
-
-        if (!empty($backtrace)) {
-            $output .= $OUTPUT->notification('<strong>Stack trace:</strong> ' . format_backtrace($backtrace), 'notifytiny');
-        }
-
-        if ($obbuffer !== '') {
-            $output .= $OUTPUT->notification('<strong>Output buffer:</strong> ' . s($obbuffer), 'notifytiny');
-        }
-    }
-
-    if (!empty($continuelink)) {
-        $output .= $OUTPUT->continue_button($continuelink);
-    }
-
-    $output .= $OUTPUT->footer();
-
-    // Padding to encourage IE to display our error page, rather than its own.
-    $output .= str_repeat(' ', 512);
-
-    echo $output;
-
-    exit(1); // General error code.
-}
-
-/**
  * Retrieves the enrollment date of a user in a specific course.
  *
  * This function queries the database to find the enrollment date
@@ -767,7 +767,7 @@ function pokcertificate_preview_by_user($cm, $pokcertificate, $flag) {
     $adminview = false;
     $studentview = false;
     // Getting certificate template view for admin.
-    if (is_siteadmin()  || has_capability('mod/pokcertificate:manageinstance', $context)) {
+    if (permission::can_manage($context)) {
         $preview = pok::preview_template($id);
         if ($preview) {
             $adminview = true;

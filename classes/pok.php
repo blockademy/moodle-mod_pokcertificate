@@ -21,6 +21,7 @@ use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 use mod_pokcertificate\persistent\pokcertificate_issues;
 use mod_pokcertificate\event\template_updated;
+use core_availability\info_module;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -88,6 +89,13 @@ class pok {
         $data->orgid = get_config('mod_pokcertificate', 'orgid');
         $data->usercreated = $USER->id;
         $data->timecreated = time();
+        $displayoptions = [];
+        $displayoptions['printintro']   = (isset($data->printintro) ? $data->printintro : 0);
+        $displayoptions['printlastmodified'] = (isset($data->printlastmodified) ? $data->printlastmodified : 1);
+        $data->displayoptions = serialize($displayoptions);
+
+        $data->intro       = $data->introeditor['text'];
+        $data->introformat = $data->introeditor['format'];
 
         $pokcertificate = new pokcertificate(0, $data);
         $pokcertificate->create();
@@ -128,7 +136,6 @@ class pok {
     public static function update_pokcertificate_instance($data, $mform) {
         global $CFG, $USER;
         require_once("$CFG->libdir/resourcelib.php");
-
         $cmid        = $data->coursemodule;
 
         $data->orgname = get_config('mod_pokcertificate', 'institution');
@@ -142,6 +149,9 @@ class pok {
         $displayoptions['printintro']   = (isset($data->printintro) ? $data->printintro : 0);
         $displayoptions['printlastmodified'] = (isset($data->printlastmodified) ? $data->printlastmodified : 1);
         $data->displayoptions = serialize($displayoptions);
+
+        $data->intro       = $data->introeditor['text'];
+        $data->introformat = $data->introeditor['format'];
 
         $pokcertificate = new pokcertificate(0, $data);
         $pokcertificate->update();
@@ -200,7 +210,7 @@ class pok {
      * @param object $templateinfo - template information
      * @param object $cm - course module instance
      *
-     * @return mixed
+     * @return array []
      */
     public static function save_template_definition($templateinfo, $cm) {
         global $USER;
@@ -209,6 +219,7 @@ class pok {
         $templatetype = $templateinfo->templatetype;
         $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($template);
         $pokid = pokcertificate::get_field('id', ['id' => $cm->instance]);
+
         try {
             if ($templatedefinition) {
                 $templatedefdata = new \stdclass;
@@ -253,10 +264,10 @@ class pok {
                 }
                 return ['certid' => $pokid, 'templateid' => $templateid];
             } else {
-                return;
+                return [];
             }
         } catch (\moodle_exception $e) {
-            return;
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -280,9 +291,14 @@ class pok {
                     }
                 }
                 $fieldvalues = [];
-                foreach ($data->templatefield as $key => $field) {
-                    $fieldvalues[$field] = $data->userfield[$key];
+                if (isset($data->fieldcount) && ($data->fieldcount > 0)) {
+                    for ($i = 0; $i < $data->fieldcount; $i++) {
+                        $tempfield = 'templatefield_' . $i;
+                        $userfield = 'userfield_' . $i;
+                        $fieldvalues[$data->$tempfield] = $data->$userfield;
+                    }
                 }
+
                 foreach ($fieldvalues as $field => $value) {
                     $mappingfield = new \stdClass();
                     $mappingfield->timecreated = time();
@@ -296,7 +312,7 @@ class pok {
             }
             return false;
         } catch (\moodle_exception $e) {
-            return false;
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -304,10 +320,9 @@ class pok {
      * Get list of certificate templates.
      *
      * @param  int $cmid
-     * @param  string $type
      * @return array
      */
-    public static function get_certificate_templates($cmid, $type = 'free') {
+    public static function get_certificate_templates($cmid) {
         global $CFG;
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
         $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
@@ -346,7 +361,7 @@ class pok {
     public static function preview_template($cmid) {
         $cm = self::get_cm_instance($cmid);
         $context = \context_module::instance($cm->id);
-        if (!empty($cm) && has_capability('mod/pokcertificate:manageinstance', $context)) {
+        if (!empty($cm) && permission::can_manage($context)) {
             $templateid = pokcertificate::get_field(
                 'templateid',
                 ['id' => $cm->instance, 'course' => $cm->course]
@@ -371,7 +386,7 @@ class pok {
         $cm = self::get_cm_instance($cmid);
         $emitcertificate = new \stdClass();
         try {
-            if (!empty($cm) && !has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+            if (!empty($cm) && !permission::can_manage(\context_system::instance())) {
                 $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
                 if ($pokrecord && $pokrecord->get('templateid')) {
                     $template = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
@@ -396,11 +411,11 @@ class pok {
     /**
      * Invoke get_certificate api to issue certificate by passing the certificate id emitted.
      *
-     * @param  object $emitcertificate
+     * @param  object $pokissuerec
      * @return mixed
      */
-    public static function issue_certificate($emitcertificate) {
-        $data = $emitcertificate->to_record();
+    public static function issue_certificate($pokissuerec) {
+        $data = $pokissuerec->to_record();
         if (!empty($data->pokcertificateid)) {
             $issuecertificate = (new \mod_pokcertificate\api)->get_certificate($data->pokcertificateid);
             $issuecertificate = json_decode($issuecertificate);
@@ -513,7 +528,9 @@ class pok {
             $data->templateid = $pokrecord->get('templateid');
             $data->certificateurl = (isset($emitcertificate->viewUrl)) ? $emitcertificate->viewUrl : '';
             $data->pokcertificateid = (isset($emitcertificate->id)) ? $emitcertificate->id : 0;
+
             if ($pokissuedataexists) {
+                $data->timemodified = time();
                 $data->id = $pokissuedataexists->get('id');
                 $issues = new pokcertificate_issues(0, $data);
                 $issues->update();
@@ -560,5 +577,61 @@ class pok {
             }
         }
         return true;
+    }
+
+    /**
+     * Gets list of users for whom the certificate is not issued.
+     *
+     * @param \stdClass $pokcertificate
+     * @param \cm_info $cm
+     * @return array
+     */
+    public static function get_users_to_issue($pokcertificate, $cm) {
+
+        $context = \context_course::instance($pokcertificate->course);
+        // Get users already issued subquery.
+        $users = self::get_notissued_users_list(
+            $pokcertificate->course,
+            $pokcertificate->templateid
+        );
+
+        // Filter only users with access to the activity.
+        $info = new info_module($cm);
+        $filteredusers = $info->filter_user_list($users);
+
+        // Filter only users without 'view' capabilities and with access to the activity.
+        $users = [];
+        foreach ($filteredusers as $filtereduser) {
+
+            $modinfo = get_fast_modinfo($cm->get_course(), $filtereduser->userid);
+            $cmuser = $modinfo->get_cm($cm->id);
+
+            if ($cmuser && $cmuser->uservisible && $cmuser->available) {
+                $users[] = $filtereduser;
+            }
+        }
+
+        return $users;
+    }
+
+    /**
+     * Returns select for the users that have been not issued
+     *
+     * @param int $courseid
+     * @param int $templateid
+     * @return array
+     */
+    private static function get_notissued_users_list(int $courseid, int $templateid): array {
+        global $DB;
+        $sql = "SELECT DISTINCT poki.* FROM {" . pokcertificate_issues::TABLE . "} poki
+                    JOIN {" . pokcertificate::TABLE . "} pok ON pok.templateid = poki.templateid AND pok.id=poki.certid
+                WHERE pok.course = :courseid AND pok.templateid = :templateid
+                      AND poki.status = 0 AND poki.certificateurl IS NULL OR poki.certificateurl = ''";
+        $params = [
+            'courseid' => $courseid,
+            'templateid' => $templateid,
+        ];
+        $users = $DB->get_records_sql($sql, $params);
+        return $users;
     }
 }

@@ -18,6 +18,7 @@ namespace mod_pokcertificate\output;
 
 defined('MOODLE_INTERNAL') || die();
 
+use mod_pokcertificate\permission;
 use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_issues;
@@ -100,7 +101,7 @@ class renderer extends \plugin_renderer_base {
         if (get_config('mod_pokcertificate', 'pokverified')) {
             if ($recexists) {
 
-                if (has_capability('mod/pokcertificate:manageinstance', $context)) {
+                if (permission::can_manage($context)) {
 
                     $certificatetemplatecontent = pok::get_certificate_templates($id);
                     if ($certificatetemplatecontent) {
@@ -114,7 +115,7 @@ class renderer extends \plugin_renderer_base {
             } else {
                 echo get_string('invalidcoursemodule', 'mod_pokcertificate');
             }
-        } else if (has_capability('mod/pokcertificate:manageinstance', $context)) {
+        } else if (permission::can_manage($context)) {
             echo self::verify_authentication();
         }
     }
@@ -297,7 +298,7 @@ class renderer extends \plugin_renderer_base {
      * @return string HTML content for the certificate success message modal dialog.
      */
     public function display_certificate($url) {
-        global $CFG, $USER;
+        global $CFG;
         require_once("{$CFG->libdir}/completionlib.php");
         $attributes = [
             'role' => 'promptdialog',
@@ -353,7 +354,6 @@ class renderer extends \plugin_renderer_base {
     public function emit_certificate_templates($cmid, $user) {
         $output  = '';
         $user = \core_user::get_user($user->id);
-        $availablecredits = get_config('mod_pokcertificate', 'availablecertificates');
         $credits = (new \mod_pokcertificate\api)->get_credits();
         $credits = json_decode($credits);
         $cm = pok::get_cm_instance($cmid);
@@ -365,12 +365,10 @@ class renderer extends \plugin_renderer_base {
         ) {
             $output = self::display_certificate($pokissuerec->get('certificateurl'));
         } else {
-            if (!empty($credits)) {
-                if (($availablecredits != $credits->pokCredits || $credits->pokCredits > $availablecredits)) {
-                    set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
-                }
+            if (!empty($credits) && isset($credits->pokCredits)) {
+                set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
             }
-            if ($credits->pokCredits >= 0) {
+            if (isset($credits->pokCredits) && $credits->pokCredits >= 0) {
                 $output = self::render_emit_certificate($cm, $user, $pokissuerec);
             } else {
                 $msg = get_string(
@@ -383,11 +381,8 @@ class renderer extends \plugin_renderer_base {
         }
         if (empty($output)) {
             $url = new \moodle_url('/course/view.php', ['id' => $cm->course]);
-            $output = self::display_message_fatal_error(
-                'no_data_available',
-                'mod_pokcertificate',
-                $url
-            );
+            $output = notice('<p class="errorbox alert alert-warning">' .
+                get_string('certificatenotconfigured', 'mod_pokcertificate') . '</p>', $url);
         }
         return $output;
     }
@@ -423,7 +418,7 @@ class renderer extends \plugin_renderer_base {
                             'mod_pokcertificate',
                             ['institution' => get_config('mod_pokcertificate', 'institution')]
                         );
-                        if ($issuecertificate->processing) {
+                        if ($issuecertificate->processing || empty($issuecertificate->viewUrl)) {
                             $output = self::certificate_pending_message($msg, $cm);
                         } else {
                             $issuecertificate->status = true;
@@ -592,18 +587,17 @@ class renderer extends \plugin_renderer_base {
     public function verify_authentication_check() {
         global $CFG, $COURSE;
         if (!get_config('mod_pokcertificate', 'pokverified')) {
-            if (is_siteadmin() || has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
+            if (permission::can_manage(\context_system::instance())) {
                 $errormsg = 'authenticationcheck';
                 $url = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
             } else {
                 $errormsg = 'authenticationcheck_user';
                 $url = $CFG->wwwroot . '/course/view.php?id=' . $COURSE->id;
             }
-            return pokcertificate_fatal_error(
+            return notice('<p class="errorbox alert alert-warning">' . get_string(
                 $errormsg,
-                'mod_pokcertificate',
-                $url
-            );
+                'mod_pokcertificate'
+            ) . '</p>', $url);
         }
     }
 
@@ -628,49 +622,5 @@ class renderer extends \plugin_renderer_base {
 
         $output = \html_writer::div($button);
         return $output;
-    }
-
-    /**
-     * Terminate the current script with a fatal error.
-     *
-     * So need custom error handler for fatal errors that have links to help people.
-     *
-     * @param string $errorcode The name of the string from error.php to print
-     * @param string $module name of module
-     * @param string $continuelink The url where the user will be prompted to continue.
-     *                             If no url is provided the user will be directed to
-     *                             the site index page.
-     * @param mixed $a Extra words and phrases that might be required in the error string
-     */
-    public function display_message_fatal_error($errorcode, $module = '', $continuelink = '', $a = null) {
-        global $CFG;
-
-        $output = '';
-        $obbuffer = '';
-
-        // Output message without messing with HTML content of error.
-        $message = '<p class="errormessage">' . get_string($errorcode, $module, $a) . '</p>';
-        $output .= $this->box($message, 'errorbox alert alert-danger', null, ['data-rel' => 'fatalerror']);
-        if ($CFG->debugdeveloper) {
-            if (!empty($debuginfo)) {
-                $debuginfo = s($debuginfo); // Removes all nasty JS.
-                $debuginfo = str_replace("\n", '<br />', $debuginfo); // Keep newlines.
-                $output .= $this->notification('<strong>Debug info:</strong> ' . $debuginfo, 'notifytiny');
-            }
-            if (!empty($backtrace)) {
-                $output .= $this->notification('<strong>Stack trace:</strong> ' . format_backtrace($backtrace), 'notifytiny');
-            }
-            if ($obbuffer !== '') {
-                $output .= $this->notification('<strong>Output buffer:</strong> ' . s($obbuffer), 'notifytiny');
-            }
-        }
-
-        if (!empty($continuelink)) {
-            $output .= $this->continue_button($continuelink);
-        }
-
-        // Padding to encourage IE to display our error page, rather than its own.
-        $output .= str_repeat(' ', 512);
-        echo $output;
     }
 }

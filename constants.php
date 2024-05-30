@@ -46,7 +46,7 @@ define('CUSTODIAN_ROOT', $custodianurl);
 $sampledata = [
     "name" => "John Galt",
     "title" => "Engineer",
-    "date" => 1704423600000,
+    "date" => time(),
     "institution" => "Ohio State University",
 ];
 define('SAMPLE_DATA', $sampledata);

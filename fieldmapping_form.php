@@ -47,77 +47,34 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $mform->addElement('header', 'fieldmapping', get_string('fieldmapping', 'pokcertificate') . "");
 
         $groupelem = [];
+        $groupelem[] = &$mform->createElement('html', '<div class = "fieldmappingheaders">');
         $groupelem[] = &$mform->createElement('html', '<span>' . get_string('apifields', 'pokcertificate') . '</span>');
         $groupelem[] = &$mform->createElement(
             'html',
             '<span class="ufheader" >' . get_string('userfields', 'pokcertificate') . '</span>'
         );
-        $mform->addGroup($groupelem, '', '', [' '], false, ['class' => 'mappingheaders']);
+        $groupelem[] = &$mform->createElement('html', '</div>');
+        $mform->addGroup($groupelem, '', '', [' '], false, []);
 
-        $localfields = get_internalfield_list();
+        $defaultselect = array(null => get_string('select'));
+
+        $localfields = $defaultselect + get_internalfield_list();
         $remotefields = get_externalfield_list($templatename, $certid);
+        $i = 0;
+        foreach ($remotefields as $key => $value) {
 
-        $repeatarray = [
-            $mform->createElement('hidden', 'fieldmapping', 'fieldmapping'),
-
-            $mform->createElement('html', '<div class = "fieldmapping">'),
-            $mform->createElement(
-                'select',
-                'templatefield',
-                '',
-                $remotefields,
-                ['class' => 'templatefields']
-            ),
-
-            $mform->createElement(
-                'select',
-                'userfield',
-                '',
-                $localfields,
-                ['class' => 'userfields']
-            ),
-
-            $mform->createElement(
-                'submit',
-                'delete',
-                'X',
-                ['class' => 'removerow']
-            ),
-
-            $mform->createElement(
-                'hidden',
-                'optionid'
-            ),
-            $mform->createElement('html', '</div>'),
-
-        ];
-
-        $repeateloptions = [];
-        $repeateloptions['fieldmapping']['default'] = '{no}';
-        $repeateloptions['fieldmapping']['type'] = PARAM_RAW;
-        $repeateloptions['templatefield']['type'] = PARAM_RAW;
-        $repeateloptions['userfield']['type'] = PARAM_RAW;
-
-        $mform->setDefault('optionid', 0);
-        $mform->setType('optionid', PARAM_INT);
-
-        $repeatno = 1;
-        $count = count($remotefields);
-        if ($count > 0) {
-            $repeatno = $count;
+            $fieldgrpelem = [];
+            $fieldgrpelem[] = &$mform->createElement('html', '<div class = "fieldmapping">');
+            $fieldgrpelem[] = &$mform->createElement('select', 'templatefield_' . $i . '', '', [$key => $value], ['class' => 'templatefields']);
+            $fieldgrpelem[] = &$mform->createElement('html', '<span>→</span>');
+            $fieldgrpelem[] = &$mform->createElement('select', 'userfield_' . $i . '', '', $localfields, ['class' => 'userfields']);
+            $fieldgrpelem[] = &$mform->createElement('html', '</div>');
+            $mform->addGroup($fieldgrpelem, "fieldgrpelem[$i]", '', [' '], false, []);
+            $i++;
         }
 
-        $this->repeat_elements(
-            $repeatarray,
-            $repeatno,
-            $repeateloptions,
-            'option_repeats',
-            'option_add_fields addfields',
-            1,
-            get_string('add', 'pokcertificate'),
-            true,
-            'delete',
-        );
+        $mform->addElement('hidden', 'fieldcount', $i);
+        $mform->setType('fieldcount', PARAM_INT);
 
         $mform->addElement('hidden', 'id', $id);
         $mform->setType('id', PARAM_INT);
@@ -160,9 +117,15 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
     public function validation($data, $files) {
 
         $errors = parent::validation($data, $files);
-        if (!isset($data['fieldmapping']) || count($data['fieldmapping']) == 0) {
-            $errors['fieldmapping'] = 'Fields to be mapped';
+        if (isset($data['fieldcount']) && $data['fieldcount'] > 0) {
+            for ($i = 0; $i < $data['fieldcount']; $i++) {
+                if (!isset($data['userfield_' . $i]) || empty($data['userfield_' . $i])) {
+                    $errors['userfield_' . $i] = 'Please select user field to be mapped';
+                    $errors["fieldgrpelem[$i]"] = 'Please select user field to be mapped';
+                }
+            }
         }
+
         return $errors;
     }
 }

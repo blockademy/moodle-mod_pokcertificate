@@ -15,16 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * pokcertificate module version information
+ * Scheduled task definitions for POK Certificate
+ *
+ * Documentation: {@link https://moodledev.io/docs/apis/subsystems/task}
  *
  * @package    mod_pokcertificate
+ * @category   task
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024041608.04;       // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023100400;    // Requires this Moodle version.
-$plugin->component = 'mod_pokcertificate';       // Full name of the plugin (used for diagnostics).
-$plugin->cron      = 0;
+$tasks = [
+    [
+        'classname' => 'mod_pokcertificate\task\issue_certitficate_user',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*/1',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
+];

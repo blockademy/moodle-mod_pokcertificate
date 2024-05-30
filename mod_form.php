@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use mod_pokcertificate\persistent\pokcertificate;
+
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -41,7 +43,6 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         global $CFG, $PAGE;
 
         $mform = $this->_form;
-
         $renderer = $PAGE->get_renderer('mod_pokcertificate');
         $renderer->verify_authentication_check();
 
@@ -96,5 +97,39 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
      * @return void
      **/
     public function data_preprocessing(&$defaultvalues) {
+        // This is where we can add the data from the flexurl table to the data provided.
+
+        if (!empty($defaultvalues['displayoptions'])) {
+            $displayoptions = (array) unserialize_array($defaultvalues['displayoptions']);
+            if (isset($displayoptions['printintro'])) {
+                $defaultvalues['printintro'] = $displayoptions['printintro'];
+            }
+            if (isset($displayoptions['printlastmodified'])) {
+                $defaultvalues['printlastmodified'] = $displayoptions['printlastmodified'];
+            }
+        }
+
+        if (!empty($defaultvalues['intro'])) {
+            $defaultvalues['introeditor'] = ['text' => $defaultvalues['intro']];;
+        }
+    }
+
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
+        parent::data_postprocessing($data);
+        if (!empty($data->instance)) {
+            $pokrecord = pokcertificate::get_record(['id' => $data->instance]);
+            $data->templateid = 0;
+            if ($pokrecord) {
+                $data->templateid = $pokrecord->get('templateid');
+            }
+        }
     }
 }

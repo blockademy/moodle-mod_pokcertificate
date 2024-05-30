@@ -154,7 +154,25 @@
 #page-mod-pokcertificate-view .fieldmapping{
     display: flex;
     align-items: center;
-    margin-left: 10%;
+}
+
+#page-mod-pokcertificate-view .fieldmapping .userfields{
+    margin-left:0.8rem!important;
+}
+
+#page-mod-pokcertificate-view .fieldmappingheaders{
+    display: flex;
+    align-items: center;
+}
+
+#page-mod-pokcertificate-view #id_option_add_fieldsaddfields{
+    display: none!important;
+}
+
+#page-mod-pokcertificate-view .addfields{
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #page-mod-pokcertificate-view .mappingheaders{
@@ -162,7 +180,7 @@
 }
 
 #page-mod-pokcertificate-view .ufheader{
-    margin-left:8.5em!important;
+    margin-left:3.5em!important;
 }
 
 #page-mod-pokcertificate-view div#id_fieldmappingcontainer{

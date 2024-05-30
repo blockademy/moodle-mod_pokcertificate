@@ -16,6 +16,7 @@
 
 namespace mod_pokcertificate\output;
 
+use mod_pokcertificate\permission;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 
@@ -30,9 +31,6 @@ class action_bar {
 
     /** @var int $cmid The course module id. */
     private $cmid;
-
-    /** @var moodle_url $pageurl The URL of the current page. */
-    private $pageurl;
 
     /**
      * The class constructor.
@@ -74,12 +72,10 @@ class action_bar {
         $menu = [];
 
         $menu[null] = get_string('previewcertificate', 'mod_pokcertificate');
-        if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
+        if (permission::can_manage($PAGE->context)) {
             $certificateslink = new \moodle_url('/mod/pokcertificate/certificates.php', ['id' => $this->cmid]);
             $menu[$certificateslink->out(false)] = get_string('certificateslist', 'mod_pokcertificate');
-        }
 
-        if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
             $cm = get_coursemodule_from_id('pokcertificate', $this->cmid, 0, false, MUST_EXIST);
             $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
             $template = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);

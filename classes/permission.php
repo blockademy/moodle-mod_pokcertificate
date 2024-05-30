@@ -14,17 +14,43 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_pokcertificate;
+
 /**
- * pokcertificate module version information
+ * Class permission
  *
  * @package    mod_pokcertificate
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class permission {
+    /**
+     * If a user can manage pok certificate module.
+     *
+     * @param \context $context
+     * @return bool
+     */
+    public static function can_manage(\context $context): bool {
+        return has_capability('mod/pokcertificate:manageinstance', $context);
+    }
 
-defined('MOODLE_INTERNAL') || die();
+    /**
+     * If a user can view.
+     *
+     * @param \context $context
+     * @return bool
+     */
+    public static function can_view(\context $context): bool {
+        return has_capability('mod/pokcertificate:view', $context);
+    }
 
-$plugin->version   = 2024041608.04;       // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023100400;    // Requires this Moodle version.
-$plugin->component = 'mod_pokcertificate';       // Full name of the plugin (used for diagnostics).
-$plugin->cron      = 0;
+    /**
+     * If a user can add template.
+     *
+     * @param \context $context
+     * @return bool
+     */
+    public static function can_add(\context $context): bool {
+        return has_capability('mod/pokcertificate:addinstance', $context);
+    }
+}

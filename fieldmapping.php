@@ -41,7 +41,7 @@ $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
-$url = new moodle_url('/mod/pokcertificate/fieldmapping.php', ['id' => $id]);
+$url = new moodle_url('/mod/pokcertificate/fieldmapping.php', ['id' => $id, 'temp' => $tempname]);
 require_capability('mod/pokcertificate:manageinstance', $context);
 
 $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
@@ -49,14 +49,16 @@ $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);
-
+$renderer = $PAGE->get_renderer('mod_pokcertificate');
+$renderer->verify_authentication_check();
 // Save selected template definition.
 if ($tempname) {
     $templateinfo = new \stdclass;
     $templateinfo->template = base64_decode($tempname);
     $templateinfo->templatetype = $temptype;
     $data = pok::save_template_definition($templateinfo, $cm);
-    if ($data) {
+
+    if (!empty($data)) {
 
         $remotefields = get_externalfield_list($tempname, $pokcertificate->id);
 
@@ -94,11 +96,6 @@ if ($tempname) {
 } else {
     echo $OUTPUT->header();
     $url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
-    $renderer = $PAGE->get_renderer('mod_pokcertificate');
-    echo $renderer->display_message_fatal_error(
-        'invalidtemplatedef',
-        'mod_pokcertificate',
-        $url
-    );
+    echo $output = notice('<p class="errorbox alert alert-danger">' . get_string('invalidtemplatedef', 'mod_pokcertificate') . '</p>', $url);
 }
 echo $OUTPUT->footer();
