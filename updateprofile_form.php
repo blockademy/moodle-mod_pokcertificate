@@ -203,7 +203,6 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
                     $fieldname = $field->get('userfield');
                     foreach ($fields as $formfield) {
                         if ($formfield->inputname == $fieldname && $formfield->is_editable()) {
-
                             $fieldstodisplay[] = $formfield;
                         }
                     }
@@ -245,7 +244,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
         $user = $DB->get_record('user', ['id' => $user->id]);
         $errors = [];
 
-        if (!$user or (isset($user->email) && $user->email !== $user->email)) {
+        if (!$user || (isset($user->email) && $user->email !== $user->email)) {
             if (!validate_email($user->email)) {
                 $errors['email'] = get_string('invalidemail');
             } else if (empty($CFG->allowaccountssameemail)) {
@@ -254,7 +253,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
                 $params = [
                     'email' => $user->email,
                     'mnethostid' => $CFG->mnet_localhost_id,
-                    'userid' => $user->id
+                    'userid' => $user->id,
                 ];
                 // If there are other user(s) that already have the same email, show an error.
                 if ($DB->record_exists_select('user', $select, $params)) {

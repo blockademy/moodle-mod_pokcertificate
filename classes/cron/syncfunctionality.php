@@ -23,6 +23,7 @@
  */
 
 namespace mod_pokcertificate\cron;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/user/lib.php');
@@ -70,6 +71,12 @@ class syncfunctionality {
     private $existinguser;
 
     /**
+     * @var mixed Returns mandatory fields count.
+     */
+    private $mandatoryfieldcount;
+
+    private $excellinenumber;
+    /**
      * Constructor for syncfunctionality class.
      *
      * @param mixed $data The data to be synchronized.
@@ -93,12 +100,12 @@ class syncfunctionality {
 
         $linenum = 1;
         $mandatoryfields = [
-                                'username',
-                                'studentname',
-                                'surname',
-                                'email',
-                                'studentid',
-                            ];
+            'username',
+            'studentname',
+            'surname',
+            'email',
+            'studentid',
+        ];
         $this->mandatoryfieldcount = 0;
         while ($line = $cir->next()) {
             $linenum++;
@@ -164,10 +171,13 @@ class syncfunctionality {
             $this->errorcount
         ) . '</div>
             </div>';
-        $button = html_writer::tag('button', get_string('continue'),
+        $button = html_writer::tag(
+            'button',
+            get_string('continue'),
             [
                 'class' => 'btn btn-primary',
-            ]);
+            ]
+        );
         $link = html_writer::tag(
             'a',
             $button,
@@ -223,6 +233,12 @@ class syncfunctionality {
             $user->timemodified = time();
             $user->usermodified = $USER->id;
             user_update_user($user, false);
+            // Pre-process custom profile menu fields data from csv file.
+            $existinguser = uu_pre_process_custom_profile_data($excel);
+            $existinguser->id = $user->id;
+
+            // Save custom profile fields data from csv file.
+            profile_save_data($existinguser);
             $this->updatedcount++;
         }
     } // End of  update_row method.
@@ -273,7 +289,7 @@ class syncfunctionality {
      * @param object $excel The Excel data for a user.
      */
     public function studentname_validation($excel) {
-        global $DB;
+
         $strings = new StdClass();
         $strings->linenumber = $this->excellinenumber;
         $strings->data = $excel->studentname;
@@ -298,17 +314,19 @@ class syncfunctionality {
      * @param object $excel The Excel data for a user.
      */
     public function surname_validation($excel) {
-        global $DB;
+
         $strings = new StdClass();
         $strings->linenumber = $this->excellinenumber;
         $strings->data = $excel->surname;
         $strings->field = 'surname';
         if (preg_match('/[^a-zA-Z0-9]/', trim($excel->surname))) {
             echo '<div class="local_users_sync_error">'
-            . get_string('invalidsapecialcharecter',
-                         'mod_pokcertificate',
-                         $strings) .
-            '</div>';
+                . get_string(
+                    'invalidsapecialcharecter',
+                    'mod_pokcertificate',
+                    $strings
+                ) .
+                '</div>';
             $this->errors[] = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
             $this->mfields[] = 'surname';
             $this->errorcount++;

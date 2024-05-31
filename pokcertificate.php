@@ -27,6 +27,7 @@ require('../../config.php');
 require_login();
 require_once($CFG->dirroot . '/mod/pokcertificate/verifyauth_form.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
 $url = new moodle_url('/mod/pokcertificate/pokcertificate.php', []);
 $PAGE->set_url($url);
@@ -62,6 +63,7 @@ echo
     </div>';
 
 $pokverified = get_config('mod_pokcertificate', 'pokverified');
+$records = pokcertificate_incompletestudentprofilelist();
 
 if ($pokverified) {
     echo '
@@ -73,7 +75,7 @@ if ($pokverified) {
         </li>
         <li class="d-flex justify-content-between border-0">
           <p class="m-0">' . get_string("incompleteprofile", "pokcertificate") . ' :</p>
-          <p class="m-0 text-muted text-right">' . get_config('mod_pokcertificate', 'availablecertificate') . '</p>
+          <p class="m-0 text-muted text-right">' . $records['count'] . '</p>
         </li>
       </ul>
     </div>

@@ -403,6 +403,7 @@ class pok {
                     }
                 }
             }
+            return false;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
@@ -633,5 +634,49 @@ class pok {
         ];
         $users = $DB->get_records_sql($sql, $params);
         return $users;
+    }
+
+    /**
+     * Verifies whether user has mapped field data if template has custom fields and if valid
+     * checking
+     *
+     * @param  mixed $cm
+     * @param  mixed $user
+     * @return void
+     */
+    public static function auto_emit_certificate($cm, $user) {
+        global $OUTPUT;
+        $link = '';
+
+        $pokissuerec = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $user->id]);
+        if ((empty($pokissuerec)) ||
+            ($pokissuerec && $pokissuerec->get('useremail') != $user->email)
+        ) {
+            $validuser = check_usermapped_fielddata($cm, $user);
+            if ($validuser) {
+                $emitcertificate = self::emit_certificate($cm->id, $user);
+                if ($emitcertificate) {
+                    $link = \html_writer::tag(
+                        'p',
+                        get_string('certificateissuemsg', 'mod_pokcertificate') . $user->email,
+                        [
+                            'class' => 'success-complheading', 'style' => 'font-size: .875em;
+                                    color: #495057;'
+                        ]
+                    );
+
+                    $link .= $OUTPUT->action_link(
+                        new \moodle_url('/course/view.php', ['id' => $cm->course]),
+                        get_string('done', 'pokcertificate'),
+                        null,
+                        [
+                            'class' => 'btn btn-success btn-sm text-nowrap',
+                            'style' => 'margin-left: auto;'
+                        ],
+                    );
+                }
+            }
+        }
+        return $link;
     }
 }

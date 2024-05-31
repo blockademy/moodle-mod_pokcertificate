@@ -74,7 +74,7 @@ class pokcertificate extends persistent {
             'templateid' => [
                 'type' => PARAM_INT,
                 'optional' => true,
-                'default' => 0
+                'default' => 0,
             ],
             'display' => [
                 'type' => PARAM_INT,

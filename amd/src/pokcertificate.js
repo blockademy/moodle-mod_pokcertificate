@@ -79,6 +79,7 @@ const verify = function(e){
                                                 '<span>' +s[2]+ '</span>');
                     var resp = JSON.parse(data.response);
                     $("#id_institution").val(resp.name);
+                    window.location.reload();
                 }
 
             }).fail(Notification.exception);

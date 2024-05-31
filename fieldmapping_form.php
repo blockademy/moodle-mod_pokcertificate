@@ -56,7 +56,7 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
         $groupelem[] = &$mform->createElement('html', '</div>');
         $mform->addGroup($groupelem, '', '', [' '], false, []);
 
-        $defaultselect = array(null => get_string('select'));
+        $defaultselect = [null => get_string('select')];
 
         $localfields = $defaultselect + get_internalfield_list();
         $remotefields = get_externalfield_list($templatename, $certid);
@@ -65,7 +65,13 @@ class mod_pokcertificate_fieldmapping_form extends moodleform {
 
             $fieldgrpelem = [];
             $fieldgrpelem[] = &$mform->createElement('html', '<div class = "fieldmapping">');
-            $fieldgrpelem[] = &$mform->createElement('select', 'templatefield_' . $i . '', '', [$key => $value], ['class' => 'templatefields']);
+            $fieldgrpelem[] = &$mform->createElement(
+                'select',
+                'templatefield_' . $i . '',
+                '',
+                [$key => $value],
+                ['class' => 'templatefields']
+            );
             $fieldgrpelem[] = &$mform->createElement('html', '<span>→</span>');
             $fieldgrpelem[] = &$mform->createElement('select', 'userfield_' . $i . '', '', $localfields, ['class' => 'userfields']);
             $fieldgrpelem[] = &$mform->createElement('html', '</div>');

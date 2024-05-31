@@ -190,12 +190,14 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
  * Set visibility to user if certificate not configured properly
  * mod_pokcertificate_cm_info_dynamic
  *
- * @param  object $cm
+ * @param \cm_info $cm
  * @return void
  */
 function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
-    global $DB, $USER, $PAGE, $OUTPUT;
+    global $DB, $USER, $PAGE;
     $context = \context_module::instance($cm->id);
+    $isverified = get_config('mod_pokcertificate', 'pokverified');
+
     if (!permission::can_manage($context)) {
         $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
         if ($pokrecord && !empty($pokrecord->get('templateid')) &&  $pokrecord->get('templateid') != 0) {
@@ -207,7 +209,6 @@ function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
                 $pokid = $pokrecord->get('id');
                 $pokfields = $DB->get_fieldset_sql("SELECT templatefield from {pokcertificate_fieldmapping} WHERE certid = $pokid");
                 foreach ($externalfields as $key => $value) {
-
                     if (!in_array($key, $pokfields)) {
                         $cm->set_user_visible(false);
                     }
@@ -217,26 +218,13 @@ function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
             $modinfo = get_fast_modinfo($cm->get_course(), $USER->id);
             $cmuser = $modinfo->get_cm($cm->id);
 
-            if ($cmuser && !empty($cmuser->uservisible) && !empty($cmuser->available)) {
-                if ($cmuser->uservisible && $cmuser->available) {
-                    $renderer = $PAGE->get_renderer('mod_pokcertificate');
-                    $pokissuerec = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $USER->id]);
-                    $link = $renderer->render_emit_certificate($cm, $USER, $pokissuerec);
-                    /*
-                    $url = new moodle_url(
-                        "/mod/pokcertificate/view.php",
-                        ['id' => $cm->id]
-                    );
-                    $link = html_writer::link($url, get_string('certificatesuccessmsg', 'mod_pokcertificate', $USER->email),);
-                    $link .= $OUTPUT->action_link(
-                    new \moodle_url('/course/view.php', ['id' => $cm->course]),
-                    get_string('done', 'pokcertificate'),
-                    null,
-                    [
-                        'class' => 'btn btn-primary text-center',
-                    ],
-                ); */
-                    $cm->set_after_link(' ' . $link);
+            if ($cmuser && !empty($cmuser->availability) && !empty($cmuser->uservisible) && !empty($cmuser->available)) {
+                $user = \core_user::get_user($USER->id);
+                if ($cmuser->uservisible && $cmuser->available && $isverified) {
+                    $link = pok::auto_emit_certificate($cm, $user);
+                    if (!empty($link)) {
+                        $cm->set_after_link(' ' . $link);
+                    }
                 }
             }
         } else {
@@ -501,9 +489,9 @@ function get_externalfield_list($template, $pokid) {
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted student profile data.
  */
-function pokcertificate_incompletestudentprofilelist($studentid, $perpage, $offset) {
+function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage = 10, $offset = 0) {
     global $DB;
-    $systemcontext = \context_system::instance();
+
     $countsql = "SELECT count(id) ";
     $selectsql = "SELECT * ";
     $fromsql = "FROM {user}
@@ -517,19 +505,34 @@ function pokcertificate_incompletestudentprofilelist($studentid, $perpage, $offs
         $queryparam['studentid'] = '%' . trim($studentid) . '%';
     }
     $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
-    $records = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
-
+    $users = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
+    $languages = get_string_manager()->get_list_of_languages();
     $list = [];
     $data = [];
-    if ($records) {
-        foreach ($records as $c) {
+    if ($users) {
+        foreach ($users as $user) {
+            $user = \core_user::get_user($user->id);
             $list = [];
-            $list['id'] = $c->id;
-            $list['firstname'] = $c->firstname;
-            $list['lastname'] = $c->lastname;
-            $list['email'] = $c->email;
-            $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
-            $data[] = $list;
+            $list['id'] = $user->id;
+            $list['firstname'] = $user->firstname;
+            $list['lastname'] = $user->lastname;
+            $list['email'] = $user->email;
+            $list['studentid'] = $user->idnumber ? $user->idnumber : '-';
+            $list['language'] = $languages[$user->lang];
+            profile_load_custom_fields($user);
+
+            $customfields = profile_get_custom_fields();
+            $customfields = array_combine(array_column($customfields, 'shortname'), $customfields);
+            if (empty(trim($user->idnumber) || $user->idnumber == 0)) {
+                $data[] = $list;
+            } else if ($customfields) {
+                foreach ((array)$customfields as $key => $field) {
+                    if (empty($user->profile[$key])) {
+                        $list[$key] = '-';
+                    }
+                }
+                $data[] = $list;
+            }
         }
     }
     return ['count' => $count, 'data' => $data];
@@ -660,7 +663,7 @@ function pokcertificate_coursecertificatestatuslist(
  */
 function pokcertificate_awardgeneralcertificatelist($studentid, $perpage, $offset) {
     global $DB;
-    $systemcontext = \context_system::instance();
+
     $countsql = "SELECT count(id) ";
     $selectsql = "SELECT * ";
     $fromsql = "FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
@@ -698,7 +701,7 @@ function pokcertificate_awardgeneralcertificatelist($studentid, $perpage, $offse
  */
 function mod_pokcertificate_extend_navigation_course(navigation_node $navigation) {
     global $PAGE;
-    $context = context_system::instance();
+    $context = \context_system::instance();
     if (has_capability('mod/pokcertificate:managecoursecertificatestatus', $context)) {
         $node = navigation_node::create(
             get_string('coursecertificatestatus', 'mod_pokcertificate'),
@@ -787,4 +790,35 @@ function pokcertificate_preview_by_user($cm, $pokcertificate, $flag) {
         }
     }
     return ['student' => $studentview, 'admin' => $adminview, 'url' => $url];
+}
+
+/**
+ * check if user has mapped field data to issue certificate
+ *
+ * @param  object $cm - course module info
+ * @param  object $user - user object
+ * @return bool
+ */
+function check_usermapped_fielddata($cm, $user) {
+    $validuser = true;
+
+    $pokfields = pok::get_mapping_fields($user, $cm);
+    $mandatoryfields = ['firstname', 'lastname', 'email', 'idnumber'];
+    foreach ($mandatoryfields as $fullname) {
+        if (empty($user->$fullname)) {
+            $validuser = false;
+        }
+    }
+
+    if (!empty($pokfields)) {
+        foreach ($pokfields as $field) {
+            $fieldname = $field->get('userfield');
+            if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') === false)) {
+                if (empty($user->$fieldname)) {
+                    $validuser = false;
+                }
+            }
+        }
+    }
+    return $validuser;
 }

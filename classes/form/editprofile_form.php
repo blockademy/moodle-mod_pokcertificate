@@ -50,7 +50,7 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
 
         $user = $this->_customdata['user'];
         $userid = $user->id;
-        $nameofstudent = $user->firstname.' '.$user->lastname;
+        $nameofstudent = $user->firstname . ' ' . $user->lastname;
 
         // Next the customisable profile fields.
 
@@ -61,12 +61,22 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
         // Add the necessary names.
         foreach (useredit_get_required_name_fields() as $fullname) {
             $purpose = user_edit_map_field_purpose($user->id, $fullname);
-            $mform->addElement('text', $fullname,  get_string($fullname, 'mod_pokcertificate'),  'maxlength="100" size="30"' . $purpose);
+            $mform->addElement(
+                'text',
+                $fullname,
+                get_string($fullname, 'mod_pokcertificate'),
+                'maxlength="100" size="30"' . $purpose
+            );
             $mform->addRule($fullname, $strrequired, 'required', null, 'client');
             $mform->setType($fullname, PARAM_NOTAGS);
         }
 
-        $mform->addElement('text', 'email', get_string('email', 'mod_pokcertificate'), 'maxlength="100" size="30"' . $purpose);
+        $mform->addElement(
+            'text',
+            'email',
+            get_string('email', 'mod_pokcertificate'),
+            'maxlength="100" size="30"' . $purpose
+        );
         $mform->addRule('email', $strrequired, 'required', null, 'client');
         $mform->setType('email', PARAM_RAW_TRIMMED);
 
@@ -107,9 +117,21 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
         if ($user) {
             $context = context_user::instance($user->id, MUST_EXIST);
             $fs = get_file_storage();
-            $hasuploadedpicture = ($fs->file_exists($context->id,
-                'user', 'icon', 0, '/', 'f2.png') || $fs->file_exists(
-                $context->id, 'user', 'icon', 0, '/', 'f2.jpg'));
+            $hasuploadedpicture = ($fs->file_exists(
+                $context->id,
+                'user',
+                'icon',
+                0,
+                '/',
+                'f2.png'
+            ) || $fs->file_exists(
+                $context->id,
+                'user',
+                'icon',
+                0,
+                '/',
+                'f2.jpg'
+            ));
             if (!empty($user->picture) && $hasuploadedpicture) {
                 $imagevalue = $OUTPUT->user_picture($user, ['courseid' => SITEID, 'size' => 66, 'link' => false]);
             } else {

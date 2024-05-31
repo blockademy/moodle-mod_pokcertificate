@@ -96,6 +96,7 @@ if ($tempname) {
 } else {
     echo $OUTPUT->header();
     $url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
-    echo $output = notice('<p class="errorbox alert alert-danger">' . get_string('invalidtemplatedef', 'mod_pokcertificate') . '</p>', $url);
+    echo $output = notice('<p class="errorbox alert alert-danger">' .
+        get_string('invalidtemplatedef', 'mod_pokcertificate') . '</p>', $url);
 }
 echo $OUTPUT->footer();

@@ -27,6 +27,7 @@ require_login();
 
 $format = optional_param('format', 'csv', PARAM_ALPHA);
 $systemcontext = \context_system::instance();
+$localfields = [];
 if ($format) {
     $fields = [
         'username'      => 'username',
@@ -35,9 +36,15 @@ if ($format) {
         'email'         => 'email',
         'studentid'     => 'studentid',
     ];
+    $allcustomfields = profile_get_custom_fields();
+    $customfields = array_combine(array_column($allcustomfields, 'shortname'), $allcustomfields);
+    foreach ((array)$customfields as $key => $field) {
+        $fields['profile_field_' . $key] = 'profile_field_' . $field->shortname;
+    }
 
     switch ($format) {
-        case 'csv' : user_download_csv($fields);
+        case 'csv':
+            user_download_csv($fields);
     }
     die;
 }
@@ -55,6 +62,7 @@ function user_download_csv($fields) {
     $csvexport = new csv_export_writer();
     $csvexport->set_filename($filename);
     $csvexport->add_data($fields);
+
     $sql = "SELECT id,
                    username,
                    firstname,
@@ -74,6 +82,16 @@ function user_download_csv($fields) {
             $user->email,
             $user->idnumber,
         ];
+
+        $customfields = profile_get_custom_fields();
+        $customfields = array_combine(array_column($customfields, 'shortname'), $customfields);
+        $customfieldsdata = profile_user_record($user->id, false);
+        if ($customfields && $customfieldsdata) {
+            foreach ((array)$customfields as $key => $field) {
+                $userprofiledata['profile_field_' . $key] = $customfieldsdata->{$key};
+            }
+        }
+
         $csvexport->add_data($userprofiledata);
     }
     $csvexport->download_file();

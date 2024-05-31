@@ -40,7 +40,7 @@ $stryesnooptions = [0 => $strno, 1 => $stryes];
 $systemcontext = \context_system::instance();
 $PAGE->set_context($systemcontext);
 
-global $USER, $DB , $OUTPUT;
+global $USER, $DB, $OUTPUT;
 
 $returnurl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
 $PAGE->set_pagelayout('admin');
@@ -61,15 +61,15 @@ $stdfields = [
 
 $rpffields = [];
 // If variable $iid equal to zero,it allows enter into the form.
-$mform1 = new \mod_pokcertificate_userupload_form();
-if ($mform1->is_cancelled()) {
+$mform = new \mod_pokcertificate_userupload_form();
+if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
-if ($formdata = $mform1->get_data()) {
+if ($formdata = $mform->get_data()) {
     echo $OUTPUT->header();
     $iid = csv_import_reader::get_new_iid('userfile');
     $cir = new csv_import_reader($iid, 'userfile'); // This class fromcsvlib.php(includes csv methods and classes).
-    $content = $mform1->get_file_content('userfile');
+    $content = $mform->get_file_content('userfile');
     $readcount = $cir->load_csv_content($content, $formdata->encoding, $formdata->delimiter_name);
     $cir->init();
     $linenum = 1;
@@ -82,31 +82,9 @@ if ($formdata = $mform1->get_data()) {
     echo $OUTPUT->footer();
 } else {
     echo $OUTPUT->header();
-    echo html_writer::tag(
-        'a',
-        get_string('back', 'mod_pokcertificate'),
-        [
-            'href' => $CFG->wwwroot . '/mod/pokcertificate/incompletestudent.php',
-            'class' => "btn btn-secondary ml-2 float-right",
-        ]
-    );
-    echo html_writer::tag(
-        'a',
-        get_string('sample', 'mod_pokcertificate'),
-        [
-            'href' => $CFG->wwwroot . '/mod/pokcertificate/userupload_sample.php',
-            'class' => "btn btn-secondary ml-2 float-right",
-        ]
-    );
-    echo html_writer::tag(
-        'a',
-        get_string('help_manual', 'mod_pokcertificate'),
-        [
-            'href' => $CFG->wwwroot . '/mod/pokcertificate/userupload_help.php',
-            'class' => "btn btn-secondary ml-2 float-right",
-        ]
-    );
-    $mform1->display();
+    $renderer = $PAGE->get_renderer('mod_pokcertificate');
+    echo $renderer->render_upload_buttons();
+    $mform->display();
     echo $OUTPUT->footer();
     die;
 }

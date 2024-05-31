@@ -15,6 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{#showdata}}
+
     <table class="generaltable dataTable no-footer" id="skill_repository" role="grid" aria-describedby="skill_repository">
         <thead>
             <tr role="row">
@@ -22,6 +23,7 @@
                 <th>{{#str}}surname,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}email,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}studentid,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}language,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}} action,mod_pokcertificate{{/str}}</th>
             </tr>
         </thead>
@@ -32,6 +34,7 @@
                     <td>{{lastname}}</td>
                     <td>{{email}}</td>
                     <td>{{studentid}}</td>
+                    <td>{{language}}</td>
                     <td>
                         <a href="{{config.wwwroot}}/mod/pokcertificate/updateprofile.php?id={{id}}">
                             <span class='createicon'>

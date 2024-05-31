@@ -23,6 +23,7 @@
  */
 
 namespace mod_pokcertificate\cron;
+
 use csv_import_reader;
 use moodle_url;
 use core_text;
@@ -55,13 +56,13 @@ class progresslibfunctions {
             $cir->close();
             $cir->cleanup();
             echo '<div class=local_users_sync_error>' . get_string('cannotreadtmpfile', 'mod_pokcertificate', $field) . '</div>';
-                $this->continue_button($returnurl);
+            $this->continue_button($returnurl);
         }
         if (count($columns) < 5) {
             $cir->close();
             $cir->cleanup();
             echo '<div class=local_users_sync_error>' . get_string('csvfewcolumns', 'mod_pokcertificate', $field) . '</div>';
-                $this->continue_button($returnurl);
+            $this->continue_button($returnurl);
         }
 
         // Test columns.
@@ -82,8 +83,8 @@ class progresslibfunctions {
             } else if (preg_match('/^(cohort|user|group|type|role|enrolperiod)\d+$/', $lcfield)) {
                 // Special fields for enrolments.
                 $newfield = $lcfield;
-            } else if (preg_match('/^profile_field_/', $lcfield)) {
-                $newfield = $lcfield;
+            } else if (preg_match('/^profile_field_/', $field)) {
+                $newfield = $field;
             } else {
                 $cir->close();
                 $cir->cleanup();
@@ -94,14 +95,15 @@ class progresslibfunctions {
                 $cir->close();
                 $cir->cleanup();
                 echo '<div class=local_users_sync_error>'
-                        . get_string('duplicatefieldname',
-                                     'mod_pokcertificate',
-                                     $newfield) .
-                     '</div>';
+                    . get_string(
+                        'duplicatefieldname',
+                        'mod_pokcertificate',
+                        $newfield
+                    ) .
+                    '</div>';
                 $this->continue_button($returnurl);
             }
             $processed[$key] = $newfield;
-
         }
 
         return $processed;

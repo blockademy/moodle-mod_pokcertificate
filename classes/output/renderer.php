@@ -408,7 +408,8 @@ class renderer extends \plugin_renderer_base {
         } else {
             if ($pokissuerec->get('status') && $pokissuerec->get('certificateurl')) {
                 $output = self::display_certificate($pokissuerec->get("certificateurl"));
-                //$output = \html_writer::tag('p', '<script>window.open("' . $pokissuerec->get("certificateurl") . '","_self")</script>');
+                // ...$output = \html_writer::tag('p',
+                // '<script>window.open("' . $pokissuerec->get("certificateurl") . '","_self")</script>');
             } else if (!empty($pokissuerec->get('pokcertificateid'))) {
                 $issuecertificate = pok::issue_certificate($pokissuerec);
                 if (!empty($issuecertificate)) {
@@ -621,6 +622,40 @@ class renderer extends \plugin_renderer_base {
         );
 
         $output = \html_writer::div($button);
+        return $output;
+    }
+
+    /**
+     * Render the user bulk upload buttons
+     *
+     * @return void
+     */
+    public function render_upload_buttons() {
+        global $CFG;
+        $output =  \html_writer::tag(
+            'a',
+            get_string('back', 'mod_pokcertificate'),
+            [
+                'href' => $CFG->wwwroot . '/mod/pokcertificate/incompletestudent.php',
+                'class' => "btn btn-secondary ml-2 float-right",
+            ]
+        );
+        $output .= \html_writer::tag(
+            'a',
+            get_string('sample', 'mod_pokcertificate'),
+            [
+                'href' => $CFG->wwwroot . '/mod/pokcertificate/userupload_sample.php',
+                'class' => "btn btn-secondary ml-2 float-right",
+            ]
+        );
+        $output .= \html_writer::tag(
+            'a',
+            get_string('help_manual', 'mod_pokcertificate'),
+            [
+                'href' => $CFG->wwwroot . '/mod/pokcertificate/userupload_help.php',
+                'class' => "btn btn-secondary ml-2 float-right",
+            ]
+        );
         return $output;
     }
 }

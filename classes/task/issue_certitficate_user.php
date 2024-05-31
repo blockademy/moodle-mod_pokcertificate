@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_pokcertificate\task;
-
 /**
  * Class issue_certitficate_user
  *
@@ -23,6 +21,8 @@ namespace mod_pokcertificate\task;
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace mod_pokcertificate\task;
 
 use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate_issues;
@@ -80,7 +80,8 @@ class issue_certitficate_user extends \core\task\scheduled_task {
                                     $user->email = $user->useremail;
                                     $issuecertificate->status = true;
                                     pok::save_issued_certificate($cm->id, $user, $issuecertificate);
-                                    mtrace("... issued pokcertificate $pokcertificate->id for user $user->id on course $course->id");
+                                    mtrace("... issued pokcertificate $pokcertificate->id for user
+                                            $user->id on course $course->id");
                                 }
                             }
                         }

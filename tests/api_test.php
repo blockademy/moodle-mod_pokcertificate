@@ -105,7 +105,7 @@ final class api_test extends \advanced_testcase {
         $this->setUser($user);
 
         // Test user with full capabilities.
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $studentrole->id);
 
         // Trigger and capture the event.
