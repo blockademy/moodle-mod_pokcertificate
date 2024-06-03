@@ -69,6 +69,27 @@ function pokcertificate_supports($feature) {
     }
 }
 
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the issued certificates.
+ *
+ * @param MoodleQuickForm $mform form passed by reference
+ */
+function pokcertificate_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'pokcertificateheader', get_string('modulenameplural', 'pokcertificate'));
+    $mform->addElement('advcheckbox', 'reset_pokcertificates', get_string('removeissues', 'pokcertificate'));
+}
+
+/**
+ * Course reset form defaults.
+ *
+ * @return array
+ */
+function pokcertificate_reset_course_form_defaults($course) {
+    return array('reset_pokcertificates' => 1);
+}
+
 /**
  * This function is used by the reset_course_userdata function in moodlelib.
  * @param object $data the data submitted from the reset course.
@@ -78,8 +99,19 @@ function pokcertificate_reset_userdata($data) {
 
     // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
     // See MDL-9367.
+    global $DB;
+    $componentstr = get_string('modulenameplural', 'pokcertificate');
+    $status = array();
 
-    return [];
+    if (!empty($data->reset_pokcertificates)) {
+        $pokcertificatesql = "SELECT pok.id
+                       FROM {pokcertificate} pok
+                       WHERE pok.course=?";
+
+        $DB->delete_records_select('pokcertificate_issues', "certid IN ($pokcertificatesql)", array($data->courseid));
+        $status[] = array('component' => $componentstr, 'item' => get_string('removeissues', 'pokcertificate'), 'error' => false);
+    }
+    return $status;
 }
 
 /**
@@ -652,7 +684,8 @@ function pokcertificate_coursecertificatestatuslist(
             $data[] = $list;
         }
     }
-    return ['count' => $totalusers,
+    return [
+        'count' => $totalusers,
         'data' => $data,
         'showtemplatetype' => $showtemplatetype,
     ];

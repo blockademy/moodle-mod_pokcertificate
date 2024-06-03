@@ -29,7 +29,6 @@ $capabilities = [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => [
-            'guest' => CAP_ALLOW,
             'user' => CAP_ALLOW,
         ],
     ],

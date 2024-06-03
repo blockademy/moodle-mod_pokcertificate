@@ -121,9 +121,4 @@ export const init = () => {
         e.preventDefault();
         verify(e);
     });
-
-   /*  $(SELECTORS.CERTIFICATETEMPLATETYPE).on('change', function(e) {
-        e.preventDefault();
-        loadtemplates(e);
-    }); */
 };

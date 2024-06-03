@@ -25,13 +25,13 @@
 require('../../config.php');
 
 require_login();
-require_once($CFG->dirroot . '/mod/pokcertificate/verifyauth_form.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/verifyauth_form.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
 $url = new moodle_url('/mod/pokcertificate/pokcertificate.php', []);
 $PAGE->set_url($url);
-$PAGE->set_context(context_system::instance());
+$PAGE->set_context(\context_system::instance());
 $PAGE->set_heading($SITE->fullname);
 
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
@@ -48,7 +48,7 @@ $data = new stdClass();
 if (get_config('mod_pokcertificate', 'institution')) {
     $data->institution = get_config('mod_pokcertificate', 'institution');
 }
-$mform = new mod_pokcertificate_verifyauth_form(
+$mform = new \mod_pokcertificate_verifyauth_form(
     $url,
     ['data' => $data]
 );

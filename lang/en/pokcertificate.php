@@ -249,3 +249,4 @@ $string['issuecertificatestask'] = 'Issue POK Certificate to user task';
 $string['certificatenotconfigured'] = 'Certificate is not configured yet';
 $string['description'] = 'Description';
 $string['certificatenotissued'] = 'Certificate not issued! Please contact Site Administartor';
+$string['removeissues'] = 'Remove issued certificates';

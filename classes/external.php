@@ -313,6 +313,8 @@ class mod_pokcertificate_external extends external_api {
             ['type' => $type, 'cmid' => $cmid]
         );
 
+        $context = \context_module::instance($cmid);
+        self::validate_context($context);
         $certificatetemplatecontent = pok::get_certificate_templates($params['cmid'], $params['type']);
 
         return json_encode($certificatetemplatecontent);

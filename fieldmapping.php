@@ -27,7 +27,7 @@ use mod_pokcertificate\pok;
 require('../../config.php');
 
 require_login();
-require_once($CFG->dirroot . '/mod/pokcertificate/fieldmapping_form.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/fieldmapping_form.php');
 
 $id = required_param('id', PARAM_INT); // Course module id.
 $tempname = required_param('temp', PARAM_RAW);
@@ -67,7 +67,7 @@ if ($tempname) {
             $templateid = $pokcertificate->templateid;
             $fielddata = get_mapped_fields($certid);
 
-            $mform = new mod_pokcertificate_fieldmapping_form(
+            $mform = new \mod_pokcertificate_fieldmapping_form(
                 $url,
                 ['data' => $fielddata, 'id' => $id, 'template' => $tempname, 'templateid' => $templateid, 'certid' => $certid]
             );
