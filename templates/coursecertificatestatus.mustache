@@ -25,7 +25,9 @@
                 <th>{{#str}}completedate,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}coursestatus,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}activity,mod_pokcertificate{{/str}}</th>
-                <th>{{#str}}typeofcerti,mod_pokcertificate{{/str}}</th>
+                {{#showtemplatetype}}
+                    <th>{{#str}}typeofcerti,mod_pokcertificate{{/str}}</th>
+                {{/showtemplatetype}}
                 <th>{{#str}}senttopok,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}checkstatus,mod_pokcertificate{{/str}}</th>
             </tr>
@@ -40,7 +42,9 @@
                     <td class="blue-completedate">{{completedate}}</td>
                     <td class="{{coursestatus}}-coursestatus">{{coursestatus}}</td>
                     <td>{{activity}}</td>
-                    <td class="{{certificatetype}}-certificatetype">{{certificatetype}}</td>
+                    {{#showtemplatetype}}
+                        <td class="{{certificatetype}}-certificatetype">{{certificatetype}}</td>
+                    {{/showtemplatetype}}
                     <td class="{{senttopok}}-senttopok">{{senttopok}}</td>
                     {{#certificateurl}}
                         <td>

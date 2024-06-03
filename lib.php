@@ -630,7 +630,7 @@ function pokcertificate_coursecertificatestatuslist(
 
     $list = [];
     $data = [];
-
+    $showtemplatetype = false;
     if ($certificates) {
         foreach ($certificates as $c) {
             $list = [];
@@ -641,13 +641,21 @@ function pokcertificate_coursecertificatestatuslist(
             $list['enrolldate'] = pokcertificate_courseenrollmentdate($courseid, $c->userid);
             $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
             $list['coursestatus'] = $c->completiondate ? get_string('completed') : get_string('inprogress', 'mod_pokcertificate');
-            $list['certificatetype'] = $c->templatetype == 0 ? 'Free' : 'Paid';
+            if ($c->templatetype != '') {
+                $showtemplatetype = true;
+                $list['certificatetype'] = ($c->templatetype === '0') ? 'Free' : 'Paid';
+            } else {
+                $list['certificatetype'] = '-';
+            }
             $list['senttopok'] = $c->status ? get_string('yes') : get_string('no');
             $list['certificateurl'] = $c->certificateurl;
             $data[] = $list;
         }
     }
-    return ['count' => $totalusers, 'data' => $data];
+    return ['count' => $totalusers,
+        'data' => $data,
+        'showtemplatetype' => $showtemplatetype,
+    ];
 }
 
 /**
