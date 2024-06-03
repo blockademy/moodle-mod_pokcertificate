@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_pokcertificate\cron;
+namespace mod_pokcertificate\local;
 
 use csv_import_reader;
 use moodle_url;

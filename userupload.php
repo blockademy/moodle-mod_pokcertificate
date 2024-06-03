@@ -74,10 +74,10 @@ if ($formdata = $mform->get_data()) {
     $cir->init();
     $linenum = 1;
 
-    $progresslibfunctions = new mod_pokcertificate\cron\progresslibfunctions();
+    $progresslibfunctions = new mod_pokcertificate\local\progresslibfunctions();
     $filecolumns = $progresslibfunctions->uu_validate_user_upload_columns($cir, $stdfields, $rpffields, $returnurl);
 
-    $hrms = new mod_pokcertificate\cron\syncfunctionality();
+    $hrms = new mod_pokcertificate\local\syncfunctionality();
     $hrms->main_hrms_frontendform_method($cir, $filecolumns, $formdata);
     echo $OUTPUT->footer();
 } else {

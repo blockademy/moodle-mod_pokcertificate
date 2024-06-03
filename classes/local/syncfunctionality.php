@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_pokcertificate\cron;
+namespace mod_pokcertificate\local;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -390,23 +390,6 @@ class syncfunctionality {
                 $strings
             ) . '</div>';
             $this->errors[] = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
-            $this->mfields[] = "studentid";
-            $this->errorcount++;
-        }
-
-        $userexist = $DB->record_exists_sql(
-            "SELECT *
-               FROM {user}
-              WHERE idnumber = :idnumber AND username NOT LIKE :username",
-            ['idnumber' => $excel->studentid, 'username' => $excel->username]
-        );
-        if ($userexist) {
-            echo '<div class="local_users_sync_error">' . get_string(
-                'studentexist',
-                'mod_pokcertificate',
-                $strings
-            ) . '</div>';
-            $this->errors[] = get_string('studentexist', 'mod_pokcertificate', $strings);
             $this->mfields[] = "studentid";
             $this->errorcount++;
         }
