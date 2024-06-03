@@ -72,7 +72,6 @@ if ($formdata = $mform->get_data()) {
     $content = $mform->get_file_content('userfile');
     $readcount = $cir->load_csv_content($content, $formdata->encoding, $formdata->delimiter_name);
     $cir->init();
-    $linenum = 1;
 
     $progresslibfunctions = new mod_pokcertificate\local\progresslibfunctions();
     $filecolumns = $progresslibfunctions->uu_validate_user_upload_columns($cir, $stdfields, $rpffields, $returnurl);
