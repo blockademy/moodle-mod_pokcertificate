@@ -48,6 +48,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
         $strrequired = get_string('required');
         $stringman = get_string_manager();
 
+        $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
         $mandatoryfields = ['firstname', 'lastname', 'email', 'idnumber'];
         foreach ($mandatoryfields as $fullname) {
             $style = '';
@@ -119,7 +120,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
         $mform->setDefault('cmid', $cmid);
 
         self::get_profile_fields($mform, $pokfields, $user);
-        $this->add_action_buttons(true, get_string('updatemyprofile'));
+        $this->add_action_buttons(true, get_string('save'));
 
         $this->set_data($user);
     }
@@ -128,7 +129,7 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
      * Extend the form definition after the data has been parsed.
      */
     public function definition_after_data() {
-        global  $DB;
+        global  $DB, $OUTPUT;
 
         $mform = $this->_form;
         $userid = $mform->getElementValue('id');
@@ -182,6 +183,34 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
         } else {
             profile_definition_after_data($mform, 0);
         }
+        // Print picture.
+        if ($user) {
+            $context = \context_user::instance($user->id, MUST_EXIST);
+            $fs = get_file_storage();
+            $hasuploadedpicture = ($fs->file_exists(
+                $context->id,
+                'user',
+                'icon',
+                0,
+                '/',
+                'f2.png'
+            ) || $fs->file_exists(
+                $context->id,
+                'user',
+                'icon',
+                0,
+                '/',
+                'f2.jpg'
+            ));
+            if (!empty($user->picture) && $hasuploadedpicture) {
+                $imagevalue = $OUTPUT->user_picture($user, ['courseid' => SITEID, 'size' => 66, 'link' => false]);
+            } else {
+                $imagevalue = get_string('none');
+            }
+        }
+
+        $imageelement = $mform->getElement('currentpicture');
+        $imageelement->setValue($imagevalue);
     }
 
 
@@ -240,28 +269,24 @@ class mod_pokcertificate_updateprofile_form extends \moodleform {
     public function validation($user, $files) {
         global $DB, $CFG;
         $errors = parent::validation($user, $files);
-        $user = (object)$user;
-        $user = $DB->get_record('user', ['id' => $user->id]);
         $errors = [];
 
-        if (!$user || (isset($user->email) && $user->email !== $user->email)) {
-            if (!validate_email($user->email)) {
-                $errors['email'] = get_string('invalidemail');
-            } else if (empty($CFG->allowaccountssameemail)) {
-                // Make a case-insensitive query for the given email address.
-                $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid AND id <> :userid';
-                $params = [
-                    'email' => $user->email,
-                    'mnethostid' => $CFG->mnet_localhost_id,
-                    'userid' => $user->id,
-                ];
-                // If there are other user(s) that already have the same email, show an error.
-                if ($DB->record_exists_select('user', $select, $params)) {
-                    $errors['email'] = get_string('emailexists');
-                }
+        if (empty($CFG->allowaccountssameemail)) {
+            // Make a case-insensitive query for the given email address.
+            $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid AND id <> :userid';
+            $params = array(
+                'email' => $user['email'],
+                'mnethostid' => $CFG->mnet_localhost_id,
+                'userid' => $user['id']
+            );
+
+            // If there are other user(s) that already have the same email, show an error.
+            if ($DB->record_exists_select('user', $select, $params)) {
+                $errors['email'] = get_string('emailexists');
             }
         }
-
+        $user = (object)$user;
+        $user = $DB->get_record('user', ['id' => $user->id]);
         // Next the customisable profile fields.
         $errors += profile_validation($user, $files);
 

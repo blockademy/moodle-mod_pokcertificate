@@ -45,7 +45,7 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
      * @return void
      */
     public function definition() {
-        global $USER;
+
         $mform = $this->_form;
 
         $user = $this->_customdata['user'];
@@ -154,8 +154,10 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
      * @return array|bool An array of validation errors, or true if validation succeeds.
      */
     public function validation($data, $files) {
+        global $DB, $CFG;
         $errors = [];
         $errors = parent::validation($data, $files);
+
         if (!validate_email($data['email'])) {
             $errors['email'] = get_string('invalidemail', 'mod_pokcertificate');
         }
@@ -168,6 +170,30 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
         if (preg_match('/[^a-zA-Z0-9]/', trim($data['lastname']))) {
             $errors['lastname'] = get_string('invalidspechar', 'mod_pokcertificate');
         }
-        return $errors;
+
+        if (empty($CFG->allowaccountssameemail)) {
+            // Make a case-insensitive query for the given email address.
+            $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid AND id <> :userid';
+            $params = array(
+                'email' => $data['email'],
+                'mnethostid' => $CFG->mnet_localhost_id,
+                'userid' => $data['id']
+            );
+
+            // If there are other user(s) that already have the same email, show an error.
+            if ($DB->record_exists_select('user', $select, $params)) {
+                $errors['email'] = get_string('emailexists');
+            }
+        }
+        $user = (object)$data;
+        $user = $DB->get_record('user', ['id' => $user->id]);
+        // Next the customisable profile fields.
+        $errors += profile_validation($user, $files);
+
+        if (count($errors) == 0) {
+            return true;
+        } else {
+            return $errors;
+        }
     }
 }
