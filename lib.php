@@ -504,7 +504,7 @@ function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage =
         $fromsql .= "AND idnumber LIKE :studentid ";
         $queryparam['studentid'] = '%' . trim($studentid) . '%';
     }
-    $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
+    //$count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
     $users = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
     $languages = get_string_manager()->get_list_of_languages();
     $list = [];
@@ -529,12 +529,13 @@ function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage =
                 foreach ((array)$customfields as $key => $field) {
                     if (empty($user->profile[$key])) {
                         $list[$key] = '-';
+                        $data[] = $list;
                     }
                 }
-                $data[] = $list;
             }
         }
     }
+    $count = count($data);
     return ['count' => $count, 'data' => $data];
 }
 

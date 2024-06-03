@@ -665,7 +665,7 @@ class pok {
                         ]
                     );
 
-                    $link .= $OUTPUT->action_link(
+                    /*  $link .= $OUTPUT->action_link(
                         new \moodle_url('/course/view.php', ['id' => $cm->course]),
                         get_string('done', 'pokcertificate'),
                         null,
@@ -673,7 +673,7 @@ class pok {
                             'class' => 'btn btn-success btn-sm text-nowrap',
                             'style' => 'margin-left: auto;'
                         ],
-                    );
+                    ); */
                 }
             }
         }
