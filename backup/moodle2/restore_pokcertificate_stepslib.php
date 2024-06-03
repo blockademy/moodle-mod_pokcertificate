@@ -33,8 +33,12 @@ class restore_pokcertificate_activity_structure_step extends restore_activity_st
     protected function define_structure() {
 
         $paths = [];
+        // To know if we are including userinfo.
+        $userinfo = $this->get_setting_value('userinfo');
         $paths[] = new restore_path_element('pokcertificate', '/activity/pokcertificate');
-        $paths[] = new restore_path_element('pokcertificate_issue', '/activity/pokcertificate/issues/issue');
+        if ($userinfo) {
+            $paths[] = new restore_path_element('pokcertificate_issue', '/activity/pokcertificate/issues/issue');
+        }
         $paths[] = new restore_path_element('pokcertificate_fieldmapping', '/activity/pokcertificate/fieldmappings/fieldmapping');
         $paths[] = new restore_path_element('pokcertificate_template', '/activity/pokcertificate/templates/template');
         // Return the paths wrapped into standard activity structure.

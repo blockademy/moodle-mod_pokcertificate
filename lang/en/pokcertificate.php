@@ -164,11 +164,11 @@ $string['helpmanualsdata'] = '
                 <td>Please do not change username.</td>
             </tr>
             <tr>
-                <td>studentname</td>
+                <td>studentname(firstname)</td>
                 <td>Please enter/modify studentname.</td>
             </tr>
             <tr>
-                <td>surname</td>
+                <td>surname(lastname)</td>
                 <td>Please enter/modify surname.</td>
             </tr>
             <tr>
@@ -176,9 +176,13 @@ $string['helpmanualsdata'] = '
                 <td>Please enter/modify email.</td>
             </tr>
             <tr>
-                <td>studentid</td>
+                <td>studentid(idnumber)</td>
                 <td>Please enter/modify studentid.</td>
             </tr>
+            <tr>
+            <td>customprofilefields</td>
+            <td>Custom profile fields if any (starts with profile_field_fieldname).</td>
+        </tr>
         </table>
     </div>';
 $string['authenticationmethods'] = 'Authentication method';
@@ -244,3 +248,4 @@ $string['viewcertificate'] = 'View Certificate';
 $string['issuecertificatestask'] = 'Issue POK Certificate to user task';
 $string['certificatenotconfigured'] = 'Certificate is not configured yet';
 $string['description'] = 'Description';
+$string['certificatenotissued'] = 'Certificate not issued! Please contact Site Administartor';

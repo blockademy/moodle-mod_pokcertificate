@@ -424,8 +424,12 @@ class renderer extends \plugin_renderer_base {
                         } else {
                             $issuecertificate->status = true;
                             pok::save_issued_certificate($cm->id, $user, $issuecertificate);
-                            if (!empty($issuecertificate->viewUrl)) {
-                                $output = self::display_certificate($issuecertificate->viewUrl);
+                            $certificateurl = pokcertificate_issues::get_record([
+                                'certid' => $cm->instance, 'userid' => $user->id,
+                                'pokcertificateid' => $pokissuerec->get('pokcertificateid')
+                            ]);
+                            if (!empty($certificateurl->get('certificateurl'))) {
+                                $output = self::display_certificate($certificateurl->get('certificateurl'));
                             } else {
                                 $output = self::certificate_pending_message($msg, $cm);
                             }
@@ -439,6 +443,10 @@ class renderer extends \plugin_renderer_base {
                         $output = self::certificate_pending_message($msg, $cm);
                     }
                 }
+            } else {
+                $url = new \moodle_url('/course/view.php', ['id' => $cm->course]);
+                $output = notice('<p class="errorbox alert alert-warning">' .
+                    get_string('certificatenotissued', 'mod_pokcertificate') . '</p>', $url);
             }
         }
         return $output;

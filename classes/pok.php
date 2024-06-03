@@ -511,10 +511,10 @@ class pok {
      *
      * @param  int $cmid
      * @param  object $user
-     * @param  object $emitcertificate
+     * @param  object $certificate
      * @return [void]
      */
-    public static function save_issued_certificate($cmid, $user, $emitcertificate) {
+    public static function save_issued_certificate($cmid, $user, $certificate) {
         $cm = self::get_cm_instance($cmid);
         try {
 
@@ -525,10 +525,10 @@ class pok {
             $data->certid = $pokrecord->get('id');
             $data->userid = $user->id;
             $data->useremail = $user->email;
-            $data->status = (isset($emitcertificate->status)) ? $emitcertificate->status : false;
+            $data->status = (isset($certificate->status)) ? $certificate->status : false;
             $data->templateid = $pokrecord->get('templateid');
-            $data->certificateurl = (isset($emitcertificate->viewUrl)) ? $emitcertificate->viewUrl : '';
-            $data->pokcertificateid = (isset($emitcertificate->id)) ? $emitcertificate->id : 0;
+            $data->certificateurl = (isset($certificate->viewUrl)) ? $certificate->viewUrl : '';
+            $data->pokcertificateid = (isset($certificate->id)) ? $certificate->id : 0;
 
             if ($pokissuedataexists) {
                 $data->timemodified = time();
@@ -589,7 +589,6 @@ class pok {
      */
     public static function get_users_to_issue($pokcertificate, $cm) {
 
-        $context = \context_course::instance($pokcertificate->course);
         // Get users already issued subquery.
         $users = self::get_notissued_users_list(
             $pokcertificate->course,
@@ -600,7 +599,6 @@ class pok {
         $info = new info_module($cm);
         $filteredusers = $info->filter_user_list($users);
 
-        // Filter only users without 'view' capabilities and with access to the activity.
         $users = [];
         foreach ($filteredusers as $filtereduser) {
 

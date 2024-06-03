@@ -80,16 +80,19 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
         $templates->add_child($template);
 
         $pokcertificate->set_source_table('pokcertificate', ['id' => backup::VAR_ACTIVITYID]);
+
         if ($userinfo) {
-            $issue->set_source_sql(
-                'SELECT *
+            if ($userinfo) {
+                $issue->set_source_sql(
+                    'SELECT *
             FROM {pokcertificate_issues}
             WHERE certid = ?',
-                ['certid' => backup::VAR_PARENTID]
-            );
+                    ['certid' => backup::VAR_PARENTID]
+                );
+            }
+            // Define id annotations.
+            $issue->annotate_ids('user', 'userid');
         }
-        // Define id annotations.
-        $issue->annotate_ids('user', 'userid');
 
         $fieldmapping->set_source_sql(
             'SELECT *
