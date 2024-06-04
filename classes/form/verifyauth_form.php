@@ -55,16 +55,19 @@ class verifyauth_form extends moodleform {
         $mform->addElement('passwordunmask', 'authtoken', get_string('authtoken', 'pokcertificate'), 'size="35"');
         $mform->setType('authtoken', PARAM_RAW);
         $mform->addHelpButton('authtoken', 'authtoken', 'pokcertificate');
+        $mform->addRule('authtoken', get_string('required'), 'required', null, 'client');
         if (get_config('mod_pokcertificate', 'authenticationtoken')) {
             $mform->setDefault("authtoken", get_config('mod_pokcertificate', 'authenticationtoken'));
         }
 
         $institution = get_config('mod_pokcertificate', 'institution');
         $authenticationtoken =  get_config('mod_pokcertificate', 'authenticationtoken');
-        $class = ($institution) ? 'verified' : 'notverified';
-        $faicon = ($institution) ? ' fa-solid fa-circle-check' : ' fa-solid fa-circle-xmark';
-        $message = ($institution) ?
-            ucwords(get_string('verified', 'mod_pokcertificate')) : ucwords(get_string('notverified', 'mod_pokcertificate'));
+        if ($authenticationtoken) {
+            $class = ($institution) ? 'verified' : 'notverified';
+            $faicon = ($institution) ? ' fa-solid fa-circle-check' : ' fa-solid fa-circle-xmark';
+            $message = ($institution) ?
+                ucwords(get_string('verified', 'mod_pokcertificate')) : ucwords(get_string('notverified', 'mod_pokcertificate'));
+        }
 
         $groupelem = [];
         $groupelem[] = &$mform->createElement(
@@ -107,6 +110,7 @@ class verifyauth_form extends moodleform {
      * @return array|bool An array of validation errors, or true if validation succeeds.
      */
     public function validation($data, $files) {
+        $errors = [];
         $errors = parent::validation($data, $files);
         return $errors;
     }
