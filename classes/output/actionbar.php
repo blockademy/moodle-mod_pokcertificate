@@ -21,13 +21,13 @@ use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 
 /**
- * Class action_bar
+ * Class actionbar
  *
  * @package    mod_pokcertificate
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_bar {
+class actionbar {
 
     /** @var int $cmid The course module id. */
     private $cmid;

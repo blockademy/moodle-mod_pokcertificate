@@ -461,7 +461,7 @@ class renderer extends \plugin_renderer_base {
      */
 
     public function action_bar(int $id,  \moodle_url $pageurl): string {
-        $actionbar = new action_bar($id, $pageurl);
+        $actionbar = new actionbar($id, $pageurl);
         $data = $actionbar->export_for_template($this);
         return $this->render_from_template('mod_pokcertificate/actionbar', $data);
     }
