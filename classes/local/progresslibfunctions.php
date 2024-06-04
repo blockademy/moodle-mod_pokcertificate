@@ -55,13 +55,15 @@ class progresslibfunctions {
         if (empty($columns)) {
             $cir->close();
             $cir->cleanup();
-            echo '<div class=local_users_sync_error>' . get_string('cannotreadtmpfile', 'mod_pokcertificate', $field) . '</div>';
+            $cannotreadtmpfile = get_string('cannotreadtmpfile', 'mod_pokcertificate');
+            echo html_writer::tag('div', $cannotreadtmpfile);
             $this->continue_button($returnurl);
         }
         if (count($columns) < 5) {
             $cir->close();
             $cir->cleanup();
-            echo '<div class=local_users_sync_error>' . get_string('csvfewcolumns', 'mod_pokcertificate', $field) . '</div>';
+            $csvfewcolumns = get_string('csvfewcolumns', 'mod_pokcertificate');
+            echo html_writer::tag('div', $csvfewcolumns);
             $this->continue_button($returnurl);
         }
 
@@ -88,19 +90,15 @@ class progresslibfunctions {
             } else {
                 $cir->close();
                 $cir->cleanup();
-                echo '<div class=local_users_sync_error>' . get_string('invalidfieldname', 'mod_pokcertificate', $field) . '</div>';
+                $invalidfieldname = get_string('invalidfieldname', 'mod_pokcertificate', $field);
+                echo html_writer::tag('div', $invalidfieldname);
                 $this->continue_button($returnurl);
             }
             if (in_array($newfield, $processed)) {
                 $cir->close();
                 $cir->cleanup();
-                echo '<div class=local_users_sync_error>'
-                    . get_string(
-                        'duplicatefieldname',
-                        'mod_pokcertificate',
-                        $newfield
-                    ) .
-                    '</div>';
+                $duplicatefieldname = get_string('duplicatefieldname', 'mod_pokcertificate', $newfield);
+                echo html_writer::tag('div', $duplicatefieldname);
                 $this->continue_button($returnurl);
             }
             $processed[$key] = $newfield;

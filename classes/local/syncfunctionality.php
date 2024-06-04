@@ -158,34 +158,26 @@ class syncfunctionality {
             }
         }
 
-        $uploadinfo = '<div class="critera_error1"><h3 style="text-decoration: underline;">'
-            . get_string('empfile_syncstatus', 'mod_pokcertificate') . '</h3>';
-        $uploadinfo .= '<div class=local_users_sync_success>' . get_string(
-            'updatedusers_msg',
-            'mod_pokcertificate',
-            $this->updatedcount
-        ) . '</div>';
-        $uploadinfo .= '<div class=local_users_sync_error>' . get_string(
-            'errorscount_msg',
-            'mod_pokcertificate',
-            $this->errorcount
-        ) . '</div>
-            </div>';
+        $uploadinfo = html_writer::div(
+            html_writer::tag('h3', get_string('empfile_syncstatus', 'mod_pokcertificate'), ['style' => 'text-decoration: underline;']) .
+            html_writer::div(get_string('updatedusers_msg', 'mod_pokcertificate', $this->updatedcount)) .
+            html_writer::div(get_string('errorscount_msg', 'mod_pokcertificate', $this->errorcount)),
+            'critera_error1'
+        );
+
         $button = html_writer::tag(
             'button',
             get_string('continue'),
-            [
-                'class' => 'btn btn-primary',
-            ]
+            ['class' => 'btn btn-primary']
         );
+
         $link = html_writer::tag(
             'a',
             $button,
-            [
-                'href' => $CFG->wwwroot . '/mod/pokcertificate/incompletestudent.php',
-            ],
+            ['href' => $CFG->wwwroot . '/mod/pokcertificate/incompletestudent.php']
         );
-        $uploadinfo .= '<div class="w-full pull-left text-xs-center">' . $link . '</div>';
+
+        $uploadinfo .= html_writer::div($link, 'w-full pull-left text-xs-center');
         mtrace($uploadinfo);
     } // End of main_hrms_frontendform_method.
 
@@ -257,7 +249,7 @@ class syncfunctionality {
             $strings->field = $field;
             $strings->linenumber = $this->excellinenumber;
             $missingstring = get_string('missing', 'mod_pokcertificate', $strings);
-            echo '<div class=local_users_sync_error>' . $missingstring . '</div>';
+            echo html_writer::tag('div', $missingstring);
             $this->errors[] = $missingstring;
             $this->mfields[] = $field;
             $this->errorcount++;
@@ -276,8 +268,9 @@ class syncfunctionality {
         $strings = new stdClass;
         $strings->linenumber = $this->excellinenumber;
         $strings->username = $excel->username;
-        echo "<div class='local_users_sync_error'>" . get_string('nouserrecord', 'mod_pokcertificate', $strings) . "</div>";
-        $this->errors[] = get_string('nouserrecord', 'mod_pokcertificate', $strings);
+        $nouserrecord = get_string('nouserrecord', 'mod_pokcertificate', $strings);
+        echo html_writer::tag('div', $nouserrecord);
+        $this->errors[] = $nouserrecord;
         $this->errorcount++;
     } // End of nouserexist method.
 
@@ -295,12 +288,9 @@ class syncfunctionality {
         $strings->data = $excel->studentname;
         $strings->field = 'studentname';
         if (preg_match('/[^a-zA-Z0-9]/', trim($excel->studentname))) {
-            echo '<div class="local_users_sync_error">' . get_string(
-                'invalidsapecialcharecter',
-                'mod_pokcertificate',
-                $strings
-            ) . '</div>';
-            $this->errors[] = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
+            $invalidsapecialcharecter = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
+            echo html_writer::tag('div', $invalidsapecialcharecter);
+            $this->errors[] = $invalidsapecialcharecter;
             $this->mfields[] = 'studentname';
             $this->errorcount++;
         }
@@ -320,14 +310,9 @@ class syncfunctionality {
         $strings->data = $excel->surname;
         $strings->field = 'surname';
         if (preg_match('/[^a-zA-Z0-9]/', trim($excel->surname))) {
-            echo '<div class="local_users_sync_error">'
-                . get_string(
-                    'invalidsapecialcharecter',
-                    'mod_pokcertificate',
-                    $strings
-                ) .
-                '</div>';
-            $this->errors[] = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
+            $invalidsapecialcharecter = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
+            echo html_writer::tag('div', $invalidsapecialcharecter);
+            $this->errors[] = $invalidsapecialcharecter;
             $this->mfields[] = 'surname';
             $this->errorcount++;
         }
@@ -348,8 +333,9 @@ class syncfunctionality {
         $strings->data = $excel->email;
         $strings->field = 'email';
         if (!validate_email($excel->email)) {
-            echo '<div class="local_users_sync_error">' . get_string('invalidemail_msg', 'mod_pokcertificate', $strings) . '</div>';
-            $this->errors[] = get_string('invalidemail_msg', 'mod_pokcertificate', $strings);
+            $invalidemailmsg = get_string('invalidemail_msg', 'mod_pokcertificate', $strings);
+            echo html_writer::tag('div', $invalidemailmsg);
+            $this->errors[] = $invalidemailmsg;
             $this->mfields[] = 'email';
             $this->errorcount++;
         }
@@ -362,8 +348,9 @@ class syncfunctionality {
         );
 
         if ($userexist) {
-            echo '<div class="local_users_sync_error">' . get_string('studentexist', 'mod_pokcertificate', $strings) . '</div>';
-            $this->errors[] = get_string('studentexist', 'mod_pokcertificate', $strings);
+            $studentexist = get_string('studentexist', 'mod_pokcertificate', $strings);
+            echo html_writer::tag('div', $studentexist);
+            $this->errors[] = $studentexist;
             $this->mfields[] = 'email';
             $this->errorcount++;
         }
@@ -384,12 +371,9 @@ class syncfunctionality {
         $strings->data = $excel->studentid;
         $strings->field = 'studentid';
         if (preg_match('/[^a-zA-Z0-9]/', trim($excel->studentid))) {
-            echo '<div class="local_users_sync_error">' . get_string(
-                'invalidsapecialcharecter',
-                'mod_pokcertificate',
-                $strings
-            ) . '</div>';
-            $this->errors[] = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
+            $invalidsapecialcharecter = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
+            echo html_writer::tag('div', $invalidsapecialcharecter);
+            $this->errors[] = $invalidsapecialcharecter;
             $this->mfields[] = "studentid";
             $this->errorcount++;
         }
