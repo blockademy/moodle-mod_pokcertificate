@@ -25,8 +25,9 @@
 use mod_pokcertificate\pok;
 
 require('../../config.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/updateprofile_form.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/editprofile_form.php');
+require_once($CFG->dirroot . '/user/editlib.php');
+use mod_pokcertificate\form\updateprofile_form;
+use mod_pokcertificate\form\editprofile_form;
 
 require_login();
 
@@ -69,7 +70,7 @@ if ($id > 0) {
         useredit_load_preferences($user);
         // Load custom profile fields data.
         profile_load_data($user);
-        $mform = new \mod_pokcertificate_updateprofile_form($url, ['pokfields' => $pokfields, 'user' => $user, 'cmid' => $id]);
+        $mform = new updateprofile_form($url, ['pokfields' => $pokfields, 'user' => $user, 'cmid' => $id]);
         $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
         $renderer = $PAGE->get_renderer('mod_pokcertificate');
         if ($mform->is_cancelled()) {
@@ -104,7 +105,7 @@ if ($id > 0) {
 
         // Load custom profile fields data.
         profile_load_data($user);
-        $mform = new \mod_pokcertificate_editprofile_form($url, ['user' => $user]);
+        $mform = new editprofile_form($url, ['user' => $user]);
         $redirecturl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
         if ($mform->is_cancelled()) {
             redirect($redirecturl);

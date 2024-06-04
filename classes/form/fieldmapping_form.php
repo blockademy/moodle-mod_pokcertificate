@@ -21,8 +21,12 @@
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace mod_pokcertificate\form;
+
 defined('MOODLE_INTERNAL') || die;
 
+use moodleform;
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -30,7 +34,7 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 /**
  * form shown while adding activity.
  */
-class mod_pokcertificate_fieldmapping_form extends moodleform {
+class fieldmapping_form extends moodleform {
 
     /**
      * Definition method for the form.

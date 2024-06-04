@@ -25,7 +25,7 @@
 require('../../config.php');
 
 require_login();
-require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/verifyauth_form.php');
+use mod_pokcertificate\form\verifyauth_form;
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
@@ -48,7 +48,7 @@ $data = new stdClass();
 if (get_config('mod_pokcertificate', 'institution')) {
     $data->institution = get_config('mod_pokcertificate', 'institution');
 }
-$mform = new \mod_pokcertificate_verifyauth_form(
+$mform = new verifyauth_form(
     $url,
     ['data' => $data]
 );

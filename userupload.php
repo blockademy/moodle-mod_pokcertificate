@@ -25,7 +25,9 @@
 require('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/userupload_form.php');
+use mod_pokcertificate\form\userupload_form;
+use mod_pokcertificate\local\progresslibfunctions;
+use mod_pokcertificate\local\syncfunctionality;
 $iid = optional_param('iid', '', PARAM_INT);
 @set_time_limit(60 * 60); // 1 hour should be enough
 raise_memory_limit(MEMORY_HUGE);
@@ -61,7 +63,7 @@ $stdfields = [
 
 $rpffields = [];
 // If variable $iid equal to zero,it allows enter into the form.
-$mform = new \mod_pokcertificate_userupload_form();
+$mform = new userupload_form();
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 }
@@ -73,10 +75,10 @@ if ($formdata = $mform->get_data()) {
     $readcount = $cir->load_csv_content($content, $formdata->encoding, $formdata->delimiter_name);
     $cir->init();
 
-    $progresslibfunctions = new mod_pokcertificate\local\progresslibfunctions();
+    $progresslibfunctions = new progresslibfunctions();
     $filecolumns = $progresslibfunctions->uu_validate_user_upload_columns($cir, $stdfields, $rpffields, $returnurl);
 
-    $hrms = new mod_pokcertificate\local\syncfunctionality();
+    $hrms = new syncfunctionality();
     $hrms->main_hrms_frontendform_method($cir, $filecolumns, $formdata);
     echo $OUTPUT->footer();
 } else {

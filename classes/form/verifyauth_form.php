@@ -22,8 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_pokcertificate\form;
+
 defined('MOODLE_INTERNAL') || die;
 
+use moodleform;
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -33,7 +36,7 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 /**
  * Form shown while adding activity.
  */
-class mod_pokcertificate_verifyauth_form extends moodleform {
+class verifyauth_form extends moodleform {
     /**
      * Form elements defnations.
      */

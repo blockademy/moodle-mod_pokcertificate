@@ -23,11 +23,11 @@
  */
 
 use mod_pokcertificate\pok;
+use mod_pokcertificate\form\fieldmapping_form;
 
 require('../../config.php');
 
 require_login();
-require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/fieldmapping_form.php');
 
 $id = required_param('id', PARAM_INT); // Course module id.
 $tempname = required_param('temp', PARAM_RAW);
@@ -67,7 +67,7 @@ if ($tempname) {
             $templateid = $pokcertificate->templateid;
             $fielddata = get_mapped_fields($certid);
 
-            $mform = new \mod_pokcertificate_fieldmapping_form(
+            $mform = new fieldmapping_form(
                 $url,
                 ['data' => $fielddata, 'id' => $id, 'template' => $tempname, 'templateid' => $templateid, 'certid' => $certid]
             );

@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_pokcertificate\form;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
@@ -32,7 +34,7 @@ define('ADD_UPDATE', 3);
 /**
  * Form class for uploading users in the Pokcertificate module.
  */
-class mod_pokcertificate_userupload_form extends moodleform {
+class userupload_form extends moodleform {
     /**
      * Defines the elements and structure of the user upload form.
      */

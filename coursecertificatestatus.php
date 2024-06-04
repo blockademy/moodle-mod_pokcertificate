@@ -24,7 +24,7 @@
 
 require_once('../../config.php');
 global $OUTPUT, $PAGE, $CFG, $DB;
-require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/searchfilter_form.php');
+use mod_pokcertificate\form\searchfilter_form;
 
 // Set up page context and heading.
 $courseid = required_param('courseid', PARAM_INT);
@@ -49,7 +49,7 @@ if (!empty($studentid)||!empty($studentname)||!empty($email)||!empty($senttopok)
     $show = '';
 }
 
-$mform = new \searchfilter_form('', ['viewtype' => 'participaints', 'courseid' => $courseid]);
+$mform = new searchfilter_form('', ['viewtype' => 'participaints', 'courseid' => $courseid]);
 $mform->set_data([
     'courseid' => $courseid,
     'studentid' => $studentid,

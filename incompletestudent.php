@@ -24,7 +24,7 @@
 
 require_once('../../config.php');
 global $CFG, $PAGE, $OUTPUT;
-require_once($CFG->dirroot . '/mod/pokcertificate/classes/form/searchfilter_form.php');
+use mod_pokcertificate\form\searchfilter_form;
 require_login();
 
 $context = \context_system::instance();
@@ -42,7 +42,7 @@ if (empty($studentid)) {
     $show = 'show';
 }
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
-$mform = new \searchfilter_form();
+$mform = new searchfilter_form();
 $mform->set_data(['studentid' => $studentid]);
 if ($mform->is_cancelled()) {
     redirect(new \moodle_url('/mod/pokcertificate/incompletestudent.php'));

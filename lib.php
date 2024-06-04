@@ -31,6 +31,7 @@ use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\persistent\pokcertificate_issues;
 use core_availability\info_module;
+use mod_pokcertificate\event\course_module_viewed;
 
 use function PHPUnit\Framework\isNull;
 
@@ -332,7 +333,7 @@ function pokcertificate_view($pokcertificate, $course, $cm, $context) {
         'objectid' => $pokcertificate->id,
     ];
 
-    $event = \mod_pokcertificate\event\course_module_viewed::create($params);
+    $event = course_module_viewed::create($params);
     $event->add_record_snapshot('course_modules', $cm);
     $event->add_record_snapshot('course', $course);
     $event->add_record_snapshot('pokcertificate', $pokcertificate);

@@ -22,8 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_pokcertificate\form;
+
 defined('MOODLE_INTERNAL') || die;
 
+use moodleform;
+use core_user;
+use context_user;
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -34,7 +39,7 @@ require_once($CFG->dirroot . '/user/editlib.php');
 /**
  * form shown while adding activity.
  */
-class mod_pokcertificate_editprofile_form extends \moodleform {
+class editprofile_form extends moodleform {
 
     /**
      * Defines the form elements for editing a user profile.

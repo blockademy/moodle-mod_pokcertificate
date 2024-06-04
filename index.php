@@ -31,11 +31,6 @@ $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
 require_course_login($course, true);
 $PAGE->set_pagelayout('incourse');
 
-// Trigger instances list viewed event.
-$event = \mod_pokcertificate\event\course_module_instance_list_viewed::create(['context' => context_course::instance($course->id)]);
-$event->add_record_snapshot('course', $course);
-$event->trigger();
-
 $strpokcertificate         = get_string('modulename', 'pokcertificate');
 $strpokcertificates        = get_string('modulenameplural', 'pokcertificate');
 $strname         = get_string('name');
