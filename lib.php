@@ -226,7 +226,7 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
  * @return void
  */
 function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
-    global $DB, $USER, $PAGE;
+    global $DB, $USER;
     $context = \context_module::instance($cm->id);
     $isverified = get_config('mod_pokcertificate', 'pokverified');
 

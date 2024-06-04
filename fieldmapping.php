@@ -40,7 +40,7 @@ $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*'
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
-$context = context_module::instance($cm->id);
+$context = \context_module::instance($cm->id);
 $url = new moodle_url('/mod/pokcertificate/fieldmapping.php', ['id' => $id, 'temp' => $tempname]);
 require_capability('mod/pokcertificate:manageinstance', $context);
 

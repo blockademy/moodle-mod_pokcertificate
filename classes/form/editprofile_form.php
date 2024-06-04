@@ -99,7 +99,7 @@ class mod_pokcertificate_editprofile_form extends \moodleform {
      * Extend the form definition after the data has been parsed.
      */
     public function definition_after_data() {
-        global $USER, $CFG, $DB, $OUTPUT;
+        global $DB, $OUTPUT;
 
         $mform = $this->_form;
         if ($userid = $mform->getElementValue('id')) {

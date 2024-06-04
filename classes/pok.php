@@ -213,7 +213,7 @@ class pok {
      * @return array []
      */
     public static function save_template_definition($templateinfo, $cm) {
-        global $USER;
+        global $USER, $DB;
         $templateid = 0;
         $template = $templateinfo->template;
         $templatetype = $templateinfo->templatetype;
@@ -223,7 +223,9 @@ class pok {
         try {
             if ($templatedefinition) {
                 $templatedefdata = new \stdclass;
-                $templateexists = pokcertificate_templates::get_record(['templatename' => $template, 'pokid' => $pokid]);
+                $templateexists = pokcertificate_templates::get_record(
+                    [$DB->sql_compare_text('templatename') => $DB->sql_compare_text($template), 'pokid' => $pokid]
+                );
 
                 if ($templateexists) {
                     $templateid = $templateexists->get('id');
@@ -591,6 +593,7 @@ class pok {
 
         // Get users already issued subquery.
         $users = self::get_notissued_users_list(
+            $pokcertificate->id,
             $pokcertificate->course,
             $pokcertificate->templateid
         );
@@ -616,19 +619,22 @@ class pok {
     /**
      * Returns select for the users that have been not issued
      *
+     * @param int $pokid
      * @param int $courseid
      * @param int $templateid
      * @return array
      */
-    private static function get_notissued_users_list(int $courseid, int $templateid): array {
+    private static function get_notissued_users_list(int $pokid, int $courseid, int $templateid): array {
         global $DB;
         $sql = "SELECT DISTINCT poki.* FROM {" . pokcertificate_issues::TABLE . "} poki
                     JOIN {" . pokcertificate::TABLE . "} pok ON pok.templateid = poki.templateid AND pok.id=poki.certid
                 WHERE pok.course = :courseid AND pok.templateid = :templateid
-                      AND poki.status = 0 AND poki.certificateurl IS NULL OR poki.certificateurl = ''";
+                      AND poki.status = 0 AND poki.certificateurl IS NULL OR poki.certificateurl = ''
+                      AND pok.id = :pokid ";
         $params = [
             'courseid' => $courseid,
             'templateid' => $templateid,
+            'pokid' => $pokid,
         ];
         $users = $DB->get_records_sql($sql, $params);
         return $users;
