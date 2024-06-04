@@ -92,7 +92,6 @@ class renderer extends \plugin_renderer_base {
      * @param int $id course module id
      * @return string HTML certificate templates view.
      */
-
     public function show_certificate_templates(int $id) {
         global $DB;
         $output = '';
@@ -128,7 +127,6 @@ class renderer extends \plugin_renderer_base {
      *
      * @return string certificate templates HTML to display.
      */
-
     public function preview_certificate_template(int $cmid) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -408,8 +406,6 @@ class renderer extends \plugin_renderer_base {
         } else {
             if ($pokissuerec->get('status') && $pokissuerec->get('certificateurl')) {
                 $output = self::display_certificate($pokissuerec->get("certificateurl"));
-                // ...$output = \html_writer::tag('p',
-                // '<script>window.open("' . $pokissuerec->get("certificateurl") . '","_self")</script>');
             } else if (!empty($pokissuerec->get('pokcertificateid'))) {
                 $issuecertificate = pok::issue_certificate($pokissuerec);
                 if (!empty($issuecertificate)) {
@@ -426,7 +422,7 @@ class renderer extends \plugin_renderer_base {
                             pok::save_issued_certificate($cm->id, $user, $issuecertificate);
                             $certificateurl = pokcertificate_issues::get_record([
                                 'certid' => $cm->instance, 'userid' => $user->id,
-                                'pokcertificateid' => $pokissuerec->get('pokcertificateid')
+                                'pokcertificateid' => $pokissuerec->get('pokcertificateid'),
                             ]);
                             if (!empty($certificateurl->get('certificateurl'))) {
                                 $output = self::display_certificate($certificateurl->get('certificateurl'));
@@ -459,7 +455,6 @@ class renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl The page url.
      * @return string The HTML for the action bar.
      */
-
     public function action_bar(int $id,  \moodle_url $pageurl): string {
         $actionbar = new actionbar($id, $pageurl);
         $data = $actionbar->export_for_template($this);
@@ -640,7 +635,7 @@ class renderer extends \plugin_renderer_base {
      */
     public function render_upload_buttons() {
         global $CFG;
-        $output =  \html_writer::tag(
+        $output = \html_writer::tag(
             'a',
             get_string('back', 'mod_pokcertificate'),
             [

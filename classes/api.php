@@ -104,7 +104,6 @@ class api {
      * @param  string $templatename Name of the template
      * @return string API response, in json encoded format
      */
-
     public function get_template_definition($templatename) {
         $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename;
         return $this->execute_command($location, '');
@@ -116,7 +115,6 @@ class api {
      * @param  object $data
      * @return string API response, in json encoded format
      */
-
     public function emit_certificate($data = '') {
         $location = MINTER_ROOT . '/mint';
         return $this->execute_command($location, $data, 'post');

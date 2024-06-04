@@ -61,7 +61,7 @@ class verifyauth_form extends moodleform {
         }
 
         $institution = get_config('mod_pokcertificate', 'institution');
-        $authenticationtoken =  get_config('mod_pokcertificate', 'authenticationtoken');
+        $authenticationtoken = get_config('mod_pokcertificate', 'authenticationtoken');
         if ($authenticationtoken) {
             $class = ($institution) ? 'verified' : 'notverified';
             $faicon = ($institution) ? ' fa-solid fa-circle-check' : ' fa-solid fa-circle-xmark';

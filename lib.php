@@ -88,7 +88,7 @@ function pokcertificate_reset_course_form_definition(&$mform) {
  * @return array
  */
 function pokcertificate_reset_course_form_defaults($course) {
-    return array('reset_pokcertificates' => 1);
+    return ['reset_pokcertificates' => 1];
 }
 
 /**
@@ -102,15 +102,15 @@ function pokcertificate_reset_userdata($data) {
     // See MDL-9367.
     global $DB;
     $componentstr = get_string('modulenameplural', 'pokcertificate');
-    $status = array();
+    $status = [];
 
     if (!empty($data->reset_pokcertificates)) {
         $pokcertificatesql = "SELECT pok.id
                        FROM {pokcertificate} pok
                        WHERE pok.course=?";
 
-        $DB->delete_records_select('pokcertificate_issues', "certid IN ($pokcertificatesql)", array($data->courseid));
-        $status[] = array('component' => $componentstr, 'item' => get_string('removeissues', 'pokcertificate'), 'error' => false);
+        $DB->delete_records_select('pokcertificate_issues', "certid IN ($pokcertificatesql)", [$data->courseid]);
+        $status[] = ['component' => $componentstr, 'item' => get_string('removeissues', 'pokcertificate'), 'error' => false];
     }
     return $status;
 }
@@ -537,7 +537,6 @@ function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage =
         $fromsql .= "AND idnumber LIKE :studentid ";
         $queryparam['studentid'] = '%' . trim($studentid) . '%';
     }
-    //$count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
     $users = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
     $languages = get_string_manager()->get_list_of_languages();
     $list = [];

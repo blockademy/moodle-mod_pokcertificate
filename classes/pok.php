@@ -664,20 +664,10 @@ class pok {
                         'p',
                         get_string('certificateissuemsg', 'mod_pokcertificate') . $user->email,
                         [
-                            'class' => 'success-complheading', 'style' => 'font-size: .875em;
-                                    color: #495057;'
+                            'class' => 'success-complheading',
+                            'style' => 'font-size: .875em; color: #495057;',
                         ]
                     );
-
-                    /*  $link .= $OUTPUT->action_link(
-                        new \moodle_url('/course/view.php', ['id' => $cm->course]),
-                        get_string('done', 'pokcertificate'),
-                        null,
-                        [
-                            'class' => 'btn btn-success btn-sm text-nowrap',
-                            'style' => 'margin-left: auto;'
-                        ],
-                    ); */
                 }
             }
         }

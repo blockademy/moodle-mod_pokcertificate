@@ -179,11 +179,11 @@ class editprofile_form extends moodleform {
         if (empty($CFG->allowaccountssameemail)) {
             // Make a case-insensitive query for the given email address.
             $select = $DB->sql_equal('email', ':email', false) . ' AND mnethostid = :mnethostid AND id <> :userid';
-            $params = array(
+            $params = [
                 'email' => $data['email'],
                 'mnethostid' => $CFG->mnet_localhost_id,
-                'userid' => $data['id']
-            );
+                'userid' => $data['id'],
+            ];
 
             // If there are other user(s) that already have the same email, show an error.
             if ($DB->record_exists_select('user', $select, $params)) {

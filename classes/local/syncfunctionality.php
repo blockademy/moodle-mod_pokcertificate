@@ -75,7 +75,16 @@ class syncfunctionality {
      */
     private $mandatoryfieldcount;
 
+    /**
+     * The line number in the Excel file being processed.
+     *
+     * This property keeps track of the current line number in the Excel file
+     * that is being processed. It is used for error reporting and validation purposes.
+     *
+     * @var int
+     */
     private $excellinenumber;
+
     /**
      * Constructor for syncfunctionality class.
      *
@@ -159,7 +168,11 @@ class syncfunctionality {
         }
 
         $uploadinfo = html_writer::div(
-            html_writer::tag('h3', get_string('empfile_syncstatus', 'mod_pokcertificate'), ['style' => 'text-decoration: underline;']) .
+            html_writer::tag(
+                'h3',
+                get_string('empfile_syncstatus', 'mod_pokcertificate'),
+                ['style' => 'text-decoration: underline;']
+            ) .
             html_writer::div(get_string('updatedusers_msg', 'mod_pokcertificate', $this->updatedcount)) .
             html_writer::div(get_string('errorscount_msg', 'mod_pokcertificate', $this->errorcount)),
             'critera_error1'
