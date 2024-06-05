@@ -709,7 +709,7 @@ function pokcertificate_awardgeneralcertificatelist($studentid, $perpage, $offse
     $countsql = "SELECT count(ra.id) ";
     $selectsql = "SELECT
                     ra.id,
-                    ra.userid, 
+                    ra.userid,
                     u.firstname,
                     u.lastname,
                     u.email,
@@ -721,7 +721,6 @@ function pokcertificate_awardgeneralcertificatelist($studentid, $perpage, $offse
                 JOIN {course} c ON ctx.instanceid = c.id
                WHERE ctx.contextlevel = 50
                      AND ra.roleid = 5 ";
-
 
     $queryparam = [];
     if ($studentid) {
