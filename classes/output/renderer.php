@@ -530,6 +530,8 @@ class renderer extends \plugin_renderer_base {
             [
                 'courseid' => $courseid,
                 'studentid' => $studentid,
+                'studentname' => $studentname,
+                'email' => $email,
                 'senttopok' => $senttopok,
                 'coursestatus' => $coursestatus,
             ]
@@ -568,13 +570,27 @@ class renderer extends \plugin_renderer_base {
     public function get_generalcertificate($filter = false) {
 
         $page = optional_param('page', 0, PARAM_INT);
+        $courseid = optional_param('courseid', 0, PARAM_INT);
         $studentid = optional_param('studentid', '', PARAM_RAW);
+        $studentname = optional_param('studentname', '', PARAM_RAW);
+        $email = optional_param('email', '', PARAM_RAW);
         $url = new \moodle_url('/mod/pokcertificate/generalcertificate.php',
-            ['studentid' => $studentid]
+            [
+                'courseid' => $courseid,
+                'studentid' => $studentid,
+                'studentname' => $studentname,
+                'email' => $email,
+            ]
         );
         $recordperpage = 10;
         $offset = $page * $recordperpage;
-        $records = pokcertificate_awardgeneralcertificatelist($studentid, $recordperpage, $offset);
+        $records = pokcertificate_awardgeneralcertificatelist(
+            $studentid,
+            $courseid,
+            $studentname,
+            $email,
+            $recordperpage,
+            $offset);
         $records['showdata'] = $records['data'] ? true : false;
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/awardedcertificatestatus', $records);
         $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);

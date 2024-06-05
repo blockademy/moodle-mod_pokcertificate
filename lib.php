@@ -703,7 +703,7 @@ function pokcertificate_coursecertificatestatuslist(
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted user data.
  */
-function pokcertificate_awardgeneralcertificatelist($studentid, $perpage, $offset) {
+function pokcertificate_awardgeneralcertificatelist($studentid, $courseid, $studentname, $email, $perpage, $offset) {
     global $DB;
 
     $countsql = "SELECT count(ra.id) ";
@@ -726,6 +726,18 @@ function pokcertificate_awardgeneralcertificatelist($studentid, $perpage, $offse
     if ($studentid) {
         $fromsql .= "AND u.idnumber LIKE :studentid ";
         $queryparam['studentid'] = '%' . trim($studentid) . '%';
+    }
+    if ($studentname) {
+        $fromsql .= "AND u.firstname LIKE :firstname ";
+        $queryparam['firstname'] = '%' . trim($studentname) . '%';
+    }
+    if ($email) {
+        $fromsql .= "AND u.email LIKE :email ";
+        $queryparam['email'] = '%' . trim($email) . '%';
+    }
+    if ($courseid) {
+        $fromsql .= "AND c.id = :courseid ";
+        $queryparam['courseid'] = $courseid;
     }
     $fromsql .= "ORDER BY u.id ";
     $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);

@@ -255,3 +255,5 @@ $string['awardcertificate'] = 'Award Certificate';
 $string['certificatetitle'] = 'Certificate Title';
 $string['issueddate'] = 'Issued Date';
 $string['certificatstatus'] = 'Certificate Status';
+$string['selectcourse'] = 'Select Course';
+$string['norecordavailable'] = 'No Record Available';

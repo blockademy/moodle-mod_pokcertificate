@@ -35,7 +35,7 @@
                 <tr>
                     <td>
                         <i class="fa fa-caret-right" aria-hidden="true" onclick="toggleAccordion(this)"></i>
-                        <input type="checkbox" class="user-checkbox" name="selected_users[]" value="{{id}}">
+                        <input type="checkbox" class="user-checkbox" name="selected_users[]" value="{{assignid}}">
                         {{firstname}}
                     </td>
                     <td>{{lastname}}</td>
@@ -68,11 +68,13 @@
             {{/data}}
         </tbody>
     </table>
-    <button id="award-certificate-btn" class="btn btn-primary">{{#str}}awardcertificate,mod_pokcertificate{{/str}}</button>
+    <div class="d-flex justify-content-center mt-4">
+        <button id="award-certificate-btn" class="btn btn-primary">{{#str}}awardcertificate, mod_pokcertificate{{/str}}</button>
+    </div>
 {{/showdata}}
 {{^showdata}}
     <div class="alert alert-info alert-block fade in  alert-dismissible" role="alert" data-aria-autofocus="true">
-        {{#str}}norecordavailable{{/str}}
+        {{#str}}norecordavailable, mod_pokcertificate{{/str}}
     </div>
 {{/showdata}}
 
@@ -114,7 +116,7 @@
 
         // Redirect only if at least one checkbox is checked
         if (selectedUserIds.length > 0) {
-            window.location.href = "mod/pokcertificate/index.php?userids=" + selectedUserIds.join(",");
+            window.location.href = "new.php?userids=" + selectedUserIds.join(",");
         } else {
             // Display a message or perform other actions when no checkboxes are checked
             alert("Please select at least one user to award a certificate.");
