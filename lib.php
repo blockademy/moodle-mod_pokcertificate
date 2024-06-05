@@ -706,15 +706,29 @@ function pokcertificate_coursecertificatestatuslist(
 function pokcertificate_awardgeneralcertificatelist($studentid, $perpage, $offset) {
     global $DB;
 
-    $countsql = "SELECT count(id) ";
-    $selectsql = "SELECT * ";
-    $fromsql = "FROM {user} WHERE deleted = 0 AND suspended = 0 AND id > 2 ";
+    $countsql = "SELECT count(ra.id) ";
+    $selectsql = "SELECT
+                    ra.id,
+                    ra.userid, 
+                    u.firstname,
+                    u.lastname,
+                    u.email,
+                    u.idnumber,
+                    c.fullname AS coursename ";
+    $fromsql = "FROM {role_assignments} ra
+                JOIN {context} ctx ON ra.contextid = ctx.id
+                JOIN {user} u ON ra.userid = u.id
+                JOIN {course} c ON ctx.instanceid = c.id
+               WHERE ctx.contextlevel = 50
+                     AND ra.roleid = 5 ";
+
 
     $queryparam = [];
     if ($studentid) {
-        $fromsql .= "AND idnumber LIKE :studentid ";
+        $fromsql .= "AND u.idnumber LIKE :studentid ";
         $queryparam['studentid'] = '%' . trim($studentid) . '%';
     }
+    $fromsql .= "ORDER BY u.id ";
     $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
     $records = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
 
@@ -723,12 +737,13 @@ function pokcertificate_awardgeneralcertificatelist($studentid, $perpage, $offse
     if ($records) {
         foreach ($records as $c) {
             $list = [];
-            $list['id'] = $c->id;
+            $list['id'] = $c->userid;
+            $list['assignid'] = $c->id;
             $list['firstname'] = $c->firstname;
             $list['lastname'] = $c->lastname;
             $list['email'] = $c->email;
             $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
-            $list['program'] = 'Program Name';
+            $list['course'] = $c->coursename;
             $data[] = $list;
         }
     }

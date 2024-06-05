@@ -17,32 +17,138 @@
 }}
 
 {{#showdata}}
-    <table class="generaltable dataTable no-footer" id="skill_repository" role="grid" aria-describedby="skill_repository">
+    <table class="generaltable dataTable no-footer">
         <thead>
             <tr role="row">
-                <th>{{#str}}studentname,mod_pokcertificate{{/str}}</th>
+                <th>
+                    <input type="checkbox" id="select-all">
+                    {{#str}}studentname,mod_pokcertificate{{/str}}
+                </th>
                 <th>{{#str}}surname,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}email,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}studentid,mod_pokcertificate{{/str}}</th>
-                <th>{{#str}}program,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}course,mod_pokcertificate{{/str}}</th>
             </tr>
         </thead>
         <tbody>
             {{#data}}
                 <tr>
-                    <td>{{firstname}}</td>
+                    <td>
+                        <i class="fa fa-caret-right" aria-hidden="true" onclick="toggleAccordion(this)"></i>
+                        <input type="checkbox" class="user-checkbox" name="selected_users[]" value="{{id}}">
+                        {{firstname}}
+                    </td>
                     <td>{{lastname}}</td>
                     <td>{{email}}</td>
                     <td>{{studentid}}</td>
-                    <td>{{program}}</td>
+                    <td>{{course}}</td>
+                </tr>
+                <tr class="accordion-content" style="display: none;">
+                    <td colspan="5">
+                        <table class="generaltable dataTable no-footer">
+                            <thead>
+                                <tr role="row">
+                                    <th>{{#str}}certificatetitle,mod_pokcertificate{{/str}}</th>
+                                    <th>{{#str}}issueddate,mod_pokcertificate{{/str}}</th>
+                                    <th>{{#str}}certificatstatus,mod_pokcertificate{{/str}}</th>
+                                    <th>{{#str}}previewcertificate,mod_pokcertificate{{/str}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Data 1</td>
+                                    <td>Data 2</td>
+                                    <td>Data 3</td>
+                                    <td>Data 4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
                 </tr>
             {{/data}}
         </tbody>
     </table>
+    <button id="award-certificate-btn" class="btn btn-primary">{{#str}}awardcertificate,mod_pokcertificate{{/str}}</button>
 {{/showdata}}
 {{^showdata}}
     <div class="alert alert-info alert-block fade in  alert-dismissible" role="alert" data-aria-autofocus="true">
-        No Record Available
+        {{#str}}norecordavailable{{/str}}
     </div>
 {{/showdata}}
+
+<script>
+    // Function to handle the click event of the play icon and toggle the accordion
+    function toggleAccordion(icon) {
+        var row = icon.parentElement.parentElement;
+        var nextRow = row.nextElementSibling;
+        if (nextRow.classList.contains("accordion-content")) {
+            if (nextRow.style.display === "none") {
+                // If the accordion content is hidden, show it
+                nextRow.style.display = "table-row";
+                // Change the icon to fa-caret-down when the accordion is active
+                icon.classList.remove("fa-caret-right");
+                icon.classList.add("fa-caret-down");
+            } else {
+                // If the accordion content is visible, hide it
+                nextRow.style.display = "none";
+                // Change the icon to fa-caret-right when the accordion is inactive
+                icon.classList.remove("fa-caret-down");
+                icon.classList.add("fa-caret-right");
+            }
+        }
+    }
+
+    // Function to handle the click event of the "Award Certificate" button
+    document.getElementById("award-certificate-btn").addEventListener("click", function() {
+        // Array to store selected user IDs
+        var selectedUserIds = [];
+        
+        // Loop through each checkbox
+        var checkboxes = document.getElementsByClassName("user-checkbox");
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                // If checkbox is checked, add its value (user ID) to the array
+                selectedUserIds.push(checkboxes[i].value);
+            }
+        }
+
+        // Redirect only if at least one checkbox is checked
+        if (selectedUserIds.length > 0) {
+            window.location.href = "mod/pokcertificate/index.php?userids=" + selectedUserIds.join(",");
+        } else {
+            // Display a message or perform other actions when no checkboxes are checked
+            alert("Please select at least one user to award a certificate.");
+        }
+    });
+
+    // Function to handle the click event of the "Select All" checkbox
+    document.getElementById("select-all").addEventListener("change", function() {
+        var checkboxes = document.getElementsByClassName("user-checkbox");
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = this.checked;
+        }
+    });
+
+    // Function to check if any checkboxes are checked and enable/disable the "Award Certificate" button accordingly
+    function checkSelected() {
+        var checkboxes = document.getElementsByClassName("user-checkbox");
+        var awardBtn = document.getElementById("award-certificate-btn");
+        var atLeastOneChecked = false;
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                atLeastOneChecked = true;
+                break;
+            }
+        }
+        awardBtn.disabled = !atLeastOneChecked;
+    }
+
+    // Call the checkSelected function when the page loads and whenever a checkbox is clicked
+    window.addEventListener("load", checkSelected);
+    document.getElementById("select-all").addEventListener("change", checkSelected);
+    var checkboxes = document.getElementsByClassName("user-checkbox");
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].addEventListener("change", checkSelected);
+    }
+</script>
 

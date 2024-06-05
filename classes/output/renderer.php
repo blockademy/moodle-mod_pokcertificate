@@ -568,8 +568,10 @@ class renderer extends \plugin_renderer_base {
     public function get_generalcertificate($filter = false) {
 
         $page = optional_param('page', 0, PARAM_INT);
-        $url = new \moodle_url('/mod/pokcertificate/generalcertificate.php', []);
         $studentid = optional_param('studentid', '', PARAM_RAW);
+        $url = new \moodle_url('/mod/pokcertificate/generalcertificate.php',
+            ['studentid' => $studentid]
+        );
         $recordperpage = 10;
         $offset = $page * $recordperpage;
         $records = pokcertificate_awardgeneralcertificatelist($studentid, $recordperpage, $offset);
