@@ -230,33 +230,37 @@ function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
     global $DB, $USER;
     $context = \context_module::instance($cm->id);
     $isverified = get_config('mod_pokcertificate', 'pokverified');
-
+    $user = \core_user::get_user($USER->id);
     if (!permission::can_manage($context)) {
         $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
         if ($pokrecord && !empty($pokrecord->get('templateid')) &&  $pokrecord->get('templateid') != 0) {
             $poktemplate = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
             $templatename = base64_encode($poktemplate->get('templatename'));;
-
-            $externalfields = get_externalfield_list($templatename, $pokrecord->get('id'));
-            if (!empty($externalfields)) {
-                $pokid = $pokrecord->get('id');
-                $pokfields = $DB->get_fieldset_sql("SELECT templatefield from {pokcertificate_fieldmapping} WHERE pokid = $pokid");
-                foreach ($externalfields as $key => $value) {
-                    if (!in_array($key, $pokfields)) {
-                        $cm->set_user_visible(false);
+            $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
+            if ((empty($pokissuerec)) ||
+                ($pokissuerec && $pokissuerec->get('useremail') != $user->email)
+            ) {
+                $externalfields = get_externalfield_list($templatename, $pokrecord->get('id'));
+                if (!empty($externalfields)) {
+                    $pokid = $pokrecord->get('id');
+                    $pokfields = $DB->get_fieldset_sql("SELECT templatefield from {pokcertificate_fieldmapping} WHERE pokid = $pokid");
+                    foreach ($externalfields as $key => $value) {
+                        if (!in_array($key, $pokfields)) {
+                            $cm->set_user_visible(false);
+                        }
                     }
                 }
-            }
 
-            $modinfo = get_fast_modinfo($cm->get_course(), $USER->id);
-            $cmuser = $modinfo->get_cm($cm->id);
+                $modinfo = get_fast_modinfo($cm->get_course(), $user->id);
+                $cmuser = $modinfo->get_cm($cm->id);
 
-            if ($cmuser && !empty($cmuser->availability) && !empty($cmuser->uservisible) && !empty($cmuser->available)) {
-                $user = \core_user::get_user($USER->id);
-                if ($cmuser->uservisible && $cmuser->available && $isverified) {
-                    $link = pok::auto_emit_certificate($cm, $user);
-                    if (!empty($link)) {
-                        $cm->set_after_link(' ' . $link);
+                if ($cmuser && !empty($cmuser->availability) && !empty($cmuser->uservisible) && !empty($cmuser->available)) {
+                    $user = \core_user::get_user($USER->id);
+                    if ($cmuser->uservisible && $cmuser->available && $isverified) {
+                        $link = pok::auto_emit_certificate($cm, $user);
+                        if (!empty($link)) {
+                            $cm->set_after_link(' ' . $link);
+                        }
                     }
                 }
             }
