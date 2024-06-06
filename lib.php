@@ -109,7 +109,7 @@ function pokcertificate_reset_userdata($data) {
                        FROM {pokcertificate} pok
                        WHERE pok.course=?";
 
-        $DB->delete_records_select('pokcertificate_issues', "certid IN ($pokcertificatesql)", [$data->courseid]);
+        $DB->delete_records_select('pokcertificate_issues', "pokid IN ($pokcertificatesql)", [$data->courseid]);
         $status[] = ['component' => $componentstr, 'item' => get_string('removeissues', 'pokcertificate'), 'error' => false];
     }
     return $status;
@@ -240,7 +240,7 @@ function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
             $externalfields = get_externalfield_list($templatename, $pokrecord->get('id'));
             if (!empty($externalfields)) {
                 $pokid = $pokrecord->get('id');
-                $pokfields = $DB->get_fieldset_sql("SELECT templatefield from {pokcertificate_fieldmapping} WHERE certid = $pokid");
+                $pokfields = $DB->get_fieldset_sql("SELECT templatefield from {pokcertificate_fieldmapping} WHERE pokid = $pokid");
                 foreach ($externalfields as $key => $value) {
                     if (!in_array($key, $pokfields)) {
                         $cm->set_user_visible(false);
@@ -424,12 +424,12 @@ function set_pokcertificate_settings() {
  *
  * This function retrieves the field mappings for a given certificate ID.
  *
- * @param int $certid The ID of the certificate.
+ * @param int $pokid The ID of the certificate.
  * @return stdClass An object containing the mapped fields.
  */
-function get_mapped_fields(int $certid) {
+function get_mapped_fields(int $pokid) {
 
-    $fields = pokcertificate_fieldmapping::fieldmapping_records(['certid' => $certid], 'id');
+    $fields = pokcertificate_fieldmapping::fieldmapping_records(['pokid' => $pokid], 'id');
     $data = new \stdClass;
     $i = 0;
     if (count($fields) > 0) {
@@ -525,7 +525,6 @@ function get_externalfield_list($template, $pokid) {
 function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage = 10, $offset = 0) {
     global $DB;
 
-    $countsql = "SELECT count(id) ";
     $selectsql = "SELECT * ";
     $fromsql = "FROM {user}
                WHERE deleted = 0
@@ -533,9 +532,13 @@ function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage =
                      AND id > 2 ";
 
     $queryparam = [];
-    if ($studentid) {
-        $fromsql .= "AND idnumber LIKE :studentid ";
-        $queryparam['studentid'] = '%' . trim($studentid) . '%';
+    $conditions = [];
+    if (!empty(trim($studentid))) {
+        $conditions[] = $DB->sql_like('idnumber', ':idnumber', false, false);
+        $queryparam['idnumber'] = $DB->sql_like_escape($studentid) . '%';
+    }
+    if (!empty($conditions)) {
+        $fromsql .= " AND " . implode(' AND ', $conditions);
     }
     $users = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
     $languages = get_string_manager()->get_list_of_languages();
@@ -615,11 +618,11 @@ function pokcertificate_coursecertificatestatuslist(
                 JOIN {course_modules} cm ON pc.id = cm.instance
                 JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSE . ")
                 JOIN {role_assignments} ra ON ctx.id = ra.contextid
-                JOIN {role} r ON (ra.roleid = r.id AND r.shortname = 'student')
+                JOIN {role} r ON (ra.roleid = r.id AND r.shortname IN ('student','employee') )
                 JOIN {user} u ON ra.userid = u.id
            LEFT JOIN {course_completions} cc ON (u.id = cc.userid AND pc.course = cc.course)
            LEFT JOIN {pokcertificate_templates} pct ON pc.templateid = pct.id
-           LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.certid)
+           LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.pokid)
                WHERE pc.course = :courseid
                      AND cm.deletioninprogress = 0
                      AND cm.module = :pokmoduleid ";
@@ -627,17 +630,22 @@ function pokcertificate_coursecertificatestatuslist(
     $queryparam = [];
     $queryparam['courseid'] = $courseid;
     $queryparam['pokmoduleid'] = $pokmoduleid;
-    if ($studentid) {
-        $fromsql .= "AND u.idnumber LIKE :studentid ";
-        $queryparam['studentid'] = '%' . trim($studentid) . '%';
+
+    $conditions = [];
+    if (!empty(trim($studentid))) {
+        $conditions[] = $DB->sql_like('u.idnumber', ':idnumber', false, false);
+        $queryparam['idnumber'] = $DB->sql_like_escape($studentid) . '%';
     }
-    if ($studentname) {
-        $fromsql .= "AND u.firstname LIKE :firstname ";
-        $queryparam['firstname'] = '%' . trim($studentname) . '%';
+    if (!empty(trim($studentname))) {
+        $conditions[] = $DB->sql_like('u.firstname', ':firstname', false, false);
+        $queryparam['firstname'] = $DB->sql_like_escape($studentname) . '%';
     }
-    if ($email) {
-        $fromsql .= "AND u.email LIKE :email ";
-        $queryparam['email'] = '%' . trim($email) . '%';
+    if (!empty(trim($email))) {
+        $conditions[] = $DB->sql_like('u.email', ':email', false, false);
+        $queryparam['email'] = $DB->sql_like_escape($email) . '%';
+    }
+    if (!empty($conditions)) {
+        $fromsql .= " AND " . implode(' AND ', $conditions);
     }
 
     if ($coursestatus == 'completed') {
@@ -714,31 +722,39 @@ function pokcertificate_awardgeneralcertificatelist($studentid, $courseid, $stud
                     u.lastname,
                     u.email,
                     u.idnumber,
+                    c.id as courseid,
                     c.fullname AS coursename ";
     $fromsql = "FROM {role_assignments} ra
                 JOIN {context} ctx ON ra.contextid = ctx.id
                 JOIN {user} u ON ra.userid = u.id
                 JOIN {course} c ON ctx.instanceid = c.id
+                JOIN {role} r ON r.id = ra.roleid
                WHERE ctx.contextlevel = 50
-                     AND ra.roleid = 5 ";
+                     AND r.shortname IN ('student','employee') ";
 
     $queryparam = [];
-    if ($studentid) {
-        $fromsql .= "AND u.idnumber LIKE :studentid ";
-        $queryparam['studentid'] = '%' . trim($studentid) . '%';
+
+    $conditions = [];
+    if (!empty(trim($studentid))) {
+        $conditions[] = $DB->sql_like('u.idnumber', ':idnumber', false, false);
+        $queryparam['idnumber'] = $DB->sql_like_escape($studentid) . '%';
     }
-    if ($studentname) {
-        $fromsql .= "AND u.firstname LIKE :firstname ";
-        $queryparam['firstname'] = '%' . trim($studentname) . '%';
+    if (!empty(trim($studentname))) {
+        $conditions[] = $DB->sql_like('u.firstname', ':firstname', false, false);
+        $queryparam['firstname'] = $DB->sql_like_escape($studentname) . '%';
     }
-    if ($email) {
-        $fromsql .= "AND u.email LIKE :email ";
-        $queryparam['email'] = '%' . trim($email) . '%';
+    if (!empty(trim($email))) {
+        $conditions[] = $DB->sql_like('u.email', ':email', false, false);
+        $queryparam['email'] = $DB->sql_like_escape($email) . '%';
     }
-    if ($courseid) {
-        $fromsql .= "AND c.id = :courseid ";
-        $queryparam['courseid'] = $courseid;
+    if (!empty(trim($courseid))) {
+        $conditions[] = $DB->sql_like('c.id', ':courseid', false, false);
+        $queryparam['courseid'] = $DB->sql_like_escape($courseid) . '%';
     }
+    if (!empty($conditions)) {
+        $fromsql .= " AND " . implode(' AND ', $conditions);
+    }
+
     $fromsql .= "ORDER BY u.id ";
     $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
     $records = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
@@ -748,12 +764,13 @@ function pokcertificate_awardgeneralcertificatelist($studentid, $courseid, $stud
     if ($records) {
         foreach ($records as $c) {
             $list = [];
-            $list['id'] = $c->userid;
+            $list['userid'] = $c->userid;
             $list['assignid'] = $c->id;
             $list['firstname'] = $c->firstname;
             $list['lastname'] = $c->lastname;
             $list['email'] = $c->email;
             $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
+            $list['courseid'] = $c->courseid;
             $list['course'] = $c->coursename;
             $data[] = $list;
         }
@@ -848,7 +865,7 @@ function pokcertificate_preview_by_user($cm, $pokcertificate, $flag) {
     } else {
 
         // Getting certificate template view for student.
-        $certificateissued = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $USER->id]);
+        $certificateissued = pokcertificate_issues::get_record(['pokid' => $pokcertificate->id, 'userid' => $USER->id]);
 
         if ($flag || ($certificateissued && !empty($certificateissued->get('pokcertificateid')))) {
             $studentview = true;
@@ -889,4 +906,32 @@ function check_usermapped_fielddata($cm, $user) {
         }
     }
     return $validuser;
+}
+
+/**
+ * validate encoded data senet from url
+ *
+ * @param  string $input
+ * @return bool
+ */
+function validate_encoded_data($input) {
+
+    // By default PHP will ignore “bad” characters, so we need to enable the “$strict” mode
+    $str = base64_decode($input, true);
+
+    // If $input cannot be decoded the $str will be a Boolean “FALSE”
+    if ($str === false) {
+        return false;
+    } else {
+        // Even if $str is not FALSE, this does not mean that the input is valid
+        // This is why now we should encode the decoded string and check it against input
+        $b64 = base64_encode($str);
+
+        // Finally, check if input string and real Base64 are identical
+        if ($input === $b64) {
+            return true;;
+        } else {
+            return false;
+        }
+    }
 }

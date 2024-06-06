@@ -37,7 +37,7 @@ class pokcertificate_fieldmapping extends persistent {
     protected static function define_properties(): array {
 
         return [
-            'certid' => [
+            'pokid' => [
                 'type' => PARAM_INT,
                 'optional' => false,
             ],

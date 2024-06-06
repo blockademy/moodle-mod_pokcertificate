@@ -202,7 +202,7 @@ class generator_test extends \advanced_testcase {
         if ($apifields) {
             $data = $generator->get_fieldmapping_data($cm->id, $pokcertificate->id, $templatename, $poktemplate['templateid']);
             pok::save_fieldmapping_data($data);
-            $this->assertTrue($DB->record_exists('pokcertificate_fieldmapping', ['certid' => $pokcertificate->id]));
+            $this->assertTrue($DB->record_exists('pokcertificate_fieldmapping', ['pokid' => $pokcertificate->id]));
         }
         // Stop event capturing and discard the events.
         $eventsink->close();

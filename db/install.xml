@@ -38,7 +38,7 @@
     <TABLE NAME="pokcertificate_issues" COMMENT="POK Certificate issue information">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="certid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="pokid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="useremail" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -49,11 +49,11 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="certid" TYPE="foreign" FIELDS="certid" REFTABLE="pokcertificate" REFFIELDS="id"/>
+        <KEY NAME="pokid" TYPE="foreign" FIELDS="pokid" REFTABLE="pokcertificate" REFFIELDS="id"/>
         <KEY NAME="templateid" TYPE="foreign" FIELDS="templateid" REFTABLE="pokcertificate" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="certid" UNIQUE="false" FIELDS="certid"/>
+        <INDEX NAME="pokid" UNIQUE="false" FIELDS="pokid"/>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
         <INDEX NAME="templateid" UNIQUE="false" FIELDS="templateid"/>
         <INDEX NAME="certificateurl" UNIQUE="false" FIELDS="certificateurl"/>
@@ -78,7 +78,7 @@
     <TABLE NAME="pokcertificate_fieldmapping" COMMENT="POK Certificate user field mapping information">
        <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="certid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="pokid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="templatefield" TYPE="char" LENGTH="255" NOTNULL="true"  DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="userfield" TYPE="char" LENGTH="255" NOTNULL="true"  DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int"  LENGTH="10" NOTNULL="false"  DEFAULT="0" SEQUENCE="false"/>
@@ -86,10 +86,10 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="certid" TYPE="foreign" FIELDS="certid" REFTABLE="pokcertificate" REFFIELDS="id"/>
+        <KEY NAME="pokid" TYPE="foreign" FIELDS="pokid" REFTABLE="pokcertificate" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="certid" UNIQUE="false" FIELDS="certid"/>
+        <INDEX NAME="pokid" UNIQUE="false" FIELDS="pokid"/>
         <INDEX NAME="templatefield" UNIQUE="false" FIELDS="templatefield"/>
         <INDEX NAME="userfield" UNIQUE="false" FIELDS="userfield"/>
       </INDEXES>

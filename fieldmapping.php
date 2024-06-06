@@ -26,7 +26,7 @@ use mod_pokcertificate\pok;
 use mod_pokcertificate\form\fieldmapping_form;
 
 require('../../config.php');
-
+require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 require_login();
 
 $id = required_param('id', PARAM_INT); // Course module id.
@@ -52,24 +52,26 @@ $PAGE->set_activity_record($pokcertificate);
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 // Save selected template definition.
-if ($tempname) {
+if (!empty(trim($tempname)) && validate_encoded_data($tempname)) {
+
     $templateinfo = new \stdclass;
     $templateinfo->template = base64_decode($tempname);
     $templateinfo->templatetype = $temptype;
-    $data = pok::save_template_definition($templateinfo, $cm);
+    $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition(base64_decode($tempname));
 
-    if (!empty($data)) {
+    if ($templatedefinition) {
+        $data = pok::save_template_definition($templateinfo, $templatedefinition, $cm);
 
         $remotefields = get_externalfield_list($tempname, $pokcertificate->id);
 
         if ($remotefields) {
-            $certid = $pokcertificate->id;
+            $pokid = $pokcertificate->id;
             $templateid = $pokcertificate->templateid;
-            $fielddata = get_mapped_fields($certid);
+            $fielddata = get_mapped_fields($pokid);
 
             $mform = new fieldmapping_form(
                 $url,
-                ['data' => $fielddata, 'id' => $id, 'template' => $tempname, 'templateid' => $templateid, 'certid' => $certid]
+                ['data' => $fielddata, 'id' => $id, 'template' => $tempname, 'templateid' => $templateid, 'pokid' => $pokid]
             );
             $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
 
@@ -92,11 +94,16 @@ if ($tempname) {
                 redirect($url);
             }
         }
+    } else {
+        echo $OUTPUT->header();
+        $url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
+        echo $output = notice('<p class="errorbox alert alert-danger">' .
+            get_string('invalidtemplatedef', 'mod_pokcertificate') . '</p>', $url);
     }
 } else {
     echo $OUTPUT->header();
     $url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
     echo $output = notice('<p class="errorbox alert alert-danger">' .
-        get_string('invalidtemplatedef', 'mod_pokcertificate') . '</p>', $url);
+        get_string('invalidtemplate', 'mod_pokcertificate') . '</p>', $url);
 }
 echo $OUTPUT->footer();

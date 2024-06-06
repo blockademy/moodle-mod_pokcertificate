@@ -52,19 +52,11 @@
  * @return bool True on successful upgrade.
  */
 function xmldb_pokcertificate_upgrade($oldversion) {
-    global $DB, $CFG;
+    global $DB;
     $dbman = $DB->get_manager();
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.2.0 release upgrade line.
-    // Put any upgrade step following this.
     if ($oldversion < 2024041608.01) {
         $table = new xmldb_table('pokcertificate_issues');
 
@@ -91,6 +83,21 @@ function xmldb_pokcertificate_upgrade($oldversion) {
         }
 
         upgrade_mod_savepoint(true, 2024041608.03, 'pokcertificate');
+    }
+
+    if ($oldversion < 2024041608.05) {
+        $table = new xmldb_table('pokcertificate_issues');
+        $field = new xmldb_field('certid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', null);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'pokid');
+        }
+
+        $table = new xmldb_table('pokcertificate_fieldmapping');
+        $field = new xmldb_field('certid', XMLDB_TYPE_INTEGER, '10', null, null, null, '0', null);
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'pokid');
+        }
+        upgrade_mod_savepoint(true, 2024041608.05, 'pokcertificate');
     }
     return true;
 }

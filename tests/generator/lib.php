@@ -96,8 +96,10 @@ class mod_pokcertificate_generator extends testing_module_generator {
         $templateinfo = new \stdclass;
         $templateinfo->template = 'Crossed Paths';
         $templateinfo->templatetype = 0;
+        $tempname = 'Crossed Paths';
+        $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($tempname);
 
-        $data = pok::save_template_definition($templateinfo, $cm);
+        $data = pok::save_template_definition($templateinfo,  $templatedefinition, $cm);
 
         return $data;
     }
@@ -108,12 +110,12 @@ class mod_pokcertificate_generator extends testing_module_generator {
      * Retrieves field mapping data for a given course module ID, certificate ID, template name, and template ID.
      *
      * @param int $cmid The course module ID.
-     * @param int $certid The certificate ID.
+     * @param int $pokid The certificate ID.
      * @param string $tempname The template name.
      * @param int $tempid The template ID.
      * @return stdClass The field mapping data.
      */
-    public function get_fieldmapping_data($cmid, $certid, $tempname, $tempid) {
+    public function get_fieldmapping_data($cmid, $pokid, $tempname, $tempid) {
         $data = new stdClass();
         $data->option_repeats = 3;
         $data->fieldmapping = [0 => 1, 1 => 2, 2 => 3];
@@ -123,7 +125,7 @@ class mod_pokcertificate_generator extends testing_module_generator {
         $data->id = $cmid;
         $data->temp = $tempname;
         $data->tempid = $tempid;
-        $data->certid = $certid;
+        $data->pokid = $pokid;
         return $data;
     }
 

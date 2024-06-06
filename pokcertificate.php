@@ -22,10 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_pokcertificate\form\verifyauth_form;
+
 require('../../config.php');
 
 require_login();
-use mod_pokcertificate\form\verifyauth_form;
+
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 

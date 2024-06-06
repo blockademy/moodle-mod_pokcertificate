@@ -355,7 +355,7 @@ class renderer extends \plugin_renderer_base {
         $credits = (new \mod_pokcertificate\api)->get_credits();
         $credits = json_decode($credits);
         $cm = pok::get_cm_instance($cmid);
-        $pokissuerec = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $user->id]);
+        $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
 
         if (
             !empty($pokissuerec) && $pokissuerec->get('status') &&
@@ -421,7 +421,7 @@ class renderer extends \plugin_renderer_base {
                             $issuecertificate->status = true;
                             pok::save_issued_certificate($cm->id, $user, $issuecertificate);
                             $certificateurl = pokcertificate_issues::get_record([
-                                'certid' => $cm->instance, 'userid' => $user->id,
+                                'pokid' => $cm->instance, 'userid' => $user->id,
                                 'pokcertificateid' => $pokissuerec->get('pokcertificateid'),
                             ]);
                             if (!empty($certificateurl->get('certificateurl'))) {
@@ -574,7 +574,8 @@ class renderer extends \plugin_renderer_base {
         $studentid = optional_param('studentid', '', PARAM_RAW);
         $studentname = optional_param('studentname', '', PARAM_RAW);
         $email = optional_param('email', '', PARAM_RAW);
-        $url = new \moodle_url('/mod/pokcertificate/generalcertificate.php',
+        $url = new \moodle_url(
+            '/mod/pokcertificate/generalcertificate.php',
             [
                 'courseid' => $courseid,
                 'studentid' => $studentid,
@@ -590,7 +591,8 @@ class renderer extends \plugin_renderer_base {
             $studentname,
             $email,
             $recordperpage,
-            $offset);
+            $offset
+        );
         $records['showdata'] = $records['data'] ? true : false;
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/awardedcertificatestatus', $records);
         $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);
@@ -678,5 +680,38 @@ class renderer extends \plugin_renderer_base {
             ]
         );
         return $output;
+    }
+
+    /**
+     * Renders the certifcate templates view.
+     *
+     * @param string $userids user id
+     * @param string $courseids courseids
+     * @return string HTML certificate templates view.
+     */
+    public function show_generalcertificate_templates(string $userids, string $courseids) {
+
+        $output = '';
+        $context = \context_system::instance();
+
+        if (get_config('mod_pokcertificate', 'pokverified')) {
+
+            if (permission::can_manage($context)) {
+
+                $certificatetemplatecontent = pok::get_certificate_templates();
+                $certificatetemplatecontent['userids'] = $userids;
+                $certificatetemplatecontent['courseids'] = $courseids;
+                $certificatetemplatecontent['generalcert'] = true;
+                if ($certificatetemplatecontent) {
+                    $output .= $this->render_from_template(
+                        'mod_pokcertificate/certificatetemplates',
+                        $certificatetemplatecontent
+                    );
+                }
+            }
+            echo $output;
+        } else if (permission::can_manage($context)) {
+            echo self::verify_authentication();
+        }
     }
 }

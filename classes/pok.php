@@ -198,8 +198,8 @@ class pok {
 
         $DB->delete_records('pokcertificate', ['id' => $pokcertificate->id]);
         $DB->delete_records('pokcertificate_templates', ['pokid' => $pokcertificate->id]);
-        $DB->delete_records('pokcertificate_fieldmapping', ['certid' => $pokcertificate->id]);
-        $DB->delete_records('pokcertificate_issues', ['certid' => $pokcertificate->id]);
+        $DB->delete_records('pokcertificate_fieldmapping', ['pokid' => $pokcertificate->id]);
+        $DB->delete_records('pokcertificate_issues', ['pokid' => $pokcertificate->id]);
         return true;
     }
 
@@ -208,16 +208,16 @@ class pok {
      * Saves the selected template definition to the database.
      *
      * @param object $templateinfo - template information
+     * @param object $templatedefinition - api template definition
      * @param object $cm - course module instance
      *
      * @return array []
      */
-    public static function save_template_definition($templateinfo, $cm) {
+    public static function save_template_definition($templateinfo, $templatedefinition, $cm) {
         global $USER, $DB;
         $templateid = 0;
         $template = $templateinfo->template;
         $templatetype = $templateinfo->templatetype;
-        $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($template);
         $pokid = pokcertificate::get_field('id', ['id' => $cm->instance]);
 
         try {
@@ -264,7 +264,7 @@ class pok {
                     ];
                     template_updated::create($eventparams)->trigger();
                 }
-                return ['certid' => $pokid, 'templateid' => $templateid];
+                return ['pokid' => $pokid, 'templateid' => $templateid];
             } else {
                 return [];
             }
@@ -283,8 +283,8 @@ class pok {
     public static function save_fieldmapping_data($data) {
 
         try {
-            if ($data->certid) {
-                $fields = pokcertificate_fieldmapping::get_records(['certid' => $data->certid]);
+            if ($data->pokid) {
+                $fields = pokcertificate_fieldmapping::get_records(['pokid' => $data->pokid]);
 
                 if ($fields) {
                     foreach ($fields as $field) {
@@ -304,7 +304,7 @@ class pok {
                 foreach ($fieldvalues as $field => $value) {
                     $mappingfield = new \stdClass();
                     $mappingfield->timecreated = time();
-                    $mappingfield->certid = $data->certid;
+                    $mappingfield->pokid = $data->pokid;
                     $mappingfield->templatefield = $field;
                     $mappingfield->userfield = $value;
                     $fieldmapping = new pokcertificate_fieldmapping(0, $mappingfield);
@@ -324,13 +324,14 @@ class pok {
      * @param  int $cmid
      * @return array
      */
-    public static function get_certificate_templates($cmid) {
+    public static function get_certificate_templates($cmid = 0) {
         global $CFG;
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
-        $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
-        $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
-        $templaterecord = pokcertificate_templates::get_record(['id' => $templateid]);
-
+        if ($cmid != 0) {
+            $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
+            $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
+            $templaterecord = pokcertificate_templates::get_record(['id' => $templateid]);
+        }
         $templates = [];
         $templateslist = (new \mod_pokcertificate\api)->get_templates_list();
         $templateslist = json_decode($templateslist);
@@ -341,14 +342,14 @@ class pok {
                 $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
                 $data['tempname'] = base64_encode($template);
                 $data['name'] = $template;
-                $data['cmid'] = $cmid;
-                $data['selectedtemplate'] = ($templaterecord &&
+                $data['cmid'] = ($cmid) ?? $cmid;
+                $data['selectedtemplate'] = (isset($templaterecord) &&
                     $templaterecord->get('templatename') == $template) ? true : false;
                 $data['certimage'] = trim($templatepreview, '"');
                 $templates['certdata'][] = $data;
             }
         }
-        $templates['temptype'] = ($templaterecord &&
+        $templates['temptype'] = (isset($templaterecord) &&
             $templaterecord->get('templatetype') ? $templaterecord->get('templatetype') : 0);
 
         return $templates;
@@ -467,7 +468,7 @@ class pok {
 
                 if ($pos !== false) {
 
-                    $pokfields = pokcertificate_fieldmapping::get_records(['certid' => $pokrecord->get('id')]);
+                    $pokfields = pokcertificate_fieldmapping::get_records(['pokid' => $pokrecord->get('id')]);
 
                     if ($pokfields) {
                         foreach ($pokfields as $field) {
@@ -521,10 +522,10 @@ class pok {
         try {
 
             $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
-            $pokissuedataexists = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $user->id]);
+            $pokissuedataexists = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
 
             $data = new \stdClass;
-            $data->certid = $pokrecord->get('id');
+            $data->pokid = $pokrecord->get('id');
             $data->userid = $user->id;
             $data->useremail = $user->email;
             $data->status = (isset($certificate->status)) ? $certificate->status : false;
@@ -556,7 +557,7 @@ class pok {
      */
     public static function get_mapping_fields($user, $cm) {
         $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
-        $pokfields = pokcertificate_fieldmapping::get_records(['certid' => $pokrecord->get('id')]);
+        $pokfields = pokcertificate_fieldmapping::get_records(['pokid' => $pokrecord->get('id')]);
         return $pokfields;
     }
 
@@ -627,7 +628,7 @@ class pok {
     private static function get_notissued_users_list(int $pokid, int $courseid, int $templateid): array {
         global $DB;
         $sql = "SELECT DISTINCT poki.* FROM {" . pokcertificate_issues::TABLE . "} poki
-                    JOIN {" . pokcertificate::TABLE . "} pok ON pok.templateid = poki.templateid AND pok.id=poki.certid
+                    JOIN {" . pokcertificate::TABLE . "} pok ON pok.templateid = poki.templateid AND pok.id=poki.pokid
                 WHERE pok.course = :courseid AND pok.templateid = :templateid
                       AND poki.status = 0 AND poki.certificateurl IS NULL OR poki.certificateurl = ''
                       AND pok.id = :pokid ";
@@ -649,10 +650,10 @@ class pok {
      * @return void
      */
     public static function auto_emit_certificate($cm, $user) {
-        global $OUTPUT;
+
         $link = '';
 
-        $pokissuerec = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $user->id]);
+        $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
         if ((empty($pokissuerec)) ||
             ($pokissuerec && $pokissuerec->get('useremail') != $user->email)
         ) {

@@ -47,7 +47,7 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
         $issue = new backup_nested_element(
             'issue',
             ['id'],
-            ['certid', 'userid', 'useremail', 'status', 'templateid', 'certificateurl', 'pokcertificateid', 'timecreated']
+            ['pokid', 'userid', 'useremail', 'status', 'templateid', 'certificateurl', 'pokcertificateid', 'timecreated']
         );
 
         $fieldmappings = new backup_nested_element('fieldmappings');
@@ -55,7 +55,7 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
         $fieldmapping = new backup_nested_element(
             'fieldmapping',
             ['id'],
-            ['certid', 'templatefield', 'userfield', 'timecreated', 'timemodified']
+            ['pokid', 'templatefield', 'userfield', 'timecreated', 'timemodified']
         );
 
         $templates = new backup_nested_element('templates');
@@ -86,8 +86,8 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
                 $issue->set_source_sql(
                     'SELECT *
             FROM {pokcertificate_issues}
-            WHERE certid = ?',
-                    ['certid' => backup::VAR_PARENTID]
+            WHERE pokid = ?',
+                    ['pokid' => backup::VAR_PARENTID]
                 );
             }
             // Define id annotations.
@@ -97,8 +97,8 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
         $fieldmapping->set_source_sql(
             'SELECT *
             FROM {pokcertificate_fieldmapping}
-            WHERE certid = ?',
-            ['certid' => backup::VAR_PARENTID]
+            WHERE pokid = ?',
+            ['pokid' => backup::VAR_PARENTID]
         );
 
         $template->set_source_sql(

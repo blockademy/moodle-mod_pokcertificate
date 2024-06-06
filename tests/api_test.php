@@ -97,7 +97,7 @@ final class api_test extends \advanced_testcase {
         if ($remotefields) {
             $data = $generator->get_fieldmapping_data($cm->id, $pokcertificate->id, $templatename, $poktemplate['templateid']);
             pok::save_fieldmapping_data($data);
-            $this->assertTrue($DB->record_exists('pokcertificate_fieldmapping', ['certid' => $pokcertificate->id]));
+            $this->assertTrue($DB->record_exists('pokcertificate_fieldmapping', ['pokid' => $pokcertificate->id]));
         }
         $pokcertificate = pokcertificate::get_record(['course' => $course->id]);
         // Test not-enrolled user.
@@ -116,7 +116,7 @@ final class api_test extends \advanced_testcase {
 
         $credits = (new \mod_pokcertificate\api)->get_credits();
         $credits = json_decode($credits);
-        $pokissuerec = pokcertificate_issues::get_record(['certid' => $cm->instance, 'userid' => $user->id]);
+        $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
         if (
             !empty($pokissuerec) && $pokissuerec->get('status') &&
             !empty($pokissuerec->get('certificateurl'))

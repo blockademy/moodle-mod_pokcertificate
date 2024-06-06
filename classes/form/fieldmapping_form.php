@@ -27,6 +27,7 @@ namespace mod_pokcertificate\form;
 defined('MOODLE_INTERNAL') || die;
 
 use moodleform;
+
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -45,7 +46,7 @@ class fieldmapping_form extends moodleform {
         $id        = $this->_customdata['id'];
         $templatename  = $this->_customdata['template'];
         $templateid  = $this->_customdata['templateid'];
-        $certid  = $this->_customdata['certid'];
+        $pokid  = $this->_customdata['pokid'];
         $data  = $this->_customdata['data'];
 
         $mform->addElement('header', 'fieldmapping', get_string('fieldmapping', 'pokcertificate') . "");
@@ -63,7 +64,7 @@ class fieldmapping_form extends moodleform {
         $defaultselect = [null => get_string('select')];
 
         $localfields = $defaultselect + get_internalfield_list();
-        $remotefields = get_externalfield_list($templatename, $certid);
+        $remotefields = get_externalfield_list($templatename, $pokid);
         $i = 0;
         foreach ($remotefields as $key => $value) {
 
@@ -95,8 +96,8 @@ class fieldmapping_form extends moodleform {
         $mform->addElement('hidden', 'tempid', $templateid);
         $mform->setType('tempid', PARAM_INT);
 
-        $mform->addElement('hidden', 'certid', $certid);
-        $mform->setType('certid', PARAM_INT);
+        $mform->addElement('hidden', 'pokid', $pokid);
+        $mform->setType('pokid', PARAM_INT);
 
         $this->set_data($data);
 

@@ -69,7 +69,7 @@ class issue_certitficate_user extends \core\task\scheduled_task {
                 // Issue the certificate.
                 foreach ($users as $user) {
 
-                    $pokissuerec = pokcertificate_issues::get_record(['certid' => $pokcertificate->id, 'userid' => $user->userid]);
+                    $pokissuerec = pokcertificate_issues::get_record(['pokid' => $pokcertificate->id, 'userid' => $user->userid]);
                     if ($pokissuerec) {
                         $issuecertificate = pok::issue_certificate($pokissuerec);
                         if (!empty($issuecertificate)) {

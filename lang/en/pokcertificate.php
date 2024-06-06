@@ -235,6 +235,7 @@ $string['invalidspechar'] = "Please do not use special characters";
 $string['usethistemplate'] = "Use this template";
 $string['inprogress'] = "Inprogress";
 $string['invalidtemplatedef'] = 'Invalid Template Definition';
+$string['invalidtemplate'] = 'Invalid template name please select valid template';
 $string['certificatesuccess'] = 'Account Details Verification';
 $string['certificatesuccessmsg'] = 'You have received an email to accept your certificate <br/><br/> <b><center>{$a}</center></b>';
 $string['certificateissuemsg'] = 'You have received an email to accept your certificate ';

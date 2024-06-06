@@ -64,7 +64,7 @@ class restore_pokcertificate_activity_structure_step extends restore_activity_st
 
         $data = (object) $data;
         $oldid = $data->id;
-        $data->certid = $this->get_new_parentid('pokcertificate');
+        $data->pokid = $this->get_new_parentid('pokcertificate');
         $newitemid = $DB->insert_record('pokcertificate_issues', $data);
         $this->set_mapping('pokcertificate_issues', $oldid, $newitemid);
     }
@@ -74,7 +74,7 @@ class restore_pokcertificate_activity_structure_step extends restore_activity_st
 
         $data = (object)$data;
         $oldid = $data->id;
-        $data->certid = $this->get_new_parentid('pokcertificate');
+        $data->pokid = $this->get_new_parentid('pokcertificate');
         $newitemid = $DB->insert_record('pokcertificate_fieldmapping', $data);
         $this->set_mapping('pokcertificate_fieldmapping', $oldid, $newitemid);
     }
