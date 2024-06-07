@@ -24,29 +24,31 @@
     }
 }}
 <div class="row ">
+  <div class="col-md-12">
     <label class="radio-inline">
         <input type="radio" name="optradio" data-value = "0" {{^temptype}}checked="checked" {{/temptype}} data-action = "templatetype" checked="checked">{{#str}}free,pokcertificate{{/str}}
     </label>
     <label class="radio-inline">
         <input type="radio" name="optradio" data-value = "1"  {{#temptype}}checked="checked" {{/temptype}} data-action = "templatetype">{{#str}}paid,pokcertificate{{/str}}
     </label>
+    </div>
 </div>
 <div class="row">
-    <div class="grid">
-        {{#certdata}}
-        <label class="card">
-            <input name="templates" class="certradio" type="radio" {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} value="{{config.wwwroot}}/mod/pokcertificate/fieldmapping.php?id={{cmid}}&temp={{tempname}}">
-            <span class="template-details">
-            <span class="template-name">{{name}}</span>
-            <img src="{{certimage}}" alt="" class="">
-            </span>
-        </label>
-        {{/certdata}}
+    <div class="col-md-12">
+        <div class="grid">
+            {{#certdata}}
+            <label class="card">
+                 <input name="templates" class="certradio" type="radio" {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} value="{{config.wwwroot}}/mod/pokcertificate/fieldmapping.php?id={{cmid}}&temp={{tempname}}">
+                <span class="template-details">
+                <span class="template-name">{{name}}</span>
+                <img src="{{certimage}}" alt="" class="">
+                </span>
+            </label>
+            {{/certdata}}
+        </div>
+        <a href class="btn btn-primary" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</a>
     </div>
-    <a href class="btn btn-primary" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</a>
-
 </div>
-
 {{#js}}
   document.getElementById("certbutton").onclick = function() {
     var templateurl = $("input[type='radio'][name='templates']:checked").val();
