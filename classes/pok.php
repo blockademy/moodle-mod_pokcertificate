@@ -327,11 +327,11 @@ class pok {
     public static function get_certificate_templates($cmid = 0) {
         global $CFG;
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
-        if ($cmid != 0) {
-            $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
-            $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
-            $templaterecord = pokcertificate_templates::get_record(['id' => $templateid]);
-        }
+
+        $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
+        $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
+        $templaterecord = pokcertificate_templates::get_record(['id' => $templateid]);
+
         $templates = [];
         $templateslist = (new \mod_pokcertificate\api)->get_templates_list();
         $templateslist = json_decode($templateslist);
