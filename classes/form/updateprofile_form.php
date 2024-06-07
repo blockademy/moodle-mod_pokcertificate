@@ -76,9 +76,15 @@ class updateprofile_form extends moodleform {
         $mform->setDefault('lang', $lang);
 
         if (!empty($pokfields)) {
-
+            $pokfieldsarr = [];
             foreach ($pokfields as $field) {
-                $fieldname = $field->get('userfield');
+                if ((!in_array($field->get('userfield'), $pokfieldsarr)) && !in_array($field->get('userfield'), $mandatoryfields)) {
+                    $pokfieldsarr[] = $field->get('userfield');
+                }
+            }
+
+            foreach ($pokfieldsarr as $key => $field) {
+                $fieldname = $field;
 
                 if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') === false)) {
 
@@ -96,7 +102,7 @@ class updateprofile_form extends moodleform {
                         }
                         $mform->addElement('select', 'country', get_string('selectacountry'), $choices, $purpose . $disabled);
                         if (!empty($CFG->country)) {
-                            $mform->setDefault('country', core_user::get_property_default('country'));
+                            $mform->setDefault('country', \core_user::get_property_default('country'));
                         }
                     } else {
                         $mform->addElement(
@@ -274,8 +280,6 @@ class updateprofile_form extends moodleform {
     public function validation($user, $files) {
         global $DB, $CFG;
         $errors = parent::validation($user, $files);
-        $errors = [];
-
         if (!validate_email($user['email'])) {
             $errors['email'] = get_string('invalidemail', 'mod_pokcertificate');
         }
