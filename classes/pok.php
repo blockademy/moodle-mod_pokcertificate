@@ -343,13 +343,13 @@ class pok {
                 $data['tempname'] = base64_encode($template);
                 $data['name'] = $template;
                 $data['cmid'] = ($cmid) ?? $cmid;
-                $data['selectedtemplate'] = (isset($templaterecord) &&
+                $data['selectedtemplate'] = ($templaterecord &&
                     $templaterecord->get('templatename') == $template) ? true : false;
                 $data['certimage'] = trim($templatepreview, '"');
                 $templates['certdata'][] = $data;
             }
         }
-        $templates['temptype'] = (isset($templaterecord) &&
+        $templates['temptype'] = ($templaterecord &&
             $templaterecord->get('templatetype') ? $templaterecord->get('templatetype') : 0);
 
         return $templates;
