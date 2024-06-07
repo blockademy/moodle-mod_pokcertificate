@@ -27,6 +27,7 @@ namespace mod_pokcertificate\form;
 defined('MOODLE_INTERNAL') || die;
 
 use moodleform;
+
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -274,6 +275,19 @@ class updateprofile_form extends moodleform {
         global $DB, $CFG;
         $errors = parent::validation($user, $files);
         $errors = [];
+
+        if (!validate_email($user['email'])) {
+            $errors['email'] = get_string('invalidemail', 'mod_pokcertificate');
+        }
+        if (preg_match('/[^a-zA-Z0-9]/', trim($user['idnumber']))) {
+            $errors['idnumber'] = get_string('invalidspechar', 'mod_pokcertificate');
+        }
+        if (preg_match('/[^a-zA-Z0-9]/', trim($user['firstname']))) {
+            $errors['firstname'] = get_string('invalidspechar', 'mod_pokcertificate');
+        }
+        if (preg_match('/[^a-zA-Z0-9]/', trim($user['lastname']))) {
+            $errors['lastname'] = get_string('invalidspechar', 'mod_pokcertificate');
+        }
 
         if (empty($CFG->allowaccountssameemail)) {
             // Make a case-insensitive query for the given email address.
