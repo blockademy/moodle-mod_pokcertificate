@@ -265,6 +265,15 @@ function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
                 }
             }
         } else {
+            $link = \html_writer::tag(
+                'p',
+                get_string('certificatenotconfigured', 'mod_pokcertificate'),
+                [
+                    'class' => 'success-complheading',
+                    'style' => 'font-size: .875em; color: #495057;'
+                ]
+            );
+            $cm->set_after_link(' ' . $link);
             $cm->set_user_visible(false);
         }
     }
@@ -529,11 +538,18 @@ function get_externalfield_list($template, $pokid) {
 function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage = 10, $offset = 0) {
     global $DB;
 
-    $selectsql = "SELECT * ";
-    $fromsql = "FROM {user}
-               WHERE deleted = 0
-                     AND suspended = 0
-                     AND id > 2 ";
+    $countsql = "SELECT count(u.id) ";
+    $selectsql = "SELECT u.* ";
+    $fromsql = "FROM {user} u ";
+    $joinsql = " LEFT JOIN {user_info_data} d ON d.userid = u.id
+                    LEFT JOIN {user_info_field} f ON d.fieldid = f.id ";
+    $wheresql = " WHERE u.deleted = 0
+                     AND u.suspended = 0
+                     AND u.id > 2 ";
+    $wheresql .= " AND CASE WHEN EXISTS
+                    (select 1 from {user_info_field} limit 1)
+                    THEN (u.idnumber IS NULL OR u.idnumber = '' OR d.data IS NULL OR d.data = '')
+                    ELSE (u.idnumber IS NULL OR u.idnumber = '') END ";
 
     $queryparam = [];
     $conditions = [];
@@ -544,13 +560,15 @@ function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage =
     if (!empty($conditions)) {
         $fromsql .= " AND " . implode(' AND ', $conditions);
     }
-    $users = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
+    $count = $DB->count_records_sql($countsql . $fromsql . $joinsql . $wheresql, $queryparam);
+    $users = $DB->get_records_sql($selectsql . $fromsql . $joinsql . $wheresql, $queryparam, $offset, $perpage);
     $languages = get_string_manager()->get_list_of_languages();
     $list = [];
     $data = [];
     if ($users) {
         foreach ($users as $user) {
             $user = \core_user::get_user($user->id);
+
             $list = [];
             $list['id'] = $user->id;
             $list['firstname'] = $user->firstname;
@@ -558,23 +576,9 @@ function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage =
             $list['email'] = $user->email;
             $list['studentid'] = $user->idnumber ? $user->idnumber : '-';
             $list['language'] = $languages[$user->lang];
-            profile_load_custom_fields($user);
-
-            $customfields = profile_get_custom_fields();
-            $customfields = array_combine(array_column($customfields, 'shortname'), $customfields);
-            if (empty(trim($user->idnumber) || $user->idnumber == 0)) {
-                $data[] = $list;
-            } else if ($customfields) {
-                foreach ((array)$customfields as $key => $field) {
-                    if (empty($user->profile[$key])) {
-                        $list[$key] = '-';
-                        $data[] = $list;
-                    }
-                }
-            }
+            $data[] = $list;
         }
     }
-    $count = count($data);
     return ['count' => $count, 'data' => $data];
 }
 

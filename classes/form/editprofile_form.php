@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 use moodleform;
 use core_user;
 use context_user;
+
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -61,7 +62,7 @@ class editprofile_form extends moodleform {
 
         $strrequired = get_string('required');
 
-        $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
+        $mform->addElement('static', 'currentpicture', '');
         $mform->addElement('static', 'nameofstudent', '', $nameofstudent);
         // Add the necessary names.
         foreach (useredit_get_required_name_fields() as $fullname) {
@@ -85,7 +86,7 @@ class editprofile_form extends moodleform {
         $mform->addRule('email', $strrequired, 'required', null, 'client');
         $mform->setType('email', PARAM_RAW_TRIMMED);
 
-        $mform->addElement('text', 'idnumber', get_string('studentid', 'mod_pokcertificate'), 'maxlength="255" size="25"');
+        $mform->addElement('text', 'idnumber', get_string('idnumber', 'mod_pokcertificate'), 'maxlength="255" size="25"');
         $mform->addRule('idnumber', $strrequired, 'required', null, 'client');
         $mform->setType('idnumber', core_user::get_property_type('idnumber'));
 

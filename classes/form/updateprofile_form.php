@@ -53,7 +53,7 @@ class updateprofile_form extends moodleform {
         $strrequired = get_string('required');
         $stringman = get_string_manager();
 
-        $mform->addElement('static', 'currentpicture', get_string('currentpicture'));
+        $mform->addElement('static', 'currentpicture', '');
         $mandatoryfields = ['firstname', 'lastname', 'email', 'idnumber'];
         foreach ($mandatoryfields as $fullname) {
             $style = '';
@@ -71,7 +71,7 @@ class updateprofile_form extends moodleform {
             $mform->addHelpButton($fullname, $fullname, 'pokcertificate');
         }
         $translations = get_string_manager()->get_list_of_translations();
-        $mform->addElement('select', 'lang', get_string('preferredlanguage'), $translations, 'disabled');
+        $mform->addElement('select', 'lang', get_string('language'), $translations, 'disabled');
         $lang = empty($user->lang) ? $CFG->lang : $user->lang;
         $mform->setDefault('lang', $lang);
 

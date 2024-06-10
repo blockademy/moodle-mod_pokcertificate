@@ -76,7 +76,8 @@ if (!empty(trim($tempname)) && validate_encoded_data($tempname)) {
             $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
 
             if ($mform->is_cancelled()) {
-                redirect($url);
+                $certificateslink = new \moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
+                redirect($certificateslink);
             } else if ($data = $mform->get_data()) {
                 $return = pok::save_fieldmapping_data($data);
                 if ($return) {
