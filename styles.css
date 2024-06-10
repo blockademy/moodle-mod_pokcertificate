@@ -38,6 +38,10 @@
     display: table;
 }
 
+#page-mod-pokcertificate-view  .optradio {
+    margin-right: 0.5rem;
+}
+
 #page-mod-pokcertificate-view  label {
     display: inline-block;
     margin-right: 1.5rem;

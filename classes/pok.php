@@ -450,7 +450,7 @@ class pok {
             $templatedefinition = json_decode($template->get('templatedefinition'));
         }
         $customparams = [];
-        if ($templatedefinition) {
+        if ($templatedefinition && $templatedefinition->params) {
             foreach ($templatedefinition->params as $param) {
                 if ($param->name == 'institution') {
                     $param->value = get_config('mod_pokcertificate', 'institution');
@@ -480,8 +480,14 @@ class pok {
                                     $customparams[$param->name] = $user->profile[$userprofilefield];
                                     $param->value = $user->profile[$userprofilefield];
                                 } else {
-                                    $customparams[$param->name] = $user->$userfield;
-                                    $param->value = $user->$userfield;
+                                    if ($user->$userfield == 'country') {
+                                        $choices = get_string_manager()->get_list_of_countries();
+                                        $customparams[$param->name] = $user->$userfield;
+                                        $param->value = $choices[$user->$userfield];
+                                    } else {
+                                        $customparams[$param->name] = $user->$userfield;
+                                        $param->value = $user->$userfield;
+                                    }
                                 }
                             }
                         }
@@ -489,7 +495,7 @@ class pok {
                 }
             }
         }
-        $templatedefinition = json_encode($templatedefinition);
+        $templatedefinition = ($templatedefinition) ? json_encode($templatedefinition) : '';
         $emitdata = new \stdclass;
         $emitdata->email = $user->email;
         $emitdata->institution = get_config('mod_pokcertificate', 'institution');
@@ -497,7 +503,7 @@ class pok {
         $emitdata->first_name = $user->firstname;
         $emitdata->last_name = $user->lastname;
         $emitdata->title = $pokrecord->get('title');
-        $emitdata->template_base64 = base64_encode($templatedefinition);
+        $emitdata->template_base64 = (!empty($templatedefinition)) ? base64_encode($templatedefinition) : '';
         $emitdata->date = time();
         $emitdata->free = ($template->get('templatetype') == 0) ? true : false;
         $emitdata->wallet = get_config('mod_pokcertificate', 'wallet');
