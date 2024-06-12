@@ -391,11 +391,10 @@ class pok {
         profile_load_custom_fields($user);
 
         $cm = self::get_cm_instance($cmid);
-
         $emitcertificate = new \stdClass();
         try {
 
-            if (!empty($cm) && permission::can_manage(\context_system::instance())) {
+            if (!empty($cm)) {
 
                 $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
 
