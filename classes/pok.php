@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
+require_once($CFG->dirroot . '/user/profile/lib.php');
 /**
  * Class pok
  *
@@ -385,24 +386,36 @@ class pok {
      * @return bool
      */
     public static function emit_certificate($cmid, $user) {
+
         $user = \core_user::get_user($user->id);
+        profile_load_custom_fields($user);
+
         $cm = self::get_cm_instance($cmid);
+
         $emitcertificate = new \stdClass();
         try {
-            if (!empty($cm) && !permission::can_manage(\context_system::instance())) {
+
+            if (!empty($cm) && permission::can_manage(\context_system::instance())) {
+
                 $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+
                 if ($pokrecord && $pokrecord->get('templateid')) {
                     $template = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
+                    $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
+                    if ((empty($pokissuerec)) ||
+                        ($pokissuerec && $pokissuerec->get('useremail') != $user->email)
+                    ) {
+                        $emitdata = self::get_emitcertificate_data($user, $template, $pokrecord);
+                        $data = json_encode($emitdata);
 
-                    $emitdata = self::get_emitcertificate_data($template, $pokrecord);
-                    $data = json_encode($emitdata);
+                        $emitcertificate = (new \mod_pokcertificate\api)->emit_certificate($data);
+                        $emitcertificate = json_decode($emitcertificate);
 
-                    $emitcertificate = (new \mod_pokcertificate\api)->emit_certificate($data);
-                    $emitcertificate = json_decode($emitcertificate);
-                    if ($emitcertificate) {
-                        $emitcertificate->status = false;
-                        self::save_issued_certificate($cmid, $user, $emitcertificate);
-                        return true;
+                        if ($emitcertificate) {
+                            $emitcertificate->status = false;
+                            self::save_issued_certificate($cmid, $user, $emitcertificate);
+                            return true;
+                        }
                     }
                 }
             }
@@ -432,23 +445,22 @@ class pok {
      * Replace template defifnition values with user values and
      * adding custom params if mapped to template.
      *
+     * @param  object $user
      * @param  object $template
      * @param  object $pokrecord
      * @return object
      */
-    public static function get_emitcertificate_data($template, $pokrecord) {
-        global $USER;
-
-        $user = \core_user::get_user($USER->id);
-        profile_load_custom_fields($user);
+    public static function get_emitcertificate_data($user, $template, $pokrecord) {
 
         $templatename = $template->get('templatename');
         $resptemplatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templatename);
+
         if (!empty($resptemplatedefinition)) {
             $templatedefinition = json_decode($resptemplatedefinition);
         } else {
             $templatedefinition = json_decode($template->get('templatedefinition'));
         }
+
         $customparams = [];
         if ($templatedefinition && $templatedefinition->params) {
             foreach ($templatedefinition->params as $param) {

@@ -14,9 +14,17 @@
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
-{{#showdata}}
+{{!
+    @template mod_pokcertificate/previewusers
 
-    <table class="generaltable dataTable no-footer" id="skill_repository" role="grid" aria-describedby="skill_repository">
+    TODO describe template previewusers
+
+    Example context (json):
+    {
+    }
+}}
+{{#showdata}}
+    <table class="generaltable dataTable no-footer" role="grid">
         <thead>
             <tr role="row">
                 <th>{{#str}}studentname,mod_pokcertificate{{/str}}</th>
@@ -24,7 +32,9 @@
                 <th>{{#str}}email,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}studentid,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}language,mod_pokcertificate{{/str}}</th>
-                <th>{{#str}} action,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}activity,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}course,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}profilestatus,mod_pokcertificate{{/str}}</th>
             </tr>
         </thead>
         <tbody>
@@ -35,17 +45,30 @@
                     <td>{{email}}</td>
                     <td>{{studentid}}</td>
                     <td>{{language}}</td>
+                    <td>{{activityname}}</td>
+                    <td>{{coursename}}</td>
                     <td>
-                        <a href="{{config.wwwroot}}/mod/pokcertificate/updateprofile.php?id={{id}}">
-                            <span class='createicon'>
-                                <i class='createiconchild fa fa-pencil' aria-hidden='true'></i>
-                            </span>
-                        </a>
+                        <form id="editprofile{{cmid}}" action="updateprofile.php" method="post">
+                        <input type="hidden" name="userinputs" id = "id_userinputs" value = {{userinputs}}>
+                        <input type="hidden" name="id" id = "id" value = {{userid}}>
+                        <input type="hidden" name="cmid" id = "cmid" value = {{cmid}}>
+                        <input type="hidden" name="flag" id = "flag" value = "1">
+                        {{^validuser}}
+                             <a href="{{config.wwwroot}}/mod/pokcertificate/updateprofile.php?cmid={{cmid}}&id={{userid}}&flag=1" target="_blank" style = "color:#e62e00">{{#str}}edit{{/str}}</a>
+                        {{/validuser}}
+                        {{#validuser}}
+                        <span style = "color:#094478">{{status}}</span>
+                        {{/validuser}}
+                        </form>
                     </td>
                 </tr>
             {{/data}}
         </tbody>
     </table>
+
+    <div class="d-flex justify-content-center mt-4">
+        <button id="award-certificate-btn" class="btn btn-primary">{{#str}}awardcertificate, mod_pokcertificate{{/str}}</button>
+    </div>
 {{/showdata}}
 {{^showdata}}
     <div class="alert alert-info alert-block fade in  alert-dismissible" role="alert" data-aria-autofocus="true">

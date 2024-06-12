@@ -26,6 +26,7 @@ use mod_pokcertificate\pok;
 
 require('../../config.php');
 require_once($CFG->dirroot . '/user/editlib.php');
+
 use mod_pokcertificate\form\updateprofile_form;
 use mod_pokcertificate\form\editprofile_form;
 
@@ -33,17 +34,21 @@ require_login();
 
 global $USER, $PAGE;
 
-$id  = optional_param('cmid', 0, PARAM_INT);
-$userid  = required_param('id', PARAM_INT);
+$id = optional_param('cmid', 0, PARAM_INT);
+$userid = required_param('id', PARAM_INT);
+$flag = optional_param('flag', 0, PARAM_BOOL);
 
 if ($id > 0) {
 
     $url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['id' => $id]);
+
     if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
         throw new \moodle_exception('invalidcoursemodule');
     }
-    if ($userid != $USER->id || (!$user = $DB->get_record('user', ['id' => $userid]))) {
-        throw new \moodle_exception('invaliduserid');
+    if (!$flag) {
+        if ($userid != $USER->id || (!$user = $DB->get_record('user', ['id' => $userid]))) {
+            throw new \moodle_exception('invaliduserid');
+        }
     }
 
     $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
@@ -60,6 +65,7 @@ if ($id > 0) {
     $PAGE->set_activity_record($pokcertificate);
 
     if (!$user = $DB->get_record('user', ['id' => $userid])) {
+
         throw new \moodle_exception('invaliduserid');
     } else {
 
@@ -70,18 +76,26 @@ if ($id > 0) {
         useredit_load_preferences($user);
         // Load custom profile fields data.
         profile_load_data($user);
-        $mform = new updateprofile_form($url, ['pokfields' => $pokfields, 'user' => $user, 'cmid' => $id]);
+        $mform = new updateprofile_form(
+            $url,
+            ['pokfields' => $pokfields, 'user' => $user, 'cmid' => $id, 'flag' => $flag]
+        );
         $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
         $renderer = $PAGE->get_renderer('mod_pokcertificate');
         if ($mform->is_cancelled()) {
             redirect($redirecturl);
         } else if ($userdata = $mform->get_data()) {
+
             $userdata->timemodified = time();
             // Update user with new profile data.
             user_update_user($userdata, false, false);
             // Save custom profile fields data.
             profile_save_data($userdata);
-            $redirecturl = new moodle_url('/mod/pokcertificate/view.php', ['id' => $id, 'flag' => 1]);
+            if ($flag) {
+                $redirecturl = new moodle_url('/mod/pokcertificate/generalcertficate.php', []);
+            } else {
+                $redirecturl = new moodle_url('/mod/pokcertificate/view.php', ['id' => $id, 'flag' => 1]);
+            }
             redirect($redirecturl);
         } else {
             echo $OUTPUT->header();
@@ -90,7 +104,7 @@ if ($id > 0) {
     }
 } else {
 
-    $url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['userid' => $userid]);
+    $url = new moodle_url('/mod/pokcertificate/updateprofile.php', ['id' => $userid]);
     $context = context_system::instance();
     $PAGE->set_url($url);
     $PAGE->set_context($context);

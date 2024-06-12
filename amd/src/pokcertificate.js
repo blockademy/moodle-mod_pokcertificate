@@ -26,18 +26,16 @@ import Notification from 'core/notification';
 import Ajax from 'core/ajax';
 import Templates from 'core/templates';
 import LoadingIcon from 'core/loadingicon';
+import ModalFactory from 'core/modal_factory';
 
 const SELECTORS = {
     VERIFYAUTH: '[id="id_verifyauth"]',
-    CERTIFICATETEMPLATETYPE: '[data-action="templatetype"]',
-    SAVECERTIFICATE: '[data-action="savecert"]',
-    ADDROW: '[class => addmapping]'
+    EMITCERTIFICATE: '[id="award-certificate-btn"]',
+
 };
 var SERVICES = {
     VERIFY_AUTHENTICATION: 'mod_pokcertificate_verify_auth',
-    INCOMPLETE_PROFILES: 'mod_pokcertificate_incomplete_profiles',
-    SHOW_CERTIFICATE_TEMPLATES: 'mod_pokcertificate_show_certificate_templates'
-
+    EMIT_CERTIFICATE: 'mod_pokcertificate_emit_general_certifcate',
 };
 
 /**
@@ -111,6 +109,42 @@ export const loadtemplates = function(e){
     });
 };
 
+/**
+* Emit general certificate for selected users.
+*
+* @param {Event} e
+*/
+const emit = function(e){
+    e.preventDefault();
+    alert("123");
+
+    var userinputs = $("#id_userinputs").val();
+    var promises = Ajax.call([
+        {methodname: SERVICES.EMIT_CERTIFICATE, args: {userinputs: userinputs}}
+    ]);
+    promises[0].done(function(resp) {
+        if(resp){
+
+            ModalFactory.create({
+                title: Str.get_string('awardcertificate','mod_pokcertificate'),
+                type: ModalFactory.types.DEFAULT,
+                body: Str.get_string('certificatesent','mod_pokcertificate'),
+                footer: '<button type="button" class="btn btn-primary" data-action="save">Done</button>'
+            }).done(function(modal) {
+                this.modal = modal;
+                modal.getRoot().find('[data-action="save"]').on('click', function() {
+                    window.location.href = 'generalcertificate.php';
+                }.bind(this));
+
+                modal.show();
+                setTimeout(() => {
+                    $("#award-certificate-btn").removeClass("disabled");
+                    $("#award-certificate-btn").removeClass("button-loader");
+                }, 2000);
+            }.bind(this));
+        }
+    }).fail(Notification.exception);
+};
 
 /**
  * Initialise masterdata aboutus actions
@@ -120,5 +154,12 @@ export const init = () => {
     $(SELECTORS.VERIFYAUTH).on('click', function(e) {
         e.preventDefault();
         verify(e);
+    });
+
+    $(SELECTORS.EMITCERTIFICATE).on('click', function(e) {
+        e.preventDefault();
+        $(this).addClass("disabled");
+        $(this).addClass("button-loader");
+        emit(e);
     });
 };

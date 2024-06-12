@@ -47,6 +47,7 @@ class updateprofile_form extends moodleform {
 
         $user = $this->_customdata['user'];
         $cmid = $this->_customdata['cmid'];
+        $flag = $this->_customdata['flag'];
         $pokfields = ($this->_customdata['pokfields']) ? $this->_customdata['pokfields'] : '';
         $userid = $user->id;
 
@@ -129,6 +130,10 @@ class updateprofile_form extends moodleform {
         $mform->addElement('hidden', 'cmid');
         $mform->setType('cmid', PARAM_INT);
         $mform->setDefault('cmid', $cmid);
+
+        $mform->addElement('hidden', 'flag');
+        $mform->setType('flag', PARAM_BOOL);
+        $mform->setDefault('flag', $flag);
 
         self::get_profile_fields($mform, $pokfields, $user);
         $this->add_action_buttons(true, get_string('save'));

@@ -284,40 +284,45 @@ class mod_pokcertificate_external extends external_api {
     }
 
     /**
-     * Get parameters for showing certificate templates.
+     * Get parameters for emitting general certificate templates to selected users.
      *
      * @return external_function_parameters The parameters for showing certificate templates.
      */
-    public static function show_certificate_templates_parameters() {
+    public static function emit_general_certifcate_parameters() {
         return new external_function_parameters(
             [
-                'type' => new external_value(PARAM_TEXT, 'type'),
-                'cmid' => new external_value(PARAM_INT, 'cmid'),
+                'userinputs' => new external_value(PARAM_RAW, 'userinputs'),
             ]
         );
     }
 
     /**
-     * Show certificate templates.
+     * emit_general_certifcate     *
      *
-     * @param string $type The type.
-     * @param int $cmid The course module id.
-     * @return string JSON-encoded certificate template content.
+     * @param  string $userinputs
+     * @return void
      */
-    public static function show_certificate_templates($type, $cmid) {
+    public static function emit_general_certifcate($userinputs) {
         global $CFG;
 
         require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
         $params = self::validate_parameters(
-            self::show_certificate_templates_parameters(),
-            ['type' => $type, 'cmid' => $cmid]
+            self::emit_general_certifcate_parameters(),
+            ['userinputs' => $userinputs]
         );
-
-        $context = \context_module::instance($cmid);
-        self::validate_context($context);
-        $certificatetemplatecontent = pok::get_certificate_templates($params['cmid'], $params['type']);
-
-        return json_encode($certificatetemplatecontent);
+        $userinputs = base64_decode($params['userinputs']);
+        $useridsarr = explode(",", $userinputs);
+        if ($useridsarr) {
+            foreach ($useridsarr as $rec) {
+                $inp = explode("-", $rec);
+                $activityid = $inp[1];
+                $user = $inp[2];
+                $cm = get_coursemodule_from_instance('pokcertificate', $activityid);
+                $user = \core_user::get_user($user);
+                pok::emit_certificate($cm->id, $user);
+            }
+        }
+        return true;
     }
 
     /**
@@ -325,7 +330,7 @@ class mod_pokcertificate_external extends external_api {
      *
      * @return external_value The returns for showing certificate templates.
      */
-    public static function show_certificate_templates_returns() {
+    public static function emit_general_certifcate_returns() {
         return new external_value(PARAM_RAW, 'return');
     }
 }

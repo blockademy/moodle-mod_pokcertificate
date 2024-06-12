@@ -69,33 +69,36 @@ class searchfilter_form extends moodleform {
             $mform->addElement('text', 'email', get_string('email', 'mod_pokcertificate'));
             $mform->setType('email', PARAM_RAW);
 
-            if ($viewtype == 'participaints') {
-                // Autocomplete input field 1.
-                $mform->addElement('select',
-                                   'senttopok',
-                                   get_string('senttopok', 'mod_pokcertificate'),
-                                   [
-                                        '' => get_string('select'),
-                                        'yes' => get_string('yes'),
-                                        'no' => get_string('no'),
-                                    ]);
-                $mform->setType('senttopok', PARAM_RAW);
+            // Autocomplete input field 1.
+            $mform->addElement(
+                'select',
+                'senttopok',
+                get_string('senttopok', 'mod_pokcertificate'),
+                [
+                    '' => get_string('select'),
+                    'yes' => get_string('yes'),
+                    'no' => get_string('no'),
+                ]
+            );
+            $mform->setType('senttopok', PARAM_RAW);
 
-                // Autocomplete input field 2.
-                $mform->addElement('select',
-                                   'coursestatus',
-                                   get_string('coursestatus', 'mod_pokcertificate'),
-                                   [
-                                        '' => get_string('select'),
-                                        'completed' => get_string('completed'),
-                                        'inprogress' => get_string('inprogress', 'mod_pokcertificate'),
-                                    ]);
-                $mform->setType('coursestatus', PARAM_RAW);
+            // Autocomplete input field 2.
+            $mform->addElement(
+                'select',
+                'coursestatus',
+                get_string('coursestatus', 'mod_pokcertificate'),
+                [
+                    '' => get_string('select'),
+                    'completed' => get_string('completed'),
+                    'inprogress' => get_string('inprogress', 'mod_pokcertificate'),
+                ]
+            );
+            $mform->setType('coursestatus', PARAM_RAW);
 
-                // Hidden field.
-                $mform->addElement('hidden', 'courseid', $courseid);
-                $mform->setType('courseid', PARAM_INT);
-            }
+            // Hidden field.
+            $mform->addElement('hidden', 'courseid', $courseid);
+            $mform->setType('courseid', PARAM_INT);
+
             if ($viewtype == 'generalcertificate') {
                 // Get all courses from the database.
                 $courses = ['' => get_string('selectcourse', 'mod_pokcertificate')];
@@ -107,10 +110,12 @@ class searchfilter_form extends moodleform {
 
                 if (!empty($courses)) {
                     // Add a select element to the form for choosing a course.
-                    $mform->addElement('select',
-                                       'course',
-                                       get_string('course', 'mod_pokcertificate'),
-                                       $courses);
+                    $mform->addElement(
+                        'select',
+                        'course',
+                        get_string('course', 'mod_pokcertificate'),
+                        $courses
+                    );
                     $mform->setType('course', PARAM_RAW);
                     $mform->setDefault('course', $courseid);
                 }
@@ -121,4 +126,3 @@ class searchfilter_form extends moodleform {
         $this->add_action_buttons(true, get_string('submit'));
     }
 }
-

@@ -30,10 +30,7 @@ use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\persistent\pokcertificate_issues;
-use core_availability\info_module;
 use mod_pokcertificate\event\course_module_viewed;
-
-use function PHPUnit\Framework\isNull;
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
@@ -85,6 +82,7 @@ function pokcertificate_reset_course_form_definition(&$mform) {
 /**
  * Course reset form defaults.
  *
+ * @param  mixed $course
  * @return array
  */
 function pokcertificate_reset_course_form_defaults($course) {
@@ -243,7 +241,8 @@ function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
                 $externalfields = get_externalfield_list($templatename, $pokrecord->get('id'));
                 if (!empty($externalfields)) {
                     $pokid = $pokrecord->get('id');
-                    $pokfields = $DB->get_fieldset_sql("SELECT templatefield from {pokcertificate_fieldmapping} WHERE pokid = $pokid");
+                    $pokfields = $DB->get_fieldset_sql("SELECT templatefield
+                                    from {pokcertificate_fieldmapping} WHERE pokid = $pokid");
                     foreach ($externalfields as $key => $value) {
                         if (!in_array($key, $pokfields)) {
                             $cm->set_user_visible(false);
@@ -270,7 +269,7 @@ function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
                 get_string('certificatenotconfigured', 'mod_pokcertificate'),
                 [
                     'class' => 'success-complheading',
-                    'style' => 'font-size: .875em; color: #495057;'
+                    'style' => 'font-size: .875em; color: #495057;',
                 ]
             );
             $cm->set_after_link(' ' . $link);
@@ -558,7 +557,7 @@ function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage =
         $queryparam['idnumber'] = $DB->sql_like_escape($studentid) . '%';
     }
     if (!empty($conditions)) {
-        $fromsql .= " AND " . implode(' AND ', $conditions);
+        $wheresql .= " AND " . implode(' AND ', $conditions);
     }
     $count = $DB->count_records_sql($countsql . $fromsql . $joinsql . $wheresql, $queryparam);
     $users = $DB->get_records_sql($selectsql . $fromsql . $joinsql . $wheresql, $queryparam, $offset, $perpage);
@@ -613,15 +612,15 @@ function pokcertificate_coursecertificatestatuslist(
     $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
     $countsql = "SELECT count(ra.id) ";
     $selectsql = "SELECT UUID(),
-                         pc.name as activity,
-                         u.id as userid,
-                         u.firstname,
-                         u.idnumber,
-                         u.email,
-                         cc.timecompleted as completiondate,
-                         pct.templatetype,
-                         pci.status,
-                         pci.certificateurl ";
+                    pc.name as activity,
+                    u.id as userid,
+                    u.firstname,
+                    u.idnumber,
+                    u.email,
+                    cc.timecompleted as completiondate,
+                    pct.templatetype,
+                    pci.status,
+                    pci.certificateurl ";
     $fromsql = "FROM {pokcertificate} pc
                 JOIN {course_modules} cm ON pc.id = cm.instance
                 JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSE . ")
@@ -695,7 +694,7 @@ function pokcertificate_coursecertificatestatuslist(
             } else {
                 $list['certificatetype'] = '-';
             }
-            $list['senttopok'] = $c->status ? get_string('yes') : get_string('no');
+            $list['senttopok'] = ($c->status || !empty($c->certificateurl)) ? get_string('yes') : get_string('no');
             $list['certificateurl'] = $c->certificateurl;
             $data[] = $list;
         }
@@ -714,33 +713,61 @@ function pokcertificate_coursecertificatestatuslist(
  * such as student ID, pagination settings, and offset. It prepares the data for awarding general certificates
  * by selecting relevant user information and formatting it appropriately.
  *
- * @param string $studentid The student ID to search for (optional).
+ * @param int $courseid The ID of the course to retrieve participants from.
+ * @param int $studentid The student ID to search for (optional).
+ * @param string $studentname The student name to search for (optional).
+ * @param string $email The student email to search for (optional).
+ * @param string $senttopok Indicates whether certificates have been sent to Pokcertificate (optional).
+ * @param string $coursestatus The completion status of the course (optional).
  * @param int $perpage The number of records to display per page.
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted user data.
  */
-function pokcertificate_awardgeneralcertificatelist($studentid, $courseid, $studentname, $email, $perpage, $offset) {
+function pokcertificate_awardgeneralcertificatelist(
+    $courseid,
+    $studentid,
+    $studentname,
+    $email,
+    $senttopok,
+    $coursestatus,
+    $perpage,
+    $offset
+) {
     global $DB;
 
+    $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
     $countsql = "SELECT count(ra.id) ";
-    $selectsql = "SELECT
-                    ra.id,
-                    ra.userid,
-                    u.firstname,
-                    u.lastname,
-                    u.email,
-                    u.idnumber,
-                    c.id as courseid,
-                    c.fullname AS coursename ";
-    $fromsql = "FROM {role_assignments} ra
-                JOIN {context} ctx ON ra.contextid = ctx.id
-                JOIN {user} u ON ra.userid = u.id
+    $selectsql = "SELECT DISTINCT(CONCAT(pc.id,u.id,c.id)),
+                         pc.id as activityid,
+                         pc.name as activity,
+                         u.id as userid,
+                         u.firstname,
+                         u.idnumber,
+                         u.lastname,
+                         u.email,
+                         cc.timecompleted as completiondate,
+                         pct.templatetype,
+                         pci.status,
+                         pci.pokcertificateid ,
+                         pci.certificateurl ,
+                         c.id as courseid,
+                         c.fullname AS coursename ";
+    $fromsql = "FROM {pokcertificate} pc
+                JOIN {course_modules} cm ON pc.id = cm.instance
+                JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSE . ")
                 JOIN {course} c ON ctx.instanceid = c.id
-                JOIN {role} r ON r.id = ra.roleid
+                JOIN {role_assignments} ra ON ctx.id = ra.contextid
+                JOIN {role} r ON ra.roleid = r.id
+                JOIN {user} u ON ra.userid = u.id
+           LEFT JOIN {course_completions} cc ON (u.id = cc.userid AND pc.course = cc.course)
+           LEFT JOIN {pokcertificate_templates} pct ON pc.templateid = pct.id
+           LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.pokid)
                WHERE ctx.contextlevel = 50
-                     AND r.shortname IN ('student','employee') ";
+               AND r.shortname IN ('student','employee') ";
 
     $queryparam = [];
+    $queryparam['courseid'] = $courseid;
+    $queryparam['pokmoduleid'] = $pokmoduleid;
 
     $conditions = [];
     if (!empty(trim($studentid))) {
@@ -755,12 +782,31 @@ function pokcertificate_awardgeneralcertificatelist($studentid, $courseid, $stud
         $conditions[] = $DB->sql_like('u.email', ':email', false, false);
         $queryparam['email'] = $DB->sql_like_escape($email) . '%';
     }
-    if (!empty(trim($courseid))) {
-        $conditions[] = $DB->sql_like('c.id', ':courseid', false, false);
-        $queryparam['courseid'] = $DB->sql_like_escape($courseid) . '%';
-    }
+
     if (!empty($conditions)) {
         $fromsql .= " AND " . implode(' AND ', $conditions);
+    }
+
+    if ($courseid) {
+        $fromsql .= "AND c.id = :courseid ";
+        $queryparam['courseid'] = $courseid;
+    }
+
+    if ($coursestatus == 'completed') {
+        $fromsql .= "AND cc.timecompleted > 0 ";
+    }
+
+    if ($coursestatus == 'inprogress') {
+        $fromsql .= "AND (cc.timecompleted = 0 OR cc.timecompleted IS NULL) ";
+    }
+
+    if ($senttopok == 'yes') {
+        $fromsql .= "AND ((pci.certificateurl IS NOT NULL AND pci.status = 1)
+                        OR (pci.pokcertificateid IS NOT NULL AND pci.status = 0))";
+    }
+
+    if ($senttopok == 'no') {
+        $fromsql .= "AND (pci.certificateurl IS NULL OR pci.status = 0) ";
     }
 
     $fromsql .= "ORDER BY u.id ";
@@ -773,17 +819,23 @@ function pokcertificate_awardgeneralcertificatelist($studentid, $courseid, $stud
         foreach ($records as $c) {
             $list = [];
             $list['userid'] = $c->userid;
-            $list['assignid'] = $c->id;
             $list['firstname'] = $c->firstname;
             $list['lastname'] = $c->lastname;
             $list['email'] = $c->email;
             $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
+            $list['activity'] = $c->activity;
+            $list['activityid'] = $c->activityid;
             $list['courseid'] = $c->courseid;
             $list['course'] = $c->coursename;
+            $list['senttopok'] = ($c->status || !empty($c->pokcertificateid)) ? get_string('yes') : get_string('no');
+            $list['status'] = ($c->status || !empty($c->pokcertificateid)) ? true : false;
+            $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
+            $list['coursestatus'] = $c->completiondate ? get_string('completed') : get_string('inprogress', 'mod_pokcertificate');
+            $list['certificateurl'] = $c->certificateurl;
             $data[] = $list;
         }
     }
-    return ['count' => $count, 'data' => $data];
+    return ['count' => $count, 'data' => $data, 'courseid' => $courseid];
 }
 
 /**
@@ -871,7 +923,6 @@ function pokcertificate_preview_by_user($cm, $pokcertificate, $flag) {
             $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
         }
     } else {
-
         // Getting certificate template view for student.
         $certificateissued = pokcertificate_issues::get_record(['pokid' => $pokcertificate->id, 'userid' => $USER->id]);
 
@@ -906,13 +957,15 @@ function check_usermapped_fielddata($cm, $user) {
     if (!empty($pokfields)) {
         foreach ($pokfields as $field) {
             $fieldname = $field->get('userfield');
-            if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') === false)) {
-                if (empty($user->$fieldname)) {
+            if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') !== false)) {
+                $userprofilefield = substr($fieldname, strlen('profile_field_'));
+                if (empty(trim($user->profile[$userprofilefield]))) {
                     $validuser = false;
                 }
             }
         }
     }
+
     return $validuser;
 }
 
@@ -924,22 +977,122 @@ function check_usermapped_fielddata($cm, $user) {
  */
 function validate_encoded_data($input) {
 
-    // By default PHP will ignore “bad” characters, so we need to enable the “$strict” mode
+    // By default PHP will ignore “bad” characters, so we need to enable the “$strict” mode.
     $str = base64_decode($input, true);
 
-    // If $input cannot be decoded the $str will be a Boolean “FALSE”
+    // If $input cannot be decoded the $str will be a Boolean “FALSE”.
     if ($str === false) {
         return false;
     } else {
-        // Even if $str is not FALSE, this does not mean that the input is valid
-        // This is why now we should encode the decoded string and check it against input
+        // Even if $str is not FALSE, this does not mean that the input is valid.
+        // This is why now we should encode the decoded string and check it against input.
         $b64 = base64_encode($str);
 
-        // Finally, check if input string and real Base64 are identical
+        // Finally, check if input string and real Base64 are identical.
         if ($input === $b64) {
             return true;;
         } else {
             return false;
         }
     }
+}
+
+/**
+ * get users data before issueing general certificate to update the incomplete profiles
+ *
+ * @param string $useractivityids
+ * @return array An array containing validation results.
+ */
+
+function pokcertificate_userslist($useractivityids) {
+    $languages = get_string_manager()->get_list_of_languages();
+    $list = [];
+    $data = [];
+
+    if ($useractivityids) {
+        foreach ($useractivityids as $rec) {
+            $inp = explode("-", $rec);
+
+            $course = get_course($inp[0]);
+            $activityid = $inp[1];
+            $user = $inp[2];
+            $user = \core_user::get_user($user);
+            profile_load_custom_fields($user);
+            $cm = get_coursemodule_from_instance('pokcertificate', $activityid);
+            $validuser = check_usermapped_fielddata($cm, $user);
+            $pokcertificate = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+
+            $list = [];
+            $list['userid'] = $user->id;
+            $list['cmid'] = $cm->id;
+            $list['firstname'] = $user->firstname;
+            $list['lastname'] = $user->lastname;
+            $list['email'] = $user->email;
+            $list['activityname'] = $pokcertificate->get('name');
+            $list['coursename'] = $course->fullname;;
+            $list['studentid'] = $user->idnumber ? $user->idnumber : '-';
+            $list['language'] = $languages[$user->lang];
+            $list['status'] = ($validuser) ?
+                get_string('complete', 'mod_pokcertificate') : get_string('incomplete', 'mod_pokcertificate');
+            $list['validuser'] = $validuser;
+            $list['username'] = \html_writer::link(
+                new \moodle_url('/user/profile.php', ['id' => $user->id]),
+                $list['userid']
+            );
+            $data[] = $list;
+        }
+    }
+
+    return ['data' => ($data)];
+}
+
+/**
+ * Validate user inputs function.
+ *
+ * @param array $selecteditems An array containing selected items to validate.
+ * @return array An array containing validation results.
+ */
+function validate_userinputs($selecteditems) {
+    global $DB;
+    foreach ($selecteditems as $item) {
+
+        $inp = explode("-", $item);
+
+        if (isset($inp[0]) && !empty($inp[0])) {
+            $courseid = $inp[0];
+            if (!$course = $DB->get_record('course', ['id' => $courseid])) {
+                throw new \moodle_exception('invalidcourse');
+            }
+        } else {
+            throw new \moodle_exception('invalidcourse');
+        }
+        if (isset($inp[1]) && !empty($inp[1])) {
+            $activityid = (int)$inp[1];
+            if (!$cm = get_coursemodule_from_instance('pokcertificate', $activityid)) {
+                throw new \moodle_exception('invalidcoursemodule');
+            }
+        } else {
+            throw new \moodle_exception('invalidcoursemodule');
+        }
+
+        if (isset($inp[2]) && !empty($inp[2])) {
+            $user = $inp[2];
+            $courseid = $inp[0];
+            $user = \core_user::get_user($user);
+            $context = \context_course::instance($courseid);
+            if (!is_enrolled($context, $user->id, '', true)) {
+                $course = get_course($courseid);
+                $courseshortname = format_string(
+                    $course->shortname,
+                    true,
+                    ['context' => $context]
+                );
+                mtrace(fullname($user) . ' not an active participant in ' . $courseshortname);
+                continue;
+            }
+        } else {
+            throw new \moodle_exception('invaliduser');
+        }
+    }
+    return true;
 }

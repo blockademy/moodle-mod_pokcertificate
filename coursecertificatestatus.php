@@ -22,9 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_pokcertificate\form\searchfilter_form;
+
 require_once('../../config.php');
 global $OUTPUT, $PAGE, $CFG, $DB;
-use mod_pokcertificate\form\searchfilter_form;
 
 // Set up page context and heading.
 $courseid = required_param('courseid', PARAM_INT);
@@ -43,7 +44,7 @@ $studentname = optional_param('studentname', '', PARAM_RAW);
 $email = optional_param('email', '', PARAM_RAW);
 $senttopok = optional_param('senttopok', '', PARAM_RAW);
 $coursestatus = optional_param('coursestatus', '', PARAM_RAW);
-if (!empty($studentid)||!empty($studentname)||!empty($email)||!empty($senttopok)||!empty($coursestatus)) {
+if (!empty($studentid) || !empty($studentname) || !empty($email) || !empty($senttopok) || !empty($coursestatus)) {
     $show = 'show';
 } else {
     $show = '';
@@ -62,7 +63,8 @@ $mform->set_data([
 if ($mform->is_cancelled()) {
     redirect(new \moodle_url('/mod/pokcertificate/coursecertificatestatus.php', ['courseid' => $courseid]));
 } else if ($userdata = $mform->get_data()) {
-    redirect(new \moodle_url('/mod/pokcertificate/coursecertificatestatus.php',
+    redirect(new \moodle_url(
+        '/mod/pokcertificate/coursecertificatestatus.php',
         [
             'courseid' => $userdata->courseid,
             'studentid' => $userdata->studentid,
@@ -76,16 +78,15 @@ if ($mform->is_cancelled()) {
 
 echo $OUTPUT->header();
 
-
 echo '<a class = "btn-link btn-sm" data-toggle = "collapse"
     data-target = "#mod_pokcertificate-filter_collapse"
     aria-expanded = "false" aria-controls = "mod_pokcertificate-filter_collapse">
         <i class = "m-0 fa fa-sliders fa-2x" aria-hidden = "true"></i>
     </a>';
-echo '<div class = "mt-2 mb-2 collapse '.$show.'"
+echo '<div class = "mt-3 mb-2 collapse ' . $show . '"
     id = "mod_pokcertificate-filter_collapse">
         <div id = "filters_form" class = "card card-body p-2">';
-            $mform->display();
+$mform->display();
 echo    '</div>
     </div>';
 

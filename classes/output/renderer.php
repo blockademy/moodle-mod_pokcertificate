@@ -466,7 +466,7 @@ class renderer extends \plugin_renderer_base {
      *
      * This function fetches a paginated list of students who have incomplete profiles,
      * optionally filtered by student ID. It prepares the data for rendering using the
-     * 'mod_pokcertificate/incompletestudentprofile_view' template and generates the
+     * 'mod_pokcertificate/incompletestudentprofileview' template and generates the
      * pagination for the student records.
      *
      * @return array An associative array containing:
@@ -481,7 +481,7 @@ class renderer extends \plugin_renderer_base {
         $offset = $page * $recordperpage;
         $records = pokcertificate_incompletestudentprofilelist($studentid, $recordperpage, $offset);
         $records['showdata'] = $records['data'] ? true : false;
-        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/incompletestudentprofile_view', $records);
+        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/incompletestudentprofileview', $records);
         $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);
         return $return;
     }
@@ -562,18 +562,19 @@ class renderer extends \plugin_renderer_base {
      * 'mod_pokcertificate/awardedcertificatestatus' template and generates the pagination
      * for the certificate records.
      *
-     * @param bool $filter Whether to apply a filter on the certificate records. Default is false.
      * @return array An associative array containing:
      *               - 'recordlist': The rendered HTML content for the certificate records.
      *               - 'pagination': The HTML content for the pagination controls.
      */
-    public function get_generalcertificate($filter = false) {
+    public function get_generalcertificate() {
 
-        $page = optional_param('page', 0, PARAM_INT);
         $courseid = optional_param('courseid', 0, PARAM_INT);
         $studentid = optional_param('studentid', '', PARAM_RAW);
         $studentname = optional_param('studentname', '', PARAM_RAW);
         $email = optional_param('email', '', PARAM_RAW);
+        $senttopok = optional_param('senttopok', '', PARAM_RAW);
+        $coursestatus = optional_param('coursestatus', '', PARAM_RAW);
+        $page = optional_param('page', 0, PARAM_INT);
         $url = new \moodle_url(
             '/mod/pokcertificate/generalcertificate.php',
             [
@@ -581,20 +582,24 @@ class renderer extends \plugin_renderer_base {
                 'studentid' => $studentid,
                 'studentname' => $studentname,
                 'email' => $email,
+                'senttopok' => $senttopok,
+                'coursestatus' => $coursestatus,
             ]
         );
         $recordperpage = 10;
         $offset = $page * $recordperpage;
         $records = pokcertificate_awardgeneralcertificatelist(
-            $studentid,
             $courseid,
+            $studentid,
             $studentname,
             $email,
+            $senttopok,
+            $coursestatus,
             $recordperpage,
             $offset
         );
         $records['showdata'] = $records['data'] ? true : false;
-        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/awardedcertificatestatus', $records);
+        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/awardgeneralcertificates', $records);
         $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);
         return $return;
     }
@@ -683,35 +688,17 @@ class renderer extends \plugin_renderer_base {
     }
 
     /**
-     * Renders the certifcate templates view.
+     * get_userlist
      *
-     * @param string $userids user id
-     * @param string $courseids courseids
-     * @return string HTML certificate templates view.
+     * @param  array $userinputs
+     * @return void
      */
-    public function show_generalcertificate_templates(string $userids, string $courseids) {
+    public function get_userslist_topreview($userinputs) {
 
-        $output = '';
-        $context = \context_system::instance();
-
-        if (get_config('mod_pokcertificate', 'pokverified')) {
-
-            if (permission::can_manage($context)) {
-
-                $certificatetemplatecontent = pok::get_certificate_templates();
-                $certificatetemplatecontent['userids'] = $userids;
-                $certificatetemplatecontent['courseids'] = $courseids;
-                $certificatetemplatecontent['generalcert'] = true;
-                if ($certificatetemplatecontent) {
-                    $output .= $this->render_from_template(
-                        'mod_pokcertificate/certificatetemplates',
-                        $certificatetemplatecontent
-                    );
-                }
-            }
-            echo $output;
-        } else if (permission::can_manage($context)) {
-            echo self::verify_authentication();
-        }
+        $records = pokcertificate_userslist($userinputs);
+        $records['showdata'] = $records['data'] ? true : false;
+        $records['userinputs'] = base64_encode(implode(",", $userinputs));
+        $return['recordlist'] = $this->render_from_template('mod_pokcertificate/previewusers', $records);
+        return $return;
     }
 }

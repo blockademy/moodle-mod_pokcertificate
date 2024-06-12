@@ -132,7 +132,7 @@ final class api_test extends \advanced_testcase {
                 ) {
                     $template = pokcertificate_templates::get_record(['id' => $pokcertificate->get('templateid')]);
 
-                    $emitdata = pok::get_emitcertificate_data($template, $pokcertificate);
+                    $emitdata = pok::get_emitcertificate_data($user, $template, $pokcertificate);
                     $data = json_encode($emitdata);
 
                     $emitcertificate = (new \mod_pokcertificate\api)->emit_certificate($data);

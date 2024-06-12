@@ -54,10 +54,10 @@ $functions = [
         'type' => 'write',
     ],
 
-    'mod_pokcertificate_show_certificate_templates' => [
+    'mod_pokcertificate_emit_general_certifcate' => [
         'classname'     => 'mod_pokcertificate_external',
-        'methodname'    => 'show_certificate_templates',
-        'description'   => 'Retieve the certificate templates',
+        'methodname'    => 'emit_general_certifcate',
+        'description'   => 'Emit the general certificates to users for course',
         'ajax' => true,
         'type' => 'write',
     ],

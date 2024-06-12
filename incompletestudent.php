@@ -24,7 +24,9 @@
 
 require_once('../../config.php');
 global $CFG, $PAGE, $OUTPUT;
+
 use mod_pokcertificate\form\searchfilter_form;
+
 require_login();
 
 $context = \context_system::instance();
@@ -47,12 +49,13 @@ $mform->set_data(['studentid' => $studentid]);
 if ($mform->is_cancelled()) {
     redirect(new \moodle_url('/mod/pokcertificate/incompletestudent.php'));
 } else if ($userdata = $mform->get_data()) {
-    redirect(new \moodle_url('/mod/pokcertificate/incompletestudent.php',
+    redirect(new \moodle_url(
+        '/mod/pokcertificate/incompletestudent.php',
         ['studentid' => $userdata->studentid]
     ));
 }
 echo $OUTPUT->header();
-
+echo $renderer->display_tabs();
 
 echo '<a class = "btn-link btn-sm" data-toggle = "collapse"
     data-target = "#mod_pokcertificate-filter_collapse"
@@ -60,9 +63,9 @@ echo '<a class = "btn-link btn-sm" data-toggle = "collapse"
         <i class = "m-0 fa fa-sliders fa-2x" aria-hidden = "true"></i>';
 echo $renderer->userbulkupload();
 echo '</a>
-    <div class = "mt-2 mb-2 collapse '.$show.'" id = "mod_pokcertificate-filter_collapse">
+    <div class = "mt-3 mb-2 collapse ' . $show . '" id = "mod_pokcertificate-filter_collapse">
         <div id = "filters_form" class = "card card-body p-2">';
-            $mform->display();
+$mform->display();
 echo    '</div>
     </div>';
 

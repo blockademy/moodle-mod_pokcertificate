@@ -15,96 +15,90 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 }}
-
 {{#showdata}}
+<div class= "row">
+ <form action="previewusers.php" method="post">
     <table class="generaltable dataTable no-footer">
         <thead>
             <tr role="row">
-                <th>
-                    <input type="checkbox" id="select-all">
-                    {{#str}}studentname,mod_pokcertificate{{/str}}
-                </th>
+                <th><input type="checkbox" id="select-all"></th>
+                <th>{{#str}}studentname,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}surname,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}email,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}studentid,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}activity,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}course,mod_pokcertificate{{/str}}</th>
+                {{#showtemplatetype}}
+                    <th>{{#str}}typeofcerti,mod_pokcertificate{{/str}}</th>
+                {{/showtemplatetype}}
+                <th>{{#str}}senttopok,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}completedate,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}coursestatus,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}preview{{/str}}</th>
             </tr>
         </thead>
         <tbody>
             {{#data}}
                 <tr>
-                    <td>
-                        <i class="fa fa-caret-right" aria-hidden="true" onclick="toggleAccordion(this)"></i>
-                        <input type="checkbox" class="user-checkbox" name="selected_users[]" value="{{assignid}}">
-                        {{firstname}}
+                    <td value = "{{courseid}}-{{activityid}}-{{userid}}">
+                    {{^status}}
+                        <input type="checkbox" class="user-checkbox inp" name="selectedusers[]" value = "{{courseid}}-{{activityid}}-{{userid}}">
+                    {{/status}}
                     </td>
+                    <td>{{firstname}}</td>
                     <td>{{lastname}}</td>
                     <td>{{email}}</td>
                     <td>{{studentid}}</td>
+                    <td>{{activity}}</td>
                     <td>{{course}}</td>
-                </tr>
-                <tr class="accordion-content" style="display: none;">
-                    <td colspan="5">
-                        <table class="generaltable dataTable no-footer">
-                            <thead>
-                                <tr role="row">
-                                    <th>{{#str}}certificatetitle,mod_pokcertificate{{/str}}</th>
-                                    <th>{{#str}}issueddate,mod_pokcertificate{{/str}}</th>
-                                    <th>{{#str}}certificatstatus,mod_pokcertificate{{/str}}</th>
-                                    <th>{{#str}}previewcertificate,mod_pokcertificate{{/str}}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Data 1</td>
-                                    <td>Data 2</td>
-                                    <td>Data 3</td>
-                                    <td>Data 4</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
+                    {{#showtemplatetype}}
+                        <td class="{{certificatetype}}-certificatetype">{{certificatetype}}</td>
+                    {{/showtemplatetype}}
+                    <td class="{{senttopok}}-senttopok">{{senttopok}}</td>
+                    <td class="blue-completedate">{{completedate}}</td>
+                    <td class="{{coursestatus}}-coursestatus">{{coursestatus}}</td>
+                    {{#status}}
+                        {{#certificateurl}}
+                            <td>
+                                <a href="{{certificateurl}}">
+                                    <span class='viewcertificate'>
+                                        <i class="fa fa-certificate" aria-hidden="true"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        {{/certificateurl}}
+                        {{^certificateurl}}
+                            <td style="font-size: smaller;color: darkslategrey;">{{#str}}mailpending,mod_pokcertificate{{/str}}</td>
+                        {{/certificateurl}}
+                    {{/status}}
+                    {{^status}}
+                    {{^certificateurl}}
+                        <td >-</td>
+                    {{/certificateurl}}
+                     {{/status}}
+                 </tr>
             {{/data}}
         </tbody>
     </table>
     <div class="d-flex justify-content-center mt-4">
-        <button id="award-certificate-btn" class="btn btn-primary">{{#str}}awardcertificate, mod_pokcertificate{{/str}}</button>
+        <button type="submit" id="award-certificate-btn" class="btn btn-primary">{{#str}}awardcertificate, mod_pokcertificate{{/str}}</button>
     </div>
+    </form>
+
 {{/showdata}}
 {{^showdata}}
     <div class="alert alert-info alert-block fade in  alert-dismissible" role="alert" data-aria-autofocus="true">
         {{#str}}norecordavailable, mod_pokcertificate{{/str}}
     </div>
 {{/showdata}}
-
+</div>
 <script>
-    // Function to handle the click event of the play icon and toggle the accordion
-    function toggleAccordion(icon) {
-        var row = icon.parentElement.parentElement;
-        var nextRow = row.nextElementSibling;
-        if (nextRow.classList.contains("accordion-content")) {
-            if (nextRow.style.display === "none") {
-                // If the accordion content is hidden, show it
-                nextRow.style.display = "table-row";
-                // Change the icon to fa-caret-down when the accordion is active
-                icon.classList.remove("fa-caret-right");
-                icon.classList.add("fa-caret-down");
-            } else {
-                // If the accordion content is visible, hide it
-                nextRow.style.display = "none";
-                // Change the icon to fa-caret-right when the accordion is inactive
-                icon.classList.remove("fa-caret-down");
-                icon.classList.add("fa-caret-right");
-            }
-        }
-    }
 
     // Function to handle the click event of the "Award Certificate" button
     document.getElementById("award-certificate-btn").addEventListener("click", function() {
         // Array to store selected user IDs
         var selectedUserIds = [];
-        
+
         // Loop through each checkbox
         var checkboxes = document.getElementsByClassName("user-checkbox");
         for (var i = 0; i < checkboxes.length; i++) {
@@ -115,8 +109,8 @@
         }
 
         // Redirect only if at least one checkbox is checked
+
         if (selectedUserIds.length > 0) {
-            window.location.href = "new.php?userids=" + selectedUserIds.join(",");
         } else {
             // Display a message or perform other actions when no checkboxes are checked
             alert("Please select at least one user to award a certificate.");
@@ -153,4 +147,3 @@
         checkboxes[i].addEventListener("change", checkSelected);
     }
 </script>
-

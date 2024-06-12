@@ -73,11 +73,11 @@ if ($pokverified) {
       <ul class="pok_details ml-0 ml-md-5">
         <li class="d-flex justify-content-between align-items-center">
           <p class="m-0">' . get_string("certficatestobesent", "pokcertificate") . ' : </p>
-          <p class="m-0 text-muted text-right">' . get_config('mod_pokcertificate', 'pendingcertificates') . '</p>
+          <p class="m-0 text-right bold text-primary"><big>' . get_config('mod_pokcertificate', 'pendingcertificates') . '</big></p>
         </li>
         <li class="d-flex justify-content-between border-0">
-          <p class="m-0">' . get_string("incompleteprofile", "pokcertificate") . ' :</p>
-          <p class="m-0 text-muted text-right">' . $records['count'] . '</p>
+          <p class="m-0 ">' . get_string("incompleteprofile", "pokcertificate") . ' :</p>
+          <p class="m-0 text-right bold text-primary "><big>' . $records['count'] . '</big></p>
         </li>
       </ul>
     </div>
