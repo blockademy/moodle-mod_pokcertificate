@@ -134,7 +134,6 @@ class searchfilter_form extends moodleform {
                         $courses
                     );
                     $mform->setType('course', PARAM_RAW);
-                    $mform->setDefault('course', $courseid);
                 }
             }
         }

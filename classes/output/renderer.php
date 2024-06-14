@@ -568,14 +568,14 @@ class renderer extends \plugin_renderer_base {
      */
     public function get_generalcertificate() {
 
-        $courseid = optional_param('courseid', 0, PARAM_INT);
+        $courseid = optional_param('course', 0, PARAM_INT);
         $studentid = optional_param('studentid', '', PARAM_RAW);
         $studentname = optional_param('studentname', '', PARAM_RAW);
         $email = optional_param('email', '', PARAM_RAW);
         $certificatestatus = optional_param('certificatestatus', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
         $filters =  [
-            'courseid' => $courseid,
+            'course' => $courseid,
             'studentid' => $studentid,
             'studentname' => $studentname,
             'email' => $email,

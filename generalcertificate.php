@@ -38,34 +38,40 @@ $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
 $PAGE->set_url($url);
-$courseid = optional_param('courseid', 0, PARAM_INT);
+$course = optional_param('course', 0, PARAM_INT);
 $studentid = optional_param('studentid', '', PARAM_RAW);
 $studentname = optional_param('studentname', '', PARAM_RAW);
 $email = optional_param('email', '', PARAM_RAW);
 $certificatestatus = optional_param('certificatestatus', '', PARAM_RAW);
 
-if (!empty($courseid) || !empty($studentid) || !empty($studentname) || !empty($email) || !empty($certificatestatus)) {
+if (!empty($course) || !empty($studentid) || !empty($studentname) || !empty($email) || !empty($certificatestatus)) {
     $show = 'show';
 } else {
     $show = '';
 }
-$searchfilters =  [
-    'courseid' => $courseid,
+
+$renderer = $PAGE->get_renderer('mod_pokcertificate');
+$mform = new searchfilter_form('', ['viewtype' => 'generalcertificate']);
+$mform->set_data([
+    'course' => $course,
     'studentid' => $studentid,
     'studentname' => $studentname,
     'email' => $email,
     'certificatestatus' => $certificatestatus,
-];
-$renderer = $PAGE->get_renderer('mod_pokcertificate');
-$mform = new searchfilter_form('', ['viewtype' => 'generalcertificate', 'courseid' => $courseid]);
-$mform->set_data($searchfilters);
+]);
 
 if ($mform->is_cancelled()) {
     redirect(new \moodle_url('/mod/pokcertificate/generalcertificate.php'));
 } else if ($userdata = $mform->get_data()) {
     redirect(new \moodle_url(
         '/mod/pokcertificate/generalcertificate.php',
-        $searchfilters
+        [
+            'course' => $course,
+            'studentid' => $studentid,
+            'studentname' => $studentname,
+            'email' => $email,
+            'certificatestatus' => $certificatestatus,
+        ]
     ));
 }
 
