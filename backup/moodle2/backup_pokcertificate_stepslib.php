@@ -37,7 +37,7 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
             ['id'],
             [
                 'name', 'course', 'intro', 'introformat', 'title', 'orgname', 'orgid',
-                'templateid', 'display', 'displayoptions',
+                'templateid', 'display', 'displayoptions', 'completionsubmit',
                 'usercreated', 'usermodified', 'timecreated', 'timemodified',
             ]
         );

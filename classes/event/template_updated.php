@@ -105,8 +105,8 @@ class template_updated extends \core\event\base {
      */
     public static function get_other_mapping() {
         $othermapped = [];
-        $othermapped['pokcertificateid'] = array('db' => 'pokcertificate', 'restore' => 'pokcertificate');
-        $othermapped['templateid'] = array('db' => 'pokcertificate_templates', 'restore' => 'pokcertificate_templates');
+        $othermapped['pokcertificateid'] = ['db' => 'pokcertificate', 'restore' => 'pokcertificate'];
+        $othermapped['templateid'] = ['db' => 'pokcertificate_templates', 'restore' => 'pokcertificate_templates'];
 
         return $othermapped;
     }

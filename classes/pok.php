@@ -95,8 +95,7 @@ class pok {
         $displayoptions['printlastmodified'] = (isset($data->printlastmodified) ? $data->printlastmodified : 1);
         $data->displayoptions = serialize($displayoptions);
 
-        $data->intro       = $data->introeditor['text'];
-        $data->introformat = $data->introeditor['format'];
+        $data->completionsubmit = $data->completionsubmit;
 
         $pokcertificate = new pokcertificate(0, $data);
         $pokcertificate->create();
@@ -150,12 +149,7 @@ class pok {
         $displayoptions['printintro']   = (isset($data->printintro) ? $data->printintro : 0);
         $displayoptions['printlastmodified'] = (isset($data->printlastmodified) ? $data->printlastmodified : 1);
         $data->displayoptions = serialize($displayoptions);
-
-        $data->intro       = $data->introeditor['text'];
-        $data->introformat = $data->introeditor['format'];
-
-        $pokcertificate = new pokcertificate(0, $data);
-        $pokcertificate->update();
+        $data->completionsubmit = $data->completionsubmit;
 
         $context = \context_module::instance($cmid);
         if ($mform && !empty($data->pokcertificate['itemid'])) {
@@ -170,12 +164,13 @@ class pok {
                 pokcertificate_get_editor_options($context),
                 $data->content
             );
-            $pokcertificate = new pokcertificate(0, $data);
-            $pokcertificate->update();
         }
 
         $completiontimeexpected = !empty($data->completionexpected) ? $data->completionexpected : null;
         \core_completion\api::update_completion_date_event($cmid, 'pokcertificate', $data->id, $completiontimeexpected);
+
+        $pokcertificate = new pokcertificate(0, $data);
+        $pokcertificate->update();
         return true;
     }
 

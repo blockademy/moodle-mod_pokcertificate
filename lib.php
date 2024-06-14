@@ -48,8 +48,10 @@ function pokcertificate_supports($feature) {
         case FEATURE_GROUPINGS:
             return false;
         case FEATURE_MOD_INTRO:
-            return false;
+            return true;
         case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
             return true;
         case FEATURE_GRADE_HAS_GRADE:
             return false;
@@ -99,15 +101,23 @@ function pokcertificate_reset_userdata($data) {
     // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
     // See MDL-9367.
     global $DB;
+
+
     $componentstr = get_string('modulenameplural', 'pokcertificate');
     $status = [];
+    $course = get_course($data->id);
 
     if (!empty($data->reset_pokcertificates)) {
-        $pokcertificatesql = "SELECT pok.id
-                       FROM {pokcertificate} pok
-                       WHERE pok.course=?";
-
-        $DB->delete_records_select('pokcertificate_issues', "pokid IN ($pokcertificatesql)", [$data->courseid]);
+        $pokcertificates = pokcertificate::get_records(['course' => $data->courseid]);
+        foreach ($pokcertificates as $pokcertificate) {
+            $pokid = $pokcertificate->get('id');
+            $DB->delete_records_select('pokcertificate_issues', "pokid IN ($pokid )", [$data->courseid]);
+            $completion = new completion_info($course);
+            $cm = get_coursemodule_from_instance('pokcertificate', $pokid);
+            if ($completion->is_enabled($cm) && $pokcertificate->get('completionsubmit')) {
+                $completion->update_state($cm, COMPLETION_INCOMPLETE);
+            }
+        }
         $status[] = ['component' => $componentstr, 'item' => get_string('removeissues', 'pokcertificate'), 'error' => false];
     }
     return $status;
@@ -190,7 +200,7 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
     if (!$pokcertificate = $DB->get_record(
         'pokcertificate',
         ['id' => $coursemodule->instance],
-        'id, name, display, displayoptions, intro, introformat'
+        'id, name, display, displayoptions, intro, introformat,completionsubmit'
     )) {
         return null;
     }
@@ -202,20 +212,43 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
         $info->content = format_module_intro('pokcertificate', $pokcertificate, $coursemodule->id, false);
     }
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $info->customdata['customcompletionrules']['completionsubmit'] = $pokcertificate->completionsubmit;
+    }
+    return $info;
+}
 
-    if ($pokcertificate->display != RESOURCELIB_DISPLAY_POPUP) {
-        return $info;
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_pokcertificate_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (
+        empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC
+    ) {
+        return [];
     }
 
-    $fullurl = "$CFG->wwwroot/mod/pokcertificate/view.php?id=$coursemodule->id&amp;inpopup=1&amp;formedit=1";
-    $options = empty($pokcertificate->displayoptions) ? [] : (array) unserialize_array($pokcertificate->displayoptions);
-    $width  = empty($options['popupwidth']) ? 620 : $options['popupwidth'];
-    $height = empty($options['popupheight']) ? 450 : $options['popupheight'];
-    $wh = "width=$width,height=$height,toolbar=no,location=no,menubar=no,copyhistory=no,status=no,";
-    $wh .= "directories=no,scrollbars=yes,resizable=yes";
-    $info->onclick = "window.open('$fullurl', '', '$wh'); return false;";
+    $descriptions = [];
 
-    return $info;
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completionsubmit':
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionmustrecievecert', 'pokcertificate');
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
 }
 /**
  * Set visibility to user if certificate not configured properly
@@ -665,7 +698,6 @@ function pokcertificate_coursecertificatestatuslist(
     }
 
     if ($senttopok == 'yes') {
-        // $fromsql .= "AND (pci.certificateurl IS NOT NULL AND pci.status = 1) ";
         $fromsql .= "AND ((pci.pokcertificateid IS NOT NULL AND pci.pokcertificateid != '') OR
                         (pci.certificateurl IS NULL aND pci.certificateurl = '')) ";
     }
@@ -822,7 +854,7 @@ function pokcertificate_awardgeneralcertificatelist(
             if ($c->status == 0 && !empty($c->pokcertificateid)) {
                 $certstatus = get_string('inprogress', 'mod_pokcertificate');
             } else if ($c->status == 1 && !empty($c->certificateurl)) {
-                $certstatus =  get_string('completed');
+                $certstatus = get_string('completed');
             } else {
                 $certstatus = "-";
             }
@@ -839,7 +871,7 @@ function pokcertificate_awardgeneralcertificatelist(
             $list['issueddate'] = $c->issueddate ? date('d M Y', $c->issueddate) : '-';
             $list['status'] = ($c->status || !empty($c->pokcertificateid)) ? true : false;
             $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
-            $list['certificatestatus'] =  $certstatus;
+            $list['certificatestatus'] = $certstatus;
             $list['certificateurl'] = $c->certificateurl;
             $data[] = $list;
         }

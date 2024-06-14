@@ -85,6 +85,10 @@ class pokcertificate extends persistent {
                 'type' => PARAM_RAW,
                 'optional' => true,
             ],
+            'completionsubmit' => [
+                'type' => PARAM_INT,
+                'optional' => false,
+            ],
             'usercreated' => [
                 'type' => PARAM_INT,
                 'optional' => false,

@@ -108,11 +108,8 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
                 $defaultvalues['printlastmodified'] = $displayoptions['printlastmodified'];
             }
         }
-
-        if (!empty($defaultvalues['intro'])) {
-            $defaultvalues['introeditor'] = ['text' => $defaultvalues['intro']];;
-        }
     }
+
 
     /**
      * Allows module to modify the data returned by form get_data().
@@ -124,6 +121,7 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
      */
     public function data_postprocessing($data) {
         parent::data_postprocessing($data);
+
         if (!empty($data->instance)) {
             $pokrecord = pokcertificate::get_record(['id' => $data->instance]);
             $data->templateid = 0;
@@ -131,5 +129,36 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
                 $data->templateid = $pokrecord->get('templateid');
             }
         }
+
+        if (!empty($data->completionunlocked)) {
+            // Turn off completion settings if the checkboxes aren't ticked.
+            $suffix = $this->get_suffix();
+            $completion = $data->{'completion' . $suffix};
+            $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (!$autocompletion || empty($data->{'completionsubmit' . $suffix})) {
+                $data->{'completionsubmit' . $suffix} = 0;
+            }
+        }
+    }
+
+    /**
+     * Display module-specific activity completion rules.
+     * Part of the API defined by moodleform_mod
+     * @return array Array of string IDs of added items, empty array if none
+     */
+    public function add_completion_rules() {
+        $mform = $this->_form;
+
+        $suffix = $this->get_suffix();
+        $completionsubmit = 'completionsubmit' . $suffix;
+        $mform->addElement('checkbox', $completionsubmit, '', get_string('completionmustrecievecert', 'pokcertificate'));
+        // Enable this completion rule by default.
+        $mform->setDefault($completionsubmit, 1);
+        return [$completionsubmit];
+    }
+
+    public function completion_rule_enabled($data) {
+        $suffix = $this->get_suffix();
+        return !empty($data['completionsubmit' . $suffix]);
     }
 }

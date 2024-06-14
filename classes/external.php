@@ -156,9 +156,9 @@ class mod_pokcertificate_external extends external_api {
             // We can avoid then additional validate_context calls.
             $pokcertificates = get_all_instances_in_courses("pokcertificate", $courses);
             foreach ($pokcertificates as $pokcertificate) {
-                helper_for_get_mods_by_courses::format_name_and_intro($pokcertificate, 'mod_pokcertificate');
+                $pokdetails = helper_for_get_mods_by_courses::format_name_and_intro($pokcertificate, 'mod_pokcertificate');
+                $context = \context_module::instance($pokcertificate->coursemodule);
 
-                $context = context_module::instance($pokcertificate->coursemodule);
                 list($pokcertificate->content, $pokcertificate->contentformat) = \core_external\util::format_text(
                     $pokcertificate->content,
                     $pokcertificate->contentformat,
@@ -169,8 +169,11 @@ class mod_pokcertificate_external extends external_api {
                     ['noclean' => true]
                 );
                 $pokcertificate->contentfiles = util::get_area_files($context->id, 'mod_pokcertificate', 'content');
-
-                $returnedpokcertificates[] = $pokcertificate;
+                if (has_capability('moodle/course:manageactivities', $context)) {
+                    $pokdetails['timemodified']  = $pokcertificate->timemodified;
+                    $pokdetails['completionsubmit']  = $pokcertificate->completionsubmit;
+                }
+                $returnedpokcertificates[] = $pokdetails;
             }
         }
 
@@ -203,6 +206,12 @@ class mod_pokcertificate_external extends external_api {
                             'displayoptions' => new external_value(PARAM_RAW, 'Display options (width, height)'),
                             'revision' => new external_value(PARAM_INT, 'Incremented when after each file changes, to avoid cache'),
                             'timemodified' => new external_value(PARAM_INT, 'Last time the pokcertificate was modified'),
+                            'completionsubmit' => new external_value(
+                                PARAM_BOOL,
+                                'Completion on receiving certificate',
+                                VALUE_OPTIONAL
+                            ),
+
                         ]
                     ))
                 ),
@@ -312,6 +321,7 @@ class mod_pokcertificate_external extends external_api {
         );
         $userinputs = base64_decode($params['userinputs']);
         $useridsarr = explode(",", $userinputs);
+
         if ($useridsarr) {
             foreach ($useridsarr as $rec) {
                 $inp = explode("-", $rec);

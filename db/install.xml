@@ -17,6 +17,7 @@
         <FIELD NAME="templateid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="display" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="displayoptions" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="completionsubmit" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If this field is set to 1, then the activity will be automatically marked as 'complete' once the user submits their choice."/>
         <FIELD NAME="usercreated" TYPE="char"  LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int"  LENGTH="10" NOTNULL="false"  DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="usermodified" TYPE="char"  LENGTH="255" NOTNULL="false" SEQUENCE="false"/>

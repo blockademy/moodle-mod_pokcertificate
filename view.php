@@ -60,10 +60,6 @@ $PAGE->set_heading($course->fullname);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->activityheader->set_attrs($activityheader);
 
-if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'])) {
-    $strlastmodified = get_string("lastmodified");
-    echo html_writer::div("$strlastmodified: " . userdate($pokcertificate->timemodified), 'modified');
-}
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 
@@ -79,6 +75,9 @@ if ($pok = pokcertificate_preview_by_user($cm, $pokcertificate, $flag)) {
         exit;
     }
 }
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 echo $OUTPUT->header();
 echo $renderer->show_certificate_templates($id);
 echo $OUTPUT->footer();

@@ -267,3 +267,4 @@ $string['certificatesent'] = 'Certificate Awarded to selected students or <br> e
 $string['mailpending'] = 'Mail acceptance pending';
 $string['completionmustrecievecert'] = 'Must receive certificate';
 $string['generalcertstatus'] = 'General Certitifacte status';
+$string['completiondetail:submit'] = 'Must receive certificate';

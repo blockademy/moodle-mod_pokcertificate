@@ -426,6 +426,14 @@ class renderer extends \plugin_renderer_base {
                             ]);
                             if (!empty($certificateurl->get('certificateurl'))) {
                                 $output = self::display_certificate($certificateurl->get('certificateurl'));
+                                // Update completion state.
+
+                                $course = get_course($cm->course);
+                                $completion = new \completion_info($course);
+                                $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+                                if ($completion->is_enabled($cm) && $pokrecord->get('completionsubmit')) {
+                                    $completion->update_state($cm, COMPLETION_COMPLETE);
+                                }
                             } else {
                                 $output = self::certificate_pending_message($msg, $cm);
                             }
@@ -451,7 +459,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * This method returns the action bar.
      *
-     * @param int $cmid The course module id.
+     * @param int $id The course module id.
      * @param \moodle_url $pageurl The page url.
      * @return string The HTML for the action bar.
      */
@@ -574,7 +582,7 @@ class renderer extends \plugin_renderer_base {
         $email = optional_param('email', '', PARAM_RAW);
         $certificatestatus = optional_param('certificatestatus', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
-        $filters =  [
+        $filters = [
             'course' => $courseid,
             'studentid' => $studentid,
             'studentname' => $studentname,
