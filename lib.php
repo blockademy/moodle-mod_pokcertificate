@@ -623,11 +623,11 @@ function pokcertificate_coursecertificatestatuslist(
                     pci.pokcertificateid ,
                     pci.certificateurl ";
     $fromsql = "FROM {pokcertificate} pc
-                JOIN {course_modules} cm ON pc.id = cm.instance
+                JOIN {course_modules} cm ON pc.id = cm.instance AND deletioninprogress = 0
                 JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSE . ")
                 JOIN {role_assignments} ra ON ctx.id = ra.contextid
                 JOIN {role} r ON (ra.roleid = r.id AND r.shortname IN ('student','employee') )
-                JOIN {user} u ON ra.userid = u.id
+                JOIN {user} u ON ra.userid = u.id AND u.deleted = 0 AND u.suspended = 0
            LEFT JOIN {course_completions} cc ON (u.id = cc.userid AND pc.course = cc.course)
            LEFT JOIN {pokcertificate_templates} pct ON pc.templateid = pct.id
            LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.pokid)
@@ -758,12 +758,12 @@ function pokcertificate_awardgeneralcertificatelist(
                          c.id as courseid,
                          c.fullname AS coursename ";
     $fromsql = "FROM {pokcertificate} pc
-                JOIN {course_modules} cm ON pc.id = cm.instance
+                JOIN {course_modules} cm ON pc.id = cm.instance AND deletioninprogress = 0
                 JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSE . ")
                 JOIN {course} c ON ctx.instanceid = c.id
                 JOIN {role_assignments} ra ON ctx.id = ra.contextid
                 JOIN {role} r ON ra.roleid = r.id
-                JOIN {user} u ON ra.userid = u.id
+                JOIN {user} u ON ra.userid = u.id AND u.deleted = 0 AND u.suspended = 0
            LEFT JOIN {course_completions} cc ON (u.id = cc.userid AND pc.course = cc.course)
            LEFT JOIN {pokcertificate_templates} pct ON pc.templateid = pct.id
            LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.pokid)
