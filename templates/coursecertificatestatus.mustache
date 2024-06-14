@@ -46,18 +46,25 @@
                         <td class="{{certificatetype}}-certificatetype">{{certificatetype}}</td>
                     {{/showtemplatetype}}
                     <td class="{{senttopok}}-senttopok">{{senttopok}}</td>
-                    {{#certificateurl}}
-                        <td>
-                            <a href="{{certificateurl}}">
-                                <span class='viewcertificate'>
-                                    <i class="fa fa-certificate" aria-hidden="true"></i>
-                                </span>
-                            </a>
-                        </td>
-                    {{/certificateurl}}
+                    {{#status}}
+                        {{#certificateurl}}
+                            <td>
+                                <a href="{{certificateurl}}">
+                                    <span class='viewcertificate'>
+                                        <i class="fa fa-certificate" aria-hidden="true"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        {{/certificateurl}}
+                        {{^certificateurl}}
+                            <td style="font-size: smaller;color: darkslategrey;">{{#str}}mailpending,mod_pokcertificate{{/str}}</td>
+                        {{/certificateurl}}
+                    {{/status}}
+                    {{^status}}
                     {{^certificateurl}}
-                        <td>-</td>
+                        <td >-</td>
                     {{/certificateurl}}
+                    {{/status}}
                 </tr>
             {{/data}}
         </tbody>

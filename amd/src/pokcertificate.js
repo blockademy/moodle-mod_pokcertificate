@@ -116,7 +116,6 @@ export const loadtemplates = function(e){
 */
 const emit = function(e){
     e.preventDefault();
-    alert("123");
 
     var userinputs = $("#id_userinputs").val();
     var promises = Ajax.call([
@@ -126,7 +125,7 @@ const emit = function(e){
         if(resp){
 
             ModalFactory.create({
-                title: Str.get_string('awardcertificate','mod_pokcertificate'),
+                title: Str.get_string('generalcertstatus','mod_pokcertificate'),
                 type: ModalFactory.types.DEFAULT,
                 body: Str.get_string('certificatesent','mod_pokcertificate'),
                 footer: '<button type="button" class="btn btn-primary" data-action="save">Done</button>'
@@ -137,10 +136,7 @@ const emit = function(e){
                 }.bind(this));
 
                 modal.show();
-                setTimeout(() => {
-                    $("#award-certificate-btn").removeClass("disabled");
-                    $("#award-certificate-btn").removeClass("button-loader");
-                }, 2000);
+                $(this).removeClass("disabled");
             }.bind(this));
         }
     }).fail(Notification.exception);
@@ -159,7 +155,6 @@ export const init = () => {
     $(SELECTORS.EMITCERTIFICATE).on('click', function(e) {
         e.preventDefault();
         $(this).addClass("disabled");
-        $(this).addClass("button-loader");
         emit(e);
     });
 };

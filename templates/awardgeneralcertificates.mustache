@@ -31,9 +31,9 @@
                 {{#showtemplatetype}}
                     <th>{{#str}}typeofcerti,mod_pokcertificate{{/str}}</th>
                 {{/showtemplatetype}}
-                <th>{{#str}}senttopok,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}issuedddate,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}completedate,mod_pokcertificate{{/str}}</th>
-                <th>{{#str}}coursestatus,mod_pokcertificate{{/str}}</th>
+                <th>{{#str}}certificatestatus,mod_pokcertificate{{/str}}</th>
                 <th>{{#str}}preview{{/str}}</th>
             </tr>
         </thead>
@@ -54,9 +54,9 @@
                     {{#showtemplatetype}}
                         <td class="{{certificatetype}}-certificatetype">{{certificatetype}}</td>
                     {{/showtemplatetype}}
-                    <td class="{{senttopok}}-senttopok">{{senttopok}}</td>
+                    <td class="blue-completedate">{{issueddate}}</td>
                     <td class="blue-completedate">{{completedate}}</td>
-                    <td class="{{coursestatus}}-coursestatus">{{coursestatus}}</td>
+                    <td class="{{certificatestatus}}-coursestatus">{{certificatestatus}}</td>
                     {{#status}}
                         {{#certificateurl}}
                             <td>
@@ -75,7 +75,7 @@
                     {{^certificateurl}}
                         <td >-</td>
                     {{/certificateurl}}
-                     {{/status}}
+                    {{/status}}
                  </tr>
             {{/data}}
         </tbody>

@@ -620,6 +620,7 @@ function pokcertificate_coursecertificatestatuslist(
                     cc.timecompleted as completiondate,
                     pct.templatetype,
                     pci.status,
+                    pci.pokcertificateid ,
                     pci.certificateurl ";
     $fromsql = "FROM {pokcertificate} pc
                 JOIN {course_modules} cm ON pc.id = cm.instance
@@ -664,11 +665,13 @@ function pokcertificate_coursecertificatestatuslist(
     }
 
     if ($senttopok == 'yes') {
-        $fromsql .= "AND (pci.certificateurl IS NOT NULL AND pci.status = 1) ";
+        // $fromsql .= "AND (pci.certificateurl IS NOT NULL AND pci.status = 1) ";
+        $fromsql .= "AND ((pci.pokcertificateid IS NOT NULL AND pci.pokcertificateid != '') OR
+                        (pci.certificateurl IS NULL aND pci.certificateurl = '')) ";
     }
 
     if ($senttopok == 'no') {
-        $fromsql .= "AND (pci.certificateurl IS NULL OR pci.status = 0) ";
+        $fromsql .= "AND (pci.id IS NULL ) ";
     }
 
     $concatsql = "ORDER BY ra.id DESC ";
@@ -694,11 +697,14 @@ function pokcertificate_coursecertificatestatuslist(
             } else {
                 $list['certificatetype'] = '-';
             }
-            $list['senttopok'] = ($c->status || !empty($c->certificateurl)) ? get_string('yes') : get_string('no');
+
+            $list['status'] = ($c->status || !empty($c->pokcertificateid)) ? true : false;
+            $list['senttopok'] = $list['status'] ? get_string('yes') : get_string('no');
             $list['certificateurl'] = $c->certificateurl;
             $data[] = $list;
         }
     }
+
     return [
         'count' => $totalusers,
         'data' => $data,
@@ -717,8 +723,7 @@ function pokcertificate_coursecertificatestatuslist(
  * @param int $studentid The student ID to search for (optional).
  * @param string $studentname The student name to search for (optional).
  * @param string $email The student email to search for (optional).
- * @param string $senttopok Indicates whether certificates have been sent to Pokcertificate (optional).
- * @param string $coursestatus The completion status of the course (optional).
+ * @param string $certificatestatus The certificate status of the POK certificate (optional).
  * @param int $perpage The number of records to display per page.
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted user data.
@@ -728,15 +733,14 @@ function pokcertificate_awardgeneralcertificatelist(
     $studentid,
     $studentname,
     $email,
-    $senttopok,
-    $coursestatus,
+    $certificatestatus,
     $perpage,
     $offset
 ) {
     global $DB;
 
     $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
-    $countsql = "SELECT count(ra.id) ";
+    $countsql = "SELECT count(DISTINCT(CONCAT(pc.id,u.id,c.id)) )";
     $selectsql = "SELECT DISTINCT(CONCAT(pc.id,u.id,c.id)),
                          pc.id as activityid,
                          pc.name as activity,
@@ -748,6 +752,7 @@ function pokcertificate_awardgeneralcertificatelist(
                          cc.timecompleted as completiondate,
                          pct.templatetype,
                          pci.status,
+                         pci.timecreated as issueddate,
                          pci.pokcertificateid ,
                          pci.certificateurl ,
                          c.id as courseid,
@@ -792,24 +797,21 @@ function pokcertificate_awardgeneralcertificatelist(
         $queryparam['courseid'] = $courseid;
     }
 
-    if ($coursestatus == 'completed') {
-        $fromsql .= "AND cc.timecompleted > 0 ";
+    if ($certificatestatus == 'completed') {
+        $fromsql .= "AND (pci.status = 1 AND (pci.certificateurl IS NOT NULL OR pci.certificateurl != '')) ";
     }
 
-    if ($coursestatus == 'inprogress') {
-        $fromsql .= "AND (cc.timecompleted = 0 OR cc.timecompleted IS NULL) ";
+    if ($certificatestatus == 'inprogress') {
+        $fromsql .= "AND (pci.status = 0 AND (pci.pokcertificateid IS NOT NULL OR pci.pokcertificateid != '')
+                    AND (pci.certificateurl IS NULL OR pci.certificateurl = '')) ";
     }
 
-    if ($senttopok == 'yes') {
-        $fromsql .= "AND ((pci.certificateurl IS NOT NULL AND pci.status = 1)
-                        OR (pci.pokcertificateid IS NOT NULL AND pci.status = 0))";
+    if ($certificatestatus == 'notissued') {
+        $fromsql .= "AND (pci.id IS NULL ) ";
     }
 
-    if ($senttopok == 'no') {
-        $fromsql .= "AND (pci.certificateurl IS NULL OR pci.status = 0) ";
-    }
+    $fromsql .= "ORDER BY ra.id DESC ";
 
-    $fromsql .= "ORDER BY u.id ";
     $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
     $records = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
 
@@ -817,6 +819,13 @@ function pokcertificate_awardgeneralcertificatelist(
     $data = [];
     if ($records) {
         foreach ($records as $c) {
+            if ($c->status == 0 && !empty($c->pokcertificateid)) {
+                $certstatus = get_string('inprogress', 'mod_pokcertificate');
+            } else if ($c->status == 1 && !empty($c->certificateurl)) {
+                $certstatus =  get_string('completed');
+            } else {
+                $certstatus = "-";
+            }
             $list = [];
             $list['userid'] = $c->userid;
             $list['firstname'] = $c->firstname;
@@ -827,10 +836,10 @@ function pokcertificate_awardgeneralcertificatelist(
             $list['activityid'] = $c->activityid;
             $list['courseid'] = $c->courseid;
             $list['course'] = $c->coursename;
-            $list['senttopok'] = ($c->status || !empty($c->pokcertificateid)) ? get_string('yes') : get_string('no');
+            $list['issueddate'] = $c->issueddate ? date('d M Y', $c->issueddate) : '-';
             $list['status'] = ($c->status || !empty($c->pokcertificateid)) ? true : false;
             $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
-            $list['coursestatus'] = $c->completiondate ? get_string('completed') : get_string('inprogress', 'mod_pokcertificate');
+            $list['certificatestatus'] =  $certstatus;
             $list['certificateurl'] = $c->certificateurl;
             $data[] = $list;
         }
@@ -1000,7 +1009,7 @@ function validate_encoded_data($input) {
 /**
  * get users data before issueing general certificate to update the incomplete profiles
  *
- * @param string $useractivityids
+ * @param array $useractivityids
  * @return array An array containing validation results.
  */
 

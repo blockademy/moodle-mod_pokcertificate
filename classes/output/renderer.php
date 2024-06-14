@@ -572,19 +572,18 @@ class renderer extends \plugin_renderer_base {
         $studentid = optional_param('studentid', '', PARAM_RAW);
         $studentname = optional_param('studentname', '', PARAM_RAW);
         $email = optional_param('email', '', PARAM_RAW);
-        $senttopok = optional_param('senttopok', '', PARAM_RAW);
-        $coursestatus = optional_param('coursestatus', '', PARAM_RAW);
+        $certificatestatus = optional_param('certificatestatus', '', PARAM_RAW);
         $page = optional_param('page', 0, PARAM_INT);
+        $filters =  [
+            'courseid' => $courseid,
+            'studentid' => $studentid,
+            'studentname' => $studentname,
+            'email' => $email,
+            'certificatestatus' => $certificatestatus,
+        ];
         $url = new \moodle_url(
             '/mod/pokcertificate/generalcertificate.php',
-            [
-                'courseid' => $courseid,
-                'studentid' => $studentid,
-                'studentname' => $studentname,
-                'email' => $email,
-                'senttopok' => $senttopok,
-                'coursestatus' => $coursestatus,
-            ]
+            $filters
         );
         $recordperpage = 10;
         $offset = $page * $recordperpage;
@@ -593,8 +592,7 @@ class renderer extends \plugin_renderer_base {
             $studentid,
             $studentname,
             $email,
-            $senttopok,
-            $coursestatus,
+            $certificatestatus,
             $recordperpage,
             $offset
         );
