@@ -1006,6 +1006,10 @@ function check_usermapped_fielddata($cm, $user) {
                 if (empty(trim($user->profile[$userprofilefield]))) {
                     $validuser = false;
                 }
+            } else {
+                if (empty(trim($user->$fieldname))) {
+                    $validuser = false;
+                }
             }
         }
     }

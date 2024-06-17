@@ -26,6 +26,7 @@ namespace mod_pokcertificate\task;
 
 use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate_issues;
+use mod_pokcertificate\persistent\pokcertificate;
 
 /**
  * Issue certificates scheduled task class.
@@ -69,7 +70,10 @@ class issue_certitficate_user extends \core\task\scheduled_task {
                 // Issue the certificate.
                 foreach ($users as $user) {
 
-                    $pokissuerec = pokcertificate_issues::get_record(['pokid' => $pokcertificate->id, 'userid' => $user->userid]);
+                    $pokissuerec = pokcertificate_issues::get_record([
+                        'pokid' => $pokcertificate->id,
+                        'userid' => $user->userid
+                    ]);
                     if ($pokissuerec) {
                         $issuecertificate = pok::issue_certificate($pokissuerec);
                         if (!empty($issuecertificate)) {
@@ -80,6 +84,14 @@ class issue_certitficate_user extends \core\task\scheduled_task {
                                     $user->email = $user->useremail;
                                     $issuecertificate->status = true;
                                     pok::save_issued_certificate($cm->id, $user, $issuecertificate);
+                                    $completion = new \completion_info($course);
+                                    $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+                                    if (
+                                        $completion->is_enabled($cm) && $pokrecord->get('completionsubmit')
+                                        && !empty($pokissuerec->get('certificateurl'))
+                                    ) {
+                                        $completion->update_state($cm, COMPLETION_COMPLETE);
+                                    }
                                     mtrace("... issued pokcertificate $pokcertificate->id for user
                                             $user->id on course $course->id");
                                 }

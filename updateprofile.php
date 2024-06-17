@@ -92,7 +92,7 @@ if ($id > 0) {
             // Save custom profile fields data.
             profile_save_data($userdata);
             if ($flag) {
-                $redirecturl = new moodle_url('/mod/pokcertificate/generalcertficate.php', []);
+                $redirecturl = new moodle_url('/mod/pokcertificate/generalcertificate.php', []);
             } else {
                 $redirecturl = new moodle_url('/mod/pokcertificate/view.php', ['id' => $id, 'flag' => 1]);
             }

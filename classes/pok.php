@@ -308,7 +308,6 @@ class pok {
                 }
                 return true;
             }
-            return false;
         } catch (\moodle_exception $e) {
             throw new \Exception($e->getMessage());
         }

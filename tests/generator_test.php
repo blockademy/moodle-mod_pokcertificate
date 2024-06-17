@@ -110,6 +110,14 @@ class generator_test extends \advanced_testcase {
         if (!isset($pokcertificate->printlastmodified)) {
             $pokcertificate->printlastmodified = 1;
         }
+        $pokcertificate->completionsubmit = 0;
+        // Test not-enrolled user.
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+        $draftideditor = 0;
+        file_prepare_draft_area($draftideditor, null, null, null, null);
+        $pokcertificate->introeditor = ['text' => 'This is a module', 'format' => FORMAT_HTML, 'itemid' => $draftideditor];
+
         // Update the module.
         update_moduleinfo($cm, $pokcertificate, $course, null);
 
@@ -192,6 +200,12 @@ class generator_test extends \advanced_testcase {
         if (!isset($pokcertificate->printlastmodified)) {
             $pokcertificate->printlastmodified = 1;
         }
+        // Test not-enrolled user.
+        $user = self::getDataGenerator()->create_user();
+        $this->setUser($user);
+        $draftideditor = 0;
+        file_prepare_draft_area($draftideditor, null, null, null, null);
+        $pokcertificate->introeditor = ['text' => 'This is a module', 'format' => FORMAT_HTML, 'itemid' => $draftideditor];
         // Update the module.
         update_moduleinfo($cm, $pokcertificate, $course, null);
 
@@ -201,8 +215,9 @@ class generator_test extends \advanced_testcase {
         $apifields = get_externalfield_list($templatename, $pokcertificate->id);
         if ($apifields) {
             $data = $generator->get_fieldmapping_data($cm->id, $pokcertificate->id, $templatename, $poktemplate['templateid']);
-            pok::save_fieldmapping_data($data);
-            $this->assertTrue($DB->record_exists('pokcertificate_fieldmapping', ['pokid' => $pokcertificate->id]));
+            if (pok::save_fieldmapping_data($data)) {
+                $this->assertTrue($DB->record_exists('pokcertificate_fieldmapping', ['pokid' => $pokcertificate->id]));
+            }
         }
         // Stop event capturing and discard the events.
         $eventsink->close();

@@ -31,6 +31,7 @@ require_login();
 
 $context = \context_system::instance();
 require_capability('mod/pokcertificate:manageinstance', $context);
+//require_capability('mod/pokcertificate:bulkupdateincompleteprofile', $context);
 
 $url = new moodle_url('/mod/pokcertificate/incompletestudent.php', []);
 $heading = get_string('incompletestudent', 'mod_pokcertificate');

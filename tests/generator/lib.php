@@ -69,13 +69,12 @@ class mod_pokcertificate_generator extends testing_module_generator {
             $record->course = $record->course->id;
         }
         $record->name = 'Sample Certificate';
-        $record->intro = 'This is a sample certificate';
-        $record->introformat = FORMAT_HTML;
         $record->title = 'Sample Certificate';
         $record->orgname = get_config('mod_pokcertificate', 'institution');
         $record->orgid = get_config('mod_pokcertificate', 'orgid');
         $record->templateid = 0;
         $record->displayoptions = serialize($displayoptions);
+        $record->completionsubmit = 0;
         $record->usercreated = $USER->id;
         $record->timecreated = time();
 
@@ -116,12 +115,14 @@ class mod_pokcertificate_generator extends testing_module_generator {
      * @return stdClass The field mapping data.
      */
     public function get_fieldmapping_data($cmid, $pokid, $tempname, $tempid) {
+
         $data = new stdClass();
         $data->option_repeats = 3;
-        $data->fieldmapping = [0 => 1, 1 => 2, 2 => 3];
-        $data->templatefield = [0 => 'param1', 1 => 'param2', 2 => 'paramN'];
-        $data->userfield = [0 => 'id', 1 => 'country', 2 => 'address'];
-        $data->optionid = [0 => 0, 1 => 0, 2 => 0];
+        $data->templatefield_0 = 'Univesrity';
+        $data->templatefield_1 = 'Roll number';
+        $data->userfield_0 = 'department';
+        $data->userfield_1 = 'idnumber';
+        $data->fieldcount = 2;
         $data->id = $cmid;
         $data->temp = $tempname;
         $data->tempid = $tempid;
