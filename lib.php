@@ -882,12 +882,15 @@ function pokcertificate_awardgeneralcertificatelist(
 /**
  * Extends the course navigation with a link to the Pokcertificate module participants page.
  *
- * @param navigation_node $navigation The course navigation node.
- * @return void
+ * @param navigation_node $navigation The navigation node to extend
+ * @param stdClass $course The course to object for the report
+ * @param context $context The context of the course
+ * @throws coding_exception
+ * @throws moodle_exception
  */
-function mod_pokcertificate_extend_navigation_course(navigation_node $navigation) {
+function mod_pokcertificate_extend_navigation_course(navigation_node $navigation, \stdClass $course, \context $context) {
     global $PAGE;
-    $context = \context_system::instance();
+
     if (has_capability('mod/pokcertificate:managecoursecertificatestatus', $context)) {
         $node = navigation_node::create(
             get_string('coursecertificatestatus', 'mod_pokcertificate'),
