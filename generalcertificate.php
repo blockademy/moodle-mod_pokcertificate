@@ -31,6 +31,9 @@ global $OUTPUT, $PAGE;
 require_login();
 
 $context = \context_system::instance();
+require_capability('mod/pokcertificate:manageinstance', $context);
+require_capability('mod/pokcertificate:awardcertificate', $context);
+
 $url = new \moodle_url('/mod/pokcertificate/generalcertificate.php', []);
 $heading = get_string('awardcertificate', 'mod_pokcertificate');
 $PAGE->set_pagelayout('admin');

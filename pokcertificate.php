@@ -30,10 +30,12 @@ require_login();
 
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
+$context = \context_system::instance();
+require_capability('mod/pokcertificate:manageinstance', $context);
 
 $url = new moodle_url('/mod/pokcertificate/pokcertificate.php', []);
 $PAGE->set_url($url);
-$PAGE->set_context(\context_system::instance());
+$PAGE->set_context($context);
 $PAGE->set_heading($SITE->fullname);
 
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");

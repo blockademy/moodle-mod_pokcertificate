@@ -30,6 +30,8 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 $selecteditems = optional_param_array('selectedusers', null, PARAM_RAW);
 
 $context = \context_system::instance();
+require_capability('mod/pokcertificate:manageinstance', $context);
+
 $url = new moodle_url('/mod/pokcertificate/previewusers.php', []);
 $heading = get_string('coursecertificatestatus', 'mod_pokcertificate');
 $PAGE->set_pagelayout('admin');
@@ -38,7 +40,6 @@ $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
 $PAGE->set_url($url);
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
-
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 
