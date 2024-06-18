@@ -33,7 +33,7 @@ $context = \context_system::instance();
 require_capability('mod/pokcertificate:manageinstance', $context);
 
 $url = new moodle_url('/mod/pokcertificate/previewusers.php', []);
-$heading = get_string('coursecertificatestatus', 'mod_pokcertificate');
+$heading = get_string('awardcertificate', 'mod_pokcertificate');
 $PAGE->set_pagelayout('admin');
 $PAGE->set_context($context);
 $PAGE->set_heading($heading);
