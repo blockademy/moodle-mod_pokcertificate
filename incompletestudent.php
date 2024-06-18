@@ -41,20 +41,30 @@ $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
 $studentid = optional_param('studentid', '', PARAM_RAW);
-if (empty($studentid)) {
-    $show = '';
-} else {
+$studentname = optional_param('studentname', '', PARAM_RAW);
+$email = optional_param('email', '', PARAM_RAW);
+if (!empty($studentid) || !empty($studentname) || !empty($email)) {
     $show = 'show';
+} else {
+    $show = '';
 }
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $mform = new searchfilter_form();
-$mform->set_data(['studentid' => $studentid]);
+$mform->set_data([
+    'studentid' => $studentid,
+    'studentname' => $studentname,
+    'email' => $email,
+]);
 if ($mform->is_cancelled()) {
     redirect(new \moodle_url('/mod/pokcertificate/incompletestudent.php'));
 } else if ($userdata = $mform->get_data()) {
     redirect(new \moodle_url(
         '/mod/pokcertificate/incompletestudent.php',
-        ['studentid' => $userdata->studentid]
+        [
+            'studentid' => $userdata->studentid,
+            'studentname' => $studentname,
+            'email' => $email,
+        ]
     ));
 }
 echo $OUTPUT->header();

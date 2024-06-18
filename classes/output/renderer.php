@@ -483,11 +483,24 @@ class renderer extends \plugin_renderer_base {
      */
     public function get_incompletestudentprofile() {
         $page = optional_param('page', 0, PARAM_INT);
-        $url = new \moodle_url('/mod/pokcertificate/incompletestudent.php', []);
         $studentid = optional_param('studentid', '', PARAM_RAW);
+        $studentname = optional_param('studentname', '', PARAM_RAW);
+        $email = optional_param('email', '', PARAM_RAW);
+        $url = new \moodle_url('/mod/pokcertificate/incompletestudent.php', [
+            'studentid' => $studentid,
+            'studentname' => $studentname,
+            'email' => $email,
+        ]);
+
         $recordperpage = 10;
         $offset = $page * $recordperpage;
-        $records = pokcertificate_incompletestudentprofilelist($studentid, $recordperpage, $offset);
+        $records = pokcertificate_incompletestudentprofilelist(
+            $studentid,
+            $studentname,
+            $email,
+            $recordperpage,
+            $offset
+        );
         $records['showdata'] = $records['data'] ? true : false;
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/incompletestudentprofileview', $records);
         $return['pagination'] = $this->paging_bar($records['count'], $page, $recordperpage, $url);

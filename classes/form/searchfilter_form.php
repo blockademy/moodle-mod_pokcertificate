@@ -59,15 +59,15 @@ class searchfilter_form extends moodleform {
         $mform->addElement('text', 'studentid', get_string('studentid', 'mod_pokcertificate'));
         $mform->setType('studentid', PARAM_RAW);
 
+        // Text input field studentname.
+        $mform->addElement('text', 'studentname', get_string('studentname', 'mod_pokcertificate'));
+        $mform->setType('studentname', PARAM_RAW);
+
+        // Text input field email.
+        $mform->addElement('text', 'email', get_string('email', 'mod_pokcertificate'));
+        $mform->setType('email', PARAM_RAW);
+
         if ($viewtype == 'participaints' || $viewtype == 'generalcertificate') {
-
-            // Text input field studentname.
-            $mform->addElement('text', 'studentname', get_string('studentname', 'mod_pokcertificate'));
-            $mform->setType('studentname', PARAM_RAW);
-
-            // Text input field email.
-            $mform->addElement('text', 'email', get_string('email', 'mod_pokcertificate'));
-            $mform->setType('email', PARAM_RAW);
 
             if ($viewtype == 'participaints') {
                 // Autocomplete input field 1.
@@ -128,10 +128,13 @@ class searchfilter_form extends moodleform {
                 if (!empty($courses)) {
                     // Add a select element to the form for choosing a course.
                     $mform->addElement(
-                        'select',
+                        'autocomplete',
                         'course',
                         get_string('course', 'mod_pokcertificate'),
-                        $courses
+                        $courses,
+                        [
+                            'multiple' => false,
+                        ]
                     );
                     $mform->setType('course', PARAM_RAW);
                 }

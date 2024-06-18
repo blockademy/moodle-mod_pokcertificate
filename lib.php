@@ -562,12 +562,20 @@ function get_externalfield_list($template, $pokid) {
  * considered incomplete. It filters users based on the provided student ID (if any) and prepares
  * the data for displaying in a list format.
  *
- * @param string|null $studentid The student ID to search for (optional).
+ * @param string|null $studentid The student ID to search for (optional). *
+ * @param string $studentname The student name to search for (optional).
+ * @param string $email The student email to search for (optional).
  * @param int $perpage The number of records to display per page.
  * @param int $offset The offset for pagination.
  * @return array An associative array containing the total count of records and the formatted student profile data.
  */
-function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage = 10, $offset = 0) {
+function pokcertificate_incompletestudentprofilelist(
+    $studentid = '',
+    $studentname = '',
+    $email = '',
+    $perpage = 10,
+    $offset = 0
+) {
     global $DB;
 
     $countsql = "SELECT count(u.id) ";
@@ -586,8 +594,16 @@ function pokcertificate_incompletestudentprofilelist($studentid = '', $perpage =
     $queryparam = [];
     $conditions = [];
     if (!empty(trim($studentid))) {
-        $conditions[] = $DB->sql_like('idnumber', ':idnumber', false, false);
+        $conditions[] = $DB->sql_like('u.idnumber', ':idnumber', false, false);
         $queryparam['idnumber'] = $DB->sql_like_escape($studentid) . '%';
+    }
+    if (!empty(trim($studentname))) {
+        $conditions[] = $DB->sql_like('u.firstname', ':firstname', false, false);
+        $queryparam['firstname'] = $DB->sql_like_escape($studentname) . '%';
+    }
+    if (!empty(trim($email))) {
+        $conditions[] = $DB->sql_like('u.email', ':email', false, false);
+        $queryparam['email'] = $DB->sql_like_escape($email) . '%';
     }
     if (!empty($conditions)) {
         $wheresql .= " AND " . implode(' AND ', $conditions);
@@ -776,6 +792,7 @@ function pokcertificate_awardgeneralcertificatelist(
     $selectsql = "SELECT DISTINCT(CONCAT(pc.id,u.id,c.id)),
                          pc.id as activityid,
                          pc.name as activity,
+                         pc.templateid,
                          u.id as userid,
                          u.firstname,
                          u.idnumber,
@@ -800,7 +817,7 @@ function pokcertificate_awardgeneralcertificatelist(
            LEFT JOIN {pokcertificate_templates} pct ON pc.templateid = pct.id
            LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.pokid)
                WHERE ctx.contextlevel = 50
-               AND r.shortname IN ('student','employee') ";
+               AND r.shortname IN ('student','employee') AND pc.templateid != 0 ";
 
     $queryparam = [];
     $queryparam['courseid'] = $courseid;
@@ -851,6 +868,27 @@ function pokcertificate_awardgeneralcertificatelist(
     $data = [];
     if ($records) {
         foreach ($records as $c) {
+            $incomplete = false;
+            $poktemplate = pokcertificate_templates::get_record(['id' => $c->templateid]);
+            $templatename = base64_encode($poktemplate->get('templatename'));
+
+            $externalfields = get_externalfield_list($templatename, $c->activityid);
+
+            if (!empty($externalfields)) {
+                $pokid = $c->activityid;
+                $pokfields = $DB->get_fieldset_sql("SELECT templatefield
+                                    from {" . pokcertificate_fieldmapping::TABLE . "} WHERE pokid = $pokid");
+
+                foreach ($externalfields as $key => $value) {
+                    if (!in_array($key, $pokfields)) {
+                        $incomplete = true;
+                        break;
+                    }
+                }
+            }
+            if ($incomplete) {
+                continue;
+            }
             if ($c->status == 0 && !empty($c->pokcertificateid)) {
                 $certstatus = get_string('inprogress', 'mod_pokcertificate');
             } else if ($c->status == 1 && !empty($c->certificateurl)) {
@@ -888,7 +926,7 @@ function pokcertificate_awardgeneralcertificatelist(
  * @throws coding_exception
  * @throws moodle_exception
  */
-function mod_pokcertificate_extend_navigation_course(navigation_node $navigation, \stdClass $course, \context $context) {
+function mod_pokcertificate_extend_navigation_course(navigation_node $navigation, $course, $context) {
     global $PAGE;
 
     if (has_capability('mod/pokcertificate:managecoursecertificatestatus', $context)) {
@@ -1001,9 +1039,12 @@ function check_usermapped_fielddata($cm, $user) {
     if (!empty($pokfields)) {
         foreach ($pokfields as $field) {
             $fieldname = $field->get('userfield');
-            if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') !== false)) {
+            if (isset($fieldname) && (!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') !== false)) {
                 $userprofilefield = substr($fieldname, strlen('profile_field_'));
-                if (empty(trim($user->profile[$userprofilefield]))) {
+                if (
+                    isset($user->profile[$userprofilefield]) &&
+                    empty(trim($user->profile[$userprofilefield]))
+                ) {
                     $validuser = false;
                 }
             } else {
