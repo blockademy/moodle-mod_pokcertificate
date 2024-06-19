@@ -35,7 +35,7 @@ const SELECTORS = {
 };
 var SERVICES = {
     VERIFY_AUTHENTICATION: 'mod_pokcertificate_verify_auth',
-    EMIT_CERTIFICATE: 'mod_pokcertificate_emit_general_certifcate',
+    EMIT_CERTIFICATE: 'mod_pokcertificate_emit_general_certificate',
 };
 
 /**
@@ -118,27 +118,33 @@ const emit = function(e){
     e.preventDefault();
 
     var userinputs = $("#id_userinputs").val();
+    var loadElement = $('.loadElement');
+    var loadingIcon = LoadingIcon.addIconToContainerWithPromise(loadElement);
+
     var promises = Ajax.call([
         {methodname: SERVICES.EMIT_CERTIFICATE, args: {userinputs: userinputs}}
     ]);
     promises[0].done(function(resp) {
+        $('#loading-image').show();
         if(resp){
-
             ModalFactory.create({
                 title: Str.get_string('generalcertstatus','mod_pokcertificate'),
                 type: ModalFactory.types.DEFAULT,
                 body: Str.get_string('certificatesent','mod_pokcertificate'),
                 footer: '<button type="button" class="btn btn-primary" data-action="save">Done</button>'
             }).done(function(modal) {
+
                 this.modal = modal;
                 modal.getRoot().find('[data-action="save"]').on('click', function() {
                     window.location.href = 'generalcertificate.php';
                 }.bind(this));
 
                 modal.show();
-                $(this).removeClass("disabled");
+                $(this).prop('disabled', false);
             }.bind(this));
         }
+        loadingIcon.resolve();
+
     }).fail(Notification.exception);
 };
 
@@ -154,7 +160,7 @@ export const init = () => {
 
     $(SELECTORS.EMITCERTIFICATE).on('click', function(e) {
         e.preventDefault();
-        $(this).addClass("disabled");
+        $(this).prop('disabled', true);
         emit(e);
     });
 };

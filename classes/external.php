@@ -297,7 +297,7 @@ class mod_pokcertificate_external extends external_api {
      *
      * @return external_function_parameters The parameters for showing certificate templates.
      */
-    public static function emit_general_certifcate_parameters() {
+    public static function emit_general_certificate_parameters() {
         return new external_function_parameters(
             [
                 'userinputs' => new external_value(PARAM_RAW, 'userinputs'),
@@ -306,33 +306,38 @@ class mod_pokcertificate_external extends external_api {
     }
 
     /**
-     * emit_general_certifcate     *
+     * emit_general_certifcate
      *
      * @param  string $userinputs
      * @return void
      */
-    public static function emit_general_certifcate($userinputs) {
+    public static function emit_general_certificate($userinputs) {
         global $CFG;
 
         require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
         $params = self::validate_parameters(
-            self::emit_general_certifcate_parameters(),
+            self::emit_general_certificate_parameters(),
             ['userinputs' => $userinputs]
         );
         $userinputs = base64_decode($params['userinputs']);
         $useridsarr = explode(",", $userinputs);
-
         if ($useridsarr) {
+            $emitcount = 0;
             foreach ($useridsarr as $rec) {
                 $inp = explode("-", $rec);
                 $activityid = $inp[1];
                 $user = $inp[2];
                 $cm = get_coursemodule_from_instance('pokcertificate', $activityid);
                 $user = \core_user::get_user($user);
-                pok::emit_certificate($cm->id, $user);
+                $validuser = check_usermapped_fielddata($cm, $user);
+                if ($validuser) {
+                    pok::emit_certificate($cm->id, $user);
+                    $emitcount++;
+                }
             }
         }
-        return true;
+
+        return ($emitcount > 0) ? true : false;
     }
 
     /**
@@ -340,7 +345,7 @@ class mod_pokcertificate_external extends external_api {
      *
      * @return external_value The returns for showing certificate templates.
      */
-    public static function emit_general_certifcate_returns() {
-        return new external_value(PARAM_RAW, 'return');
+    public static function emit_general_certificate_returns() {
+        return new external_value(PARAM_BOOL, 'return');
     }
 }

@@ -102,7 +102,6 @@ function pokcertificate_reset_userdata($data) {
     // See MDL-9367.
     global $DB;
 
-
     $componentstr = get_string('modulenameplural', 'pokcertificate');
     $status = [];
     $course = get_course($data->id);
@@ -275,7 +274,7 @@ function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
                 if (!empty($externalfields)) {
                     $pokid = $pokrecord->get('id');
                     $pokfields = $DB->get_fieldset_sql("SELECT templatefield
-                                    from {pokcertificate_fieldmapping} WHERE pokid = $pokid");
+                                    from {" . pokcertificate_fieldmapping::TABLE . "} WHERE pokid = $pokid");
                     foreach ($externalfields as $key => $value) {
                         if (!in_array($key, $pokfields)) {
                             $cm->set_user_visible(false);
@@ -671,15 +670,15 @@ function pokcertificate_coursecertificatestatuslist(
                     pci.status,
                     pci.pokcertificateid ,
                     pci.certificateurl ";
-    $fromsql = "FROM {pokcertificate} pc
+    $fromsql = "FROM {" . pokcertificate::TABLE . "} pc
                 JOIN {course_modules} cm ON pc.id = cm.instance AND deletioninprogress = 0
                 JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSE . ")
                 JOIN {role_assignments} ra ON ctx.id = ra.contextid
                 JOIN {role} r ON (ra.roleid = r.id AND r.shortname IN ('student','employee') )
                 JOIN {user} u ON ra.userid = u.id AND u.deleted = 0 AND u.suspended = 0
            LEFT JOIN {course_completions} cc ON (u.id = cc.userid AND pc.course = cc.course)
-           LEFT JOIN {pokcertificate_templates} pct ON pc.templateid = pct.id
-           LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.pokid)
+           LEFT JOIN {" . pokcertificate_templates::TABLE . "} pct ON pc.templateid = pct.id
+           LEFT JOIN {" . pokcertificate_issues::TABLE . "} pci ON (u.id = pci.userid AND pc.id = pci.pokid)
                WHERE pc.course = :courseid
                      AND cm.deletioninprogress = 0
                      AND cm.module = :pokmoduleid ";
@@ -806,7 +805,7 @@ function pokcertificate_awardgeneralcertificatelist(
                          pci.certificateurl ,
                          c.id as courseid,
                          c.fullname AS coursename ";
-    $fromsql = "FROM {pokcertificate} pc
+    $fromsql = "FROM {" . pokcertificate::TABLE . "} pc
                 JOIN {course_modules} cm ON pc.id = cm.instance AND deletioninprogress = 0
                 JOIN {context} ctx ON (pc.course = ctx.instanceid AND ctx.contextlevel = " . CONTEXT_COURSE . ")
                 JOIN {course} c ON ctx.instanceid = c.id
@@ -814,8 +813,8 @@ function pokcertificate_awardgeneralcertificatelist(
                 JOIN {role} r ON ra.roleid = r.id
                 JOIN {user} u ON ra.userid = u.id AND u.deleted = 0 AND u.suspended = 0
            LEFT JOIN {course_completions} cc ON (u.id = cc.userid AND pc.course = cc.course)
-           LEFT JOIN {pokcertificate_templates} pct ON pc.templateid = pct.id
-           LEFT JOIN {pokcertificate_issues} pci ON (u.id = pci.userid AND pc.id = pci.pokid)
+           LEFT JOIN {" . pokcertificate_templates::TABLE . "} pct ON pc.templateid = pct.id
+           LEFT JOIN {" . pokcertificate_issues::TABLE . "} pci ON (u.id = pci.userid AND pc.id = pci.pokid)
                WHERE ctx.contextlevel = 50
                AND r.shortname IN ('student','employee') AND pc.templateid != 0 ";
 

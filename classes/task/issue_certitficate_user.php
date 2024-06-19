@@ -27,6 +27,7 @@ namespace mod_pokcertificate\task;
 use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate_issues;
 use mod_pokcertificate\persistent\pokcertificate;
+use mod_pokcertificate\persistent\pokcertificate_templates;
 
 /**
  * Issue certificates scheduled task class.
@@ -72,7 +73,7 @@ class issue_certitficate_user extends \core\task\scheduled_task {
 
                     $pokissuerec = pokcertificate_issues::get_record([
                         'pokid' => $pokcertificate->id,
-                        'userid' => $user->userid
+                        'userid' => $user->userid,
                     ]);
                     if ($pokissuerec) {
                         $issuecertificate = pok::issue_certificate($pokissuerec);
@@ -114,8 +115,8 @@ class issue_certitficate_user extends \core\task\scheduled_task {
     public function get_pokcertificates(): array {
         global $DB;
         $sql = "SELECT pok.*
-                FROM {pokcertificate} pok
-                JOIN {pokcertificate_templates} pokt
+                FROM {" . pokcertificate::TABLE . "} pok
+                JOIN {" . pokcertificate_templates::TABLE . "} pokt
                 ON pok.templateid = pokt.id
                 WHERE pok.templateid != 0 ";
         return $DB->get_records_sql($sql);

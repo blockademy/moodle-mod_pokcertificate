@@ -21,6 +21,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
+use mod_pokcertificate\persistent\pokcertificate_templates;
+use mod_pokcertificate\persistent\pokcertificate_issues;
+
 /**
  * Define the complete pokcertificate structure for backup, with file and id annotations
  */
@@ -84,9 +88,9 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
         if ($userinfo) {
             if ($userinfo) {
                 $issue->set_source_sql(
-                    'SELECT *
-            FROM {pokcertificate_issues}
-            WHERE pokid = ?',
+                    "SELECT *
+            FROM {" . pokcertificate_issues::TABLE . "}
+            WHERE pokid = ?",
                     ['pokid' => backup::VAR_PARENTID]
                 );
             }
@@ -95,16 +99,16 @@ class backup_pokcertificate_activity_structure_step extends backup_activity_stru
         }
 
         $fieldmapping->set_source_sql(
-            'SELECT *
-            FROM {pokcertificate_fieldmapping}
-            WHERE pokid = ?',
+            "SELECT *
+            FROM {" . pokcertificate_fieldmapping::TABLE . "}
+            WHERE pokid = ?",
             ['pokid' => backup::VAR_PARENTID]
         );
 
         $template->set_source_sql(
-            'SELECT *
-            FROM {pokcertificate_templates}
-            WHERE pokid = ?',
+            "SELECT *
+            FROM {" . pokcertificate_templates::TABLE . "}
+            WHERE pokid = ?",
             ['pokid' => backup::VAR_PARENTID]
         );
         // Return the root element (pokcertificate], wrapped into standard activity structure.

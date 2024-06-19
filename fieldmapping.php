@@ -63,7 +63,7 @@ if (!empty(trim($tempname)) && validate_encoded_data($tempname)) {
         $data = pok::save_template_definition($templateinfo, $templatedefinition, $cm);
 
         $remotefields = get_externalfield_list($tempname, $pokcertificate->id);
-
+        $data = data_submitted();
         if ($remotefields) {
             $pokid = $pokcertificate->id;
             $templateid = $pokcertificate->templateid;
@@ -71,8 +71,9 @@ if (!empty(trim($tempname)) && validate_encoded_data($tempname)) {
 
             $mform = new fieldmapping_form(
                 $url,
-                ['data' => $fielddata, 'id' => $id, 'template' => $tempname, 'templateid' => $templateid, 'pokid' => $pokid]
+                ['data' => $fielddata, 'id' => $id, 'template' => $tempname, 'templateid' => $templateid, 'pokid' => $pokid] + (array)$data
             );
+
             $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
 
             if ($mform->is_cancelled()) {

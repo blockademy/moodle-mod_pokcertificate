@@ -13,10 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-declare(strict_types=1);
-
-namespace mod_pokcertificate;
-
 /**
  * Class for unit testing mod_pokcertificate/custom_completion.
  *
@@ -25,6 +21,10 @@ namespace mod_pokcertificate;
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+declare(strict_types=1);
+
+namespace mod_pokcertificate;
 
 use advanced_testcase;
 use cm_info;
@@ -55,16 +55,16 @@ class custom_completion_test extends advanced_testcase {
     public function get_state_provider(): array {
         return [
             'Undefined rule' => [
-                'somenonexistentrule', COMPLETION_DISABLED, false, null, coding_exception::class
+                'somenonexistentrule', COMPLETION_DISABLED, false, null, coding_exception::class,
             ],
             'Rule not available' => [
-                'completionsubmit', COMPLETION_DISABLED, false, null, moodle_exception::class
+                'completionsubmit', COMPLETION_DISABLED, false, null, moodle_exception::class,
             ],
             'Rule available, user has not received certificate' => [
-                'completionsubmit', COMPLETION_ENABLED, false, COMPLETION_INCOMPLETE, null
+                'completionsubmit', COMPLETION_ENABLED, false, COMPLETION_INCOMPLETE, null,
             ],
             'Rule available, user must receive certificate' => [
-                'completionsubmit', COMPLETION_ENABLED, true, COMPLETION_COMPLETE, null
+                'completionsubmit', COMPLETION_ENABLED, true, COMPLETION_COMPLETE, null,
             ],
         ];
     }
@@ -72,14 +72,14 @@ class custom_completion_test extends advanced_testcase {
     /**
      * Test for get_state().
      *
-     * @dataProvider get_state_provider
+     * [@dataProvider] get_state_provider
      * @param string $rule The custom completion rule.
      * @param int $available Whether this rule is available.
      * @param bool $submitted Whether the user has received pok certificate.
      * @param int|null $status Expected status.
      * @param string|null $exception Expected exception.
      */
-    public function test_get_state(string $rule, int $available, ?bool $submitted, ?int $status, ?string $exception) {
+    public function test_get_state(string $rule, int $available, ?bool $submitted, ?int $status, ?string $exception): void {
         global $DB;
 
         if (!is_null($exception)) {
@@ -89,8 +89,8 @@ class custom_completion_test extends advanced_testcase {
         // Custom completion rule data for cm_info::customdata.
         $customdataval = [
             'customcompletionrules' => [
-                $rule => $available
-            ]
+                $rule => $available,
+            ],
         ];
 
         // Build a mock cm_info instance.
@@ -179,10 +179,10 @@ class custom_completion_test extends advanced_testcase {
     public function get_available_custom_rules_provider(): array {
         return [
             'Completion submit available' => [
-                COMPLETION_ENABLED, ['completionsubmit']
+                COMPLETION_ENABLED, ['completionsubmit'],
             ],
             'Completion submit not available' => [
-                COMPLETION_DISABLED, []
+                COMPLETION_DISABLED, [],
             ],
         ];
     }
@@ -197,8 +197,8 @@ class custom_completion_test extends advanced_testcase {
     public function test_get_available_custom_rules(int $status, array $expected) {
         $customdataval = [
             'customcompletionrules' => [
-                'completionsubmit' => $status
-            ]
+                'completionsubmit' => $status,
+            ],
         ];
 
         // Build a mock cm_info instance.

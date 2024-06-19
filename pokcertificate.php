@@ -59,11 +59,11 @@ $mform = new verifyauth_form(
 
 echo
 '<div class="row mt-5 pok_details_content mx-0">
-<div class="col-md-8 p-0">
+    <div class="col-md-8 p-0">
         <div class="verification_form">';
 $mform->display();
 echo
-'</div>
+'       </div>
     </div>';
 
 $pokverified = get_config('mod_pokcertificate', 'pokverified');

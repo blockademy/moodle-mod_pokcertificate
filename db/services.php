@@ -54,9 +54,9 @@ $functions = [
         'type' => 'write',
     ],
 
-    'mod_pokcertificate_emit_general_certifcate' => [
+    'mod_pokcertificate_emit_general_certificate' => [
         'classname'     => 'mod_pokcertificate_external',
-        'methodname'    => 'emit_general_certifcate',
+        'methodname'    => 'emit_general_certificate',
         'description'   => 'Emit the general certificates to users for course',
         'ajax' => true,
         'type' => 'write',

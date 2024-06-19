@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 use moodleform;
+
 define('ADD_UPDATE', 3);
 
 /**
@@ -40,13 +41,6 @@ class userupload_form extends moodleform {
      */
     public function definition() {
         $mform = $this->_form;
-        $auths = \core_component::get_plugin_list('auth');
-        $enabled = get_string('pluginenabled', 'core_plugin');
-        $disabled = get_string('plugindisabled', 'core_plugin');
-        $authoptions = [];
-        $cannotchangepass = [];
-        $cannotchangeusername = [];
-
         $mform->addElement('filepicker', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');
 
@@ -63,5 +57,4 @@ class userupload_form extends moodleform {
 
         $this->add_action_buttons(true, get_string('upload'));
     }
-
 }

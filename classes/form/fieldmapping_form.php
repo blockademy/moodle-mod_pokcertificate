@@ -49,27 +49,30 @@ class fieldmapping_form extends moodleform {
         $pokid  = $this->_customdata['pokid'];
         $data  = $this->_customdata['data'];
 
-        $mform->addElement('header', 'fieldmapping', get_string('fieldmapping', 'pokcertificate') . "");
-
-        $groupelem = [];
-        $groupelem[] = &$mform->createElement('html', '<div class = "fieldmappingheaders">');
-        $groupelem[] = &$mform->createElement('html', '<span>' . get_string('apifields', 'pokcertificate') . '</span>');
-        $groupelem[] = &$mform->createElement(
-            'html',
-            '<span class="ufheader" >' . get_string('userfields', 'pokcertificate') . '</span>'
-        );
-        $groupelem[] = &$mform->createElement('html', '</div>');
-        $mform->addGroup($groupelem, '', '', [' '], false, []);
-
         $defaultselect = [null => get_string('select')];
-
         $localfields = $defaultselect + get_internalfield_list();
         $remotefields = get_externalfield_list($templatename, $pokid);
+
+        $html =
+            '<table class="fieldlist">
+            <thead>
+                <tr>
+                <th class="header c0 fieldmapheader" style="" scope="col">' . get_string("userfieldmapping", "pokcertificate") . '</th>
+                <th class="header c1 " style="" scope="col">' . get_string('apifields', 'pokcertificate') . '</th>
+                <th class="header c2 " style="" scope="col"></th>
+                <th class="header c3 " style="" scope="col">' . get_string('userfields', 'pokcertificate') . '</th>
+                </tr>
+            </thead>
+            <tbody>';
+        $mform->addElement('html', $html);
+
         $i = 0;
         foreach ($remotefields as $key => $value) {
 
             $fieldgrpelem = [];
-            $fieldgrpelem[] = &$mform->createElement('html', '<div class = "fieldmapping">');
+            $fieldgrpelem[] = &$mform->createElement('html', '<tr class="">
+                                            <td class="cell c0 " style=""></td>
+                                            <td class="cell c1 fieldmapfields" style="">');
             $fieldgrpelem[] = &$mform->createElement(
                 'select',
                 'templatefield_' . $i . '',
@@ -77,12 +80,23 @@ class fieldmapping_form extends moodleform {
                 [$key => $value],
                 ['class' => 'templatefields']
             );
-            $fieldgrpelem[] = &$mform->createElement('html', '<span>→</span>');
+            $fieldgrpelem[] = &$mform->createElement('html', '</td>');
+            $fieldgrpelem[] = &$mform->createElement('html', '<td class="cell c2 fieldmapfields" style=""><span></span></td>
+                                                              <td class="cell c3 fieldmapfields" style="">');
             $fieldgrpelem[] = &$mform->createElement('select', 'userfield_' . $i . '', '', $localfields, ['class' => 'userfields']);
-            $fieldgrpelem[] = &$mform->createElement('html', '</div>');
+            $fieldgrpelem[] = &$mform->createElement('html', '</td>');
+            $fieldgrpelem[] = &$mform->createElement('html', '</tr>');
             $mform->addGroup($fieldgrpelem, "fieldgrpelem[$i]", '', [' '], false, []);
+            $mform->addGroupRule("fieldgrpelem[$i]", [
+                'userfield_' . $i => [
+                    [get_string('fieldmappingerror', 'pokcertificate'), 'required', null, 'client'],
+                ],
+            ]);
             $i++;
         }
+        $html = '</tbody>
+        </table>';
+        $mform->addElement('html', $html);
 
         $mform->addElement('hidden', 'fieldcount', $i);
         $mform->setType('fieldcount', PARAM_INT);
@@ -101,7 +115,7 @@ class fieldmapping_form extends moodleform {
 
         $this->set_data($data);
 
-        $this->add_action_buttons();
+        $this->add_action_buttons(true, get_string('save'));
     }
 
 
@@ -112,6 +126,17 @@ class fieldmapping_form extends moodleform {
      * @return void
      **/
     public function data_preprocessing(&$defaultvalues) {
+    }
+
+    /**
+     * Allows module to modify the data returned by form get_data().
+     * This method is also called in the bulk activity completion form.
+     *
+     * Only available on moodleform_mod.
+     *
+     * @param stdClass $data the form data to be modified.
+     */
+    public function data_postprocessing($data) {
     }
 
 
@@ -128,14 +153,6 @@ class fieldmapping_form extends moodleform {
     public function validation($data, $files) {
 
         $errors = parent::validation($data, $files);
-        if (isset($data['fieldcount']) && $data['fieldcount'] > 0) {
-            for ($i = 0; $i < $data['fieldcount']; $i++) {
-                if (!isset($data['userfield_' . $i]) || empty($data['userfield_' . $i])) {
-                    $errors['userfield_' . $i] = 'Please select user field to be mapped';
-                    $errors["fieldgrpelem[$i]"] = 'Please select user field to be mapped';
-                }
-            }
-        }
 
         return $errors;
     }

@@ -27,8 +27,8 @@ use mod_pokcertificate\pok;
 require('../../config.php');
 require_once($CFG->dirroot . '/user/editlib.php');
 
-use mod_pokcertificate\form\updateprofile_form;
-use mod_pokcertificate\form\editprofile_form;
+use mod_pokcertificate\form\updateprofile_form; // For user level profile update after login to issue certificate.
+use mod_pokcertificate\form\editprofile_form; // For system level user profile updates from incompletestudentprofiles.
 
 require_login();
 

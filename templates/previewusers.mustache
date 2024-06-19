@@ -24,6 +24,9 @@
     }
 }}
 {{#showdata}}
+    <div class="large text-muted">
+        <p class="text-right"><strong><i>{{#str}}validuserprofiles, mod_pokcertificate{{/str}}</i></strong></p>
+    </div>
     <table class="generaltable dataTable no-footer" role="grid">
         <thead>
             <tr role="row">
@@ -66,7 +69,9 @@
 
     <div class="d-flex justify-content-center mt-4">
         <button id="award-certificate-btn" class="btn btn-primary">{{#str}}award, mod_pokcertificate{{/str}}</button>
+        <div class="loadElement"></div>
     </div>
+
 {{/showdata}}
 {{^showdata}}
     <div class="alert alert-info alert-block fade in  alert-dismissible" role="alert" data-aria-autofocus="true">
