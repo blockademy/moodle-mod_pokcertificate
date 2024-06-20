@@ -158,7 +158,7 @@ class mod_pokcertificate_external extends external_api {
             foreach ($pokcertificates as $pokcertificate) {
                 $pokdetails = helper_for_get_mods_by_courses::format_name_and_intro($pokcertificate, 'mod_pokcertificate');
                 $context = \context_module::instance($pokcertificate->coursemodule);
-
+                self::validate_context($context);
                 list($pokcertificate->content, $pokcertificate->contentformat) = \core_external\util::format_text(
                     $pokcertificate->content,
                     $pokcertificate->contentformat,
@@ -236,12 +236,15 @@ class mod_pokcertificate_external extends external_api {
     }
 
     /**
-     * verify authentication
+     * Verify authentication for a POK using an authentication token and institution.
      *
-     * @param  mixed $prodtype
-     * @param  mixed $authtoken
-     * @param  mixed $institution
-     * @return array
+     * This method verifies the authentication for a specific product type using the provided
+     * authentication token and institution information.
+     *
+     * @param string $prodtype The type of product for which authentication is being verified.
+     * @param string $authtoken The authentication token used for verification.
+     * @param string $institution The institution against which the authentication is performed.
+     * @return bool Returns true if authentication is successful, false otherwise.
      */
     public static function verify_authentication($prodtype, $authtoken, $institution) {
         global $CFG;
@@ -252,27 +255,32 @@ class mod_pokcertificate_external extends external_api {
             self::verify_authentication_parameters(),
             ['prodtype' => $prodtype, 'authtoken' => $authtoken, "institution" => $institution]
         );
+        self::validate_context(\context_system::instance());
+        if (has_capability('moodle/course:manageactivities', $context)) {
+            $result = pokcertificate_validate_apikey($params['authtoken']);
 
-        $result = pokcertificate_validate_apikey($params['authtoken']);
-
-        if ($result) {
-            $orgdetails = (new mod_pokcertificate\api)->get_organization();
-            $organisation = json_decode($orgdetails);
-            if (isset($organisation->id) && isset($organisation->name)) {
-                set_config('orgid', $organisation->id, 'mod_pokcertificate');
-                set_config('institution', $organisation->name, 'mod_pokcertificate');
+            if ($result) {
+                $orgdetails = (new mod_pokcertificate\api)->get_organization();
+                $organisation = json_decode($orgdetails);
+                if (isset($organisation->id) && isset($organisation->name)) {
+                    set_config('orgid', $organisation->id, 'mod_pokcertificate');
+                    set_config('institution', $organisation->name, 'mod_pokcertificate');
+                }
+                $credits = (new mod_pokcertificate\api)->get_credits();
+                $credits = json_decode($credits);
+                $certificatecount = (new mod_pokcertificate\api)->count_certificates();
+                $certificatecount = json_decode($certificatecount);
+                set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
+                set_config('pendingcertificates', $certificatecount->processing, 'mod_pokcertificate');
+                set_config('issuedcertificates', $certificatecount->emitted, 'mod_pokcertificate');
+                $msg = get_string("success");
+                return ["status" => 0, "msg" => $msg, "response" => $orgdetails];
+            } else {
+                $msg = get_string("error");
+                return ["status" => 1, "msg" => $msg, "response" => ''];
             }
-            $credits = (new mod_pokcertificate\api)->get_credits();
-            $credits = json_decode($credits);
-            $certificatecount = (new mod_pokcertificate\api)->count_certificates();
-            $certificatecount = json_decode($certificatecount);
-            set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
-            set_config('pendingcertificates', $certificatecount->processing, 'mod_pokcertificate');
-            set_config('issuedcertificates', $certificatecount->emitted, 'mod_pokcertificate');
-            $msg = get_string("success");
-            return ["status" => 0, "msg" => $msg, "response" => $orgdetails];
         } else {
-            $msg = get_string("error");
+            $msg = get_string('accessdenied', 'pokcertificate');
             return ["status" => 1, "msg" => $msg, "response" => ''];
         }
     }
@@ -287,7 +295,7 @@ class mod_pokcertificate_external extends external_api {
             [
                 'status'  => new external_value(PARAM_TEXT, get_string('status')),
                 'msg'  => new external_value(PARAM_RAW, get_string('error')),
-                'response'  => new external_value(PARAM_RAW, get_string('response')),
+                'response'  => new external_value(PARAM_RAW, get_string('response', 'mod_pokcertificate')),
             ]
         );
     }
@@ -306,10 +314,14 @@ class mod_pokcertificate_external extends external_api {
     }
 
     /**
-     * emit_general_certifcate
+     * Emit a general certificate based on user inputs.
      *
-     * @param  string $userinputs
-     * @return void
+     * This method generates and emits a general certificate using the provided user inputs.
+     * It performs necessary operations to create the certificate based on the current state.
+     *
+     * @param string $userinputs An array containing user inputs necessary for generating the certificate.
+     *                          This typically includes information such as name, date, and details required for the certificate.
+     * @return string|false The generated certificate content as a string on success, or false on failure.
      */
     public static function emit_general_certificate($userinputs) {
         global $CFG;
@@ -319,20 +331,24 @@ class mod_pokcertificate_external extends external_api {
             self::emit_general_certificate_parameters(),
             ['userinputs' => $userinputs]
         );
-        $userinputs = base64_decode($params['userinputs']);
-        $useridsarr = explode(",", $userinputs);
-        if ($useridsarr) {
-            $emitcount = 0;
-            foreach ($useridsarr as $rec) {
-                $inp = explode("-", $rec);
-                $activityid = $inp[1];
-                $user = $inp[2];
-                $cm = get_coursemodule_from_instance('pokcertificate', $activityid);
-                $user = \core_user::get_user($user);
-                $validuser = check_usermapped_fielddata($cm, $user);
-                if ($validuser) {
-                    pok::emit_certificate($cm->id, $user);
-                    $emitcount++;
+        $emitcount = 0;
+        $context = \context_system::instance();
+        self::validate_context($context);
+        if (has_capability('mod/pokcertificate:awardcertificate', $context)) {
+            $userinputs = base64_decode($params['userinputs']);
+            $useridsarr = explode(",", $userinputs);
+            if ($useridsarr) {
+                foreach ($useridsarr as $rec) {
+                    $inp = explode("_", $rec);
+                    $activityid = $inp[1];
+                    $user = $inp[2];
+                    $cm = get_coursemodule_from_instance('pokcertificate', $activityid);
+                    $user = \core_user::get_user($user);
+                    $validuser = check_usermapped_fielddata($cm, $user);
+                    if ($validuser) {
+                        pok::emit_certificate($cm->id, $user);
+                        $emitcount++;
+                    }
                 }
             }
         }

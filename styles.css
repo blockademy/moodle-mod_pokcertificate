@@ -193,6 +193,11 @@
 
 #page-mod-pokcertificate-view .verifyauth{
     margin-top: 1.5em;
+    padding: 7px 18px;
+    border-radius: 4px;
+    color: white;
+    background-color: #2578dd;
+    margin-left: 5px;
 }
 
 #page-admin-mod-pokcertificate-pokcertificate .navmenu {

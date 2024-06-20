@@ -57,8 +57,7 @@ $mform = new verifyauth_form(
     ['data' => $data]
 );
 
-echo
-'<div class="row mt-5 pok_details_content mx-0">
+echo '<div class="row mt-5 pok_details_content mx-0">
     <div class="col-md-8 p-0">
         <div class="verification_form">';
 $mform->display();
@@ -67,24 +66,11 @@ echo
     </div>';
 
 $pokverified = get_config('mod_pokcertificate', 'pokverified');
-$records = pokcertificate_incompletestudentprofilelist();
 
 if ($pokverified) {
-    echo '
-    <div class="col-md-4 p-0">
-      <ul class="pok_details ml-0 ml-md-5">
-        <li class="d-flex justify-content-between align-items-center">
-          <p class="m-0">' . get_string("certficatestobesent", "pokcertificate") . ' : </p>
-          <p class="m-0 text-right bold text-primary"><big>' . get_config('mod_pokcertificate', 'pendingcertificates') . '</big></p>
-        </li>
-        <li class="d-flex justify-content-between border-0">
-          <p class="m-0 ">' . get_string("incompleteprofile", "pokcertificate") . ' :</p>
-          <p class="m-0 text-right bold text-primary "><big>' . $records['count'] . '</big></p>
-        </li>
-      </ul>
-    </div>
-  </div>';
+    echo $renderer->verificationstats();
 }
+echo  '</div>';
 echo $OUTPUT->container_end();
 
 echo $OUTPUT->footer();

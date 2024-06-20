@@ -27,6 +27,7 @@ namespace mod_pokcertificate\form;
 defined('MOODLE_INTERNAL') || die;
 
 use moodleform;
+
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -46,7 +47,7 @@ class verifyauth_form extends moodleform {
 
         $mform->addElement('header', 'pokheading', get_string('linkpokdetails', 'pokcertificate') . "<div class ='test'> </div>");
 
-        $options = [1 => 'QA', 2 => 'LIVE'];
+        $options = [1 => get_string('qa', 'pokcertificate'), 2 => get_string('live', 'mod_pokcertificate')];
 
         $mform->addElement('select', 'prodtype', get_string('prodtype', 'pokcertificate'), $options);
         $mform->setDefault('prodtype', 1);

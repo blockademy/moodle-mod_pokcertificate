@@ -25,14 +25,17 @@
 require('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
+
 use mod_pokcertificate\form\userupload_form;
 use mod_pokcertificate\local\progresslibfunctions;
 use mod_pokcertificate\local\syncfunctionality;
+
 $iid = optional_param('iid', '', PARAM_INT);
 @set_time_limit(60 * 60); // 1 hour should be enough
 raise_memory_limit(MEMORY_HUGE);
 
 require_login();
+require_capability('mod/pokcertificate:bulkupdateincompleteprofile', $context);
 
 $errorstr = get_string('error');
 $stryes = get_string('yes');

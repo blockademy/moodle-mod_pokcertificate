@@ -95,7 +95,7 @@ $capabilities = [
 
     'mod/pokcertificate:viewstatusreport' => [
         'riskbitmask' => RISK_SPAM,
-        'captype' => 'write',
+        'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
             'manager' => CAP_ALLOW,

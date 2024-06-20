@@ -273,8 +273,11 @@ function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
                 $externalfields = get_externalfield_list($templatename, $pokrecord->get('id'));
                 if (!empty($externalfields)) {
                     $pokid = $pokrecord->get('id');
-                    $pokfields = $DB->get_fieldset_sql("SELECT templatefield
-                                    from {" . pokcertificate_fieldmapping::TABLE . "} WHERE pokid = $pokid");
+                    $pokfields = $DB->get_fieldset_sql(
+                        "SELECT templatefield
+                                    from {" . pokcertificate_fieldmapping::TABLE . "} WHERE pokid = :pokid",
+                        ['pokid' => $pokid]
+                    );
                     foreach ($externalfields as $key => $value) {
                         if (!in_array($key, $pokfields)) {
                             $cm->set_user_visible(false);
@@ -870,13 +873,14 @@ function pokcertificate_awardgeneralcertificatelist(
             $incomplete = false;
             $poktemplate = pokcertificate_templates::get_record(['id' => $c->templateid]);
             $templatename = base64_encode($poktemplate->get('templatename'));
-
             $externalfields = get_externalfield_list($templatename, $c->activityid);
-
             if (!empty($externalfields)) {
                 $pokid = $c->activityid;
-                $pokfields = $DB->get_fieldset_sql("SELECT templatefield
-                                    from {" . pokcertificate_fieldmapping::TABLE . "} WHERE pokid = $pokid");
+                $pokfields = $DB->get_fieldset_sql(
+                    "SELECT templatefield
+                                    from {" . pokcertificate_fieldmapping::TABLE . "} WHERE pokid = :pokid",
+                    ['pokid' => $pokid]
+                );
 
                 foreach ($externalfields as $key => $value) {
                     if (!in_array($key, $pokfields)) {
@@ -910,6 +914,7 @@ function pokcertificate_awardgeneralcertificatelist(
             $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
             $list['certificatestatus'] = $certstatus;
             $list['certificateurl'] = $c->certificateurl;
+            $list['userinputids'] = base64_encode(serialize([$c->courseid . '_' . $c->activityid . '_' . $c->userid]));
             $data[] = $list;
         }
     }
@@ -1099,7 +1104,9 @@ function pokcertificate_userslist($useractivityids) {
 
     if ($useractivityids) {
         foreach ($useractivityids as $rec) {
-            $inp = explode("-", $rec);
+            $rec = unserialize(base64_decode($rec));
+            $rec = array_shift($rec);
+            $inp = explode("_", $rec);
 
             $course = get_course($inp[0]);
             $activityid = $inp[1];
@@ -1127,6 +1134,8 @@ function pokcertificate_userslist($useractivityids) {
                 new \moodle_url('/user/profile.php', ['id' => $user->id]),
                 $list['userid']
             );
+            $list['userinputs'] = base64_encode(serialize([$course->id . '_' . $activityid . '_' . $user->id]));
+
             $data[] = $list;
         }
     }
@@ -1137,18 +1146,20 @@ function pokcertificate_userslist($useractivityids) {
 /**
  * Validate user inputs function.
  *
- * @param array $selecteditems An array containing selected items to validate.
+ * @param array $selecteditems An encoded string containing courseid,activityid,userid for selected items to validate.
  * @return array An array containing validation results.
  */
 function validate_userinputs($selecteditems) {
     global $DB;
-    foreach ($selecteditems as $item) {
 
-        $inp = explode("-", $item);
+    foreach ($selecteditems as $item) {
+        $item = unserialize(base64_decode($item));
+        $item = array_shift($item);
+        $inp = explode("_", $item);
 
         if (isset($inp[0]) && !empty($inp[0])) {
             $courseid = $inp[0];
-            if (!$course = $DB->get_record('course', ['id' => $courseid])) {
+            if (!$course = $DB->record_exists('course', ['id' => $courseid])) {
                 throw new \moodle_exception('invalidcourse');
             }
         } else {
@@ -1176,7 +1187,8 @@ function validate_userinputs($selecteditems) {
                     ['context' => $context]
                 );
                 mtrace(fullname($user) . ' not an active participant in ' . $courseshortname);
-                continue;
+                throw new \moodle_exception('invaliduser');
+                return false;
             }
         } else {
             throw new \moodle_exception('invaliduser');

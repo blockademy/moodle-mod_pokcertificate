@@ -83,6 +83,9 @@ A pokcertificate may be used
 $string['pluginname'] = 'POK Certificate';
 
 // Settings.
+$string['qa'] = 'QA';
+$string['live'] = 'LIVE';
+$string['response'] = 'Response';
 $string['templateapiurl'] = 'TEMPLATE_MANAGER_ROOT API URL';
 $string['minterapiurl'] = 'MINTER_ROOT API URL';
 $string['apikeysurl'] = 'API_KEYS_ROOT API URL';

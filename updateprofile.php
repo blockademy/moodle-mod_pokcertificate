@@ -110,6 +110,7 @@ if ($id > 0) {
     $PAGE->set_context($context);
     $PAGE->set_title(get_string('profile', 'mod_pokcertificate'));
     $PAGE->set_heading(get_string('profile', 'mod_pokcertificate'));
+    require_capability('mod/pokcertificate:bulkupdateincompleteprofile', $context);
 
     if (!$user = $DB->get_record('user', ['id' => $userid])) {
         throw new \moodle_exception('invaliduserid');

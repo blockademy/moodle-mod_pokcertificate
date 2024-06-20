@@ -23,41 +23,34 @@
     {
     }
 }}
-<div class="row ">
-  <div class="col-md-12">
-    <label class="radio-inline">
-        <input type="radio" class="optradio" name="optradio" data-value = "0" {{^temptype}}checked="checked" {{/temptype}} data-action = "templatetype" checked="checked">{{#str}}free,pokcertificate{{/str}}
-    </label>
-    <label class="radio-inline">
-        <input type="radio" class="optradio" name="optradio" data-value = "1"  {{#temptype}}checked="checked" {{/temptype}} data-action = "templatetype">{{#str}}paid,pokcertificate{{/str}}
-    </label>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
-        <div class="grid">
-            {{#certdata}}
-            <label class="card">
-                 <input name="templates" class="certradio" type="radio" {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} value="{{config.wwwroot}}/mod/pokcertificate/fieldmapping.php?id={{cmid}}&temp={{tempname}}">
-                <span class="template-details">
-                <span class="template-name">{{name}}</span>
-                <img src="{{certimage}}" alt="" class="">
-                </span>
+
+<form action="fieldmapping.php" method="post">
+    <div class="row">
+        <div class="col-md-12">
+            <label class="radio-inline">
+                <input type="radio" class="optradio" name="type" value = "0" {{^temptype}}checked="checked" {{/temptype}} data-action = "templatetype" checked="checked">{{#str}}free,pokcertificate{{/str}}
             </label>
-            {{/certdata}}
+            <label class="radio-inline">
+                <input type="radio" class="optradio" name="type" value = "1"  {{#temptype}}checked="checked" {{/temptype}} data-action = "templatetype">{{#str}}paid,pokcertificate{{/str}}
+            </label>
         </div>
-        <a href class="btn btn-primary" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</a>
     </div>
-</div>
-{{#js}}
-  document.getElementById("certbutton").onclick = function() {
-    var templateurl = $("input[type='radio'][name='templates']:checked").val();
-    var type = $("input[type='radio'][name='optradio']:checked").attr('data-value');
-    if(templateurl){
-        window.location.href = templateurl+'&type='+type;
-    }else{
-        window.location.href = 'javascript:void(0)';
-    }
-    return false;
-  };
-{{/js}}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="grid">
+                {{#certdata}}
+                <label class="card">
+                    <input type="hidden" name="id" id = "id" value = {{cmid}}>
+                    <input name="temp" class="certradio" type="radio" {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} value="{{tempname}}">
+                    <span class="template-details">
+                    <span class="template-name">{{name}}</span>
+                    <img src="{{certimage}}" alt="" class="">
+                    </span>
+                </label>
+                {{/certdata}}
+            </div>
+            <button type="submit" class="btn btn-primary" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</button>
+        </div>
+    </div>
+</form>
+

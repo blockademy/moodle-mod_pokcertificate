@@ -40,9 +40,9 @@
         <tbody>
             {{#data}}
                 <tr>
-                    <td value = "{{courseid}}-{{activityid}}-{{userid}}">
+                    <td value = "{{userinputids}}">
                     {{^status}}
-                        <input type="checkbox" class="user-checkbox inp" name="selectedusers[]" value = "{{courseid}}-{{activityid}}-{{userid}}">
+                        <input type="checkbox" class="user-checkbox inp" name="selectedusers[]" value = "{{userinputids}}">
                     {{/status}}
                     </td>
                     <td>{{firstname}}</td>
@@ -93,7 +93,6 @@
 {{/showdata}}
 </div>
 <script>
-
     // Function to handle the click event of the "Award Certificate" button
     document.getElementById("award-certificate-btn").addEventListener("click", function() {
         // Array to store selected user IDs
@@ -116,7 +115,6 @@
             alert("Please select at least one user to award a certificate.");
         }
     });
-
     // Function to handle the click event of the "Select All" checkbox
     document.getElementById("select-all").addEventListener("change", function() {
         var checkboxes = document.getElementsByClassName("user-checkbox");

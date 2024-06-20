@@ -69,8 +69,6 @@ class renderer extends \plugin_renderer_base {
         global $CFG;
         return '<div class="verifyauth" >' . get_string('verifyauth', 'pokcertificate') . '
                     <a target="_blank" class="bt btn-primary"
-                    style="padding: 7px 18px; border-radius: 4px; color:
-                    white; background-color: #2578dd; margin-left: 5px;"
                     href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >'
             . get_string('clickhere', 'mod_pokcertificate') . '
                     </a></div>';
@@ -713,11 +711,60 @@ class renderer extends \plugin_renderer_base {
      * @return void
      */
     public function get_userslist_topreview($userinputs) {
-
         $records = pokcertificate_userslist($userinputs);
         $records['showdata'] = $records['data'] ? true : false;
-        $records['userinputs'] = base64_encode(implode(",", $userinputs));
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/previewusers', $records);
         return $return;
+    }
+
+    /**
+     * Display the search form.
+     *
+     * This method displays a search form based on the provided parameters.
+     *
+     * @param bool $show Determines whether to show the form (true) or not (false).
+     * @param MoodleQuickForm $mform The form object used to generate the search form.
+     * @return void
+     */
+    public function display_search_form($show, $mform) {
+        $output = \html_writer::start_tag(
+            'a',
+            [
+                'class' => 'btn-link btn-sm',
+                'data-toggle' => 'collapse',
+                'data-target' => '#mod_pokcertificate-filter_collapse',
+                'aria-expanded' => 'false',
+                'aria-controls' => 'mod_pokcertificate-filter_collapse',
+            ]
+        );
+        $output .= \html_writer::start_tag(
+            'i',
+            ['class' => 'm-0 fa fa-sliders fa-2x', 'aria-hidden' => "true"]
+        );
+        $output .= \html_writer::end_tag('i');
+        $output .= \html_writer::end_tag('a');
+        $output .= \html_writer::start_tag(
+            'div',
+            [
+                'class' => "mt-3 mb-2 collapse " . $show,
+                'id' => "mod_pokcertificate-filter_collapse"
+            ]
+        );
+        $output .= \html_writer::start_tag('div', ['id' => "filters_form", 'class' => "card card-body p-2"]);
+        echo $output;
+        echo  $mform->display();
+        echo \html_writer::end_tag('div');
+        echo \html_writer::end_tag('div');
+    }
+
+    /**
+     * Displays incomplete studentprofile count and available credits count on verification page.
+     * @return string The HTML .
+     */
+    public function verificationstats() {
+        $records = pokcertificate_incompletestudentprofilelist();
+        $data['creditscount'] = $records['count'];
+        $data['pendingcount'] = get_config('mod_pokcertificate', 'pendingcertificates');
+        return $this->render_from_template('mod_pokcertificate/verificationstats', $data);
     }
 }

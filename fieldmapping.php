@@ -30,12 +30,13 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 require_login();
 
 $id = required_param('id', PARAM_INT); // Course module id.
-$tempname = required_param('temp', PARAM_RAW);
+$tempname = required_param('temp', PARAM_RAW); // Selected template name.
 $temptype = optional_param('type', 0, PARAM_INT);
 
 if ($id && !$cm = get_coursemodule_from_id('pokcertificate', $id)) {
     throw new \moodle_exception('invalidcoursemodule');
 }
+
 $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
@@ -53,11 +54,11 @@ $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 // Save selected template definition.
 if (!empty(trim($tempname)) && validate_encoded_data($tempname)) {
-
+    $templatename = base64_decode($tempname);
     $templateinfo = new \stdclass;
-    $templateinfo->template = base64_decode($tempname);
+    $templateinfo->template = $templatename;
     $templateinfo->templatetype = $temptype;
-    $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition(base64_decode($tempname));
+    $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templatename);
 
     if ($templatedefinition) {
         $data = pok::save_template_definition($templateinfo, $templatedefinition, $cm);
