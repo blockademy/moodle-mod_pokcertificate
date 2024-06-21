@@ -72,13 +72,13 @@ class custom_completion_test extends advanced_testcase {
     /**
      * Test for get_state().
      *
-     * [@dataProvider] get_state_provider
      * @param string $rule The custom completion rule.
      * @param int $available Whether this rule is available.
      * @param bool $submitted Whether the user has received pok certificate.
      * @param int|null $status Expected status.
      * @param string|null $exception Expected exception.
      */
+
     public function test_get_state(string $rule, int $available, ?bool $submitted, ?int $status, ?string $exception): void {
         global $DB;
 

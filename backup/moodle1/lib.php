@@ -50,13 +50,13 @@ class moodle1_mod_pokcertificate_handler extends moodle1_mod_handler {
                 'pokcertificate',
                 '/MOODLE_BACKUP/COURSE/MODULES/MOD/POKCERTIFICATE',
                 [
-                    'renamefields' => array(
+                    'renamefields' => [
                         'text' => 'intro',
                         'format' => 'introformat',
-                    ),
-                    'newfields' => array(
+                    ],
+                    'newfields' => [
                         'completionsubmit' => 0,
-                    ),
+                    ],
                 ],
             ),
             new convert_path(

@@ -89,7 +89,7 @@ class issue_certitficate_user extends \core\task\scheduled_task {
                                     $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
                                     $issuerec = pokcertificate_issues::get_record([
                                         'pokid' => $pokcertificate->id,
-                                        'userid' => $user->userid
+                                        'userid' => $user->userid,
                                     ]);
                                     if (
                                         $completion->is_enabled($cm) && $pokrecord->get('completionsubmit')

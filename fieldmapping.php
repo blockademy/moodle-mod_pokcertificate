@@ -72,7 +72,10 @@ if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
 
             $mform = new fieldmapping_form(
                 $url,
-                ['data' => $fielddata, 'id' => $id, 'template' => $tempname, 'templateid' => $templateid, 'pokid' => $pokid] + (array)$data
+                [
+                    'data' => $fielddata, 'id' => $id, 'template' => $tempname,
+                    'templateid' => $templateid, 'pokid' => $pokid,
+                ] + (array)$data
             );
 
             $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);

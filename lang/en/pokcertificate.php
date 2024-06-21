@@ -274,3 +274,14 @@ $string['generalcertstatus'] = 'General Certitifacte status';
 $string['completiondetail:submit'] = 'Must receive certificate';
 $string['fieldmappingerror'] = 'Please select user field to be mapped';
 $string['validuserprofiles'] = 'Note: Certificates are issued to users whose profile status is Complete.';
+
+// Privacy provider strings.
+$string['privacy:metadata:pokcertificate_issues'] = 'The list of issued POKcertificates';
+$string['privacy:metadata:pokcertificate_issues:pokid'] = 'The ID that belongs to the POKcertificate activity';
+$string['privacy:metadata:pokcertificate_issues:status'] = 'The status of POKcertificate whether issued or not';
+$string['privacy:metadata:pokcertificate_issues:useremail'] = 'The user email to which the confirmation mail is sent to issue POKcertificate';
+$string['privacy:metadata:pokcertificate_issues:timecreated'] = 'The time the POKcertificate was issued';
+$string['privacy:metadata:pokcertificate_issues:templateid'] = 'The ID of the template to which the POKcertificate activity is mapped';
+$string['privacy:metadata:pokcertificate_issues:certificateurl'] = 'The POKcertificate URL that belongs to the user';
+$string['privacy:metadata:pokcertificate_issues:pokcertificateid'] = 'The POKcertificate code that belongs to the user';
+$string['privacy:metadata:pokcertificate_issues:userid'] = 'The ID of the user who was issued the POKcertificate';

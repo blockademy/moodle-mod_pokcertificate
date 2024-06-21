@@ -750,7 +750,7 @@ class renderer extends \plugin_renderer_base {
             'div',
             [
                 'class' => "mt-3 mb-2 collapse " . $show,
-                'id' => "mod_pokcertificate-filter_collapse"
+                'id' => "mod_pokcertificate-filter_collapse",
             ]
         );
         $output .= \html_writer::start_tag('div', ['id' => "filters_form", 'class' => "card card-body p-2"]);

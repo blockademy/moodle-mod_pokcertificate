@@ -366,7 +366,8 @@ class helper {
                 $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
                 $list['enrolldate'] = pokcertificate_courseenrollmentdate($courseid, $c->userid);
                 $list['completedate'] = $c->completiondate ? date('d M Y', $c->completiondate) : '-';
-                $list['coursestatus'] = $c->completiondate ? get_string('completed') : get_string('inprogress', 'mod_pokcertificate');
+                $list['coursestatus'] = $c->completiondate ?
+                    get_string('completed') : get_string('inprogress', 'mod_pokcertificate');
                 if ($c->templatetype != '') {
                     $showtemplatetype = true;
                     $list['certificatetype'] = ($c->templatetype === '0') ? 'Free' : 'Paid';

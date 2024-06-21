@@ -58,7 +58,8 @@ class fieldmapping_form extends moodleform {
             '<table class="fieldlist">
             <thead>
                 <tr>
-                <th class="header c0 fieldmapheader" style="" scope="col">' . get_string("userfieldmapping", "pokcertificate") . '</th>
+                <th class="header c0 fieldmapheader" style="" scope="col">' .
+            get_string("userfieldmapping", "pokcertificate") . '</th>
                 <th class="header c1 " style="" scope="col">' . get_string('apifields', 'pokcertificate') . '</th>
                 <th class="header c2 " style="" scope="col"></th>
                 <th class="header c3 " style="" scope="col">' . get_string('userfields', 'pokcertificate') . '</th>
