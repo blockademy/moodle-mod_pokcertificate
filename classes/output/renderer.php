@@ -712,8 +712,10 @@ class renderer extends \plugin_renderer_base {
      * @return void
      */
     public function get_userslist_topreview($userinputs) {
+
         $records = helper::pokcertificate_userslist($userinputs);
         $records['showdata'] = $records['data'] ? true : false;
+        $records['userinputs'] = implode(",", $userinputs);
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/previewusers', $records);
         return $return;
     }

@@ -697,7 +697,6 @@ class helper {
                     new \moodle_url('/user/profile.php', ['id' => $user->id]),
                     $list['userid']
                 );
-                $list['userinputs'] = base64_encode(serialize([$course->id . '_' . $activityid . '_' . $user->id]));
 
                 $data[] = $list;
             }

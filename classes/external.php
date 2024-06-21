@@ -336,11 +336,15 @@ class mod_pokcertificate_external extends external_api {
         $emitcount = 0;
         $context = \context_system::instance();
         self::validate_context($context);
+
         if (has_capability('mod/pokcertificate:awardcertificate', $context)) {
-            $userinputs = base64_decode($params['userinputs']);
+
             $useridsarr = explode(",", $userinputs);
             if ($useridsarr) {
-                foreach ($useridsarr as $rec) {
+                foreach ($useridsarr as $userrec) {
+
+                    $data = unserialize(base64_decode($userrec));
+                    $rec = implode("", $data);
                     $inp = explode("_", $rec);
                     $activityid = $inp[1];
                     $user = $inp[2];
