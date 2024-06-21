@@ -16,7 +16,7 @@
 
 namespace mod_pokcertificate\output;
 
-use mod_pokcertificate\permission;
+use mod_pokcertificate\helper;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 
@@ -72,7 +72,7 @@ class actionbar {
         $menu = [];
 
         $menu[null] = get_string('previewcertificate', 'mod_pokcertificate');
-        if (permission::can_manage($PAGE->context)) {
+        if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
             $certificateslink = new \moodle_url('/mod/pokcertificate/certificates.php', ['id' => $this->cmid]);
             $menu[$certificateslink->out(false)] = get_string('certificateslist', 'mod_pokcertificate');
 
@@ -84,7 +84,7 @@ class actionbar {
                 ['id' => $this->cmid, 'temp' => base64_encode($template)]
             );
             $pokid = pokcertificate::get_field('id', ['id' => $cm->instance]);
-            $remotefields = get_externalfield_list(base64_encode($template), $pokid);
+            $remotefields = helper::get_externalfield_list(base64_encode($template), $pokid);
 
             if ($remotefields) {
                 $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');

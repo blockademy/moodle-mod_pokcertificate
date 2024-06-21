@@ -26,8 +26,6 @@ use mod_pokcertificate\form\verifyauth_form;
 
 require('../../config.php');
 
-require_login();
-
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 $context = \context_system::instance();
@@ -37,6 +35,7 @@ $url = new moodle_url('/mod/pokcertificate/pokcertificate.php', []);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_heading($SITE->fullname);
+require_login();
 
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
 // Restrict normal user to access this page.

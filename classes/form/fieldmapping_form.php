@@ -27,9 +27,9 @@ namespace mod_pokcertificate\form;
 defined('MOODLE_INTERNAL') || die;
 
 use moodleform;
+use mod_pokcertificate\helper;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 /**
@@ -50,8 +50,9 @@ class fieldmapping_form extends moodleform {
         $data  = $this->_customdata['data'];
 
         $defaultselect = [null => get_string('select')];
-        $localfields = $defaultselect + get_internalfield_list();
-        $remotefields = get_externalfield_list($templatename, $pokid);
+        $userfields = helper::get_internalfield_list();
+        $localfields = $defaultselect + $userfields;
+        $remotefields = helper::get_externalfield_list($templatename, $pokid);
 
         $html =
             '<table class="fieldlist">
@@ -116,44 +117,5 @@ class fieldmapping_form extends moodleform {
         $this->set_data($data);
 
         $this->add_action_buttons(true, get_string('save'));
-    }
-
-
-    /**
-     * Enforce defaults here.
-     *
-     * @param array $defaultvalues Form defaults
-     * @return void
-     **/
-    public function data_preprocessing(&$defaultvalues) {
-    }
-
-    /**
-     * Allows module to modify the data returned by form get_data().
-     * This method is also called in the bulk activity completion form.
-     *
-     * Only available on moodleform_mod.
-     *
-     * @param stdClass $data the form data to be modified.
-     */
-    public function data_postprocessing($data) {
-    }
-
-
-    /**
-     * Validates the form data submitted by the user.
-     *
-     * This method is responsible for validating the form data submitted by the user.
-     * It performs necessary validation checks on the data and files provided.
-     *
-     * @param array $data An associative array containing the form data submitted by the user.
-     * @param array $files An associative array containing any files uploaded via the form.
-     * @return array|bool An array of validation errors, or true if validation succeeds.
-     */
-    public function validation($data, $files) {
-
-        $errors = parent::validation($data, $files);
-
-        return $errors;
     }
 }

@@ -24,10 +24,10 @@
 
 use mod_pokcertificate\pok;
 use mod_pokcertificate\form\fieldmapping_form;
+use mod_pokcertificate\helper;
 
 require('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
-require_login();
 
 $id = required_param('id', PARAM_INT); // Course module id.
 $tempname = required_param('temp', PARAM_RAW); // Selected template name.
@@ -53,7 +53,7 @@ $PAGE->set_activity_record($pokcertificate);
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 // Save selected template definition.
-if (!empty(trim($tempname)) && validate_encoded_data($tempname)) {
+if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
     $templatename = base64_decode($tempname);
     $templateinfo = new \stdclass;
     $templateinfo->template = $templatename;
@@ -63,12 +63,12 @@ if (!empty(trim($tempname)) && validate_encoded_data($tempname)) {
     if ($templatedefinition) {
         $data = pok::save_template_definition($templateinfo, $templatedefinition, $cm);
 
-        $remotefields = get_externalfield_list($tempname, $pokcertificate->id);
+        $remotefields = helper::get_externalfield_list($tempname, $pokcertificate->id);
         $data = data_submitted();
         if ($remotefields) {
             $pokid = $pokcertificate->id;
             $templateid = $pokcertificate->templateid;
-            $fielddata = get_mapped_fields($pokid);
+            $fielddata = helper::get_mapped_fields($pokid);
 
             $mform = new fieldmapping_form(
                 $url,

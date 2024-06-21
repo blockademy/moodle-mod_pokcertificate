@@ -26,6 +26,7 @@ use core_availability\info_module;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/utility.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
 require_once($CFG->dirroot . '/user/profile/lib.php');
 /**
@@ -359,7 +360,7 @@ class pok {
     public static function preview_template($cmid) {
         $cm = self::get_cm_instance($cmid);
         $context = \context_module::instance($cm->id);
-        if (!empty($cm) && permission::can_manage($context)) {
+        if (!empty($cm) && has_capability('mod/pokcertificate:manageinstance', $context)) {
             $templateid = pokcertificate::get_field(
                 'templateid',
                 ['id' => $cm->instance, 'course' => $cm->course]
@@ -668,7 +669,7 @@ class pok {
         if ((empty($pokissuerec)) ||
             ($pokissuerec && $pokissuerec->get('useremail') != $user->email)
         ) {
-            $validuser = check_usermapped_fielddata($cm, $user);
+            $validuser = helper::check_usermapped_fielddata($cm, $user);
             if ($validuser) {
                 $emitcertificate = self::emit_certificate($cm->id, $user);
                 if ($emitcertificate) {

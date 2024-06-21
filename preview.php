@@ -24,8 +24,6 @@
 
 require('../../config.php');
 
-require_login();
-
 $id      = optional_param('id', 0, PARAM_INT); // Course Module ID.
 $url = new moodle_url('/mod/pokcertificate/preview.php', ['id' => $id]);
 

@@ -18,6 +18,7 @@ namespace mod_pokcertificate;
 
 use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\pok;
+use mod_pokcertificate\helper;
 
 /**
  * PHPUnit data generator testcase
@@ -212,7 +213,7 @@ class generator_test extends \advanced_testcase {
         $poktemplatedata = pokcertificate_templates::get_record(['id' => $poktemplate['templateid']]);
 
         $templatename = base64_encode($poktemplatedata->get('templatename'));
-        $apifields = get_externalfield_list($templatename, $pokcertificate->id);
+        $apifields = helper::get_externalfield_list($templatename, $pokcertificate->id);
         if ($apifields) {
             $data = $generator->get_fieldmapping_data($cm->id, $pokcertificate->id, $templatename, $poktemplate['templateid']);
             if (pok::save_fieldmapping_data($data)) {

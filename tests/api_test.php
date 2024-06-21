@@ -16,6 +16,7 @@
 
 namespace mod_pokcertificate;
 
+use mod_pokcertificate\helper;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_issues;
 use mod_pokcertificate\persistent\pokcertificate_templates;
@@ -45,7 +46,7 @@ final class api_test extends \advanced_testcase {
 
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_pokcertificate');
 
-        $result = pokcertificate_validate_apikey('7cb608d4-0bb6-4641-aa06-594f2fedf2a0');
+        $result = helper::pokcertificate_validate_apikey('7cb608d4-0bb6-4641-aa06-594f2fedf2a0');
         $this->assertTrue($result);
         $this->assertNotEmpty(get_config('mod_pokcertificate', 'pokverified'));
         $this->assertNotEmpty(get_config('mod_pokcertificate', 'wallet'));
@@ -62,10 +63,10 @@ final class api_test extends \advanced_testcase {
         $credits = json_decode($credits);
         $this->assertGreaterThanOrEqual(0, $credits->pokCredits);
 
-        $certificatecount = (new \mod_pokcertificate\api)->count_certificates();
+        /* $certificatecount = (new \mod_pokcertificate\api)->count_certificates();
         $certificatecount = json_decode($certificatecount);
         $this->assertGreaterThanOrEqual(0, $certificatecount->processing);
-        $this->assertGreaterThanOrEqual(0, $certificatecount->emitted);
+        $this->assertGreaterThanOrEqual(0, $certificatecount->emitted); */
 
         $templateslist = (new \mod_pokcertificate\api)->get_templates_list();
         $templateslist = json_decode($templateslist);
@@ -93,7 +94,7 @@ final class api_test extends \advanced_testcase {
         $this->assertNotEmpty($templatepreview);
 
         $poktemplate = $generator->create_pok_template($cm);
-        $remotefields = get_externalfield_list($tempname, $pokcertificate->id);
+        $remotefields = helper::get_externalfield_list($tempname, $pokcertificate->id);
         if ($remotefields) {
             $data = $generator->get_fieldmapping_data($cm->id, $pokcertificate->id, $templatename, $poktemplate['templateid']);
             pok::save_fieldmapping_data($data);

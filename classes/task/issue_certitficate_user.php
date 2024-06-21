@@ -87,9 +87,13 @@ class issue_certitficate_user extends \core\task\scheduled_task {
                                     pok::save_issued_certificate($cm->id, $user, $issuecertificate);
                                     $completion = new \completion_info($course);
                                     $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+                                    $issuerec = pokcertificate_issues::get_record([
+                                        'pokid' => $pokcertificate->id,
+                                        'userid' => $user->userid
+                                    ]);
                                     if (
                                         $completion->is_enabled($cm) && $pokrecord->get('completionsubmit')
-                                        && !empty($pokissuerec->get('certificateurl'))
+                                        && !empty($issuerec->get('certificateurl'))
                                     ) {
                                         $completion->update_state($cm, COMPLETION_COMPLETE);
                                     }

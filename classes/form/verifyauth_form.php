@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 use moodleform;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/utility.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
@@ -60,7 +60,7 @@ class verifyauth_form extends moodleform {
         if (get_config('mod_pokcertificate', 'authenticationtoken')) {
             $mform->setDefault("authtoken", get_config('mod_pokcertificate', 'authenticationtoken'));
         }
-
+        $class = $faicon = $message = '';
         $institution = get_config('mod_pokcertificate', 'institution');
         $authenticationtoken = get_config('mod_pokcertificate', 'authenticationtoken');
         if ($authenticationtoken) {

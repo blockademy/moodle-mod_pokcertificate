@@ -24,7 +24,6 @@
 
 require('../../config.php');
 
-require_login();
 $id      = required_param('id', PARAM_INT); // Course Module ID.
 
 $url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
@@ -49,6 +48,7 @@ if (empty($options['printintro'])) {
 }
 $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);
+$PAGE->set_url('/mod/pokcertificate/certificates.php', []);
 
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);

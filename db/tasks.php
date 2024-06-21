@@ -17,8 +17,6 @@
 /**
  * Scheduled task definitions for POK Certificate
  *
- * Documentation: {@link https://moodledev.io/docs/apis/subsystems/task}
- *
  * @package    mod_pokcertificate
  * @category   task
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd

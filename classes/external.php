@@ -26,6 +26,7 @@ use core_external\external_value;
 use core_external\external_warnings;
 use core_external\util;
 use mod_pokcertificate\pok;
+use mod_pokcertificate\helper;
 
 /**
  * pokcertificate external functions
@@ -75,7 +76,7 @@ class mod_pokcertificate_external extends external_api {
         $pokcertificate = $DB->get_record('pokcertificate', ['id' => $params['pokcertificateid']], '*', MUST_EXIST);
         list($course, $cm) = get_course_and_cm_from_instance($pokcertificate, 'pokcertificate');
 
-        $context = context_module::instance($cm->id);
+        $context = \context_module::instance($cm->id);
         self::validate_context($context);
 
         require_capability('mod/pokcertificate:view', $context);
@@ -255,9 +256,10 @@ class mod_pokcertificate_external extends external_api {
             self::verify_authentication_parameters(),
             ['prodtype' => $prodtype, 'authtoken' => $authtoken, "institution" => $institution]
         );
-        self::validate_context(\context_system::instance());
+        $context = \context_system::instance();
+        self::validate_context($context);
         if (has_capability('moodle/course:manageactivities', $context)) {
-            $result = pokcertificate_validate_apikey($params['authtoken']);
+            $result = helper::pokcertificate_validate_apikey($params['authtoken']);
 
             if ($result) {
                 $orgdetails = (new mod_pokcertificate\api)->get_organization();
@@ -344,7 +346,7 @@ class mod_pokcertificate_external extends external_api {
                     $user = $inp[2];
                     $cm = get_coursemodule_from_instance('pokcertificate', $activityid);
                     $user = \core_user::get_user($user);
-                    $validuser = check_usermapped_fielddata($cm, $user);
+                    $validuser = helper::check_usermapped_fielddata($cm, $user);
                     if ($validuser) {
                         pok::emit_certificate($cm->id, $user);
                         $emitcount++;

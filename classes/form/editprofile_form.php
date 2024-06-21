@@ -31,7 +31,6 @@ use core_user;
 use context_user;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 require_once($CFG->dirroot . '/lib/formslib.php');
@@ -84,7 +83,7 @@ class editprofile_form extends moodleform {
             'maxlength="100" size="30"' . $purpose
         );
         $mform->addRule('email', $strrequired, 'required', null, 'client');
-        $mform->setType('email', PARAM_RAW_TRIMMED);
+        $mform->setType('email', PARAM_EMAIL);
 
         $mform->addElement('text', 'idnumber', get_string('idnumber', 'mod_pokcertificate'), 'maxlength="255" size="25"');
         $mform->addRule('idnumber', $strrequired, 'required', null, 'client');

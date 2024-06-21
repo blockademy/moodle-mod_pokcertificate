@@ -24,7 +24,8 @@
 
 require('../../config.php');
 
-require_login();
+use mod_pokcertificate\helper;
+
 global $CFG, $OUTPUT, $PAGE;
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 $selecteditems = optional_param_array('selectedusers', null, PARAM_RAW);
@@ -39,6 +40,7 @@ $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
 $PAGE->set_url($url);
+require_login();
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
 echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
@@ -47,7 +49,7 @@ echo $renderer->display_tabs();
 
 if (count($selecteditems) > 0) {
 
-    if (validate_userinputs($selecteditems)) {
+    if (helper::validate_userinputs($selecteditems)) {
         $renderer = $PAGE->get_renderer('mod_pokcertificate');
         $records = $renderer->get_userslist_topreview($selecteditems);
         echo $records['recordlist'];

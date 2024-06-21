@@ -27,8 +27,6 @@ global $CFG, $PAGE, $OUTPUT;
 
 use mod_pokcertificate\form\searchfilter_form;
 
-require_login();
-
 $context = \context_system::instance();
 require_capability('mod/pokcertificate:manageinstance', $context);
 require_capability('mod/pokcertificate:bulkupdateincompleteprofile', $context);
@@ -40,6 +38,8 @@ $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
+require_login();
+
 $studentid = optional_param('studentid', '', PARAM_RAW);
 $studentname = optional_param('studentname', '', PARAM_RAW);
 $email = optional_param('email', '', PARAM_RAW);

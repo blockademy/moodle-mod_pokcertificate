@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 use mod_pokcertificate\persistent\pokcertificate;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/utility.php');
 require_once($CFG->libdir . '/filelib.php');
 
 /**

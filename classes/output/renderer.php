@@ -18,8 +18,8 @@ namespace mod_pokcertificate\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-use mod_pokcertificate\permission;
 use mod_pokcertificate\pok;
+use mod_pokcertificate\helper;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_issues;
 use mod_pokcertificate\persistent\pokcertificate_templates;
@@ -98,7 +98,7 @@ class renderer extends \plugin_renderer_base {
         if (get_config('mod_pokcertificate', 'pokverified')) {
             if ($recexists) {
 
-                if (permission::can_manage($context)) {
+                if (has_capability('mod/pokcertificate:manageinstance', $context)) {
 
                     $certificatetemplatecontent = pok::get_certificate_templates($id);
                     if ($certificatetemplatecontent) {
@@ -112,7 +112,7 @@ class renderer extends \plugin_renderer_base {
             } else {
                 echo get_string('invalidcoursemodule', 'mod_pokcertificate');
             }
-        } else if (permission::can_manage($context)) {
+        } else if (has_capability('mod/pokcertificate:manageinstance', $context)) {
             echo self::verify_authentication();
         }
     }
@@ -492,7 +492,7 @@ class renderer extends \plugin_renderer_base {
 
         $recordperpage = 10;
         $offset = $page * $recordperpage;
-        $records = pokcertificate_incompletestudentprofilelist(
+        $records = helper::pokcertificate_incompletestudentprofilelist(
             $studentid,
             $studentname,
             $email,
@@ -557,7 +557,7 @@ class renderer extends \plugin_renderer_base {
         );
         $recordperpage = 10;
         $offset = $page * $recordperpage;
-        $records = pokcertificate_coursecertificatestatuslist(
+        $records = helper::pokcertificate_coursecertificatestatuslist(
             $courseid,
             $studentid,
             $studentname,
@@ -606,7 +606,7 @@ class renderer extends \plugin_renderer_base {
         );
         $recordperpage = 10;
         $offset = $page * $recordperpage;
-        $records = pokcertificate_awardgeneralcertificatelist(
+        $records = helper::pokcertificate_awardgeneralcertificatelist(
             $courseid,
             $studentid,
             $studentname,
@@ -632,8 +632,9 @@ class renderer extends \plugin_renderer_base {
      */
     public function verify_authentication_check() {
         global $CFG, $COURSE;
+        $context = \context_system::instance();
         if (!get_config('mod_pokcertificate', 'pokverified')) {
-            if (permission::can_manage(\context_system::instance())) {
+            if (has_capability('mod/pokcertificate:manageinstance', $context)) {
                 $errormsg = 'authenticationcheck';
                 $url = $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php';
             } else {
@@ -711,7 +712,7 @@ class renderer extends \plugin_renderer_base {
      * @return void
      */
     public function get_userslist_topreview($userinputs) {
-        $records = pokcertificate_userslist($userinputs);
+        $records = helper::pokcertificate_userslist($userinputs);
         $records['showdata'] = $records['data'] ? true : false;
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/previewusers', $records);
         return $return;
@@ -762,7 +763,7 @@ class renderer extends \plugin_renderer_base {
      * @return string The HTML .
      */
     public function verificationstats() {
-        $records = pokcertificate_incompletestudentprofilelist();
+        $records = helper::pokcertificate_incompletestudentprofilelist();
         $data['creditscount'] = $records['count'];
         $data['pendingcount'] = get_config('mod_pokcertificate', 'pendingcertificates');
         return $this->render_from_template('mod_pokcertificate/verificationstats', $data);

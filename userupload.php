@@ -30,11 +30,12 @@ use mod_pokcertificate\form\userupload_form;
 use mod_pokcertificate\local\progresslibfunctions;
 use mod_pokcertificate\local\syncfunctionality;
 
+global $USER, $DB, $OUTPUT;
+
 $iid = optional_param('iid', '', PARAM_INT);
 @set_time_limit(60 * 60); // 1 hour should be enough
 raise_memory_limit(MEMORY_HUGE);
 
-require_login();
 require_capability('mod/pokcertificate:bulkupdateincompleteprofile', $context);
 
 $errorstr = get_string('error');
@@ -45,14 +46,14 @@ $stryesnooptions = [0 => $strno, 1 => $stryes];
 $systemcontext = \context_system::instance();
 $PAGE->set_context($systemcontext);
 
-global $USER, $DB, $OUTPUT;
-
 $returnurl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
 $PAGE->set_pagelayout('admin');
 $PAGE->set_url('/mod/pokcertificate/userupload.php');
 $PAGE->set_heading(get_string('bulkupload', 'mod_pokcertificate'));
 $strheading = get_string('bulkupload', 'mod_pokcertificate');
 $PAGE->set_title($strheading);
+
+require_login();
 $returnurl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
 
 $stdfields = [

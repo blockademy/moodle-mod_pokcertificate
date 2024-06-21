@@ -27,9 +27,6 @@ use mod_pokcertificate\form\searchfilter_form;
 require_once('../../config.php');
 
 global $OUTPUT, $PAGE;
-
-require_login();
-
 $context = \context_system::instance();
 require_capability('mod/pokcertificate:manageinstance', $context);
 require_capability('mod/pokcertificate:awardcertificate', $context);
@@ -41,6 +38,8 @@ $PAGE->set_context($context);
 $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
 $PAGE->set_url($url);
+require_login();
+
 $course = optional_param('course', 0, PARAM_INT);
 $studentid = optional_param('studentid', '', PARAM_RAW);
 $studentname = optional_param('studentname', '', PARAM_RAW);

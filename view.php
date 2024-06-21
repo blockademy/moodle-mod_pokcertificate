@@ -23,10 +23,11 @@
  */
 
 use mod_pokcertificate\pok;
+use mod_pokcertificate\helper;
 
 require('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
-require_once($CFG->dirroot . '/mod/pokcertificate/locallib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/utility.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 $id      = optional_param('id', 0, PARAM_INT); // Course Module ID.
@@ -39,7 +40,6 @@ if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
 $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
-require_course_login($course, true, $cm);
 $context = \context_module::instance($cm->id);
 require_capability('mod/pokcertificate:view', $context);
 
@@ -48,7 +48,7 @@ pokcertificate_view($pokcertificate, $course, $cm, $context);
 
 $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
-
+require_course_login($course, true, $cm);
 $options = empty($pokcertificate->displayoptions) ? [] : (array) unserialize_array($pokcertificate->displayoptions);
 
 $activityheader = ['hidecompletion' => false];
@@ -64,7 +64,7 @@ $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 
 pok::set_cmid($id);
-if ($pok = pokcertificate_preview_by_user($cm, $pokcertificate, $flag)) {
+if ($pok = helper::pokcertificate_preview_by_user($cm, $pokcertificate, $flag)) {
 
     if ($pok['url']) {
         redirect($pok['url']);
