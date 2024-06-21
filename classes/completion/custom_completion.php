@@ -41,7 +41,7 @@ class custom_completion extends activity_custom_completion {
 
         $this->validate_rule($rule);
 
-        // Feedback only supports completionsubmit as a custom rule.
+        // POK certificate only supports completionsubmit as a custom rule.
         $pokissuerec = pokcertificate_issues::get_record(['pokid' => $this->cm->instance, 'userid' => $this->userid]);
         $status = ($pokissuerec && $pokissuerec->get('status') &&
             !empty($pokissuerec->get('certificateurl'))) ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;

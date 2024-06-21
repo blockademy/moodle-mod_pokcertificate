@@ -95,7 +95,7 @@ class issue_certitficate_user extends \core\task\scheduled_task {
                                         $completion->is_enabled($cm) && $pokrecord->get('completionsubmit')
                                         && !empty($issuerec->get('certificateurl'))
                                     ) {
-                                        $completion->update_state($cm, COMPLETION_COMPLETE);
+                                        $completion->update_state($cm, COMPLETION_COMPLETE, $user->userid);
                                     }
                                     mtrace("... issued pokcertificate $pokcertificate->id for user
                                             $user->id on course $course->id");
