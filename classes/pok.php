@@ -336,13 +336,15 @@ class pok {
                 $data = [];
                 $previewdata = json_encode(SAMPLE_DATA);
                 $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
-                $data['tempname'] = base64_encode($template);
-                $data['name'] = $template;
-                $data['cmid'] = ($cmid) ?? $cmid;
-                $data['selectedtemplate'] = ($templaterecord &&
-                    $templaterecord->get('templatename') == $template) ? true : false;
-                $data['certimage'] = trim($templatepreview, '"');
-                $templates['certdata'][] = $data;
+                if (!empty($templatepreview)) {
+                    $data['tempname'] = base64_encode($template);
+                    $data['name'] = $template;
+                    $data['cmid'] = ($cmid) ?? $cmid;
+                    $data['selectedtemplate'] = ($templaterecord &&
+                        $templaterecord->get('templatename') == $template) ? true : false;
+                    $data['certimage'] = (!empty($templatepreview)) ? trim($templatepreview, '"') : '';
+                    $templates['certdata'][] = $data;
+                }
             }
         }
         $templates['temptype'] = ($templaterecord &&
