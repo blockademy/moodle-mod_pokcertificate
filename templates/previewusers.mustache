@@ -49,6 +49,7 @@
                     <td>{{activityname}}</td>
                     <td>{{coursename}}</td>
                     <td>
+                        <input type="hidden" class = "profilestatus" value = "{{#validuser}}1{{/validuser}}{{^validuser}}0{{/validuser}}">
                         <form id="editprofile{{cmid}}" action="updateprofile.php" method="post">
                         <input type="hidden" name="userinputs" id = "id_userinputs" value = {{userinputs}}>
                         <input type="hidden" name="id" id = "id" value = {{userid}}>
@@ -79,3 +80,17 @@
     </div>
 {{/showdata}}
 
+
+<script>
+window.addEventListener("load", myFunction);
+function myFunction() {
+    $('table tr').each(function () {
+        var status = $(this).find('.profilestatus').val();
+        if (status && status == 1) {
+            $('#award-certificate-btn').prop('disabled', false);
+        } else {
+            $('#award-certificate-btn').prop('disabled', true);
+        }
+    });
+}
+</script>
