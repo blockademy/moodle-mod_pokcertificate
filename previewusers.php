@@ -47,7 +47,7 @@ $renderer = $PAGE->get_renderer('mod_pokcertificate');
 
 echo $renderer->display_tabs();
 
-if (count($selecteditems) > 0) {
+if (!empty($selecteditems) && count($selecteditems) > 0) {
 
     if (helper::validate_userinputs($selecteditems)) {
         $renderer = $PAGE->get_renderer('mod_pokcertificate');

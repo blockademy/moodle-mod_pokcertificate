@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Page module upgrade code
+ * pokcertificate module upgrade code
  *
  * This file keeps track of upgrades to
  * the resource module

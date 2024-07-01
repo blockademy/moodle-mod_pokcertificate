@@ -390,7 +390,6 @@ class pok {
         $cm = self::get_cm_instance($cmid);
         $emitcertificate = new \stdClass();
         try {
-
             if (!empty($cm)) {
 
                 $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
@@ -398,19 +397,24 @@ class pok {
                 if ($pokrecord && $pokrecord->get('templateid')) {
                     $template = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
                     $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
+
                     if ((empty($pokissuerec)) ||
                         ($pokissuerec && $pokissuerec->get('useremail') != $user->email)
                     ) {
                         $emitdata = self::get_emitcertificate_data($user, $template, $pokrecord);
-                        $data = json_encode($emitdata);
+                        if (!empty($emitdata)) {
+                            $data = json_encode($emitdata);
 
-                        $emitcertificate = (new \mod_pokcertificate\api)->emit_certificate($data);
-                        $emitcertificate = json_decode($emitcertificate);
+                            $emitcertificate = (new \mod_pokcertificate\api)->emit_certificate($data);
+                            if (!empty($emitcertificate)) {
+                                $emitcertificate = json_decode($emitcertificate);
 
-                        if ($emitcertificate) {
-                            $emitcertificate->status = false;
-                            self::save_issued_certificate($cmid, $user, $emitcertificate);
-                            return true;
+                                if ($emitcertificate) {
+                                    $emitcertificate->status = false;
+                                    self::save_issued_certificate($cmid, $user, $emitcertificate);
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
