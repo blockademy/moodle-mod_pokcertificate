@@ -81,7 +81,7 @@ function user_download_csv($fields) {
         $customfieldsdata = profile_user_record($user->id, false);
         if ($customfields && $customfieldsdata) {
             foreach ((array)$customfields as $key => $field) {
-                $userprofiledata['profile_field_' . $key] = $customfieldsdata->{$key};
+                $userprofiledata['profile_field_' . $key] = strip_tags($customfieldsdata->{$key});
             }
         }
         $csvexport->add_data($userprofiledata);
