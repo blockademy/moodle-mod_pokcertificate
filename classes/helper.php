@@ -213,7 +213,7 @@ class helper {
         global $DB;
 
         $countsql = "SELECT count(u.id) ";
-        $selectsql = "SELECT u.* ";
+        $selectsql = "SELECT UUID(),u.* ";
         $fromsql = "FROM {user} u ";
         $joinsql = " LEFT JOIN {user_info_data} d ON d.userid = u.id
                     LEFT JOIN {user_info_field} f ON d.fieldid = f.id ";
