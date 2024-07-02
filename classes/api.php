@@ -32,7 +32,6 @@ use mod_pokcertificate\persistent\pokcertificate_log;
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
 
-defined('MOODLE_INTERNAL') || die();
 /**
  * Class api
  *

@@ -74,7 +74,7 @@ function user_download_csv($fields) {
             $user->firstname,
             $user->lastname,
             $user->email,
-            $user->idnumber
+            $user->idnumber,
         ];
         $customfields = profile_get_custom_fields();
         $customfields = array_combine(array_column($customfields, 'shortname'), $customfields);

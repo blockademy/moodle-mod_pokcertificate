@@ -16,12 +16,18 @@
 
 namespace mod_pokcertificate;
 
+defined('MOODLE_INTERNAL') || die();
+
 use moodle_url;
 use mod_pokcertificate\pok;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_fieldmapping;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 use mod_pokcertificate\persistent\pokcertificate_issues;
+
+require_once($CFG->libdir . '/filelib.php');
+require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
+
 
 /**
  * Class helper
