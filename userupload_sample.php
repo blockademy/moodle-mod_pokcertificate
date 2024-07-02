@@ -62,24 +62,31 @@ function user_download_csv($fields) {
     $csvexport = new csv_export_writer();
     $csvexport->set_filename($filename);
     $csvexport->add_data($fields);
+    $users = $DB->get_records_sql(
+        'SELECT id, username, firstname, lastname, email, idnumber
+            FROM {user} WHERE deleted = :deleted AND suspended = :suspended AND id > :id LIMIT 2 ',
+        ['deleted' => 0, 'suspended' => 0, 'id' => 2]
+    );
 
-    $userprofiledata = [
-        'hemanth',
-        'Hemanth',
-        'Reddy',
-        'hemanath@mail.com',
-        '1101',
-    ];
-    $csvexport->add_data($userprofiledata);
+    foreach ($users as $user) {
+        $userprofiledata = [
+            $user->username,
+            $user->firstname,
+            $user->lastname,
+            $user->email,
+            $user->idnumber
+        ];
+        $customfields = profile_get_custom_fields();
+        $customfields = array_combine(array_column($customfields, 'shortname'), $customfields);
+        $customfieldsdata = profile_user_record($user->id, false);
+        if ($customfields && $customfieldsdata) {
+            foreach ((array)$customfields as $key => $field) {
+                $userprofiledata['profile_field_' . $key] = $customfieldsdata->{$key};
+            }
+        }
+        $csvexport->add_data($userprofiledata);
+    }
 
-    $userprofiledata = [
-        'radhika',
-        'Radhika',
-        'Dubey',
-        'radhika@mail.com',
-        '1102',
-    ];
-    $csvexport->add_data($userprofiledata);
     $csvexport->download_file();
     die;
 }

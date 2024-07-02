@@ -427,7 +427,7 @@ function pokcertificate_check_updates_since(cm_info $cm, $from, $filter = []) {
 function mod_pokcertificate_extend_navigation_course(navigation_node $navigation, $course, $context) {
     global $PAGE;
 
-    if (has_capability('mod/pokcertificate:managecoursecertificatestatus', $context)) {
+    if (has_capability('mod/pokcertificate:managecoursecertificate', $context)) {
         $node = navigation_node::create(
             get_string('coursecertificatestatus', 'mod_pokcertificate'),
             new moodle_url(

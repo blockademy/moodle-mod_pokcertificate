@@ -37,7 +37,7 @@ $iid = optional_param('iid', '', PARAM_INT);
 raise_memory_limit(MEMORY_HUGE);
 
 $systemcontext = \context_system::instance();
-require_capability('mod/pokcertificate:bulkupdateincompleteprofile', $systemcontext);
+require_capability('mod/pokcertificate:uploadincompleteprofile', $systemcontext);
 
 $errorstr = get_string('error');
 $stryes = get_string('yes');

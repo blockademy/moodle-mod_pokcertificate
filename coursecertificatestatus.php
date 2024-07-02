@@ -33,7 +33,7 @@ $course = $DB->get_record('course', ['id' => $courseid]);
 
 $context = context_course::instance($courseid, MUST_EXIST);
 require_capability('mod/pokcertificate:manageinstance', $context);
-require_capability('mod/pokcertificate:managecoursecertificatestatus', $context);
+require_capability('mod/pokcertificate:managecoursecertificate', $context);
 
 require_course_login($course);
 $url = new \moodle_url('/mod/pokcertificate/coursecertificatestatus.php', ['courseid' => $courseid]);

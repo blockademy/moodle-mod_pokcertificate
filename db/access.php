@@ -66,7 +66,7 @@ $capabilities = [
         'clonepermissionsfrom' => 'moodle/course:manageactivities',
     ],
 
-    'mod/pokcertificate:bulkupdateincompleteprofile' => [
+    'mod/pokcertificate:uploadincompleteprofile' => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -75,7 +75,7 @@ $capabilities = [
         ],
     ],
 
-    'mod/pokcertificate:selfupdateincompleteprofile' => [
+    'mod/pokcertificate:updateincompleteprofile' => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
@@ -102,7 +102,7 @@ $capabilities = [
         ],
     ],
 
-    'mod/pokcertificate:managecoursecertificatestatus' => [
+    'mod/pokcertificate:managecoursecertificate' => [
         'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,

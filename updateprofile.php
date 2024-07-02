@@ -57,6 +57,7 @@ if ($id > 0) {
     require_course_login($course, true, $cm);
     $context = context_module::instance($cm->id);
     require_capability('mod/pokcertificate:view', $context);
+    require_capability('mod/pokcertificate:updateincompleteprofile', $context);
 
     $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
     $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
@@ -110,7 +111,7 @@ if ($id > 0) {
     $PAGE->set_context($context);
     $PAGE->set_title(get_string('profile', 'mod_pokcertificate'));
     $PAGE->set_heading(get_string('profile', 'mod_pokcertificate'));
-    require_capability('mod/pokcertificate:bulkupdateincompleteprofile', $context);
+    require_capability('mod/pokcertificate:updateincompleteprofile', $context);
 
     if (!$user = $DB->get_record('user', ['id' => $userid])) {
         throw new \moodle_exception('invaliduserid');

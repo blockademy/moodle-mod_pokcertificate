@@ -29,7 +29,7 @@ use mod_pokcertificate\form\searchfilter_form;
 
 $context = \context_system::instance();
 require_capability('mod/pokcertificate:manageinstance', $context);
-require_capability('mod/pokcertificate:bulkupdateincompleteprofile', $context);
+require_capability('mod/pokcertificate:updateincompleteprofile', $context);
 
 $url = new moodle_url('/mod/pokcertificate/incompletestudent.php', []);
 $heading = get_string('incompletestudent', 'mod_pokcertificate');
