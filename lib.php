@@ -444,6 +444,23 @@ function mod_pokcertificate_extend_navigation_course(navigation_node $navigation
 }
 
 /**
+ * Adds module specific settings to the settings block
+ *
+ * @param settings_navigation $settings The settings navigation object
+ * @param navigation_node $poknode The node to add module settings to
+ */
+function pokcertificate_extend_settings_navigation(settings_navigation $settings, navigation_node $poknode) {
+    $cmid = $settings->get_page()->cm->id;
+    $context = \context_module::instance($cmid);
+    if (has_capability('mod/pokcertificate:manageinstance', $context)) {
+        $poknode->add(
+            get_string('profilefields', 'pokcertificate'),
+            new moodle_url('/user/profile/index.php', []),
+        );
+    }
+}
+
+/**
  * Retrieves the enrollment date of a user in a specific course.
  *
  * This function queries the database to find the enrollment date

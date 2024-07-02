@@ -238,6 +238,7 @@ class helper {
         }
         $count = $DB->count_records_sql($countsql . $fromsql . $joinsql . $wheresql, $queryparam);
         $users = $DB->get_records_sql($selectsql . $fromsql . $joinsql . $wheresql, $queryparam, $offset, $perpage);
+
         $languages = get_string_manager()->get_list_of_languages();
         $list = [];
         $data = [];
@@ -277,13 +278,13 @@ class helper {
      */
     public static function pokcertificate_coursecertificatestatuslist(
         $courseid,
-        $studentid,
-        $studentname,
-        $email,
-        $senttopok,
-        $coursestatus,
-        $perpage,
-        $offset
+        $studentid = '',
+        $studentname = '',
+        $email = '',
+        $senttopok = '',
+        $coursestatus = '',
+        $perpage = 10,
+        $offset = 0
     ) {
         global $DB;
         $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);

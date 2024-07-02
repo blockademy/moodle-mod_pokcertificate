@@ -108,6 +108,7 @@ $string['prodtype_help'] = 'Select Production Type<br>(Based on production type 
 $string['done'] = 'Done';
 $string['tryagain'] = 'Try again';
 $string['verifyauth'] = 'To verify authentication token';
+$string['pokverifyauth'] = 'POK authentication verification';
 $string['connecterror'] = 'API Connection error';
 $string['fail'] = 'Failed';
 
@@ -274,7 +275,7 @@ $string['generalcertstatus'] = 'General Certitifacte status';
 $string['completiondetail:submit'] = 'Must receive certificate';
 $string['fieldmappingerror'] = 'Please select user field to be mapped';
 $string['validuserprofiles'] = 'Note: Certificates are issued to users whose profile status is Complete.';
-
+$string['profilefields'] = 'User Profile Fields';
 // Privacy provider strings.
 $string['privacy:metadata:pokcertificate_issues'] = 'The list of issued POKcertificates';
 $string['privacy:metadata:pokcertificate_issues:pokid'] = 'The ID that belongs to the POKcertificate activity';

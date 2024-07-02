@@ -36,14 +36,14 @@ $iid = optional_param('iid', '', PARAM_INT);
 @set_time_limit(60 * 60); // 1 hour should be enough
 raise_memory_limit(MEMORY_HUGE);
 
-require_capability('mod/pokcertificate:bulkupdateincompleteprofile', $context);
+$systemcontext = \context_system::instance();
+require_capability('mod/pokcertificate:bulkupdateincompleteprofile', $systemcontext);
 
 $errorstr = get_string('error');
 $stryes = get_string('yes');
 $strno = get_string('no');
 $stryesnooptions = [0 => $strno, 1 => $stryes];
 
-$systemcontext = \context_system::instance();
 $PAGE->set_context($systemcontext);
 
 $returnurl = new moodle_url('/mod/pokcertificate/incompletestudent.php');
