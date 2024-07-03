@@ -290,7 +290,7 @@ padding: 0;
 }
 
 #page-mod-pokcertificate-view .card {
-background-color: #cbd0d5;
+background-color: #cbd0d570;
 border-radius: var(--card-radius);
 position: relative;
 
@@ -309,7 +309,7 @@ top: calc(var(--card-padding) + var(--radio-border-width));
 
 
 #page-mod-pokcertificate-view .template-details {
-border: var(--radio-border-width) solid var(--color-gray);
+/*border: var(--radio-border-width) solid var(--color-gray);*/
 border-radius: var(--card-radius);
 cursor: pointer;
 display: flex;
@@ -456,7 +456,7 @@ background-color: #ffffff;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-size: larger;
+    font-size: medium;
 }
 .template_cat_container input[type='radio']:checked + label{
     color: #0c7bb6;
@@ -467,3 +467,8 @@ background-color: #ffffff;
 #page-mod-pokcertificate-view .certificates_container .certradio{
     visibility: hidden;
 }
+
+/*#page-mod-pokcertificate-view .certificates_container .certradio .btn-light:hover {
+    padding : 0em 1em 0em 1em;
+}*/
+
