@@ -27,30 +27,48 @@
 <form action="fieldmapping.php" method="post">
     <div class="row">
         <div class="col-md-12">
-            <label class="radio-inline">
-                <input type="radio" class="optradio" name="type" value = "0" {{^temptype}}checked="checked" {{/temptype}} data-action = "templatetype" checked="checked">{{#str}}free,pokcertificate{{/str}}
-            </label>
-            <label class="radio-inline">
-                <input type="radio" class="optradio" name="type" value = "1"  {{#temptype}}checked="checked" {{/temptype}} data-action = "templatetype">{{#str}}paid,pokcertificate{{/str}}
-            </label>
+            <div class="template_cat_container mb-3 d-flex">
+
+                <div class="radio_inpt_container mr-3">
+                    <input type="radio" id="type1" class="optradio" name="type" value = "0" {{^temptype}}checked="checked" {{/temptype}} data-action = "templatetype" checked="checked">
+                    <label for="type1" class="radio-inline">{{#str}}free,pokcertificate{{/str}}</label>
+                </div>
+                <div class="radio_inpt_container">
+                    <input type="radio" id="type2" class="optradio" name="type" value = "1"  {{#temptype}}checked="checked" {{/temptype}} data-action = "templatetype">
+                    <label for="type2" class="radio-inline">{{#str}}paid,pokcertificate{{/str}}</label>
+                </div>
+            </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="grid">
+            <div class="grid certificates_container">
                 {{#certdata}}
-                <label class="card">
+                <div class="card certificate_card">
                     <input type="hidden" name="id" id = "id" value = {{cmid}}>
                     <input name="temp" class="certradio" type="radio" {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} value="{{tempname}}">
                     <span class="template-details">
-                    <span class="template-name">{{name}}</span>
-                    <img src="{{certimage}}" alt="" class="">
+                    <span class="template-name d-none">{{name}}</span>
+                        <img src="{{certimage}}" alt="" class="">
+                        <div class="d-flex justify-content-end mt-2">
+                            <button type="button" class="btn selection_btn btn-light">Select</button>
+                        </div>
                     </span>
-                </label>
+                </div>
                 {{/certdata}}
             </div>
             <button type="submit" class="btn btn-primary" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</button>
         </div>
     </div>
 </form>
-
+{{#js}}
+    $(document).ready(function(){
+        $('.certificates_container .selection_btn').click(function(e){
+            e.preventDefault();
+            var card_element = $(this).parent().parent().parent();
+            card_element.find('.certradio').prop('checked',true);
+            $('.certificates_container .selection_btn').removeClass('btn-success').addClass('btn-light');
+            $(this).removeClass('btn-light').addClass('btn-success');
+        });
+    });
+{{/js}}

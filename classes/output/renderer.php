@@ -364,7 +364,7 @@ class renderer extends \plugin_renderer_base {
             if (!empty($credits) && isset($credits->pokCredits)) {
                 set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
             }
-            if (isset($credits->pokCredits) && $credits->pokCredits >= 0) {
+            if (isset($credits->pokCredits) && $credits->pokCredits > 0) {
                 $output = self::render_emit_certificate($cm, $user, $pokissuerec);
             } else {
                 $msg = get_string(
@@ -767,7 +767,9 @@ class renderer extends \plugin_renderer_base {
     public function verificationstats() {
         $records = helper::pokcertificate_incompletestudentprofilelist();
         $data['creditscount'] = $records['count'];
-        $data['pendingcount'] = get_config('mod_pokcertificate', 'pendingcertificates');
+        $credits = (new \mod_pokcertificate\api)->get_credits();
+        $credits = json_decode($credits);
+        $data['pendingcount'] = $credits->pokCredits;
         return $this->render_from_template('mod_pokcertificate/verificationstats', $data);
     }
 }

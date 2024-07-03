@@ -42,25 +42,10 @@
     margin-right: 0.5rem;
 }
 
-#page-mod-pokcertificate-view  label {
-    display: inline-block;
-    margin-right: 1.5rem;
-    margin-bottom: 1.5rem;
-
-}
 
 #page-mod-pokcertificate-view .certbutton{
     margin: 10px 20px 10px 140px;
 }
-/*
-#page-mod-pokcertificate-view form .fieldmapping {
-    width: 50%;
-    float: left;
-} */
-
-/* #page-mod-pokcertificate-view form input[name="delete[0]"] {
-     display: none;
-} */
 
 
 /* Style the tab */
@@ -305,7 +290,7 @@ padding: 0;
 }
 
 #page-mod-pokcertificate-view .card {
-background-color: #fff;
+background-color: #cbd0d5;
 border-radius: var(--card-radius);
 position: relative;
 
@@ -416,10 +401,69 @@ padding: 5px 70px 10px 10px;
     min-height: 60px;
 }
 
+
+#page-mod-pokcertificate-view .fieldmapfields .templatefields .custom-select{
+    width:100%;
+}
+
 #page-mod-pokcertificate-view td.cell.fieldmapfields .userfields{
     min-height: 60px;
 }
 
 #page-mod-pokcertificate-view div#fgroup_id_buttonar {
     padding: 0px 15px 15px 80px;
+}
+/* Float four columns side by side */
+.verify .column {
+    float: left;
+    width: 25%;
+    padding: 0 10px;
+}
+
+/* Remove extra left and right margins, due to padding */
+.verify .row {margin: 0 -5px;}
+
+/* Clear floats after the columns */
+.verify .row:after {
+content: "";
+display: table;
+clear: both;
+}
+
+.authverify {
+    margin: 0 0 2em 0;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+.verify .column {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+}
+}
+
+/* Style the counter cards */
+.verify .card {
+box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+padding: 16px;
+text-align: center;
+background-color: #ffffff;
+}
+
+
+.template_cat_container label{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: larger;
+}
+.template_cat_container input[type='radio']:checked + label{
+    color: #0c7bb6;
+}
+.template_cat_container input[type='radio']{
+    transform: scale(1.2);
+}
+#page-mod-pokcertificate-view .certificates_container .certradio{
+    visibility: hidden;
 }
