@@ -123,7 +123,7 @@ $string['certficatestobesent'] = 'Certificates to be sent';
 $string['incompleteprofile'] = 'Incomplete Student Profile';
 $string['certificatename'] = 'Certificate Name';
 $string['title'] = 'Title';
-
+$string['accessdenied'] = 'Access Denied';
 $string['fieldmapping'] = 'Field Mapping';
 $string['apifields'] = 'POK field';
 $string['userfields'] = 'Moodle field';

@@ -48,7 +48,7 @@
                     <input type="hidden" name="id" id = "id" value = {{cmid}}>
                     <input name="temp" class="certradio" type="radio" {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} value="{{tempname}}">
                     <span class="template-details">
-                    <span class="template-name d-none">{{name}}</span>
+                    <span class="template-name ">{{name}}</span>
                         <img src="{{certimage}}" alt="" class="">
                         <div class="d-flex justify-content-end mt-2">
                             <button type="button" class="btn selection_btn btn-light">Select</button>
@@ -57,7 +57,9 @@
                 </div>
                 {{/certdata}}
             </div>
+            <div class="w-full text-center mt-3">
             <button type="submit" class="btn btn-primary" id="certbutton">{{#str}}usethistemplate, mod_pokcertificate{{/str}}</button>
+            </div>
         </div>
     </div>
 </form>
