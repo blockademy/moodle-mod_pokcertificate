@@ -126,7 +126,7 @@ class renderer extends \plugin_renderer_base {
      * @return string certificate templates HTML to display.
      */
     public function preview_certificate_template(int $cmid) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
         $output = '';
         $recexists = $DB->record_exists('course_modules', ['id' => $cmid]);
@@ -139,9 +139,9 @@ class renderer extends \plugin_renderer_base {
                     ['id' => $pokcertificate->get('templateid')]
                 );
                 $previewdata = [
-                    "name" => "John Galt",
+                    "name" => fullname($USER),
                     "title" => $pokcertificate->get('title'),
-                    "date" => time(),
+                    "date" => round(microtime(true) * 1000),
                     "institution" => get_config('mod_pokcertificate', 'institution'),
                 ];
                 $previewdata = json_encode($previewdata);
