@@ -439,6 +439,7 @@ class helper {
      * @return array An associative array containing the total count of records and the formatted user data.
      */
     public static function pokcertificate_awardgeneralcertificatelist(
+        $course,
         $courseid,
         $studentid,
         $studentname,
@@ -503,9 +504,9 @@ class helper {
             $fromsql .= " AND " . implode(' AND ', $conditions);
         }
 
-        if ($courseid) {
+        if ($courseid != 0 || $course != 0) {
             $fromsql .= "AND c.id = :courseid ";
-            $queryparam['courseid'] = $courseid;
+            $queryparam['courseid'] = ($courseid) ? $courseid : $course;
         }
 
         if ($certificatestatus == 'completed') {
