@@ -118,11 +118,12 @@ const emit = function(e){
     e.preventDefault();
 
     var userinputs = $("#id_userinputs").val();
+    var courseid = parseInt($("#courseid").val());
     var loadElement = $('.loadElement');
     var loadingIcon = LoadingIcon.addIconToContainerWithPromise(loadElement);
 
     var promises = Ajax.call([
-        {methodname: SERVICES.EMIT_CERTIFICATE, args: {userinputs: userinputs}}
+        {methodname: SERVICES.EMIT_CERTIFICATE, args: {userinputs: userinputs,courseid:courseid}}
     ]);
     promises[0].done(function(resp) {
         $('#loading-image').show();
@@ -136,7 +137,7 @@ const emit = function(e){
 
                 this.modal = modal;
                 modal.getRoot().find('[data-action="save"]').on('click', function() {
-                    window.location.href = 'generalcertificate.php';
+                    window.location.href = 'generalcertificate.php?courseid='+courseid;
                 }.bind(this));
 
                 modal.show();

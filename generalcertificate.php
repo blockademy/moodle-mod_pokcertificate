@@ -30,7 +30,7 @@ global $OUTPUT, $PAGE, $USER;
 
 $course = optional_param('courseid', 0, PARAM_INT);
 $context = \context_system::instance();
-if ($course != 0) {
+if ($course > 0) {
     $context = context_course::instance($course, MUST_EXIST);
     if (!is_enrolled($context, $USER->id)) {
         throw new \moodle_exception('usernotincourse');

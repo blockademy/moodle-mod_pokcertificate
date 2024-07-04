@@ -311,6 +311,7 @@ class mod_pokcertificate_external extends external_api {
         return new external_function_parameters(
             [
                 'userinputs' => new external_value(PARAM_RAW, 'userinputs'),
+                'courseid' => new external_value(PARAM_INT, 'courseid'),
             ]
         );
     }
@@ -323,26 +324,29 @@ class mod_pokcertificate_external extends external_api {
      *
      * @param string $userinputs An array containing user inputs necessary for generating the certificate.
      *                          This typically includes information such as name, date, and details required for the certificate.
+     * @param int $courseid
      * @return string|false The generated certificate content as a string on success, or false on failure.
      */
-    public static function emit_general_certificate($userinputs) {
+    public static function emit_general_certificate($userinputs, $courseid = 0) {
         global $CFG;
 
         require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
         $params = self::validate_parameters(
             self::emit_general_certificate_parameters(),
-            ['userinputs' => $userinputs]
+            ['userinputs' => $userinputs, 'courseid' => $courseid]
         );
         $emitcount = 0;
         $context = \context_system::instance();
-        self::validate_context($context);
 
+        if ($courseid > 0) {
+            $context = context_course::instance($courseid, MUST_EXIST);
+        }
+        self::validate_context($context);
         if (has_capability('mod/pokcertificate:awardcertificate', $context)) {
 
             $useridsarr = explode(",", $userinputs);
             if ($useridsarr) {
                 foreach ($useridsarr as $userrec) {
-
                     $data = unserialize(base64_decode($userrec));
                     $rec = implode("", $data);
                     $inp = explode("_", $rec);

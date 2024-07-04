@@ -31,8 +31,8 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 $selecteditems = optional_param_array('selectedusers', null, PARAM_RAW);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $context = \context_system::instance();
-if ($course != 0) {
-    $context = context_course::instance($course, MUST_EXIST);
+if ($courseid > 0) {
+    $context = context_course::instance($courseid, MUST_EXIST);
     if (!is_enrolled($context, $USER->id)) {
         throw new \moodle_exception('usernotincourse');
     }
