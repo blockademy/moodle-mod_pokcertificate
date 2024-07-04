@@ -98,8 +98,10 @@ class searchfilter_form extends moodleform {
             }
 
             // Hidden field.
-            $mform->addElement('hidden', 'courseid', $courseid);
-            $mform->setType('courseid', PARAM_INT);
+            if ($courseid > 0) {
+                $mform->addElement('hidden', 'courseid', $courseid);
+                $mform->setType('courseid', PARAM_INT);
+            }
 
             if ($viewtype == 'generalcertificate') {
 

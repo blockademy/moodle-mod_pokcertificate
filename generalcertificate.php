@@ -28,10 +28,10 @@ require_once('../../config.php');
 
 global $OUTPUT, $PAGE, $USER;
 
-$course = optional_param('courseid', 0, PARAM_INT);
+$courseid = optional_param('courseid', 0, PARAM_INT);
 $context = \context_system::instance();
-if ($course > 0) {
-    $context = context_course::instance($course, MUST_EXIST);
+if ($courseid > 0) {
+    $context = context_course::instance($courseid, MUST_EXIST);
     if (!is_enrolled($context, $USER->id)) {
         throw new \moodle_exception('usernotincourse');
     }
@@ -47,7 +47,7 @@ $PAGE->set_heading($heading);
 $PAGE->set_title($heading);
 $PAGE->set_url($url);
 require_login();
-
+$course = optional_param('course', 0, PARAM_INT);
 $studentid = optional_param('studentid', '', PARAM_RAW);
 $studentname = optional_param('studentname', '', PARAM_RAW);
 $email = optional_param('email', '', PARAM_RAW);
@@ -60,7 +60,7 @@ if (!empty($course) || !empty($studentid) || !empty($studentname) || !empty($ema
 }
 
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
-$mform = new searchfilter_form('', ['viewtype' => 'generalcertificate', 'courseid' => $course]);
+$mform = new searchfilter_form('', ['viewtype' => 'generalcertificate', 'courseid' => $courseid]);
 $mform->set_data([
     'course' => $course,
     'studentid' => $studentid,
@@ -72,8 +72,8 @@ $mform->set_data([
 
 if ($mform->is_cancelled()) {
     $urlparams = [];
-    if ($course != 0) {
-        $urlparams = ['courseid' => $course];
+    if ($courseid > 0) {
+        $urlparams = ['courseid' => $courseid];
     }
     redirect(new \moodle_url('/mod/pokcertificate/generalcertificate.php', $urlparams));
 } else if ($userdata = $mform->get_data()) {
