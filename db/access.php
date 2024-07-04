@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Page module capability definition
+ * POKcertificate module capability definition
  *
  * @package    mod_pokcertificate
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
@@ -89,6 +89,7 @@ $capabilities = [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         ],
     ],
@@ -107,6 +108,7 @@ $capabilities = [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
         ],
     ],
