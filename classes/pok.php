@@ -474,7 +474,7 @@ class pok {
                     $param->value = $pokrecord->get('title');
                 }
                 if ($param->name == 'date') {
-                    $param->value = date('d-m-Y');
+                    $param->value = date('d/m/Y');
                 }
                 $pos = strpos($param->name, 'custom:');
 

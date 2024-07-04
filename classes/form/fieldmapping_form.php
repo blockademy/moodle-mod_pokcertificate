@@ -83,7 +83,7 @@ class fieldmapping_form extends moodleform {
                 $fieldvalue = $pokrecord->get('title');
             }
             if ($key == 'date') {
-                $fieldvalue = date('d-m-Y');
+                $fieldvalue = date('d/m/Y');
             }
             if ($key == 'achiever') {
                 $fieldvalue = get_string('userfullname', 'pokcertificate');
