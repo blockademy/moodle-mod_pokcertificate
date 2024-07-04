@@ -42,7 +42,10 @@ class renderer extends \plugin_renderer_base {
      * @return string HTML content for the tabs.
      */
     public function display_tabs() {
-        return $this->render_from_template('mod_pokcertificate/viewdata', []);
+        $context = \context_system::instance();
+        if (has_capability('mod/pokcertificate:manageinstance', $context)) {
+            return $this->render_from_template('mod_pokcertificate/viewdata', []);
+        }
     }
 
     /**
@@ -771,5 +774,22 @@ class renderer extends \plugin_renderer_base {
         $credits = json_decode($credits);
         $data['pendingcount'] = $credits->pokCredits;
         return $this->render_from_template('mod_pokcertificate/verificationstats', $data);
+    }
+
+    /**
+     * navigate_usercustomfield
+     *
+     * @return string The HTML .
+     */
+    public function navigate_usercustomfield() {
+        global $CFG;
+        $context = \context_system::instance();
+        if (has_capability('moodle/site:config', $context)) {
+            echo '<div class="" >' . get_string('userprofilefields', 'pokcertificate') . '
+                    <a target="_blank" class="btn btn-primary " style="margin-left:5px"
+                                        href="' . $CFG->wwwroot . '/user/profile/index.php' . '" >' .
+                get_string('clickhere', 'pokcertificate') . '
+                                        </a></div>';
+        }
     }
 }

@@ -123,7 +123,6 @@ class helper {
                 }
             }
         }
-
         return $data;
     }
 
@@ -159,7 +158,7 @@ class helper {
         return $localfields;
     }
 
-    /** Get all template definition fields
+    /** Get all template definition custom fields
      *
      * @param string $template
      * @param int $pokid
@@ -187,6 +186,33 @@ class helper {
             }
         }
         return $templatefields;
+    }
+
+    /** Get all template definition madatory fields
+     *
+     * @param string $template
+     * @param int $pokid
+     * @return array
+     */
+    public static function get_mandatoryfield_list($template, $pokid) {
+        $mandatoryfields = [];
+        if (isset($template) && !empty($template)) {
+            $template = base64_decode($template);
+            $templatedefinition = pokcertificate_templates::get_field(
+                'templatedefinition',
+                ['pokid' => $pokid, 'templatename' => $template]
+            );
+            $templatedefinition = json_decode($templatedefinition);
+            if ($templatedefinition) {
+                foreach ($templatedefinition->params as $param) {
+                    $pos = strpos($param->name, ':');
+                    if ($pos === false && in_array($param->name, ['date', 'title', 'institution', 'achiever'])) {
+                        $mandatoryfields[$param->name] = $param->name;
+                    }
+                }
+            }
+        }
+        return $mandatoryfields;
     }
 
     /**
@@ -691,6 +717,7 @@ class helper {
                 $list = [];
                 $list['userid'] = $user->id;
                 $list['cmid'] = $cm->id;
+                $list['courseid'] = $cm->course;
                 $list['firstname'] = $user->firstname;
                 $list['lastname'] = $user->lastname;
                 $list['email'] = $user->email;
@@ -723,6 +750,10 @@ class helper {
         global $DB;
 
         foreach ($selecteditems as $item) {
+            if (!self::validate_encoded_data($item)) {
+                throw new \moodle_exception('invalidinputs', 'pokcertificate');
+            }
+
             $item = unserialize(base64_decode($item));
             $item = array_shift($item);
             $inp = explode("_", $item);

@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 
 use moodleform;
 use mod_pokcertificate\helper;
+use mod_pokcertificate\persistent\pokcertificate;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -42,6 +43,7 @@ class fieldmapping_form extends moodleform {
      */
     public function definition() {
 
+        global $CFG;
         $mform = $this->_form;
         $id        = $this->_customdata['id'];
         $templatename  = $this->_customdata['template'];
@@ -53,9 +55,13 @@ class fieldmapping_form extends moodleform {
         $userfields = helper::get_internalfield_list();
         $localfields = $defaultselect + $userfields;
         $remotefields = helper::get_externalfield_list($templatename, $pokid);
+        $mandatoryfields = helper::get_mandatoryfield_list($templatename, $pokid);
+
+        $pokrecord = pokcertificate::get_record(['id' => $pokid]);
 
         $html =
-            '<table class="fieldlist">
+            '<div class="table-responsive ">
+            <table class="fieldlist">
             <thead>
                 <tr>
                 <th class="header c0 fieldmapheader" style="" scope="col">' .
@@ -68,36 +74,65 @@ class fieldmapping_form extends moodleform {
             <tbody>';
         $mform->addElement('html', $html);
 
+        foreach ($mandatoryfields as $key => $value) {
+
+            if ($key == 'institution') {
+                $fieldvalue = get_config('mod_pokcertificate', 'institution');
+            }
+            if ($key == 'title') {
+                $fieldvalue = $pokrecord->get('title');
+            }
+            if ($key == 'date') {
+                $fieldvalue = date('d-m-Y');
+            }
+            if ($key == 'achiever') {
+                $fieldvalue = get_string('userfullname', 'pokcertificate');
+            }
+            $mform->addElement('html', '<tr class="">
+                                            <td class="cell c0 " style=""></td>
+                                            <td class="cell c1 fieldmapfields" style="">');
+            $mform->addElement(
+                'select',
+                'mandatoryfield_' . $key . '',
+                '',
+                [$key => $value],
+                ['class' => 'templatefields']
+            );
+            $mform->addElement('html', '</td>');
+            $mform->addElement('html', '<td class="cell c2 fieldmapfields" style=""><span></span></td>
+                                                              <td class="cell c3 fieldmapfields" style="">');
+            $mform->addElement('text', 'userfield_' . $key . '', '', ['class' => 'textfield userfields', 'readonly' => 'readonly']);
+            $mform->addElement('html', '</td>');
+            $mform->addElement('html', '</tr>');
+            $mform->setDefault('userfield_' . $key, $fieldvalue);
+            $mform->setType('userfield_' . $key, PARAM_TEXT);
+        }
         $i = 0;
         foreach ($remotefields as $key => $value) {
 
-            $fieldgrpelem = [];
-            $fieldgrpelem[] = &$mform->createElement('html', '<tr class="">
+            $mform->addElement('html', '<tr class="">
                                             <td class="cell c0 " style=""></td>
                                             <td class="cell c1 fieldmapfields" style="">');
-            $fieldgrpelem[] = &$mform->createElement(
+            $mform->addElement(
                 'select',
                 'templatefield_' . $i . '',
                 '',
                 [$key => $value],
                 ['class' => 'templatefields']
             );
-            $fieldgrpelem[] = &$mform->createElement('html', '</td>');
-            $fieldgrpelem[] = &$mform->createElement('html', '<td class="cell c2 fieldmapfields" style=""><span></span></td>
+            $mform->addElement('html', '</td>');
+            $mform->addElement('html', '<td class="cell c2 fieldmapfields" style=""><span></span></td>
                                                               <td class="cell c3 fieldmapfields" style="">');
-            $fieldgrpelem[] = &$mform->createElement('select', 'userfield_' . $i . '', '', $localfields, ['class' => 'userfields']);
-            $fieldgrpelem[] = &$mform->createElement('html', '</td>');
-            $fieldgrpelem[] = &$mform->createElement('html', '</tr>');
-            $mform->addGroup($fieldgrpelem, "fieldgrpelem[$i]", '', [' '], false, []);
-            $mform->addGroupRule("fieldgrpelem[$i]", [
-                'userfield_' . $i => [
-                    [get_string('fieldmappingerror', 'pokcertificate'), 'required', null, 'client'],
-                ],
-            ]);
+            $mform->addElement('select', 'userfield_' . $i . '', '', $localfields, ['class' => 'userfields']);
+            $mform->addRule('userfield_' . $i . '', get_string('required'), 'required', null, 'client');
+            $mform->addElement('html', '</td>');
+            $mform->addElement('html', '</tr>');
+
             $i++;
         }
+
         $html = '</tbody>
-        </table>';
+        </table></div>';
         $mform->addElement('html', $html);
 
         $mform->addElement('hidden', 'fieldcount', $i);
@@ -116,7 +151,6 @@ class fieldmapping_form extends moodleform {
         $mform->setType('pokid', PARAM_INT);
 
         $this->set_data($data);
-
         $this->add_action_buttons(true, get_string('save'));
     }
 }

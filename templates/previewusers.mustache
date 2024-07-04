@@ -54,6 +54,7 @@
                         <input type="hidden" name="userinputs" id = "id_userinputs" value = {{userinputs}}>
                         <input type="hidden" name="id" id = "id" value = {{userid}}>
                         <input type="hidden" name="cmid" id = "cmid" value = {{cmid}}>
+                        <input type = "hidden" name= "courseid"  id = "courseid" value = {{courseid}}>
                         <input type="hidden" name="flag" id = "flag" value = "1">
                         {{^validuser}}
                              <a href="{{config.wwwroot}}/mod/pokcertificate/updateprofile.php?cmid={{cmid}}&id={{userid}}&flag=1" target="_blank" style = "color:#e62e00">{{#str}}edit{{/str}}</a>

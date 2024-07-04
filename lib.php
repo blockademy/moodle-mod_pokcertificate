@@ -428,6 +428,7 @@ function mod_pokcertificate_extend_navigation_course(navigation_node $navigation
     global $PAGE;
 
     if (has_capability('mod/pokcertificate:managecoursecertificate', $context)) {
+
         $node = navigation_node::create(
             get_string('coursecertificatestatus', 'mod_pokcertificate'),
             new moodle_url(
@@ -441,22 +442,18 @@ function mod_pokcertificate_extend_navigation_course(navigation_node $navigation
         );
         $navigation->add_node($node);
     }
-}
-
-/**
- * Adds module specific settings to the settings block
- *
- * @param settings_navigation $settings The settings navigation object
- * @param navigation_node $poknode The node to add module settings to
- */
-function pokcertificate_extend_settings_navigation(settings_navigation $settings, navigation_node $poknode) {
-    $cmid = $settings->get_page()->cm->id;
-    $context = \context_module::instance($cmid);
-    if (has_capability('mod/pokcertificate:manageinstance', $context)) {
-        $poknode->add(
-            get_string('profilefields', 'pokcertificate'),
-            new moodle_url('/user/profile/index.php', []),
+    if (has_capability('mod/pokcertificate:awardcertificate', $context)) {
+        $params = ['courseid' => $PAGE->course->id];
+        $url = new \moodle_url('/mod/pokcertificate/generalcertificate.php', $params);
+        $node = navigation_node::create(
+            get_string('awardcertificate', 'mod_pokcertificate'),
+            $url,
+            navigation_node::TYPE_SETTING,
+            null,
+            null,
+            new pix_icon('i/competencies', '')
         );
+        $navigation->add_node($node);
     }
 }
 

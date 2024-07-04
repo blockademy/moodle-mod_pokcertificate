@@ -26,8 +26,16 @@ use mod_pokcertificate\form\searchfilter_form;
 
 require_once('../../config.php');
 
-global $OUTPUT, $PAGE;
+global $OUTPUT, $PAGE, $USER;
+
+$course = optional_param('courseid', 0, PARAM_INT);
 $context = \context_system::instance();
+if ($course != 0) {
+    $context = context_course::instance($course, MUST_EXIST);
+    if (!is_enrolled($context, $USER->id)) {
+        throw new \moodle_exception('usernotincourse');
+    }
+}
 require_capability('mod/pokcertificate:manageinstance', $context);
 require_capability('mod/pokcertificate:awardcertificate', $context);
 
@@ -40,7 +48,6 @@ $PAGE->set_title($heading);
 $PAGE->set_url($url);
 require_login();
 
-$course = optional_param('course', 0, PARAM_INT);
 $studentid = optional_param('studentid', '', PARAM_RAW);
 $studentname = optional_param('studentname', '', PARAM_RAW);
 $email = optional_param('email', '', PARAM_RAW);
@@ -53,17 +60,22 @@ if (!empty($course) || !empty($studentid) || !empty($studentname) || !empty($ema
 }
 
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
-$mform = new searchfilter_form('', ['viewtype' => 'generalcertificate']);
+$mform = new searchfilter_form('', ['viewtype' => 'generalcertificate', 'courseid' => $course]);
 $mform->set_data([
     'course' => $course,
     'studentid' => $studentid,
     'studentname' => $studentname,
     'email' => $email,
     'certificatestatus' => $certificatestatus,
+
 ]);
 
 if ($mform->is_cancelled()) {
-    redirect(new \moodle_url('/mod/pokcertificate/generalcertificate.php'));
+    $urlparams = [];
+    if ($course != 0) {
+        $urlparams = ['courseid' => $course];
+    }
+    redirect(new \moodle_url('/mod/pokcertificate/generalcertificate.php', $urlparams));
 } else if ($userdata = $mform->get_data()) {
     redirect(new \moodle_url(
         '/mod/pokcertificate/generalcertificate.php',

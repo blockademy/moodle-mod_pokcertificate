@@ -52,6 +52,7 @@ $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
+
 // Save selected template definition.
 if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
     $templatename = base64_decode($tempname);
@@ -69,7 +70,6 @@ if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
             $pokid = $pokcertificate->id;
             $templateid = $pokcertificate->templateid;
             $fielddata = helper::get_mapped_fields($pokid);
-
             $mform = new fieldmapping_form(
                 $url,
                 [
@@ -90,6 +90,7 @@ if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
                 }
             } else {
                 echo $OUTPUT->header();
+                $renderer->navigate_usercustomfield();
                 $mform->display();
             }
         } else {

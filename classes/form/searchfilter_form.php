@@ -119,13 +119,14 @@ class searchfilter_form extends moodleform {
 
                 // Get all courses from the database.
                 $courses = ['' => get_string('selectcourse', 'mod_pokcertificate')];
+
                 $sql = "SELECT id, fullname
                           FROM {course}
                          WHERE category > 0
-                      ORDER BY fullname";
+                      ORDER BY fullname ";
                 $courses = $courses + $DB->get_records_sql_menu($sql);
 
-                if (!empty($courses)) {
+                if (!empty($courses) && has_capability('mod/pokcertificate:manageinstance', \context_system::instance())) {
                     // Add a select element to the form for choosing a course.
                     $mform->addElement(
                         'autocomplete',

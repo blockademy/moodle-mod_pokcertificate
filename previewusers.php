@@ -26,12 +26,19 @@ require('../../config.php');
 
 use mod_pokcertificate\helper;
 
-global $CFG, $OUTPUT, $PAGE;
+global $CFG, $OUTPUT, $PAGE, $USER;
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 $selecteditems = optional_param_array('selectedusers', null, PARAM_RAW);
-
+$courseid = optional_param('courseid', 0, PARAM_INT);
 $context = \context_system::instance();
+if ($course != 0) {
+    $context = context_course::instance($course, MUST_EXIST);
+    if (!is_enrolled($context, $USER->id)) {
+        throw new \moodle_exception('usernotincourse');
+    }
+}
 require_capability('mod/pokcertificate:manageinstance', $context);
+require_capability('mod/pokcertificate:awardcertificate', $context);
 
 $url = new moodle_url('/mod/pokcertificate/previewusers.php', []);
 $heading = get_string('awardcertificate', 'mod_pokcertificate');

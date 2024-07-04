@@ -402,7 +402,12 @@ padding: 5px 70px 10px 10px;
 }
 
 
-#page-mod-pokcertificate-view .fieldmapfields .templatefields .custom-select{
+#page-mod-pokcertificate-view .fieldmapfields .templatefields .custom-select,
+#page-mod-pokcertificate-view .fieldmapfields .userfields .custom-select{
+    width:100%;
+}
+
+#page-mod-pokcertificate-view .fieldmapfields .userfields .textfield{
     width:100%;
 }
 
@@ -411,7 +416,7 @@ padding: 5px 70px 10px 10px;
 }
 
 #page-mod-pokcertificate-view div#fgroup_id_buttonar {
-    padding: 0px 15px 15px 80px;
+    padding: 1em 1em 1em 10em;
 }
 /* Float four columns side by side */
 .verify .column {
@@ -467,8 +472,20 @@ background-color: #ffffff;
 #page-mod-pokcertificate-view .certificates_container .certradio{
     visibility: hidden;
 }
-
+#page-mod-pokcertificate-view .certificates_container button.btn.selection_btn.btn-light {
+    border-color: #0c0c0c2e;
+}
 /*#page-mod-pokcertificate-view .certificates_container .certradio .btn-light:hover {
     padding : 0em 1em 0em 1em;
 }*/
 
+#page-mod-pokcertificate-view td.cell.fieldmapfields .fitem .col-form-label{
+    display:none !important;
+}
+#page-mod-pokcertificate-view td.cell.fieldmapfields .fitem .felement{
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+}
+#page-mod-pokcertificate-view table.fieldlist {
+    margin-top: 1rem;
+}
