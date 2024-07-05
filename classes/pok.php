@@ -606,9 +606,10 @@ class pok {
      *
      * @param \stdClass $pokcertificate
      * @param \cm_info $cm
+     * @param bool $task
      * @return array
      */
-    public static function get_users_to_issue($pokcertificate, $cm) {
+    public static function get_users_to_issue($pokcertificate, $cm, $task = false) {
 
         // Get users already issued subquery.
         $users = self::get_notissued_users_list(
@@ -620,7 +621,9 @@ class pok {
         // Filter only users with access to the activity.
         $info = new info_module($cm);
         $filteredusers = $info->filter_user_list($users);
-
+        if ($task) {
+            return $filteredusers;
+        }
         $users = [];
         foreach ($filteredusers as $filtereduser) {
 

@@ -66,7 +66,7 @@ class issue_certitficate_user extends \core\task\scheduled_task {
                     continue;
                 }
                 // Get all the users with requirements that had not been issued.
-                $users = pok::get_users_to_issue($pokcertificate, $cm);
+                $users = pok::get_users_to_issue($pokcertificate, $cm, true);
 
                 // Issue the certificate.
                 foreach ($users as $user) {

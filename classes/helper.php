@@ -238,7 +238,7 @@ class helper {
     ) {
         global $DB;
 
-        $countsql = "SELECT count(u.id) ";
+        $countsql = "SELECT count(DISTINCT(u.id)) ";
         $selectsql = "SELECT DISTINCT(u.id),u.* ";
         $fromsql = "FROM {user} u ";
         $joinsql = " LEFT JOIN {user_info_data} d ON d.userid = u.id
@@ -246,10 +246,24 @@ class helper {
         $wheresql = " WHERE u.deleted = 0
                      AND u.suspended = 0
                      AND u.id > 2 ";
-        $wheresql .= " AND CASE WHEN EXISTS
-                    (select 1 from {user_info_field} limit 1)
-                    THEN (u.idnumber IS NULL OR u.idnumber = '' OR d.data IS NULL OR d.data = '')
-                    ELSE (u.idnumber IS NULL OR u.idnumber = '') END ";
+        $wheresql .= " AND (
+                        EXISTS (
+                            SELECT 1 FROM mdl_user_info_field LIMIT 1
+                        )
+                        AND (
+                            u.idnumber IS NULL
+                            OR u.idnumber = ''
+                            OR d.data IS NULL
+                            OR d.data = ''
+                        )
+                        OR NOT EXISTS (
+                            SELECT 1 FROM mdl_user_info_field LIMIT 1
+                        )
+                        AND (
+                            u.idnumber IS NULL
+                            OR u.idnumber = ''
+                        )
+                    )";
 
         $queryparam = [];
         $conditions = [];
@@ -325,6 +339,7 @@ class helper {
                     pc.name as activity,
                     u.id as userid,
                     u.firstname,
+                    u.lastname,
                     u.idnumber,
                     u.email,
                     cc.timecompleted as completiondate,
@@ -394,7 +409,7 @@ class helper {
             foreach ($certificates as $c) {
                 $list = [];
                 $list['activity'] = $c->activity;
-                $list['firstname'] = $c->firstname;
+                $list['firstname'] = $c->firstname . ' ' . $c->lastname;
                 $list['email'] = $c->email;
                 $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
                 $list['enrolldate'] = pokcertificate_courseenrollmentdate($courseid, $c->userid);
