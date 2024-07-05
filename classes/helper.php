@@ -409,7 +409,8 @@ class helper {
             foreach ($certificates as $c) {
                 $list = [];
                 $list['activity'] = $c->activity;
-                $list['firstname'] = $c->firstname . ' ' . $c->lastname;
+                $list['firstname'] = $c->firstname;
+                $list['lastname'] = $c->lastname;
                 $list['email'] = $c->email;
                 $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
                 $list['enrolldate'] = pokcertificate_courseenrollmentdate($courseid, $c->userid);

@@ -67,7 +67,7 @@ $mform->set_data([
     'studentname' => $studentname,
     'email' => $email,
     'certificatestatus' => $certificatestatus,
-
+    'courseid' => $courseid,
 ]);
 
 if ($mform->is_cancelled()) {
@@ -85,6 +85,7 @@ if ($mform->is_cancelled()) {
             'studentname' => $studentname,
             'email' => $email,
             'certificatestatus' => $certificatestatus,
+            'courseid' => $courseid,
         ]
     ));
 }

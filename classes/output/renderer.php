@@ -603,6 +603,7 @@ class renderer extends \plugin_renderer_base {
             'studentname' => $studentname,
             'email' => $email,
             'certificatestatus' => $certificatestatus,
+            'courseid' => $courseid,
         ];
         if ($courseid > 0) {
             $filters['courseid'] = $courseid;
