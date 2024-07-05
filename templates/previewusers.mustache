@@ -27,7 +27,7 @@
     <div class="small text-muted">
         <p class="text-right"><strong><i>{{#str}}validuserprofiles, mod_pokcertificate{{/str}}</i></strong></p>
     </div>
-    <table class="generaltable dataTable no-footer" role="grid">
+    <table class="generaltable dataTable no-footer" role="grid" id = "previewusers">
         <thead>
             <tr role="row">
                 <th>{{#str}}studentname,mod_pokcertificate{{/str}}</th>
@@ -70,7 +70,7 @@
     </table>
 
     <div class="d-flex justify-content-center mt-4">
-        <button id="award-certificate-btn" class="btn btn-primary">{{#str}}award, mod_pokcertificate{{/str}}</button>
+        <button id="award-certificate-btn" class="btn btn-primary" {{showbutton}}>{{#str}}award, mod_pokcertificate{{/str}}</button>
         <div class="loadElement"></div>
     </div>
 
@@ -80,18 +80,3 @@
         {{#str}}norecordavailable, mod_pokcertificate{{/str}}
     </div>
 {{/showdata}}
-
-
-<script>
-window.addEventListener("load", myFunction);
-function myFunction() {
-    $('table tr').each(function () {
-        var status = $(this).find('.profilestatus').val();
-        if (status && status == 1) {
-            $('#award-certificate-btn').prop('disabled', false);
-        } else {
-            $('#award-certificate-btn').prop('disabled', true);
-        }
-    });
-}
-</script>

@@ -538,7 +538,7 @@ class helper {
             $fromsql .= "AND (pci.id IS NULL ) ";
         }
 
-        $fromsql .= "ORDER BY ra.id DESC ";
+        $fromsql .= "ORDER BY pc.id DESC ";
 
         $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
         $records = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
@@ -715,6 +715,7 @@ class helper {
         $languages = get_string_manager()->get_list_of_languages();
         $list = [];
         $data = [];
+        $status = [];
 
         if ($useractivityids) {
             foreach ($useractivityids as $rec) {
@@ -729,6 +730,7 @@ class helper {
                 profile_load_custom_fields($user);
                 $cm = get_coursemodule_from_instance('pokcertificate', $activityid);
                 $validuser = self::check_usermapped_fielddata($cm, $user);
+
                 $pokcertificate = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
 
                 $list = [];
@@ -749,12 +751,21 @@ class helper {
                     new \moodle_url('/user/profile.php', ['id' => $user->id]),
                     $list['userid']
                 );
-
-                $data[] = $list;
+                $status[] = $list['status'];
+                if (!is_siteadmin()) {
+                    if ($validuser) {
+                        $data[] = $list;
+                    }
+                } else {
+                    $data[] = $list;
+                }
             }
         }
-
-        return ['data' => ($data)];
+        $showbutton = 'disabled';
+        if (in_array(get_string('complete', 'mod_pokcertificate'), $status)) {
+            $showbutton = 'enabled';
+        }
+        return ['data' => $data, 'showbutton' => $showbutton];
     }
 
     /**

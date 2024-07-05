@@ -725,6 +725,7 @@ class renderer extends \plugin_renderer_base {
 
         $records = helper::pokcertificate_userslist($userinputs);
         $records['showdata'] = $records['data'] ? true : false;
+        $records['showbutton'] = $records['showbutton'];
         $records['userinputs'] = implode(",", $userinputs);
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/previewusers', $records);
         return $return;

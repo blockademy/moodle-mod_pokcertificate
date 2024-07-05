@@ -489,8 +489,10 @@ class pok {
                                 $userfield = $field->get('userfield');
                                 if (strpos($field->get('userfield'), 'profile_field_') === 0) {
                                     $userprofilefield = substr($field->get('userfield'), strlen('profile_field_'));
-                                    $customparams[$param->name] = $user->profile[$userprofilefield];
-                                    $param->value = $user->profile[$userprofilefield];
+                                    if (isset($user->profile[$userprofilefield])) {
+                                        $customparams[$param->name] = $user->profile[$userprofilefield];
+                                        $param->value = $user->profile[$userprofilefield];
+                                    }
                                 } else {
                                     if ($user->$userfield == 'country') {
                                         $choices = get_string_manager()->get_list_of_countries();
