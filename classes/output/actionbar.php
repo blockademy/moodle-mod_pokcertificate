@@ -83,12 +83,8 @@ class actionbar {
                 '/mod/pokcertificate/fieldmapping.php',
                 ['id' => $this->cmid, 'temp' => base64_encode($template)]
             );
-            $pokid = pokcertificate::get_field('id', ['id' => $cm->instance]);
-            $remotefields = helper::get_externalfield_list(base64_encode($template), $pokid);
 
-            if ($remotefields) {
-                $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');
-            }
+            $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');
         }
         return new \url_select($menu, $menu[null], null, 'pokactionselect');
     }

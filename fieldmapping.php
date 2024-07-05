@@ -64,42 +64,32 @@ if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
     if ($templatedefinition) {
         $data = pok::save_template_definition($templateinfo, $templatedefinition, $cm);
 
-        $remotefields = helper::get_externalfield_list($tempname, $pokcertificate->id);
         $data = data_submitted();
-        if ($remotefields) {
-            $pokid = $pokcertificate->id;
-            $templateid = $pokcertificate->templateid;
-            $fielddata = helper::get_mapped_fields($pokid);
-            $mform = new fieldmapping_form(
-                $url,
-                [
-                    'data' => $fielddata, 'id' => $id, 'template' => $tempname,
-                    'templateid' => $templateid, 'pokid' => $pokid,
-                ] + (array)$data
-            );
+        $pokid = $pokcertificate->id;
+        $templateid = $pokcertificate->templateid;
+        $fielddata = helper::get_mapped_fields($pokid);
+        $mform = new fieldmapping_form(
+            $url,
+            [
+                'data' => $fielddata, 'id' => $id, 'template' => $tempname,
+                'templateid' => $templateid, 'pokid' => $pokid,
+            ] + (array)$data
+        );
 
-            $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
+        $redirecturl = new moodle_url('/course/view.php', ['id' => $cm->course]);
 
-            if ($mform->is_cancelled()) {
-                $certificateslink = new \moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
-                redirect($certificateslink);
-            } else if ($data = $mform->get_data()) {
-                $return = pok::save_fieldmapping_data($data);
-                if ($return) {
-                    redirect($redirecturl);
-                }
-            } else {
-                echo $OUTPUT->header();
-                $renderer->navigate_usercustomfield();
-                $mform->display();
+        if ($mform->is_cancelled()) {
+            $certificateslink = new \moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
+            redirect($certificateslink);
+        } else if ($data = $mform->get_data()) {
+            $return = pok::save_fieldmapping_data($data);
+            if ($return) {
+                redirect($redirecturl);
             }
         } else {
-            $preview = pok::preview_template($id);
-            if ($preview) {
-                $params = ['id' => $id];
-                $url = new moodle_url('/mod/pokcertificate/preview.php', $params);
-                redirect($url);
-            }
+            echo $OUTPUT->header();
+            $renderer->navigate_usercustomfield();
+            $mform->display();
         }
     } else {
         echo $OUTPUT->header();
