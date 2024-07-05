@@ -354,7 +354,9 @@ class mod_pokcertificate_external extends external_api {
                     $user = $inp[2];
                     $cm = get_coursemodule_from_instance('pokcertificate', $activityid);
                     $user = \core_user::get_user($user);
+                    profile_load_custom_fields($user);
                     $validuser = helper::check_usermapped_fielddata($cm, $user);
+
                     if ($validuser) {
                         pok::emit_certificate($cm->id, $user);
                         $emitcount++;

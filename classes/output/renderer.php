@@ -719,14 +719,17 @@ class renderer extends \plugin_renderer_base {
      * get_userlist
      *
      * @param  array $userinputs
+     * @param  int $courseid
      * @return void
      */
-    public function get_userslist_topreview($userinputs) {
+    public function get_userslist_topreview($userinputs, $courseid) {
 
         $records = helper::pokcertificate_userslist($userinputs);
         $records['showdata'] = $records['data'] ? true : false;
         $records['showbutton'] = $records['showbutton'];
+        $records['isadmin'] = (is_siteadmin()) ? true : false;
         $records['userinputs'] = implode(",", $userinputs);
+        $records['courseid'] = $courseid;
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/previewusers', $records);
         return $return;
     }

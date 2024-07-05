@@ -23,10 +23,16 @@
     {
     }
 }}
-{{#showdata}}
-    <div class="small text-muted">
+ <div class="small text-muted">
+        {{#isadmin}}
         <p class="text-right"><strong><i>{{#str}}validuserprofiles, mod_pokcertificate{{/str}}</i></strong></p>
+        {{/isadmin}}
+        {{^isadmin}}
+        <p class="text-right"><strong><i>{{#str}}validuserprofilesforteachers, mod_pokcertificate{{/str}}</i></strong></p>
+        {{/isadmin}}
     </div>
+{{#showdata}}
+
     <table class="generaltable dataTable no-footer" role="grid" id = "previewusers">
         <thead>
             <tr role="row">
@@ -78,5 +84,8 @@
 {{^showdata}}
     <div class="alert alert-info alert-block fade in  alert-dismissible" role="alert" data-aria-autofocus="true">
         {{#str}}norecordavailable, mod_pokcertificate{{/str}}
+    </div>
+     <div class="w-full text-center mt-3">
+    <a href = "{{config.wwwroot}}/mod/pokcertificate/generalcertificate.php{{#courseid}}?courseid={{courseid}}{{/courseid}}" class="btn btn-primary">{{#str}}continue{{/str}}</a>
     </div>
 {{/showdata}}

@@ -277,6 +277,7 @@ $string['generalcertstatus'] = 'General Certitifacte status';
 $string['completiondetail:submit'] = 'Must receive certificate';
 $string['fieldmappingerror'] = 'Please select user field to be mapped';
 $string['validuserprofiles'] = 'Note: Certificates are issued to users whose profile status is Complete.';
+$string['validuserprofilesforteachers'] = 'Note: Teachers can view/issue certificates to users whose profile status is Complete. ';
 $string['profilefields'] = 'User Profile Fields';
 // Privacy provider strings.
 $string['privacy:metadata:pokcertificate_issues'] = 'The list of issued POKcertificates';
