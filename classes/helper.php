@@ -321,7 +321,7 @@ class helper {
         global $DB;
         $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
         $countsql = "SELECT count(ra.id) ";
-        $selectsql = "SELECT UUID(),
+        $selectsql = "SELECT DISTINCT(u.id),
                     pc.name as activity,
                     u.id as userid,
                     u.firstname,
@@ -429,7 +429,8 @@ class helper {
      * such as student ID, pagination settings, and offset. It prepares the data for awarding general certificates
      * by selecting relevant user information and formatting it appropriately.
      *
-     * @param int $courseid The ID of the course to retrieve participants from.
+     * @param int $course The ID of the course filter to retrieve participants from for admin.
+     * @param int $courseid The ID of the course to retrieve participants from for teacher.
      * @param int $studentid The student ID to search for (optional).
      * @param string $studentname The student name to search for (optional).
      * @param string $email The student email to search for (optional).
