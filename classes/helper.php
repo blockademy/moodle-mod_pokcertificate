@@ -830,13 +830,13 @@ class helper {
      * This function retrieves and returns custom fields associated with the specified user.
      *
      * @param object $user The user object or ID for which custom fields are to be loaded.
-     * @return array|null Associative array of custom fields as key-value pairs, or null if no custom fields found.
+     * @return object $user with custom fields as key-value pairs, or null if no custom fields found.
      */
     public static function load_user_custom_fields($user) {
         $usercustomfields = new \stdClass();
         $fields = profile_get_user_fields_with_data($user->id);
         foreach ($fields as $formfield) {
-            $usercustomfields->{$formfield->field->shortname} = $formfield->data;
+            $usercustomfields->{$formfield->field->shortname} = strip_tags($formfield->data);
         }
         $user->profile = (array)$usercustomfields;
         return $user;
