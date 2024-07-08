@@ -37,6 +37,7 @@ global $USER, $PAGE;
 $id = optional_param('cmid', 0, PARAM_INT);
 $userid = required_param('id', PARAM_INT);
 $flag = optional_param('flag', 0, PARAM_BOOL);
+$courseid = optional_param('courseid', 0, PARAM_INT);
 
 if ($id > 0) {
 
@@ -93,7 +94,11 @@ if ($id > 0) {
             // Save custom profile fields data.
             profile_save_data($userdata);
             if ($flag) {
-                $redirecturl = new moodle_url('/mod/pokcertificate/generalcertificate.php', ['courseid' => $cm->course]);
+                $params = [];
+                if ($courseid != 0) {
+                    $params['courseid'] = $courseid;
+                }
+                $redirecturl = new moodle_url('/mod/pokcertificate/generalcertificate.php', $params);
             } else {
                 $redirecturl = new moodle_url('/mod/pokcertificate/view.php', ['id' => $id, 'flag' => 1]);
             }
