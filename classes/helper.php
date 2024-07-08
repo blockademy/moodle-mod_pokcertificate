@@ -727,12 +727,16 @@ class helper {
                 $activityid = $inp[1];
                 $user = $inp[2];
                 $user = \core_user::get_user($user);
-                profile_load_custom_fields($user);
+                $user = self::load_user_custom_fields($user);
+
                 $cm = get_coursemodule_from_instance('pokcertificate', $activityid);
                 $validuser = self::check_usermapped_fielddata($cm, $user);
 
                 $pokcertificate = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
-
+                $isadmin = false;
+                if (is_siteadmin() || has_capability('moodle/site:config', \context_system::instance())) {
+                    $isadmin = true;
+                }
                 $list = [];
                 $list['userid'] = $user->id;
                 $list['cmid'] = $cm->id;
@@ -751,14 +755,9 @@ class helper {
                     new \moodle_url('/user/profile.php', ['id' => $user->id]),
                     $list['userid']
                 );
+                $list['isadmin'] = $isadmin;
                 $status[] = $list['status'];
-                if (!is_siteadmin()) {
-                    if ($validuser) {
-                        $data[] = $list;
-                    }
-                } else {
-                    $data[] = $list;
-                }
+                $data[] = $list;
             }
         }
         $showbutton = 'disabled';
@@ -823,5 +822,23 @@ class helper {
             }
         }
         return true;
+    }
+
+    /**
+     * Loads custom fields for a given user.
+     *
+     * This function retrieves and returns custom fields associated with the specified user.
+     *
+     * @param object $user The user object or ID for which custom fields are to be loaded.
+     * @return array|null Associative array of custom fields as key-value pairs, or null if no custom fields found.
+     */
+    public static function load_user_custom_fields($user) {
+        $usercustomfields = new \stdClass();
+        $fields = profile_get_user_fields_with_data($user->id);
+        foreach ($fields as $formfield) {
+            $usercustomfields->{$formfield->field->shortname} = $formfield->data;
+        }
+        $user->profile = (array)$usercustomfields;
+        return $user;
     }
 }

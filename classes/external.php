@@ -331,7 +331,7 @@ class mod_pokcertificate_external extends external_api {
         global $CFG;
 
         require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
-        $params = self::validate_parameters(
+        self::validate_parameters(
             self::emit_general_certificate_parameters(),
             ['userinputs' => $userinputs, 'courseid' => $courseid]
         );
@@ -339,7 +339,7 @@ class mod_pokcertificate_external extends external_api {
         $context = \context_system::instance();
 
         if ($courseid > 0) {
-            $context = context_course::instance($courseid, MUST_EXIST);
+            $context = \context_course::instance($courseid, MUST_EXIST);
         }
         self::validate_context($context);
         if (has_capability('mod/pokcertificate:awardcertificate', $context)) {
@@ -354,7 +354,7 @@ class mod_pokcertificate_external extends external_api {
                     $user = $inp[2];
                     $cm = get_coursemodule_from_instance('pokcertificate', $activityid);
                     $user = \core_user::get_user($user);
-                    profile_load_custom_fields($user);
+                    $user = helper::load_user_custom_fields($user);
                     $validuser = helper::check_usermapped_fielddata($cm, $user);
 
                     if ($validuser) {

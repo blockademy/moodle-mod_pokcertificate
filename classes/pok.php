@@ -385,7 +385,7 @@ class pok {
     public static function emit_certificate($cmid, $user) {
 
         $user = \core_user::get_user($user->id);
-        profile_load_custom_fields($user);
+        $user = helper::load_user_custom_fields($user);
 
         $cm = self::get_cm_instance($cmid);
         $emitcertificate = new \stdClass();

@@ -63,7 +63,12 @@
                         <input type = "hidden" name= "courseid"  id = "courseid" value = {{courseid}}>
                         <input type="hidden" name="flag" id = "flag" value = "1">
                         {{^validuser}}
-                             <a href="{{config.wwwroot}}/mod/pokcertificate/updateprofile.php?cmid={{cmid}}&id={{userid}}&flag=1" target="_blank" style = "color:#e62e00">{{#str}}edit{{/str}}</a>
+                        {{#isadmin}}
+                            <a href="{{config.wwwroot}}/mod/pokcertificate/updateprofile.php?cmid={{cmid}}&id={{userid}}&flag=1" target="_blank" style = "color:#e62e00" disabled>{{#str}}edit{{/str}}</a>
+                        {{/isadmin}}
+                        {{^isadmin}}
+                            <span style = "color:#7c674c"><i>{{#str}}cannotedit, mod_pokcertificate{{/str}}</i></span>
+                        {{/isadmin}}
                         {{/validuser}}
                         {{#validuser}}
                         <span style = "color:#094478">{{status}}</span>
