@@ -489,3 +489,51 @@ background-color: #ffffff;
 #page-mod-pokcertificate-view table.fieldlist {
     margin-top: 1rem;
 }
+
+#pokintroview .verification_section {
+    background: #ebebff;
+    padding: 18px 20px;
+    border-radius: 16px;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+#pokintroview .verify_text {
+    color: #552aa8;
+}
+#pokintroview .verify_desc {
+    font-size: 12px;
+}
+#pokintroview .verify_btn {
+    border: 1px solid;
+    background: #5124a6;
+    font-weight: 600;
+    padding: 8px 14px;
+}
+#pokintroview .credential_link {
+    padding: 9px 14px;
+    border-radius: 15px;
+    color: black;
+    background: #ebebff;
+}
+#pokintroview .credential_link:hover {
+    text-decoration: none;
+}
+#pokintroview .credential_desc {
+    font-size: large;
+}
+#pokintroview .contact_section {
+    border: 1px solid #ddd;
+    padding: 15px 14px;
+    border-radius: 20px;
+    gap: 2rem;
+}
+#pokintroview .contact_section .envelope {
+    font-size: 45px;
+    color: grey;
+}
+#pokintroview .contact_section .contact_link {
+    font-size: 12px;
+}
+#pokintroview .contact_section .contact_link a:hover {
+    text-decoration: none;
+}

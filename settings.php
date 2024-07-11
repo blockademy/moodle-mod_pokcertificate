@@ -31,12 +31,7 @@ if ($ADMIN->fulltree) {
         new admin_setting_heading(
             'pokcertificate/settings_msg',
             '',
-            '<div class="" >' . get_string('verifyauth', 'pokcertificate') . '
-            <a target="_blank" class="bt btn-primary"
-            style="padding: 7px 18px; border-radius: 4px; color: white; background-color: #2578dd; margin-left: 5px;"
-            href="' . $CFG->wwwroot . '/mod/pokcertificate/pokcertificate.php' . '" >' .
-                get_string('clickhere', 'mod_pokcertificate') . '
-            </a></div><br>'
+            $OUTPUT->render_from_template('mod_pokcertificate/setting_view', [])
         )
     );
 }

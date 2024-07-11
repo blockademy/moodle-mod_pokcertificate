@@ -1,0 +1,61 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_pokcertificate/setting_view
+
+    Describe template Setting view
+
+    Example context (json):
+    {
+    }
+}}
+<div id="pokintroview">
+    <div class="container-lg">
+        <div class="verification_section mb-4 d-flex align-items-center justify-content-between">
+            <div class="">
+                <img src="{{config.wwwroot}}/mod/pokcertificate/pix/settingview/lock.png" alt="Lock" width="50px" class="img-fluid">
+            </div>
+            <div class="mr-auto">
+                <h6 class="verify_text mb-0">{{#str}}verfiytext, mod_pokcertificate{{/str}}</h6>
+                <p class="verify_desc mb-0">{{#str}}verfiydesc, mod_pokcertificate{{/str}}</p>
+            </div>
+            <div>
+                <a href="{{config.wwwroot}}/mod/pokcertificate/pokcertificate.php" class="btn verify_btn text-white">Verify Token</a>
+            </div>
+        </div>
+        <div class="row my-5">
+            <div class="col-md-7">
+                <img src="{{config.wwwroot}}/mod/pokcertificate/pix/settingview/pok.png" alt="POK_logo" width="140px" class="img-fluid">
+                <a href="#" class="credential_link">{{#str}}credential_link, mod_pokcertificate{{/str}}</a>
+                <h2 class="credential_title my-4">{{#str}}credential_title, mod_pokcertificate{{/str}}</h2>
+                <p class="credential_desc mb-5">{{#str}}credential_desc, mod_pokcertificate{{/str}}</p>
+                <div class="contact_section d-flex align-items-center mb-4">
+                    <img src="{{config.wwwroot}}/mod/pokcertificate/pix/settingview/ic_mail.svg" alt="mail" class="img-fluid">
+                    <div class="contact">
+                        <h6 class="contact_text mb-0">{{#str}}contact_text, mod_pokcertificate{{/str}}</h6>
+                        <p class="contact_link mb-0">{{#str}}contact_link, mod_pokcertificate{{/str}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div>
+                    <img src="{{config.wwwroot}}/mod/pokcertificate/pix/settingview/image.png" alt="main_img" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -291,3 +291,12 @@ $string['privacy:metadata:pokcertificate_issues:certificateurl'] = 'The POKcerti
 $string['privacy:metadata:pokcertificate_issues:pokcertificateid'] = 'The POKcertificate code that belongs to the user';
 $string['privacy:metadata:pokcertificate_issues:userid'] = 'The ID of the user who was issued the POKcertificate';
 $string['invalidinputs'] = 'Invalid inputs received';
+
+
+$string['verfiytext'] = 'Verify your Authentication Token';
+$string['verfiydesc'] = 'Enter the token generated in POK to link your moodle activities and issue credentials automatically';
+$string['credential_link'] = 'Digital credentials';
+$string['credential_title'] = 'Issue Verifiable Credentials, Micro-Credentials, Certificates, Diplomas, Badges and Proof of Assistance as NFTs in the Blockchain';
+$string['credential_desc'] = 'With POK,issue credentials to students enrolled in your courses,ensuring authenticity and transparency on the block chain.';
+$string['contact_text'] = "If you don't have your authentication token";
+$string['contact_link'] = 'Contact us at <a href="#">contacto@pok.tech</a> to get it';
