@@ -338,7 +338,7 @@ class pok {
                     $data['name'] = $template;
                     $data['cmid'] = ($cmid) ?? $cmid;
                     $data['selectedtemplate'] = ($templaterecord &&
-                        $templaterecord->get('templatename') == $template) ? true : false;
+                        $templaterecord->get('templatename') === $template) ? true : false;
                     $data['certimage'] = (!empty($templatepreview)) ? trim($templatepreview, '"') : '';
                     $templates['certdata'][] = $data;
                 }

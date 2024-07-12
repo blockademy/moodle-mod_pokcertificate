@@ -41,13 +41,9 @@
 #page-mod-pokcertificate-view  .optradio {
     margin-right: 0.5rem;
 }
-
-
 #page-mod-pokcertificate-view .certbutton{
     margin: 10px 20px 10px 140px;
 }
-
-
 /* Style the tab */
 #page-admin-mod-pokcertificate-pokcertificate .tab {
     overflow: hidden;
@@ -87,7 +83,6 @@
     padding: 5px 5px 5px 10px;
     color: red;
   }
-
 
   #page-admin-mod-pokcertificate-pokcertificate  .success-msg {
     border-left: 3px solid green;
@@ -307,7 +302,6 @@ right: calc(var(--card-padding) + var(--radio-border-width));
 top: calc(var(--card-padding) + var(--radio-border-width));
 }
 
-
 #page-mod-pokcertificate-view .template-details {
 /*border: var(--radio-border-width) solid var(--color-gray);*/
 border-radius: var(--card-radius);
@@ -355,7 +349,6 @@ font-weight: bold;
 line-height: 1em;
 }
 
-
 #page-mod-pokcertificate-view .hidden-visually {
 border: 0;
 clip: rect(0, 0, 0, 0);
@@ -388,7 +381,6 @@ cursor: pointer; transition: background-color 0.3s ease;
 }
 #loading-button:hover { background-color: #2980b9; }
 
-
 #page-mod-pokcertificate-view th.header.fieldmapheader{
 padding: 5px 70px 10px 10px;
 }
@@ -400,7 +392,6 @@ padding: 5px 70px 10px 10px;
 #page-mod-pokcertificate-view td.cell.fieldmapfields .templatefields{
     min-height: 60px;
 }
-
 
 #page-mod-pokcertificate-view .fieldmapfields .templatefields .custom-select,
 #page-mod-pokcertificate-view .fieldmapfields .userfields .custom-select{
@@ -455,7 +446,6 @@ padding: 16px;
 text-align: center;
 background-color: #ffffff;
 }
-
 
 .template_cat_container label{
     display: inline-flex;
@@ -537,3 +527,30 @@ background-color: #ffffff;
 #pokintroview .contact_section .contact_link a:hover {
     text-decoration: none;
 }
+.pokcertificateloader {
+    width:100%;
+    height:100%;
+    position:fixed;
+    top:0;
+    left:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#ffffffcd;
+    z-index:9999;
+    flex-direction: column;
+    gap: 1rem;
+}
+.pokcertificateloader .loading-spinner {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    border: 10px solid rgba(230, 230, 230, .3);
+    border-radius: 50%;
+    border-top-color: #3dc9e5;
+    animation: spin 1s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }

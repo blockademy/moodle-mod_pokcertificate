@@ -49,7 +49,7 @@ if (empty($options['printintro'])) {
 $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_url('/mod/pokcertificate/certificates.php', []);
-$PAGE->set_pagelayout('certificates');
+$PAGE->set_subpage('certificates');
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);
 if (!$PAGE->activityheader->is_title_allowed()) {
@@ -60,6 +60,7 @@ $PAGE->activityheader->set_attrs($activityheader);
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 echo $OUTPUT->header();
+echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
 echo $renderer->action_bar($id, $PAGE->url);
 echo $renderer->show_certificate_templates($id);
 echo $OUTPUT->footer();

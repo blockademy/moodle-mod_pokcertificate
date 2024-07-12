@@ -46,12 +46,12 @@
                 {{#certdata}}
                 <div class="card certificate_card">
                     <input type="hidden" name="id" id = "id" value = {{cmid}}>
-                    <input name="temp" class="certradio" type="radio" {{#selectedtemplate}} checked="checked" {{/selectedtemplate}} value="{{tempname}}">
+                    <input name="temp" class="certradio" type="radio" value="{{tempname}}">
                     <span class="template-details">
                     <span class="template-name ">{{name}}</span>
                         <img src="{{certimage}}" alt="" class="">
                         <div class="d-flex justify-content-end mt-3">
-                            <button type="button" class="btn selection_btn btn-light">{{#str}}select{{/str}}</button>
+                            <button type="button" class="btn selection_btn {{#selectedtemplate}} btn-success{{/selectedtemplate}}{{^selectedtemplate}}btn-light{{/selectedtemplate}}">{{#str}}select{{/str}}</button>
                         </div>
                     </span>
                 </div>
@@ -73,4 +73,5 @@
             $(this).removeClass('btn-light').addClass('btn-success');
         });
     });
+
 {{/js}}

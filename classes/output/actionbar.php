@@ -30,8 +30,8 @@ use mod_pokcertificate\persistent\pokcertificate_templates;
 class actionbar {
 
     /** @var int $cmid The course module id. */
-    private $cmid;
-
+    protected $cmid;
+    protected $pageurl;
     /**
      * The class constructor.
      *
@@ -70,26 +70,31 @@ class actionbar {
         global $PAGE;
 
         $menu = [];
-        $menu[null] = get_string('previewcertificate', 'mod_pokcertificate');
-        $selected = $menu[null];
         if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
+
+            $previewlink = new \moodle_url('/mod/pokcertificate/preview.php', ['id' => $this->cmid]);
+            $menu[$previewlink->out(false)] = get_string('previewcertificate', 'mod_pokcertificate');
+
             $certificateslink = new \moodle_url('/mod/pokcertificate/certificates.php', ['id' => $this->cmid]);
             $menu[$certificateslink->out(false)] = get_string('certificateslist', 'mod_pokcertificate');
+
             $cm = get_coursemodule_from_id('pokcertificate', $this->cmid, 0, false, MUST_EXIST);
             $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
             $template = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);
+
             $fieldmappinglink = new \moodle_url(
                 '/mod/pokcertificate/fieldmapping.php',
                 ['id' => $this->cmid, 'temp' => base64_encode($template)]
             );
             $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');
-            if ($PAGE->pagelayout === 'certificates') {
-                $selected = $menu[$certificateslink->out(false)];
-            } else if ($PAGE->pagelayout === 'fieldmapping') {
-                $selected = $menu[$fieldmappinglink->out(false)];
+
+            if ($PAGE->subpage === 'certificates') {
+                return new \url_select($menu, $certificateslink, null, 'pokactionselect');
+            } else if ($PAGE->subpage === 'fieldmapping') {
+                return new \url_select($menu, $fieldmappinglink, null, 'pokactionselect');
+            } else {
+                return new \url_select($menu, $previewlink, null, 'pokactionselect');
             }
         }
-
-        return new \url_select($menu, $selected, null, 'pokactionselect');
     }
 }

@@ -43,7 +43,7 @@ admin_externalpage_setup('managemodules');
 
 echo $OUTPUT->header();
 echo $OUTPUT->container_start();
-
+echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 echo $renderer->display_tabs();
 $data = new stdClass();

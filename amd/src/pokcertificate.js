@@ -48,8 +48,6 @@ const verify = function(e){
     var institution = $("#id_institution").val();
     var authtoken = $("#id_authtoken").val();
     var prodtype = $("#id_prodtype").val();
-    var loadElement = $('.loadElement');
-    var loadingIcon = LoadingIcon.addIconToContainerWithPromise(loadElement);
 
     $("#verify_response").css("display", "none");
     Str.get_strings([
@@ -57,7 +55,7 @@ const verify = function(e){
         {key: 'notverified', component: 'mod_pokcertificate'},
         {key: 'verified', component: 'mod_pokcertificate'},
     ]).then(function(s) {
-            $('#loading-image').show();
+            $('.pokcertificateloader').fadeIn();
             var promises = Ajax.call([
                 {
                     methodname:SERVICES.VERIFY_AUTHENTICATION,
@@ -65,14 +63,10 @@ const verify = function(e){
                 }
             ]);
             promises[0].done(function(data) {
-               loadingIcon.resolve();
-
                 if(data.status == 1){
-
                     $("#verifyresponse").html('<i class="notverified fa-solid fa-circle-xmark"></i>' +
                                                 '<span">' +s[1]+'</span>');
                 }else{
-
                     $("#verifyresponse").html('<i class="verified fa-solid fa-circle-check"></i>' +
                                                 '<span>' +s[2]+ '</span>');
                     var resp = JSON.parse(data.response);
