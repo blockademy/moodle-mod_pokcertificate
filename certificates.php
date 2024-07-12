@@ -49,7 +49,6 @@ if (empty($options['printintro'])) {
 $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_url('/mod/pokcertificate/certificates.php', []);
-$PAGE->set_subpage('certificates');
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);
 if (!$PAGE->activityheader->is_title_allowed()) {
