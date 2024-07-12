@@ -29,13 +29,14 @@
 </div>
 
 {{#js}}
-    $(document).ready(function() {
-      // Show loader on page load
-      $('.pokcertificateloader').show();
 
-      // Hide loader after page content has fully loaded
-      $(window).on("load", function() {
-        $('.pokcertificateloader').fadeOut("slow");
-      });
-    });
+     $(document).ready(function(){
+        var pokcertificateloader = $('.pokcertificateloader');
+        pokcertificateloader.hide();
+     });
+    $(window).on("beforeunload", function(){
+        var pokcertificateloader = $('.pokcertificateloader');
+        pokcertificateloader.show();
+     });
 {{/js}}
+
