@@ -82,6 +82,7 @@ $string['modulename_help'] = 'POK Certificates allows administrators and teacher
     <span class="p-5"><b> * Participation badge: </b>Awarded to students who attend a specified number of classes or activities.<br></span>
     <span class="p-5"><b> * Micro-credentials: </b>Recognize specific skills learned during the course, such as completing a module or passing an exam.<br></span>
 ';
+$string['pluginname'] = 'POK Certificate';
 // Settings.
 $string['qa'] = 'QA';
 $string['live'] = 'LIVE';
