@@ -43,7 +43,7 @@ $string['legacyfiles'] = 'Migration of old course file';
 $string['legacyfilesactive'] = 'Active';
 $string['legacyfilesdone'] = 'Finished';
 
-$string['modulename_link'] = 'mod/pokcertificate/view';
+$string['modulename_link'] = 'https://www.pok.tech/';
 $string['optionsheader'] = 'Display options';
 $string['pokcertificate-mod-pokcertificate-x'] = 'Any pokcertificate module pokcertificate';
 
@@ -70,18 +70,18 @@ $string['printheadingexplain'] = 'Display pokcertificate name above content?';
 $string['modulename'] = 'POK Certificate';
 $string['modulenameplural'] = 'POK Certificates';
 
-$string['modulename_help'] = 'The pokcertificate module enables a teacher to create a web pokcertificate resource using the text editor. A pokcertificate can display text, images, sound, video, web links and embedded code, such as Google maps.
+$string['modulename_help'] = 'POK Certificates allows administrators and teachers to assign certificates from their organization to Moodle courses. These certificates will be automatically sent to enrolled students who meet the course requirements. Or they can be issued manually by administrators.
 
-Advantages of using the pokcertificate module rather than the file module include the resource being more accessible (for example to users of mobile devices) and easier to update.
+<b>Advantages of using POK:</b><br>
+    <span class="p-5">* Certificates unalterable and easy to verify.<br></span>
+    <span class="p-5">* Shareable in multiple formats and social networks.<br></span>
+    <span class="p-5">* Recognition of achievements with blockchain technology, guaranteeing security and privacy.<br></span>
 
-For large amounts of content, it\'s recommended that a book is used rather than a pokcertificate.
-
-A pokcertificate may be used
-
-* To present the terms and conditions of a course or a summary of the course syllabus
-* To embed several videos or sound files together with some explanatory text';
-$string['pluginname'] = 'POK Certificate';
-
+<b>A pokcertificate may be used:</b><br>
+    <span class="p-5"><b> * Course Completion Certificate: </b>Issued automatically when the student completes all course activities.<br></span>
+    <span class="p-5"><b> * Participation badge: </b>Awarded to students who attend a specified number of classes or activities.<br></span>
+    <span class="p-5"><b> * Micro-credentials: </b>Recognize specific skills learned during the course, such as completing a module or passing an exam.<br></span>
+';
 // Settings.
 $string['qa'] = 'QA';
 $string['live'] = 'LIVE';
@@ -119,8 +119,10 @@ $string['pokcertificate:editinstance'] = 'Edit pokcertificate resource';
 $string['pokcertificate:manageinstance'] = 'Manage pokcertificate resource';
 $string['pokcertificate:deleteinstance'] = 'Delete pokcertificate resource';
 
-$string['certficatestobesent'] = 'Certificates to be sent';
+$string['certficatestobesent'] = 'Blockchain credentials to be sent';
 $string['incompleteprofile'] = 'Incomplete Student Profile';
+$string['basiccredentials'] = 'Basic credentials';
+$string['unlimited'] = 'Unlimited';
 $string['certificatename'] = 'Certificate Name';
 $string['title'] = 'Title';
 $string['userfullname'] = 'Userfullname';
@@ -291,7 +293,6 @@ $string['privacy:metadata:pokcertificate_issues:certificateurl'] = 'The POKcerti
 $string['privacy:metadata:pokcertificate_issues:pokcertificateid'] = 'The POKcertificate code that belongs to the user';
 $string['privacy:metadata:pokcertificate_issues:userid'] = 'The ID of the user who was issued the POKcertificate';
 $string['invalidinputs'] = 'Invalid inputs received';
-
 
 $string['verfiytext'] = 'Verify your Authentication Token';
 $string['verfiydesc'] = 'Enter the token generated in POK to link your moodle activities and issue credentials automatically';

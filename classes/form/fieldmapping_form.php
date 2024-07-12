@@ -43,10 +43,10 @@ class fieldmapping_form extends moodleform {
      */
     public function definition() {
 
-        global $CFG;
         $mform = $this->_form;
         $id        = $this->_customdata['id'];
         $templatename  = $this->_customdata['template'];
+        $templatetype  = $this->_customdata['type'];
         $templateid  = $this->_customdata['templateid'];
         $pokid  = $this->_customdata['pokid'];
         $data  = $this->_customdata['data'];
@@ -143,6 +143,9 @@ class fieldmapping_form extends moodleform {
 
         $mform->addElement('hidden', 'temp', $templatename);
         $mform->setType('temp', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'type', $templatetype);
+        $mform->setType('type', PARAM_INT);
 
         $mform->addElement('hidden', 'tempid', $templateid);
         $mform->setType('tempid', PARAM_INT);

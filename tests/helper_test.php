@@ -16,8 +16,6 @@
 
 namespace mod_pokcertificate;
 
-use mod_pokcertificate\persistent\pokcertificate_templates;
-use mod_pokcertificate\pok;
 use mod_pokcertificate\helper;
 
 /**

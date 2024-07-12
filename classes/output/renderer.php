@@ -120,7 +120,6 @@ class renderer extends \plugin_renderer_base {
         }
     }
 
-
     /**
      * Renders the preview certifcate templates view.
      *
@@ -783,7 +782,7 @@ class renderer extends \plugin_renderer_base {
         $data['creditscount'] = $records['count'];
         $credits = (new \mod_pokcertificate\api)->get_credits();
         $credits = json_decode($credits);
-        $data['pendingcount'] = $credits->pokCredits;
+        $data['pendingcount'] = $credits->toSend;
         return $this->render_from_template('mod_pokcertificate/verificationstats', $data);
     }
 

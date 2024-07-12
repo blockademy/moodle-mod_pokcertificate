@@ -33,7 +33,6 @@ require_once($CFG->dirroot . '/mod/pokcertificate/utility.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
-
 /**
  * Form shown while adding activity.
  */
@@ -53,7 +52,7 @@ class verifyauth_form extends moodleform {
         $mform->setDefault('prodtype', 1);
         $mform->addHelpButton('prodtype', 'prodtype', 'pokcertificate');
 
-        $mform->addElement('passwordunmask', 'authtoken', get_string('authtoken', 'pokcertificate'), 'size="35"');
+        $mform->addElement('password', 'authtoken', get_string('authtoken', 'pokcertificate'), 'size="35"');
         $mform->setType('authtoken', PARAM_RAW);
         $mform->addHelpButton('authtoken', 'authtoken', 'pokcertificate');
         $mform->addRule('authtoken', get_string('required'), 'required', null, 'client');
@@ -98,7 +97,6 @@ class verifyauth_form extends moodleform {
 
         $this->set_data($data);
     }
-
 
     /**
      * Validates the form data submitted by the user.

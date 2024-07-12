@@ -42,7 +42,7 @@ $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);
-
+$PAGE->set_pagelayout('preview');
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 echo $OUTPUT->header();

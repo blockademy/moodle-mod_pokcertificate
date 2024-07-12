@@ -127,7 +127,6 @@ class pok {
         return $data;
     }
 
-
     /**
      * Update pokcertificate instance.
      * @param object $data
@@ -175,7 +174,6 @@ class pok {
         return true;
     }
 
-
     /**
      * Delete pokcertificate instance and related data from other tables.
      * @param int $id
@@ -199,7 +197,6 @@ class pok {
         $DB->delete_records('pokcertificate_issues', ['pokid' => $pokcertificate->id]);
         return true;
     }
-
 
     /**
      * Saves the selected template definition to the database.
@@ -518,7 +515,7 @@ class pok {
         $emitdata->last_name = $user->lastname;
         $emitdata->title = $pokrecord->get('title');
         $emitdata->template_base64 = (!empty($templatedefinition)) ? base64_encode($templatedefinition) : '';
-        $emitdata->date = time();
+        $emitdata->date = time() * 1000;
         $emitdata->free = ($template->get('templatetype') == 0) ? true : false;
         $emitdata->wallet = get_config('mod_pokcertificate', 'wallet');
         $emitdata->language_tag = $user->lang;

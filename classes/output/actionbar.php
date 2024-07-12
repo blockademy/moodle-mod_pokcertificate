@@ -70,12 +70,11 @@ class actionbar {
         global $PAGE;
 
         $menu = [];
-
         $menu[null] = get_string('previewcertificate', 'mod_pokcertificate');
+        $selected = $menu[null];
         if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
             $certificateslink = new \moodle_url('/mod/pokcertificate/certificates.php', ['id' => $this->cmid]);
             $menu[$certificateslink->out(false)] = get_string('certificateslist', 'mod_pokcertificate');
-
             $cm = get_coursemodule_from_id('pokcertificate', $this->cmid, 0, false, MUST_EXIST);
             $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
             $template = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);
@@ -83,9 +82,14 @@ class actionbar {
                 '/mod/pokcertificate/fieldmapping.php',
                 ['id' => $this->cmid, 'temp' => base64_encode($template)]
             );
-
             $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');
+            if ($PAGE->pagelayout === 'certificates') {
+                $selected = $menu[$certificateslink->out(false)];
+            } else if ($PAGE->pagelayout === 'fieldmapping') {
+                $selected = $menu[$fieldmappinglink->out(false)];
+            }
         }
-        return new \url_select($menu, $menu[null], null, 'pokactionselect');
+
+        return new \url_select($menu, $selected, null, 'pokactionselect');
     }
 }

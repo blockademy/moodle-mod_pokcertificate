@@ -50,6 +50,7 @@ $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);
+$PAGE->set_pagelayout('fieldmapping');
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 
@@ -71,7 +72,7 @@ if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
         $mform = new fieldmapping_form(
             $url,
             [
-                'data' => $fielddata, 'id' => $id, 'template' => $tempname,
+                'data' => $fielddata, 'id' => $id, 'template' => $tempname, 'type' => $temptype,
                 'templateid' => $templateid, 'pokid' => $pokid,
             ] + (array)$data
         );
@@ -88,17 +89,20 @@ if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
             }
         } else {
             echo $OUTPUT->header();
+            echo $renderer->action_bar($id, $PAGE->url);
             $renderer->navigate_usercustomfield();
             $mform->display();
         }
     } else {
         echo $OUTPUT->header();
+        echo $renderer->action_bar($id, $PAGE->url);
         $url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
         echo $output = notice('<p class="errorbox alert alert-danger">' .
             get_string('invalidtemplatedef', 'mod_pokcertificate') . '</p>', $url);
     }
 } else {
     echo $OUTPUT->header();
+    echo $renderer->action_bar($id, $PAGE->url);
     $url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
     echo $output = notice('<p class="errorbox alert alert-danger">' .
         get_string('invalidtemplate', 'mod_pokcertificate') . '</p>', $url);
