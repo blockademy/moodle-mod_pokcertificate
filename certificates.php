@@ -25,7 +25,6 @@
 require('../../config.php');
 
 $id      = required_param('id', PARAM_INT); // Course Module ID.
-
 $url = new moodle_url('/mod/pokcertificate/certificates.php', ['id' => $id]);
 if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
     throw new \moodle_exception('invalidcoursemodule');
@@ -34,7 +33,7 @@ $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*'
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
 require_course_login($course, true, $cm);
-$context = context_module::instance($cm->id);
+$context = \context_module::instance($cm->id);
 require_capability('mod/pokcertificate:manageinstance', $context);
 
 $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
@@ -51,7 +50,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_url('/mod/pokcertificate/certificates.php', []);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);
-//$PAGE->set_subpage('fieldmapping');
+$PAGE->set_subpage('certificates');
 if (!$PAGE->activityheader->is_title_allowed()) {
     $activityheader['title'] = "";
 }
