@@ -51,7 +51,7 @@ $PAGE->set_heading($course->fullname);
 $PAGE->set_url('/mod/pokcertificate/certificates.php', []);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_activity_record($pokcertificate);
-$PAGE->set_subpage('fieldmapping');
+//$PAGE->set_subpage('fieldmapping');
 if (!$PAGE->activityheader->is_title_allowed()) {
     $activityheader['title'] = "";
 }
@@ -60,7 +60,7 @@ $PAGE->activityheader->set_attrs($activityheader);
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 echo $OUTPUT->header();
-echo $renderer->action_bar($id, $PAGE->url);
+//echo $renderer->action_bar($id, $PAGE->url);
 echo $renderer->show_certificate_templates($id);
-echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
+//echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
 echo $OUTPUT->footer();
