@@ -59,8 +59,8 @@ if (!$PAGE->activityheader->is_title_allowed()) {
 $PAGE->activityheader->set_attrs($activityheader);
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
+echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
 echo $OUTPUT->header();
-//echo $renderer->action_bar($id, $PAGE->url);
+echo $renderer->action_bar($id, $PAGE->url);
 echo $renderer->show_certificate_templates($id);
-//echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
 echo $OUTPUT->footer();
