@@ -461,24 +461,10 @@ class pok {
         $customparams = [];
         if ($templatedefinition && $templatedefinition->params) {
             foreach ($templatedefinition->params as $param) {
-                if ($param->name == 'institution') {
-                    $param->value = get_config('mod_pokcertificate', 'institution');
-                }
-                if ($param->name == 'achiever') {
-                    $param->value = $user->firstname . ' ' . $user->lastname;
-                }
-                if ($param->name == 'title') {
-                    $param->value = $pokrecord->get('title');
-                }
-                if ($param->name == 'date') {
-                    $param->value = date('d/m/Y');
-                }
+
                 $pos = strpos($param->name, 'custom:');
-
                 if ($pos !== false) {
-
                     $pokfields = pokcertificate_fieldmapping::get_records(['pokid' => $pokrecord->get('id')]);
-
                     if ($pokfields) {
                         foreach ($pokfields as $field) {
                             $varname = substr($param->name, strrpos($param->name, ':') + 1);
@@ -488,16 +474,12 @@ class pok {
                                     $userprofilefield = substr($field->get('userfield'), strlen('profile_field_'));
                                     if (isset($user->profile[$userprofilefield])) {
                                         $customparams[$param->name] = $user->profile[$userprofilefield];
-                                        $param->value = $user->profile[$userprofilefield];
                                     }
                                 } else {
                                     if ($user->$userfield == 'country') {
-                                        $choices = get_string_manager()->get_list_of_countries();
                                         $customparams[$param->name] = $user->$userfield;
-                                        $param->value = $choices[$user->$userfield];
                                     } else {
                                         $customparams[$param->name] = $user->$userfield;
-                                        $param->value = $user->$userfield;
                                     }
                                 }
                             }
