@@ -65,10 +65,10 @@ if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
     if ($templatedefinition) {
         $data = pok::save_template_definition($templateinfo, $templatedefinition, $cm);
 
-        $data = data_submitted();
         $pokid = $pokcertificate->id;
         $templateid = $pokcertificate->templateid;
         $fielddata = helper::get_mapped_fields($pokid);
+
         $mform = new fieldmapping_form(
             $url,
             [

@@ -27,6 +27,7 @@ namespace mod_pokcertificate\form;
 defined('MOODLE_INTERNAL') || die;
 
 use moodleform;
+use mod_pokcertificate\helper;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -54,7 +55,8 @@ class updateprofile_form extends moodleform {
         $stringman = get_string_manager();
 
         $mform->addElement('static', 'currentpicture', '');
-        $mandatoryfields = ['firstname', 'lastname', 'email', 'idnumber'];
+        $mandatoryfields = helper::user_mandatory_fields();
+        $templatemandatoryfields = helper::template_mandatory_fields();
         foreach ($mandatoryfields as $fullname) {
             $style = '';
             if (!empty($user->$fullname)) {
@@ -78,16 +80,16 @@ class updateprofile_form extends moodleform {
         if (!empty($pokfields)) {
             $pokfieldsarr = [];
             foreach ($pokfields as $field) {
-                if ((!in_array($field->get('userfield'), $pokfieldsarr)) && !in_array($field->get('userfield'), $mandatoryfields)) {
+                if (!in_array($field->get('templatefield'), $templatemandatoryfields)) {
                     $pokfieldsarr[] = $field->get('userfield');
                 }
             }
+            $pokfieldsarr = array_unique($pokfieldsarr);
 
             foreach ($pokfieldsarr as $key => $field) {
                 $fieldname = $field;
 
                 if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') === false)) {
-
                     $purpose = user_edit_map_field_purpose($user->id, $fieldname);
                     $style = '';
                     if (!empty($user->$fieldname)) {
@@ -105,18 +107,15 @@ class updateprofile_form extends moodleform {
                             $mform->setDefault('country', \core_user::get_property_default('country'));
                         }
                     } else {
+
                         $mform->addElement(
                             'text',
                             $fieldname,
                             get_string($fieldname),
                             'maxlength="100" size="30"' . $purpose . $style
                         );
-                        if ($stringman->string_exists('missing' . $fieldname, 'core')) {
-                            $strmissingfield = get_string('missing' . $fieldname, 'core');
-                        } else {
-                            $strmissingfield = $strrequired;
-                        }
-                        $mform->addRule($fieldname, $strmissingfield, 'required', null, 'client');
+
+                        $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
                         $mform->setType($fieldname, PARAM_NOTAGS);
                     }
                 }
@@ -228,7 +227,6 @@ class updateprofile_form extends moodleform {
         $imageelement->setValue($imagevalue);
     }
 
-
     /**
      * get_profile_fields
      *
@@ -269,7 +267,6 @@ class updateprofile_form extends moodleform {
             }
         }
     }
-
 
     /**
      * Validates the form data submitted by the user.

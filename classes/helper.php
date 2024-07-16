@@ -28,7 +28,6 @@ use mod_pokcertificate\persistent\pokcertificate_issues;
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
 
-
 /**
  * Class helper
  *
@@ -206,7 +205,7 @@ class helper {
             if ($templatedefinition) {
                 foreach ($templatedefinition->params as $param) {
                     $pos = strpos($param->name, ':');
-                    if ($pos === false && in_array($param->name, ['date', 'title', 'institution', 'achiever'])) {
+                    if ($pos === false && in_array($param->name, ['date', 'title', 'institution'/* , 'achiever' */])) {
                         $mandatoryfields[$param->name] = $param->name;
                     }
                 }
@@ -647,27 +646,29 @@ class helper {
         $validuser = true;
 
         $pokfields = pok::get_mapping_fields($user, $cm);
-        $mandatoryfields = ['firstname', 'lastname', 'email', 'idnumber'];
+        $mandatoryfields = self::user_mandatory_fields();
         foreach ($mandatoryfields as $fullname) {
             if (empty($user->$fullname)) {
                 $validuser = false;
             }
         }
-
+        $templatemandatoryfields = self::template_mandatory_fields();
         if (!empty($pokfields)) {
             foreach ($pokfields as $field) {
-                $fieldname = $field->get('userfield');
-                if (isset($fieldname) && (!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') !== false)) {
-                    $userprofilefield = substr($fieldname, strlen('profile_field_'));
-                    if (
-                        isset($user->profile[$userprofilefield]) &&
-                        empty(trim($user->profile[$userprofilefield]))
-                    ) {
-                        $validuser = false;
-                    }
-                } else {
-                    if (empty(trim($user->$fieldname))) {
-                        $validuser = false;
+                if (!in_array($field->get('templatefield'), $templatemandatoryfields)) {
+                    $fieldname = $field->get('userfield');
+                    if (isset($fieldname) && (!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') !== false)) {
+                        $userprofilefield = substr($fieldname, strlen('profile_field_'));
+                        if (
+                            isset($user->profile[$userprofilefield]) &&
+                            empty(trim($user->profile[$userprofilefield]))
+                        ) {
+                            $validuser = false;
+                        }
+                    } else {
+                        if (empty(trim($user->$fieldname))) {
+                            $validuser = false;
+                        }
                     }
                 }
             }
@@ -840,5 +841,31 @@ class helper {
         }
         $user->profile = (array)$usercustomfields;
         return $user;
+    }
+
+    /**
+     * Retrieves the list of mandatory fields for a user.
+     *
+     * This method provides an array of field names that are considered mandatory
+     * for user data, such as firstname, lastname, email and idnumber.
+     *
+     * @return array An array of strings representing mandatory field names.
+     */
+    public static function user_mandatory_fields() {
+        $mandatoryfields = ['firstname', 'lastname', 'email', 'idnumber'];
+        return $mandatoryfields;
+    }
+
+    /**
+     * Retrieves the list of template mandatory fields for a user.
+     *
+     * This method provides an array of field names that are considered mandatory
+     * for user data, such as date, title, and institution.
+     *
+     * @return array An array of strings representing mandatory field names.
+     */
+    public static function template_mandatory_fields() {
+        $templatemandatoryfields = ['date', 'title', 'institution'];
+        return $templatemandatoryfields;
     }
 }

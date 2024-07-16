@@ -475,6 +475,7 @@ background-color: #ffffff;
 #page-mod-pokcertificate-view td.cell.fieldmapfields .fitem .felement{
     flex: 0 0 100% !important;
     max-width: 100% !important;
+    align-content: center;
 }
 #page-mod-pokcertificate-view table.fieldlist {
     margin-top: 1rem;

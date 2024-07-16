@@ -136,6 +136,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function preview_certificate($templatename, $data) {
+        $templatename = rawurlencode($templatename);
         $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename . '/render';
         return $this->execute_command($location, $data, 'post');
     }
@@ -162,6 +163,7 @@ class api {
         if ($method == 'post') {
             $options['CURLOPT_HTTPHEADER'][] = 'Content-Type: application/json';
         }
+
         $result = $curl->{$method}($location, $params, $options);
         $apiresult = null;
         if ($curl->get_errno()) {

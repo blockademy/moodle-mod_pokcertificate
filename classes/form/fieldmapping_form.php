@@ -73,9 +73,9 @@ class fieldmapping_form extends moodleform {
             </thead>
             <tbody>';
         $mform->addElement('html', $html);
+        $i = 0;
 
         foreach ($mandatoryfields as $key => $value) {
-
             if ($key == 'institution') {
                 $fieldvalue = get_config('mod_pokcertificate', 'institution');
             }
@@ -93,21 +93,30 @@ class fieldmapping_form extends moodleform {
                                             <td class="cell c1 fieldmapfields" style="">');
             $mform->addElement(
                 'select',
-                'mandatoryfield_' . $key . '',
+                'templatefield_' . $i . '',
                 '',
                 [$key => $value],
                 ['class' => 'templatefields']
             );
+
             $mform->addElement('html', '</td>');
             $mform->addElement('html', '<td class="cell c2 fieldmapfields" style=""><span></span></td>
                                                               <td class="cell c3 fieldmapfields" style="">');
-            $mform->addElement('text', 'userfield_' . $key . '', '', ['class' => 'textfield userfields', 'readonly' => 'readonly']);
+            if ($key == 'date') {
+                $mform->addElement('date_selector', 'userfield_' . $i . '', '', ['class' => 'userfields']);
+                //$mform->addElement('date_selector', 'userfield_' . $i . '', '', ['class' => 'textfield userfields']);
+            } else {
+                $mform->addElement('text', 'userfield_' . $i . '', '', ['class' => 'textfield userfields']);
+                $mform->addRule('userfield_' . $i . '', get_string('required'), 'required', null, 'client');
+                $mform->setDefault('userfield_' . $i, $fieldvalue);
+                $mform->setType('userfield_' . $i, PARAM_TEXT);
+            }
+
+            $i++;
             $mform->addElement('html', '</td>');
             $mform->addElement('html', '</tr>');
-            $mform->setDefault('userfield_' . $key, $fieldvalue);
-            $mform->setType('userfield_' . $key, PARAM_TEXT);
         }
-        $i = 0;
+
         foreach ($remotefields as $key => $value) {
 
             $mform->addElement('html', '<tr class="">
@@ -155,5 +164,34 @@ class fieldmapping_form extends moodleform {
 
         $this->set_data($data);
         $this->add_action_buttons(true, get_string('save'));
+    }
+
+    /**
+     * Validates the form data submitted .
+     *
+     * This method is responsible for validating the form data submitted .
+     * It performs necessary validation checks on the data and files provided.
+     *
+     * @param array $data An associative array containing the form data submitted .
+     * @param array $files An associative array containing any files uploaded via the form.
+     * @return array|bool An array of validation errors, or true if validation succeeds.
+     */
+    public function validation($data, $files) {
+
+        $errors = parent::validation($data, $files);
+
+        $templatemandatoryfields = helper::template_mandatory_fields();
+        if (isset($data['fieldcount']) && ($data['fieldcount'] > 0)) {
+            for ($i = 0; $i < $data['fieldcount']; $i++) {
+                $tempfield = 'templatefield_' . $i;
+                $userfield = 'userfield_' . $i;
+                if (isset($data[$tempfield]) && (in_array($data[$tempfield], $templatemandatoryfields))) {
+                    if (empty(trim($data[$userfield]))) {
+                        $errors[$userfield] = get_string('invalid', 'mod_pokcertificate');
+                    }
+                }
+            }
+        }
+        return $errors;
     }
 }

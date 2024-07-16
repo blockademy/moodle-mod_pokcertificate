@@ -302,3 +302,4 @@ $string['credential_title'] = 'Issue Verifiable Credentials, Micro-Credentials, 
 $string['credential_desc'] = 'With POK,issue credentials to students enrolled in your courses,ensuring authenticity and transparency on the block chain.';
 $string['contact_text'] = "If you don't have your authentication token";
 $string['contact_link'] = 'Contact us at <a href="#">contacto@pok.tech</a> to get it';
+$string['invalid'] = 'Invalid';

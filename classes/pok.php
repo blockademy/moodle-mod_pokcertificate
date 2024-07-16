@@ -457,16 +457,40 @@ class pok {
         } else {
             $templatedefinition = json_decode($template->get('templatedefinition'));
         }
-
+        $pokfields = pokcertificate_fieldmapping::get_records(['pokid' => $pokrecord->get('id')]);
         $customparams = [];
+        $templatemandatoryfields = helper::template_mandatory_fields();
+        $institution = get_config('mod_pokcertificate', 'institution');
+        $title = $pokrecord->get('title');
+        $timemilliseconds = time() * 1000;
         if ($templatedefinition && $templatedefinition->params) {
             foreach ($templatedefinition->params as $param) {
 
                 $pos = strpos($param->name, 'custom:');
                 if ($pos !== false) {
-                    $pokfields = pokcertificate_fieldmapping::get_records(['pokid' => $pokrecord->get('id')]);
+
                     if ($pokfields) {
                         foreach ($pokfields as $field) {
+                            $templatefield = $field->get('templatefield');
+                            switch ($templatefield) {
+                                case 'institution':
+                                    if (in_array('institution', $templatemandatoryfields)) {
+                                        $institution = $field->get('userfield');
+                                    }
+                                    break;
+                                case 'title':
+                                    if (in_array('title', $templatemandatoryfields)) {
+                                        $title = $field->get('userfield');
+                                    }
+                                    break;
+                                case 'date':
+                                    if (in_array('date', $templatemandatoryfields)) {
+                                        $date = $field->get('userfield');
+                                        $timemilliseconds = $date * 1000;
+                                    }
+                                    break;
+                            }
+
                             $varname = substr($param->name, strrpos($param->name, ':') + 1);
                             if ($field->get('templatefield') == $varname) {
                                 $userfield = $field->get('userfield');
@@ -491,13 +515,13 @@ class pok {
         $templatedefinition = ($templatedefinition) ? json_encode($templatedefinition) : '';
         $emitdata = new \stdclass;
         $emitdata->email = $user->email;
-        $emitdata->institution = get_config('mod_pokcertificate', 'institution');
+        $emitdata->institution = $institution;
         $emitdata->identification = $user->idnumber;
         $emitdata->first_name = $user->firstname;
         $emitdata->last_name = $user->lastname;
-        $emitdata->title = $pokrecord->get('title');
-        $emitdata->template_base64 = (!empty($templatedefinition)) ? base64_encode($templatedefinition) : '';
-        $emitdata->date = time() * 1000;
+        $emitdata->title = $title;
+        $emitdata->template_base64 = $templatename;
+        $emitdata->date = $timemilliseconds;
         $emitdata->free = ($template->get('templatetype') == 0) ? true : false;
         $emitdata->wallet = get_config('mod_pokcertificate', 'wallet');
         $emitdata->language_tag = $user->lang;
