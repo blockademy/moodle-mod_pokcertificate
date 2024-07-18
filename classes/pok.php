@@ -520,7 +520,7 @@ class pok {
         $emitdata->first_name = $user->firstname;
         $emitdata->last_name = $user->lastname;
         $emitdata->title = $title;
-        $emitdata->template_base64 = $templatename;
+        $emitdata->template = $templatename;
         $emitdata->date = $timemilliseconds;
         $emitdata->free = ($template->get('templatetype') == 0) ? true : false;
         $emitdata->wallet = get_config('mod_pokcertificate', 'wallet');
