@@ -62,6 +62,7 @@ $PAGE->activityheader->set_attrs($activityheader);
 $PAGE->set_subpage('certificates');
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
+echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
 
 pok::set_cmid($id);
 if ($pok = helper::pokcertificate_preview_by_user($cm, $pokcertificate, $flag)) {
@@ -75,7 +76,6 @@ if ($pok = helper::pokcertificate_preview_by_user($cm, $pokcertificate, $flag)) 
         exit;
     }
 }
-echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
 
 echo $OUTPUT->header();
 echo $renderer->show_certificate_templates($id);
