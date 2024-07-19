@@ -59,7 +59,7 @@ $PAGE->set_title($course->shortname . ': ' . $pokcertificate->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->add_body_class('limitedwidth');
 $PAGE->activityheader->set_attrs($activityheader);
-
+$PAGE->set_subpage('certificates');
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 
@@ -75,9 +75,9 @@ if ($pok = helper::pokcertificate_preview_by_user($cm, $pokcertificate, $flag)) 
         exit;
     }
 }
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
+echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
 
 echo $OUTPUT->header();
+echo $renderer->action_bar($id, $PAGE->url);
 echo $renderer->show_certificate_templates($id);
 echo $OUTPUT->footer();
