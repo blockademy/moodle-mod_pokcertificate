@@ -47,9 +47,10 @@ echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
 $renderer = $PAGE->get_renderer('mod_pokcertificate');
 echo $renderer->display_tabs();
 $data = new stdClass();
-
 if (get_config('mod_pokcertificate', 'institution')) {
     $data->institution = get_config('mod_pokcertificate', 'institution');
+    $data->prodtype = get_config('mod_pokcertificate', 'prodtype');
+    $data->authtoken = get_config('mod_pokcertificate', 'authenticationtoken');
 }
 $mform = new verifyauth_form(
     $url,
