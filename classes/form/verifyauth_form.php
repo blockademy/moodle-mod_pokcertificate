@@ -96,6 +96,7 @@ class verifyauth_form extends moodleform {
         $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
 
         $this->set_data($data);
+        $mform->disable_form_change_checker();
     }
 
     /**

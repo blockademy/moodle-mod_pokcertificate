@@ -782,7 +782,7 @@ class renderer extends \plugin_renderer_base {
         $data['creditscount'] = $records['count'];
         $credits = (new \mod_pokcertificate\api)->get_credits();
         $credits = json_decode($credits);
-        $data['pendingcount'] = ($credits->toSend) ?? $credits->toSend;
+        $data['pendingcount'] = isset($credits->toSend) ? $credits->toSend : get_string('notavailable');
         return $this->render_from_template('mod_pokcertificate/verificationstats', $data);
     }
 
