@@ -271,6 +271,7 @@ $string['certificatstatus'] = 'Certificate Status';
 $string['selectcourse'] = 'Select Course';
 $string['norecordavailable'] = 'No Record Available';
 $string['incomplete'] = 'Incomplete Profile';
+$string['incompleteactivity'] = 'Incomplete Activity';
 $string['complete'] = 'Complete';
 $string['profilestatus'] = 'Profile status';
 $string['certificatesent'] = 'Certificate sent success';
@@ -303,3 +304,4 @@ $string['credential_desc'] = 'With POK,issue credentials to students enrolled in
 $string['contact_text'] = "If you don't have your authentication token";
 $string['contact_link'] = 'Contact us at <a href="#">contacto@pok.tech</a> to get it';
 $string['invalid'] = 'Invalid';
+$string['filedmappingmissing'] = 'Custom template fields not mapped';

@@ -42,7 +42,9 @@
                 <tr>
                     <td value = "{{userinputids}}">
                     {{^status}}
+                        {{^incompleteactivity}}
                         <input type="checkbox" class="user-checkbox inp" name="selectedusers[]" value = "{{userinputids}}">
+                        {{/incompleteactivity}}
                     {{/status}}
                     </td>
                     <td>{{firstname}}</td>
@@ -56,7 +58,7 @@
                     {{/showtemplatetype}}
                     <td class="blue-completedate">{{completedate}}</td>
                     <td class="blue-completedate">{{issueddate}}</td>
-                    <td class="{{certificatestatus}}-coursestatus">{{certificatestatus}}</td>
+                    <td class="{{certificatestatus}}-coursestatus" {{#incompleteactivity}}style="cursor:pointer;" title="{{#str}}filedmappingmissing,mod_pokcertificate{{/str}}"{{/incompleteactivity}}>{{certificatestatus}}</td>
                     {{#status}}
                         {{#certificateurl}}
                             <td>

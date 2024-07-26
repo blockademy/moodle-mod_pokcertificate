@@ -545,6 +545,7 @@ class helper {
         $list = [];
         $data = [];
         if ($records) {
+
             foreach ($records as $c) {
                 $incomplete = false;
                 $poktemplate = pokcertificate_templates::get_record(['id' => $c->templateid]);
@@ -565,13 +566,13 @@ class helper {
                         }
                     }
                 }
-                if ($incomplete) {
-                    continue;
-                }
+
                 if ($c->status == 0 && !empty($c->pokcertificateid)) {
                     $certstatus = get_string('inprogress', 'mod_pokcertificate');
                 } else if ($c->status == 1 && !empty($c->certificateurl)) {
                     $certstatus = get_string('completed');
+                } else if ($incomplete) {
+                    $certstatus = get_string('incompleteactivity', 'mod_pokcertificate');
                 } else {
                     $certstatus = "-";
                 }
@@ -583,6 +584,7 @@ class helper {
                 $list['studentid'] = $c->idnumber ? $c->idnumber : '-';
                 $list['activity'] = $c->activity;
                 $list['activityid'] = $c->activityid;
+                $list['incompleteactivity'] = $incomplete;
                 $list['courseid'] = $c->courseid;
                 $list['course'] = $c->coursename;
                 $list['issueddate'] = $c->issueddate ? date('d M Y', $c->issueddate) : '-';
@@ -594,6 +596,7 @@ class helper {
                 $data[] = $list;
             }
         }
+
         return ['count' => $count, 'data' => $data, 'courseid' => $courseid];
     }
 
