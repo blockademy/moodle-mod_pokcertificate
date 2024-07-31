@@ -104,6 +104,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function get_template_definition($templatename) {
+        $templatename = rawurlencode($templatename);
         $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename;
         return $this->execute_command($location, '');
     }
