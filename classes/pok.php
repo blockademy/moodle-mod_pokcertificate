@@ -327,8 +327,8 @@ class pok {
 
         $templates = [];
         $templateslist = (new \mod_pokcertificate\api)->get_templates_list();
-        $templateslist = json_decode($templateslist);
-        if ($templateslist) {
+        if (!empty($templateslist)) {
+            $templateslist = json_decode($templateslist);
             foreach ($templateslist as $template) {
                 $data = [];
                 $previewdata = json_encode(SAMPLE_DATA);
