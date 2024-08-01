@@ -167,10 +167,10 @@ class api {
         $response = null;
         $apiresult = null;
 
-        $result = $curl->{$method}($location, $params, $options);
         $apiurl = $location . '?' . $params;
-        $responsecode = ($curl->get_errno()) ? $curl->get_errno() : $curl->get_info()['http_code'];
-        $logrec = self::saveupdate_logdata($apiurl, 0, $response, $responsecode, $result);
+        $logrec = self::saveupdate_logdata($apiurl, 0);
+
+        $result = $curl->{$method}($location, $params, $options);
 
         if ($curl->get_errno()) {
             $response = get_string('connecterror', 'mod_pokcertificate') . 'URL : ' . $location;
