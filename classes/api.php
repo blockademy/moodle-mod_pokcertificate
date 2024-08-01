@@ -164,28 +164,66 @@ class api {
         if ($method == 'post') {
             $options['CURLOPT_HTTPHEADER'][] = 'Content-Type: application/json';
         }
+        $response = null;
+        $apiresult = null;
 
         $result = $curl->{$method}($location, $params, $options);
-        $apiresult = null;
+        $apiurl = $location . '?' . $params;
+        $responsecode = ($curl->get_errno()) ? $curl->get_errno() : $curl->get_info()['http_code'];
+        $logrec = self::saveupdate_logdata($apiurl, 0, $response, $responsecode, $result);
+
         if ($curl->get_errno()) {
+            $response = get_string('connecterror', 'mod_pokcertificate') . 'URL : ' . $location;
+            self::saveupdate_logdata($apiurl, $response, $curl->get_errno(), $result, $logrec->get('id'));
             throw new moodle_exception('connecterror', 'mod_pokcertificate', '', ['url' => $location]);
         }
+
         // Insert the API log here.
-        $response = null;
         if ($curl->get_info()['http_code'] == 200) {
             $response = get_string('success');
             $apiresult = $result;
         } else {
             $response = get_string('fail', 'pokcertificate');
         }
+        self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $curl->get_info()['http_code'], $result);
 
-        $log = new \stdClass();
-        $log->api = $location . '?' . $params;
-        $log->response = $response;
-        $log->responsecode = $curl->get_info()['http_code'];
-        $log->responsevalue = $result;
-        $logdata = new pokcertificate_log(0, $log);
-        $logdata->create();
         return $apiresult;
+    }
+
+    /**
+     * Saves or updates log data in the database.
+     *
+     * This method inserts a new log entry if `$logid` is null. If `$logid` is provided,
+     * it updates the existing log entry with the given ID. The method records information
+     * about the API call, including the URL, response, response code, and any additional
+     * result data.
+     *
+     * @param string $apiurl The URL of the API for which the log entry is being created or updated.
+     * @param int|null $logid The unique identifier for the log entry. Pass null to insert a new entry.
+     * @param string $responsemsg The response message defined based on code received from the API call.
+     * @param int $responsecode The response code received from the API call. Defaults to an empty string.
+     * @param string $apiresult The response body received from the API call. Defaults to an empty string.
+     *
+     * @return object The logid.
+     */
+
+    public function saveupdate_logdata($apiurl, $logid, $responsemsg = null, $responsecode = 0, $apiresult = null) {
+
+        if ($logid == 0) {
+            $log = new \stdClass();
+            $log->api = $apiurl;
+            $log->response = $responsemsg;
+            $log->responsecode = $responsecode;
+            $log->responsevalue = $apiresult;
+            $logdata = new pokcertificate_log(0, $log);
+            $logid = $logdata->create();
+        } else if ($logid != 0) {
+            $logdata = new pokcertificate_log($logid);
+            $logdata->set('response', $responsemsg);
+            $logdata->set('responsecode', $responsecode);
+            $logdata->set('responsevalue', $apiresult);
+            $logid = $logdata->update();
+        }
+        return $logid;
     }
 }

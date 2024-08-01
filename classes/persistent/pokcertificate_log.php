@@ -44,15 +44,20 @@ class pokcertificate_log extends persistent {
             ],
             'response' => [
                 'type' => PARAM_TEXT,
-                'optional' => false,
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ],
             'responsecode' => [
-                'type' => PARAM_TEXT,
-                'optional' => false,
+                'type' => PARAM_INT,
+                'optional' => true,
+                'default' => 0,
             ],
             'responsevalue' => [
                 'type' => PARAM_RAW,
-                'optional' => false,
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ],
         ];
     }
