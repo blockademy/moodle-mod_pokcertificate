@@ -781,8 +781,12 @@ class renderer extends \plugin_renderer_base {
         $records = helper::pokcertificate_incompletestudentprofilelist();
         $data['creditscount'] = $records['count'];
         $credits = (new \mod_pokcertificate\api)->get_credits();
-        $credits = json_decode($credits);
-        $data['pendingcount'] = isset($credits->toSend) ? $credits->toSend : get_string('notavailable');
+        $pendingcount = get_string('notavailable');
+        if($credits){
+            $credits = json_decode($credits);
+            $pendingcount = $credits->toSend ?? get_string('notavailable');
+        }
+        $data['pendingcount'] = $pendingcount;
         return $this->render_from_template('mod_pokcertificate/verificationstats', $data);
     }
 

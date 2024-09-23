@@ -397,7 +397,7 @@ class helper {
             $fromsql .= "AND (pci.id IS NULL ) ";
         }
 
-        $concatsql = "ORDER BY ra.id DESC ";
+        $concatsql = " ORDER BY ra.id DESC ";
         $totalusers = $DB->count_records_sql($countsql . $fromsql, $queryparam);
         $certificates = $DB->get_records_sql($selectsql . $fromsql . $concatsql, $queryparam, $offset, $perpage);
 
@@ -466,7 +466,7 @@ class helper {
         global $DB;
 
         $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
-        $countsql = "SELECT DISTINCT CONCAT(pc.id, u.id, c.id) as combid  ";
+        $countsql = "SELECT count(DISTINCT(CONCAT(pc.id,u.id,c.id)) )  ";
         $selectsql = "SELECT DISTINCT(CONCAT(pc.id,u.id,c.id)),
                          pc.id as activityid,
                          pc.name as activity,
@@ -538,10 +538,10 @@ class helper {
         }
 
         $orderbysql = " ORDER BY pc.id DESC ";
-        $groupby = " GROUP BY combid ";
-        $recordscount = $DB->get_records_sql($countsql . $fromsql . $groupby , $queryparam);
+
+        $count = $DB->count_records_sql($countsql  . $fromsql , $queryparam);
         $records = $DB->get_records_sql($selectsql . $fromsql . $orderbysql, $queryparam, $offset, $perpage);
-        $count = count($recordscount);
+
         $list = [];
         $data = [];
         if ($records) {

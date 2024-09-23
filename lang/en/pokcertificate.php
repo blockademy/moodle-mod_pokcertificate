@@ -305,3 +305,4 @@ $string['contact_text'] = "If you don't have your authentication token";
 $string['contact_link'] = 'Contact us at <a href="#">contacto@pok.tech</a> to get it';
 $string['invalid'] = 'Invalid';
 $string['filedmappingmissing'] = 'Custom template fields not mapped';
+$string['pokauthnotverified'] = 'POK authentication was not verfied! Please contact Site Administartor';
