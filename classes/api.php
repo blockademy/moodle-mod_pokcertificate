@@ -186,14 +186,13 @@ class api {
             $apiresult = $result;
         } else {
             $response = get_string('fail', 'pokcertificate');
-            if ($httpCode === 403) {
-                self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $httpCode, $result);
-                $url = new \moodle_url('/my/courses.php', []);
-                return notice('<p class="errorbox alert alert-danger">' . get_string(
-                    'pokauthnotverified',
-                    'mod_pokcertificate'
-                ) . '</p>', $url);
-            }
+            self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $httpCode, $result);
+            $url = new \moodle_url('/my/courses.php', []);
+            return notice('<p class="errorbox alert alert-danger">' . get_string(
+                'curlapierror',
+                'mod_pokcertificate'
+            ) . '</p>', $url);
+
         }
         self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $httpCode, $result);
 
