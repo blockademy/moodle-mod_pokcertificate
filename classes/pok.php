@@ -96,7 +96,7 @@ class pok {
         $displayoptions['printlastmodified'] = (isset($data->printlastmodified) ? $data->printlastmodified : 1);
         $data->displayoptions = serialize($displayoptions);
 
-        $data->completionsubmit = (isset($data->completionsubmit) && !empty($data->completionsubmit)) ?  $data->completionsubmit : 0;
+        $data->completionsubmit = (isset($data->completionsubmit) && !empty($data->completionsubmit)) ? $data->completionsubmit : 0;
 
         $pokcertificate = new pokcertificate(0, $data);
         $pokcertificate->create();
@@ -149,7 +149,7 @@ class pok {
         $displayoptions['printintro']   = (isset($data->printintro) ? $data->printintro : 0);
         $displayoptions['printlastmodified'] = (isset($data->printlastmodified) ? $data->printlastmodified : 1);
         $data->displayoptions = serialize($displayoptions);
-        $data->completionsubmit = (isset($data->completionsubmit) && !empty($data->completionsubmit)) ?  $data->completionsubmit : 0;
+        $data->completionsubmit = (isset($data->completionsubmit) && !empty($data->completionsubmit)) ? $data->completionsubmit : 0;
 
         $context = \context_module::instance($cmid);
         if ($mform && !empty($data->pokcertificate['itemid'])) {

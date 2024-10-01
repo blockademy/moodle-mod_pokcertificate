@@ -150,6 +150,7 @@ class api {
      * @return string             API response, in json encoded format
      */
     private function execute_command($location, $params, $method = 'get') {
+
         $curl = new \curl();
         $options = [
             'CURLOPT_HTTPHEADER' => [
@@ -177,6 +178,7 @@ class api {
             self::saveupdate_logdata($apiurl, $response, $curl->get_errno(), $result, $logrec->get('id'));
             throw new moodle_exception('connecterror', 'mod_pokcertificate', '', ['url' => $location]);
         }
+        $httpCode = $curl->get_info()['http_code'];
 
         // Insert the API log here.
         if ($curl->get_info()['http_code'] == 200) {
@@ -184,8 +186,15 @@ class api {
             $apiresult = $result;
         } else {
             $response = get_string('fail', 'pokcertificate');
+            self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $httpCode, $result);
+            $url = new \moodle_url('/my/courses.php', []);
+            return notice('<p class="errorbox alert alert-danger">' . get_string(
+                'curlapierror',
+                'mod_pokcertificate'
+            ) . '</p>', $url);
+
         }
-        self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $curl->get_info()['http_code'], $result);
+        self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $httpCode, $result);
 
         return $apiresult;
     }
