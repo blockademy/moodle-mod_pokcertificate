@@ -247,7 +247,7 @@ class helper {
                      AND u.id > 2 ";
         $wheresql .= " AND (
                         EXISTS (
-                            SELECT 1 FROM mdl_user_info_field LIMIT 1
+                            SELECT 1 FROM {user_info_field} LIMIT 1
                         )
                         AND (
                             u.idnumber IS NULL
@@ -256,7 +256,7 @@ class helper {
                             OR d.data = ''
                         )
                         OR NOT EXISTS (
-                            SELECT 1 FROM mdl_user_info_field LIMIT 1
+                            SELECT 1 FROM {user_info_field} LIMIT 1
                         )
                         AND (
                             u.idnumber IS NULL
@@ -397,7 +397,7 @@ class helper {
             $fromsql .= "AND (pci.id IS NULL ) ";
         }
 
-        $concatsql = "ORDER BY ra.id DESC ";
+        $concatsql = " ORDER BY ra.id DESC ";
         $totalusers = $DB->count_records_sql($countsql . $fromsql, $queryparam);
         $certificates = $DB->get_records_sql($selectsql . $fromsql . $concatsql, $queryparam, $offset, $perpage);
 
@@ -466,7 +466,7 @@ class helper {
         global $DB;
 
         $pokmoduleid = $DB->get_field('modules', 'id', ['name' => 'pokcertificate']);
-        $countsql = "SELECT count(DISTINCT(CONCAT(pc.id,u.id,c.id)) )";
+        $countsql = "SELECT count(DISTINCT(CONCAT(pc.id,u.id,c.id)) )  ";
         $selectsql = "SELECT DISTINCT(CONCAT(pc.id,u.id,c.id)),
                          pc.id as activityid,
                          pc.name as activity,
@@ -537,10 +537,10 @@ class helper {
             $fromsql .= "AND (pci.id IS NULL ) ";
         }
 
-        $fromsql .= "ORDER BY pc.id DESC ";
+        $orderbysql = " ORDER BY pc.id DESC ";
 
-        $count = $DB->count_records_sql($countsql . $fromsql, $queryparam);
-        $records = $DB->get_records_sql($selectsql . $fromsql, $queryparam, $offset, $perpage);
+        $count = $DB->count_records_sql($countsql  . $fromsql , $queryparam);
+        $records = $DB->get_records_sql($selectsql . $fromsql . $orderbysql, $queryparam, $offset, $perpage);
 
         $list = [];
         $data = [];

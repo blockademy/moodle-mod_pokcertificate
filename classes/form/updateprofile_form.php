@@ -89,7 +89,7 @@ class updateprofile_form extends moodleform {
             foreach ($pokfieldsarr as $key => $field) {
                 $fieldname = $field;
 
-                if ((!in_array($fieldname, ['id']) && strpos($fieldname, 'profile_field_') === false)) {
+                if ((!in_array($fieldname, ['id','firstname', 'lastname', 'email', 'idnumber']) && strpos($fieldname, 'profile_field_') === false)) {
                     $purpose = user_edit_map_field_purpose($user->id, $fieldname);
                     $style = '';
                     if (!empty($user->$fieldname)) {

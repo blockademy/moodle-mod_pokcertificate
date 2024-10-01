@@ -104,7 +104,6 @@ class fieldmapping_form extends moodleform {
                                                               <td class="cell c3 fieldmapfields" style="">');
             if ($key == 'date') {
                 $mform->addElement('date_selector', 'userfield_' . $i . '', '', ['class' => 'userfields']);
-                //$mform->addElement('date_selector', 'userfield_' . $i . '', '', ['class' => 'textfield userfields']);
             } else {
                 $mform->addElement('text', 'userfield_' . $i . '', '', ['class' => 'textfield userfields']);
                 $mform->addRule('userfield_' . $i . '', get_string('required'), 'required', null, 'client');
