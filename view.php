@@ -39,6 +39,7 @@ if (!$cm = get_coursemodule_from_id('pokcertificate', $id)) {
 }
 $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+require_course_login($course, true, $cm);
 
 $context = \context_module::instance($cm->id);
 require_capability('mod/pokcertificate:view', $context);
@@ -48,7 +49,6 @@ pokcertificate_view($pokcertificate, $course, $cm, $context);
 
 $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
-require_course_login($course, true, $cm);
 $options = empty($pokcertificate->displayoptions) ? [] : (array) unserialize_array($pokcertificate->displayoptions);
 
 $activityheader = ['hidecompletion' => false];
