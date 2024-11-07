@@ -16,6 +16,7 @@
 
 namespace mod_pokcertificate\output;
 
+use mod_pokcertificate\helper;
 use mod_pokcertificate\persistent\pokcertificate;
 use mod_pokcertificate\persistent\pokcertificate_templates;
 
@@ -54,7 +55,7 @@ class actionbar {
         $urlselect = $this->get_action_selector();
 
         $data = [
-            'urlselect' => !empty($urlselect) ? $urlselect->export_for_template($output) : '',
+            'urlselect' => $urlselect->export_for_template($output),
         ];
 
         return $data;
@@ -63,9 +64,9 @@ class actionbar {
     /**
      * Returns the URL selector object.
      *
-     * @return mixed url or null The URL select object.
+     * @return \url_select The URL select object.
      */
-    private function get_action_selector() {
+    private function get_action_selector(): \url_select {
         global $PAGE;
 
         $menu = [];
@@ -94,8 +95,6 @@ class actionbar {
             } else {
                 return new \url_select($menu, $previewlink, null, 'pokactionselect');
             }
-        } else {
-            throw new \moodle_exception('nopermissiontoshow');
         }
     }
 }
