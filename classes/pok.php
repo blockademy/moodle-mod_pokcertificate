@@ -212,8 +212,11 @@ class pok {
         $templateid = 0;
         $template = $templateinfo->template;
         $templatetype = $templateinfo->templatetype;
-        $pokid = pokcertificate::get_field('id', ['id' => $cm->instance]);
-
+        $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+        $pokid = $pokrecord->get('id');
+        $templateid = $pokrecord->get('templateid');
+        $existtemp = pokcertificate_templates::get_field('templatename', ['id' => $templateid, 'pokid' => $pokid]);
+        $flag = false;
         try {
             if ($templatedefinition) {
                 $templatedefdata = new \stdclass;
@@ -230,8 +233,12 @@ class pok {
                     $templatedata->set('templatedefinition', $templatedefinition);
                     $templatedata->set('usermodified', $USER->id);
                     $templatedata->set('timemodified', time());
-                    $templatedata->update();
+                    $updatetemplate = $templatedata->update();
+                    if ($updatetemplate) {
+                        $flag = true;
+                    }
                 } else {
+
                     $templatedefdata->pokid = $pokid;
                     $templatedefdata->templatetype = $templatetype;
                     $templatedefdata->templatename = $template;
@@ -240,6 +247,12 @@ class pok {
                     $templatedata = new pokcertificate_templates(0, $templatedefdata);
                     $newtemplate = $templatedata->create();
                     $templateid = $newtemplate->get('id');
+                    if ($newtemplate) {
+                        $flag = true;
+                    }
+                }
+                if (($template !== $existtemp) && $flag) {
+                    $DB->delete_records('pokcertificate_fieldmapping', ['pokid' => $pokid]);
                 }
                 if ($templateid != 0) {
 
