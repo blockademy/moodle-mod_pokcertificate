@@ -69,7 +69,6 @@ function pokcertificate_supports($feature) {
     }
 }
 
-
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the issued certificates.
@@ -218,7 +217,6 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
     return $info;
 }
 
-
 /**
  * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
  *
@@ -258,10 +256,11 @@ function mod_pokcertificate_get_completion_active_rule_descriptions($cm) {
  */
 function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
     global $DB, $USER;
+
     $context = \context_module::instance($cm->id);
     $isverified = get_config('mod_pokcertificate', 'pokverified');
     $user = \core_user::get_user($USER->id);
-    if (!has_capability('mod/pokcertificate:manageinstance', $context)) {
+    if (!empty($user) && !has_capability('mod/pokcertificate:manageinstance', $context)) {
         $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
         if ($pokrecord && !empty($pokrecord->get('templateid')) &&  $pokrecord->get('templateid') != 0) {
             $poktemplate = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
@@ -413,7 +412,6 @@ function pokcertificate_check_updates_since(cm_info $cm, $from, $filter = []) {
     $updates = course_check_module_updates_since($cm, $from, ['content'], $filter);
     return $updates;
 }
-
 
 /**
  * Extends the course navigation with a link to the Pokcertificate module participants page.
