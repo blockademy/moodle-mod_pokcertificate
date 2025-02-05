@@ -143,6 +143,23 @@ class api {
     }
 
     /**
+     * Given a list of pages
+     * @return array
+     */
+    public function get_pages() {
+        $location = PAGES_ROOT;
+        $result_json = $this->execute_command($location, '');
+        $result = json_decode($result_json);
+        $pages = [];
+        
+        foreach ($result->data as $page){
+            $pages[$page->id] = $page->name;
+        }
+
+        return $pages;
+    }
+
+    /**
      * Hit the API
      * @param  string $location   API URL
      * @param  string $params     URL parameters for the API
