@@ -37,6 +37,7 @@ $PAGE->set_context($context);
 $PAGE->set_heading($SITE->fullname);
 require_login();
 
+$PAGE->requires->jquery();
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
 // Restrict normal user to access this page.
 admin_externalpage_setup('managemodules');
