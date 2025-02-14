@@ -79,9 +79,6 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         $mform->addRule('title', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('title', 'title', 'pokcertificate');
 
-        $pages = (new mod_pokcertificate\api)->get_pages();
-        $mform->addElement('select', 'page', get_string('pages', 'pokcertificate'), $pages);
-
         $this->standard_intro_elements();
 
         $this->standard_coursemodule_elements();
