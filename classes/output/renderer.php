@@ -366,15 +366,25 @@ class renderer extends \plugin_renderer_base {
             if (!empty($credits) && isset($credits->pokCredits)) {
                 set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
             }
-            if (isset($credits->pokCredits) && $credits->pokCredits > 0) {
-                $output = self::render_emit_certificate($cm, $user, $pokissuerec);
+            
+            $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
+            $pokid = $pokrecord->get('id');
+            $templateid = $pokrecord->get('templateid');
+            $templatetype = pokcertificate_templates::get_field('templatetype', ['id' => $templateid, 'pokid' => $pokid]);
+            
+            if ($templatetype == PAID){
+                if (isset($credits->pokCredits) && $credits->pokCredits > 0) {
+                    $output = self::render_emit_certificate($cm, $user, $pokissuerec);
+                } else {
+                    $msg = get_string(
+                        'mailacceptancepending',
+                        'mod_pokcertificate',
+                        ['institution' => get_config('mod_pokcertificate', 'institution')]
+                    );
+                    $output = self::certificate_pending_message($msg, $cm);
+                }
             } else {
-                $msg = get_string(
-                    'mailacceptancepending',
-                    'mod_pokcertificate',
-                    ['institution' => get_config('mod_pokcertificate', 'institution')]
-                );
-                $output = self::certificate_pending_message($msg, $cm);
+                $output = self::render_emit_certificate($cm, $user, $pokissuerec);
             }
         }
         if (empty($output)) {
