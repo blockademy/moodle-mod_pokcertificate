@@ -273,8 +273,8 @@ class mod_pokcertificate_external extends external_api {
                 $certificatecount = (new mod_pokcertificate\api)->count_certificates();
                 $certificatecount = json_decode($certificatecount);
                 set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
-                set_config('pendingcertificates', $certificatecount->processing, 'mod_pokcertificate');
-                set_config('issuedcertificates', $certificatecount->emitted, 'mod_pokcertificate');
+                set_config('pendingcertificates', $certificatecount->processingCredentials, 'mod_pokcertificate');
+                set_config('issuedcertificates', $certificatecount->emittedCredentials, 'mod_pokcertificate');
                 $msg = get_string("success");
                 return ["status" => 0, "msg" => $msg, "response" => $orgdetails];
             } else {

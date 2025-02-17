@@ -75,7 +75,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function get_credits() {
-        $location = MINTER_ROOT . '/credits/' . $this->wallet;
+        $location = CREDITS_ROOT . '/credits/' . $this->wallet;
         return $this->execute_command($location, '');
     }
 
@@ -84,9 +84,9 @@ class api {
      * @return string API response, in json encoded format
      */
     public function count_certificates() {
-        $location = MINTER_ROOT . '/certificate/count';
-        $params['wallet'] = $this->wallet;
-        return $this->execute_command($location, $params);
+        $location = API_ROOT . '/organization/me';
+        //$params['wallet'] = $this->wallet;
+        return $this->execute_command($location, '');
     }
 
     /**
@@ -140,23 +140,6 @@ class api {
         $templatename = rawurlencode($templatename);
         $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename . '/render';
         return $this->execute_command($location, $data, 'post');
-    }
-
-    /**
-     * Given a list of pages
-     * @return array
-     */
-    public function get_pages() {
-        $location = PAGES_ROOT;
-        $result_json = $this->execute_command($location, '');
-        $result = json_decode($result_json);
-        $pages = [];
-        
-        foreach ($result->data as $page){
-            $pages[$page->id] = $page->name;
-        }
-
-        return $pages;
     }
 
     /**

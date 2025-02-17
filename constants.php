@@ -26,6 +26,8 @@ namespace mod_pokcertificate;
 
 defined('MOODLE_INTERNAL') || die;
 
+define('FREE', 0);
+define('PAID', 1);
 $prodtype = get_config('mod_pokcertificate', 'prodtype');
 
 $tempurl = ($prodtype == 2 ? 'https://templates.pok.tech' : 'https://templates.credentity.xyz');
@@ -33,6 +35,12 @@ define('TEMPLATE_MANAGER_ROOT', $tempurl);
 
 $minturl = ($prodtype == 2 ? 'https://minter.pok.tech' : 'https://minter.credentity.xyz');
 define('MINTER_ROOT', $minturl);
+
+$creditsurl = ($prodtype == 2 ? 'https://credits.pok.tech' : 'https://credits.credentity.xyz');
+define('CREDITS_ROOT', $creditsurl);
+
+$apiurl = ($prodtype == 2 ? 'https://api.pok.tech' : 'https://api.credentity.xyz');
+define('API_ROOT', $apiurl);
 
 $apikeysurl = ($prodtype == 2 ? 'https://api-keys.pok.tech' : 'https://api-keys.credentity.xyz');
 define('API_KEYS_ROOT', $apikeysurl);
@@ -42,9 +50,6 @@ define('RBAC_ROOT', $rbacurl);
 
 $custodianurl = ($prodtype == 2 ? 'https://custodian.pok.tech' : 'https://custodian.credentity.xyz');
 define('CUSTODIAN_ROOT', $custodianurl);
-
-$pagesurl = ($prodtype == 2 ? 'https://api.pok.tech/page' : 'https://api.credentity.xyz/page');
-define('PAGES_ROOT', $pagesurl);
 
 $sampledata = [
     "name" => "John Galt",
