@@ -475,6 +475,7 @@ class pok {
         $templatemandatoryfields = helper::template_mandatory_fields();
         $institution = get_config('mod_pokcertificate', 'institution');
         $title = $pokrecord->get('title');
+        $page = $pokrecord->get('page');
         $timemilliseconds = time() * 1000;
         if ($templatedefinition && $templatedefinition->params) {
             foreach ($templatedefinition->params as $param) {
@@ -533,6 +534,7 @@ class pok {
         $emitdata->first_name = $user->firstname;
         $emitdata->last_name = $user->lastname;
         $emitdata->title = $title;
+        $emitdata->page = $page;
         $emitdata->template = $templatename;
         $emitdata->date = $timemilliseconds;
         $emitdata->free = ($template->get('templatetype') == 0) ? true : false;

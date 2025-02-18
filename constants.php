@@ -51,6 +51,9 @@ define('RBAC_ROOT', $rbacurl);
 $custodianurl = ($prodtype == 2 ? 'https://custodian.pok.tech' : 'https://custodian.credentity.xyz');
 define('CUSTODIAN_ROOT', $custodianurl);
 
+$pagesurl = ($prodtype == 2 ? 'https://api.pok.tech/page' : 'https://api.credentity.xyz/page');
+define('PAGES_ROOT', $pagesurl);
+
 $sampledata = [
     "name" => "John Galt",
     "title" => "Engineer",
