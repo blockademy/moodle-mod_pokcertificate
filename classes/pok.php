@@ -534,7 +534,6 @@ class pok {
         $emitdata->first_name = $user->firstname;
         $emitdata->last_name = $user->lastname;
         $emitdata->title = $title;
-        $emitdata->page = $page;
         $emitdata->template = $templatename;
         $emitdata->date = $timemilliseconds;
         $emitdata->free = ($template->get('templatetype') == 0) ? true : false;
@@ -542,6 +541,9 @@ class pok {
         $emitdata->language_tag = $user->lang;
         if (!empty($customparams)) {
             $emitdata->custom_params = $customparams;
+        }
+        if (!empty($page) && $page != "-"){
+            $emitdata->page = $page;
         }
 
         return $emitdata;

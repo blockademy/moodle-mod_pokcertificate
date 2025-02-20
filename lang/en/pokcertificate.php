@@ -96,6 +96,7 @@ $string['linkpokdetails'] = 'Link POK Account Details';
 $string['institution'] = 'Name of the Institution';
 $string['institution_help'] = 'Institution name will be auto-populated once the authentication token is verified.';
 $string['pages'] = 'Choose a custom page';
+$string['none'] = 'None';
 $string['domain'] = 'Domain Name';
 $string['domain_help'] = 'Domian Name';
 $string['authtoken'] = 'Authentication Token';

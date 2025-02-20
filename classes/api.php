@@ -147,10 +147,10 @@ class api {
      * @return array
      */
     public function get_pages() {
-        $location = PAGES_ROOT;
+        $location = API_ROOT . '/page';
         $result_json = $this->execute_command($location, '');
         $result = json_decode($result_json);
-        $pages = [];
+        $pages = ['-' => get_string('none', 'mod_pokcertificate')];
         
         foreach ($result->data as $page){
             $pages[$page->id] = $page->name;
