@@ -543,7 +543,7 @@ class pok {
             $emitdata->custom_params = $customparams;
         }
         if (!empty($page) && $page != "-"){
-            $emitdata->page = $page;
+            $emitdata->custom_page = $page;
         }
 
         return $emitdata;
