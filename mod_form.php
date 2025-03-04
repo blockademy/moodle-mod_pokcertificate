@@ -135,11 +135,10 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
 
         if (!empty($data->completionunlocked)) {
             // Turn off completion settings if the checkboxes aren't ticked.
-            $suffix = $this->get_suffix();
-            $completion = $data->{'completion' . $suffix};
+            $completion = $data->{'completion'};
             $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
-            if (!$autocompletion || empty($data->{'completionsubmit' . $suffix})) {
-                $data->{'completionsubmit' . $suffix} = 0;
+            if (!$autocompletion || empty($data->{'completionsubmit'})) {
+                $data->{'completionsubmit'} = 0;
             }
         }
     }
@@ -152,8 +151,7 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform = $this->_form;
 
-        $suffix = $this->get_suffix();
-        $completionsubmit = 'completionsubmit' . $suffix;
+        $completionsubmit = 'completionsubmit';
         $mform->addElement('checkbox', $completionsubmit, '', get_string('completionmustrecievecert', 'pokcertificate'));
         // Enable this completion rule by default.
         $mform->setDefault($completionsubmit, 1);
@@ -172,7 +170,6 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
      * @return bool True if any completion rule is enabled, false otherwise.
      */
     public function completion_rule_enabled($data) {
-        $suffix = $this->get_suffix();
-        return !empty($data['completionsubmit' . $suffix]);
+        return !empty($data['completionsubmit']);
     }
 }
