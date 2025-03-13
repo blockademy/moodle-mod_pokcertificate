@@ -475,6 +475,7 @@ class pok {
         $templatemandatoryfields = helper::template_mandatory_fields();
         $institution = get_config('mod_pokcertificate', 'institution');
         $title = $pokrecord->get('title');
+        $page = $pokrecord->get('page');
         $timemilliseconds = time() * 1000;
         if ($templatedefinition && $templatedefinition->params) {
             foreach ($templatedefinition->params as $param) {
@@ -540,6 +541,9 @@ class pok {
         $emitdata->language_tag = $user->lang;
         if (!empty($customparams)) {
             $emitdata->custom_params = $customparams;
+        }
+        if (!empty($page) && $page != "-"){
+            $emitdata->custom_page = $page;
         }
 
         return $emitdata;
