@@ -27,8 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 $functions = [
 
     'mod_pokcertificate_view_pokcertificate' => [
-        'classname'     => 'mod_pokcertificate_external',
-        'methodname'    => 'view_pokcertificate',
+        'classname'     => 'mod_pokcertificate\external\view_pokcertificate',
         'description'   => 'Simulate the view.php web interface pokcertificate: trigger events, completion, etc...',
         'type'          => 'write',
         'capabilities'  => 'mod/pokcertificate:view',
@@ -36,8 +35,7 @@ $functions = [
     ],
 
     'mod_pokcertificate_get_pokcertificates_by_courses' => [
-        'classname'     => 'mod_pokcertificate_external',
-        'methodname'    => 'get_pokcertificates_by_courses',
+        'classname'     => 'mod_pokcertificate\external\get_pokcertificates_by_courses',
         'description'   => 'Returns a list of pokcertificates in a provided list of courses,
                             if no list is provided all pokcertificates that the user
                             can view will be returned.',
@@ -47,16 +45,14 @@ $functions = [
     ],
 
     'mod_pokcertificate_verify_auth' => [
-        'classname'     => 'mod_pokcertificate_external',
-        'methodname'    => 'verify_authentication',
+        'classname'     => 'mod_pokcertificate\external\verify_authentication',
         'description'   => 'Verify the authentication',
         'ajax' => true,
         'type' => 'write',
     ],
 
     'mod_pokcertificate_emit_general_certificate' => [
-        'classname'     => 'mod_pokcertificate_external',
-        'methodname'    => 'emit_general_certificate',
+        'classname'     => 'mod_pokcertificate\external\emit_general_certificate',
         'description'   => 'Emit the general certificates to users for course',
         'ajax' => true,
         'type' => 'write',
