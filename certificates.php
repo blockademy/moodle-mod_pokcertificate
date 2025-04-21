@@ -37,6 +37,7 @@ $context = \context_module::instance($cm->id);
 require_capability('mod/pokcertificate:manageinstance', $context);
 
 $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
+$PAGE->requires->jquery();
 $PAGE->requires->js_call_amd("mod_pokcertificate/pokcertificate", "init");
 
 $options = empty($pokcertificate->displayoptions) ? [] : (array) unserialize_array($pokcertificate->displayoptions);
