@@ -258,7 +258,7 @@ class renderer extends \plugin_renderer_base {
 
         $output .= $this->box_start('modal-body', 'modal-body', $attributes);
         $output .= \html_writer::start_tag('div', ['class' => 'text-center']);
-        $output .= \html_writer::tag('i', '', ['class' => ' faicon fa-solid fa-envelope-open fa-xl']);
+        $output .= \html_writer::tag('i', '', ['class' => ' fa fa-solid fa-envelope-open fa-xl']);
         $output .= \html_writer::tag('p', get_string('congratulations', 'mod_pokcertificate'), ['class' => 'success-mainheading']);
         $output .= \html_writer::end_tag('div');
 
