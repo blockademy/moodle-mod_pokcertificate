@@ -169,10 +169,10 @@ class editprofile_form extends moodleform {
         if (preg_match('/[^a-zA-Z0-9]/', trim($data['idnumber']))) {
             $errors['idnumber'] = get_string('invalidspechar', 'mod_pokcertificate');
         }
-        if (preg_match('/[^a-zA-Z0-9\s]/', trim($data['firstname']))) {
+        if (preg_match('/[.+]/', trim($data['firstname']))) {
             $errors['firstname'] = get_string('invalidspechar', 'mod_pokcertificate');
         }
-        if (preg_match('/[^a-zA-Z0-9\s]/', trim($data['lastname']))) {
+        if (preg_match('/[.+]/', trim($data['lastname']))) {
             $errors['lastname'] = get_string('invalidspechar', 'mod_pokcertificate');
         }
 
