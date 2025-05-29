@@ -287,10 +287,10 @@ class updateprofile_form extends moodleform {
         if (preg_match('/[^a-zA-Z0-9]/', trim($user['idnumber']))) {
             $errors['idnumber'] = get_string('invalidspechar', 'mod_pokcertificate');
         }
-        if (preg_match('/[^a-zA-Z0-9\s]/', trim($user['firstname']))) {
+        if (preg_match('/[.+]/', trim($user['firstname']))) {
             $errors['firstname'] = get_string('invalidspechar', 'mod_pokcertificate');
         }
-        if (preg_match('/[^a-zA-Z0-9\s]/', trim($user['lastname']))) {
+        if (preg_match('/[.+]/', trim($user['lastname']))) {
             $errors['lastname'] = get_string('invalidspechar', 'mod_pokcertificate');
         }
 
