@@ -300,7 +300,7 @@ class syncfunctionality {
         $strings->linenumber = $this->excellinenumber;
         $strings->data = $excel->studentname;
         $strings->field = 'studentname';
-        if (preg_match('/[.+]/', trim($excel->studentname))) {
+        if (!preg_match('/.+/', trim($excel->studentname))) {
             $invalidsapecialcharecter = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
             echo html_writer::tag('div', $invalidsapecialcharecter);
             $this->errors[] = $invalidsapecialcharecter;
@@ -322,7 +322,7 @@ class syncfunctionality {
         $strings->linenumber = $this->excellinenumber;
         $strings->data = $excel->surname;
         $strings->field = 'surname';
-        if (preg_match('/[.+]/', trim($excel->surname))) {
+        if (!preg_match('/.+/', trim($excel->surname))) {
             $invalidsapecialcharecter = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
             echo html_writer::tag('div', $invalidsapecialcharecter);
             $this->errors[] = $invalidsapecialcharecter;
@@ -383,7 +383,7 @@ class syncfunctionality {
         $strings->linenumber = $this->excellinenumber;
         $strings->data = $excel->studentid;
         $strings->field = 'studentid';
-        if (preg_match('/[.+]/', trim($excel->studentid))) {
+        if (!preg_match('/.+/', trim($excel->studentid))) {
             $invalidsapecialcharecter = get_string('invalidsapecialcharecter', 'mod_pokcertificate', $strings);
             echo html_writer::tag('div', $invalidsapecialcharecter);
             $this->errors[] = $invalidsapecialcharecter;
