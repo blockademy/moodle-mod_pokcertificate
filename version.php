@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025052901;       // The current module version (Date: YYYYMMDDXX).
+$plugin->version   = 2025072502;       // The current module version (Date: YYYYMMDDXX).
 $plugin->requires  = 2022041908;    // Requires this Moodle version.
 $plugin->component = 'mod_pokcertificate';       // Full name of the plugin (used for diagnostics).
 $plugin->cron      = 0;
