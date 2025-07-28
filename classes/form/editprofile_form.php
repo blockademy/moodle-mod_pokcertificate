@@ -86,7 +86,6 @@ class editprofile_form extends moodleform {
         $mform->setType('email', PARAM_EMAIL);
 
         $mform->addElement('text', 'idnumber', get_string('idnumber', 'mod_pokcertificate'), 'maxlength="255" size="25"');
-        $mform->addRule('idnumber', $strrequired, 'required', null, 'client');
         $mform->setType('idnumber', core_user::get_property_type('idnumber'));
 
         $mform->addElement('hidden', 'id');
@@ -165,9 +164,6 @@ class editprofile_form extends moodleform {
 
         if (!validate_email($data['email'])) {
             $errors['email'] = get_string('invalidemail', 'mod_pokcertificate');
-        }
-        if (!preg_match('/.+/', trim($data['idnumber']))) {
-            $errors['idnumber'] = get_string('invalidspechar', 'mod_pokcertificate');
         }
         if (!preg_match('/.+/', trim($data['firstname']))) {
             $errors['firstname'] = get_string('invalidspechar', 'mod_pokcertificate');

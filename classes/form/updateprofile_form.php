@@ -89,7 +89,7 @@ class updateprofile_form extends moodleform {
             foreach ($pokfieldsarr as $key => $field) {
                 $fieldname = $field;
 
-                if ((!in_array($fieldname, ['id','firstname', 'lastname', 'email', 'idnumber']) && strpos($fieldname, 'profile_field_') === false)) {
+                if ((!in_array($fieldname, ['id','firstname', 'lastname', 'email']) && strpos($fieldname, 'profile_field_') === false)) {
                     $purpose = user_edit_map_field_purpose($user->id, $fieldname);
                     $style = '';
                     if (!empty($user->$fieldname)) {
@@ -283,9 +283,6 @@ class updateprofile_form extends moodleform {
         $errors = parent::validation($user, $files);
         if (!validate_email($user['email'])) {
             $errors['email'] = get_string('invalidemail', 'mod_pokcertificate');
-        }
-        if (!preg_match('/.+/', trim($user['idnumber']))) {
-            $errors['idnumber'] = get_string('invalidspechar', 'mod_pokcertificate');
         }
         if (!preg_match('/.+/', trim($user['firstname']))) {
             $errors['firstname'] = get_string('invalidspechar', 'mod_pokcertificate');
