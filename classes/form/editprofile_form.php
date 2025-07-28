@@ -164,9 +164,6 @@ class editprofile_form extends moodleform {
         if (!validate_email($data['email'])) {
             $errors['email'] = get_string('invalidemail', 'mod_pokcertificate');
         }
-        if (!preg_match('/.+/', trim($data['idnumber']))) {
-            $errors['idnumber'] = get_string('invalidspechar', 'mod_pokcertificate');
-        }
         if (!preg_match('/.+/', trim($data['firstname']))) {
             $errors['firstname'] = get_string('invalidspechar', 'mod_pokcertificate');
         }
