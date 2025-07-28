@@ -250,17 +250,8 @@ class helper {
                             SELECT 1 FROM {user_info_field} LIMIT 1
                         )
                         AND (
-                            u.idnumber IS NULL
-                            OR u.idnumber = ''
-                            OR d.data IS NULL
+                            d.data IS NULL
                             OR d.data = ''
-                        )
-                        OR NOT EXISTS (
-                            SELECT 1 FROM {user_info_field} LIMIT 1
-                        )
-                        AND (
-                            u.idnumber IS NULL
-                            OR u.idnumber = ''
                         )
                     )";
 
@@ -855,7 +846,7 @@ class helper {
      * @return array An array of strings representing mandatory field names.
      */
     public static function user_mandatory_fields() {
-        $mandatoryfields = ['firstname', 'lastname', 'email', 'idnumber'];
+        $mandatoryfields = ['firstname', 'lastname', 'email'];
         return $mandatoryfields;
     }
 
