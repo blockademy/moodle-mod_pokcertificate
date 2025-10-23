@@ -1,0 +1,22 @@
+name: PHP CI
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    name: PHP Linter
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+
+      - name: Run syntax check
+        run: find . -type f -name "*.php" -exec php -l {} \;
