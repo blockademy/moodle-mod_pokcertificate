@@ -351,6 +351,7 @@ class pok {
                 $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($previewdata);
                 if (!empty($templatepreview)) {
                     $data['tempname'] = base64_encode($template->name);
+                    $data['tempid'] = $template->id;
                     $data['name'] = $template->name;
                     $data['cmid'] = ($cmid) ?? $cmid;
                     $data['selectedtemplate'] = ($templaterecord &&
