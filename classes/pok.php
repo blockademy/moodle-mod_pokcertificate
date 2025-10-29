@@ -331,27 +331,30 @@ class pok {
      * @return array
      */
     public static function get_certificate_templates($cmid = 0) {
-        global $CFG;
+        global $CFG, $USER;
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
 
         $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
         $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
         $templaterecord = pokcertificate_templates::get_record(['id' => $templateid]);
 
+        $user = \core_user::get_user($USER->id);
+
         $templates = [];
         $templateslist = (new \mod_pokcertificate\api)->get_templates_list();
         if (!empty($templateslist)) {
             $templateslist = json_decode($templateslist);
-            foreach ($templateslist as $template) {
+            foreach ($templateslist->data as $template) {
                 $data = [];
-                $previewdata = json_encode(SAMPLE_DATA);
-                $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
+                $previewdata = self::get_preview_data($template->id, $user->lang, SAMPLE_DATA);
+                $previewdata = json_encode($previewdata);                
+                $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($previewdata);
                 if (!empty($templatepreview)) {
-                    $data['tempname'] = base64_encode($template);
-                    $data['name'] = $template;
+                    $data['tempname'] = base64_encode($template->name);
+                    $data['name'] = $template->name;
                     $data['cmid'] = ($cmid) ?? $cmid;
                     $data['selectedtemplate'] = ($templaterecord &&
-                        $templaterecord->get('templatename') === $template) ? true : false;
+                        $templaterecord->get('templatename') === $template->name) ? true : false;
                     $data['certimage'] = (!empty($templatepreview)) ? trim($templatepreview, '"') : '';
                     $templates['certdata'][] = $data;
                 }
@@ -361,6 +364,40 @@ class pok {
             $templaterecord->get('templatetype') ? $templaterecord->get('templatetype') : 0);
 
         return $templates;
+    }
+
+    public static function get_preview_data($templateid, $lang, $sampledata) {
+        $emitdata = new \stdclass;
+        
+        // credential data
+        $creddata = new \stdclass;
+        $creddata->emissionType = 'pok';
+        $creddata->dateFormat = 'dd/MM/yyyy';
+        $timemilliseconds = $sampledata["date"];
+        $emissionDate = new \DateTime('@' . $timemilliseconds);
+        $emissionDate->setTimezone(new \DateTimeZone('UTC'));
+        $creddata->emissionDate = $emissionDate->format(DATE_ISO8601);
+        $creddata->title = $sampledata["title"];
+        $creddata->emitter = $sampledata["institution"];
+        $emitdata->credential = $creddata;
+
+        // receiver data
+        $recdata = new \stdclass;
+        if (!empty($lang)) {
+            $recdata->languageTag = $lang;
+        }        
+        $recdata->lastName = $sampledata["lastName"];
+        $recdata->firstName = $sampledata["firstName"];
+        $emitdata->receiver = $recdata;
+
+        // customization data
+        $customdata = new \stdclass;
+        $customdata->template = new \stdclass;
+        $customdata->template->id = $templateid;
+        $customdata->template->customParameters = new \stdclass;
+        $emitdata->customization = $customdata;
+
+        return $emitdata;
     }
 
     /**
@@ -462,8 +499,9 @@ class pok {
      */
     public static function get_emitcertificate_data($user, $template, $pokrecord) {
 
-        $templatename = $template->get('templatename');
-        $resptemplatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templatename);
+        $templateDef = $template->get('templatedefinition');
+        $templateDef = json_decode($templateDef);
+        $resptemplatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templateDef->id);
 
         if (!empty($resptemplatedefinition)) {
             $templatedefinition = json_decode($resptemplatedefinition);
@@ -476,49 +514,45 @@ class pok {
         $institution = get_config('mod_pokcertificate', 'institution');
         $title = $pokrecord->get('title');
         $page = $pokrecord->get('page');
-        $timemilliseconds = time() * 1000;
-        if ($templatedefinition && $templatedefinition->params) {
-            foreach ($templatedefinition->params as $param) {
+        $timemilliseconds = time();
+        if ($templatedefinition && $templatedefinition->customParameters) {
+            foreach ($templatedefinition->customParameters as $param) {
 
-                $pos = strpos($param->name, 'custom:');
-                if ($pos !== false) {
+                if ($pokfields) {
+                    foreach ($pokfields as $field) {
+                        $templatefield = $field->get('templatefield');
+                        switch ($templatefield) {
+                            case 'institution':
+                                if (in_array('institution', $templatemandatoryfields)) {
+                                    $institution = $field->get('userfield');
+                                }
+                                break;
+                            case 'title':
+                                if (in_array('title', $templatemandatoryfields)) {
+                                    $title = $field->get('userfield');
+                                }
+                                break;
+                            case 'date':
+                                if (in_array('date', $templatemandatoryfields)) {
+                                    $date = $field->get('userfield');
+                                    $timemilliseconds = $date;
+                                }
+                                break;
+                        }
 
-                    if ($pokfields) {
-                        foreach ($pokfields as $field) {
-                            $templatefield = $field->get('templatefield');
-                            switch ($templatefield) {
-                                case 'institution':
-                                    if (in_array('institution', $templatemandatoryfields)) {
-                                        $institution = $field->get('userfield');
-                                    }
-                                    break;
-                                case 'title':
-                                    if (in_array('title', $templatemandatoryfields)) {
-                                        $title = $field->get('userfield');
-                                    }
-                                    break;
-                                case 'date':
-                                    if (in_array('date', $templatemandatoryfields)) {
-                                        $date = $field->get('userfield');
-                                        $timemilliseconds = $date * 1000;
-                                    }
-                                    break;
-                            }
-
-                            $varname = substr($param->name, strrpos($param->name, ':') + 1);
-                            if ($field->get('templatefield') == $varname) {
-                                $userfield = $field->get('userfield');
-                                if (strpos($field->get('userfield'), 'profile_field_') === 0) {
-                                    $userprofilefield = substr($field->get('userfield'), strlen('profile_field_'));
-                                    if (isset($user->profile[$userprofilefield])) {
-                                        $customparams[$param->name] = $user->profile[$userprofilefield];
-                                    }
+                        $varname = $param->id;
+                        if ($field->get('templatefield') == $varname) {
+                            $userfield = $field->get('userfield');
+                            if (strpos($field->get('userfield'), 'profile_field_') === 0) {
+                                $userprofilefield = substr($field->get('userfield'), strlen('profile_field_'));
+                                if (isset($user->profile[$userprofilefield])) {
+                                    $customparams[$param->id] = $user->profile[$userprofilefield];
+                                }
+                            } else {
+                                if ($user->$userfield == 'country') {
+                                    $customparams[$param->id] = $user->$userfield;
                                 } else {
-                                    if ($user->$userfield == 'country') {
-                                        $customparams[$param->name] = $user->$userfield;
-                                    } else {
-                                        $customparams[$param->name] = $user->$userfield;
-                                    }
+                                    $customparams[$param->id] = $user->$userfield;
                                 }
                             }
                         }
@@ -526,25 +560,43 @@ class pok {
                 }
             }
         }
-        $templatedefinition = ($templatedefinition) ? json_encode($templatedefinition) : '';
         $emitdata = new \stdclass;
-        $emitdata->email = $user->email;
-        $emitdata->institution = $institution;
-        $emitdata->identification = $user->idnumber;
-        $emitdata->first_name = $user->firstname;
-        $emitdata->last_name = $user->lastname;
-        $emitdata->title = $title;
-        $emitdata->template = $templatename;
-        $emitdata->date = $timemilliseconds;
-        $emitdata->free = ($template->get('templatetype') == 0) ? true : false;
-        $emitdata->wallet = get_config('mod_pokcertificate', 'wallet');
-        $emitdata->language_tag = $user->lang;
-        if (!empty($customparams)) {
-            $emitdata->custom_params = $customparams;
-        }
+        
+        // credential data
+        $creddata = new \stdclass;
+        $creddata->emissionType = ($template->get('templatetype') == 0) ? 'pok' : 'blockchain';
+        $creddata->tags = [];
+        $creddata->dateFormat = 'dd/MM/yyyy';       // FIXME!
+        $emissionDate = new \DateTime('@' . $timemilliseconds);
+        $emissionDate->setTimezone(new \DateTimeZone('UTC'));
+        $creddata->emissionDate = $emissionDate->format(DATE_ISO8601);
+        $creddata->title = $title;
+        $creddata->emitter = $institution;
+        $creddata->skipAcceptance = false;
+        $emitdata->credential = $creddata;
+
+        // receiver data
+        $recdata = new \stdclass;
+        $recdata->languageTag = $user->lang;
+        $recdata->identification = $user->idnumber;
+        $recdata->email = $user->email;
+        $recdata->lastName = $user->lastname;
+        $recdata->firstName = $user->firstname;
+        $emitdata->receiver = $recdata;
+
+        // customization data
+        $customdata = new \stdclass;
         if (!empty($page) && $page != "-"){
-            $emitdata->custom_page = $page;
+            $customdata->page = $page;
         }
+        $customdata->template = new \stdclass;
+        $customdata->template->id = $templateDef->id;
+        if (!empty($customparams)) {
+            $customdata->template->customParameters = $customparams;
+        } else {
+            $customdata->template->customParameters = new \stdClass;
+        }
+        $emitdata->customization = $customdata;
 
         return $emitdata;
     }

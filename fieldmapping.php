@@ -39,6 +39,7 @@ if ($id && !$cm = get_coursemodule_from_id('pokcertificate', $id)) {
 
 $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$templateid = $pokcertificate->templateid;
 
 require_course_login($course, true, $cm);
 $context = \context_module::instance($cm->id);
@@ -60,13 +61,12 @@ if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
     $templateinfo = new \stdclass;
     $templateinfo->template = $templatename;
     $templateinfo->templatetype = $temptype;
-    $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templatename);
+    $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templateid);
 
     if ($templatedefinition) {
         $data = pok::save_template_definition($templateinfo, $templatedefinition, $cm);
 
         $pokid = $pokcertificate->id;
-        $templateid = $pokcertificate->templateid;
         $fielddata = helper::get_mapped_fields($pokid);
 
         $mform = new fieldmapping_form(

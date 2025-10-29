@@ -52,7 +52,8 @@ $custodianurl = ($prodtype == 2 ? 'https://custodian.pok.tech' : 'https://custod
 define('CUSTODIAN_ROOT', $custodianurl);
 
 $sampledata = [
-    "name" => "John Galt",
+    "firstName" => "John",
+    "lastName" => "Galt",
     "title" => "Engineer",
     "date" => time(),
     "institution" => "Ohio State University",

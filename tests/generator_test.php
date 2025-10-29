@@ -47,7 +47,7 @@ class generator_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         $this->assertEquals(0, $DB->count_records('pokcertificate'));
-        $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course]);
+        $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course, 'page' => 1]);
         $this->assertEquals(1, $DB->count_records('pokcertificate', ['id' => $pokcertificate->id]));
         $this->assertTrue($DB->record_exists('pokcertificate', ['course' => $course->id]));
         $this->assertTrue($DB->record_exists('pokcertificate', ['id' => $pokcertificate->id]));
@@ -83,7 +83,7 @@ class generator_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         $this->assertEquals(0, $DB->count_records('pokcertificate'));
-        $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course]);
+        $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course, 'page' => 'default']);
         $this->assertEquals(1, $DB->count_records('pokcertificate', ['id' => $pokcertificate->id]));
         // Check if the records created.
         $this->assertTrue($DB->record_exists('pokcertificate', ['course' => $course->id]));

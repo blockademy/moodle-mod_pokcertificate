@@ -72,9 +72,12 @@ class helper {
                 set_config('authenticationtoken', $key, 'mod_pokcertificate');
                 return true;
             } else {
+                // log the result output!
+                mtrace($result);
                 return false;
             }
         } else {
+            mtrace($result);
             return false;
         }
     }
@@ -172,7 +175,7 @@ class helper {
                 ['pokid' => $pokid, 'templatename' => $template]
             );
             $templatedefinition = json_decode($templatedefinition);
-            if ($templatedefinition) {
+            if ($templatedefinition && $templatedefinition->params) {                
                 foreach ($templatedefinition->params as $param) {
                     $pos = strpos($param->name, 'custom:');
                     if ($pos !== false) {
@@ -181,6 +184,12 @@ class helper {
                             $templatefields[$var] = $var;
                         }
                     }
+                }
+            }
+            // also support Public API to get custom fields 
+            if ($templatedefinition && $templatedefinition->customParameters) {
+                foreach ($templatedefinition->customParameters as $param) {
+                    $templatefields[$param->id] = $param->id;
                 }
             }
         }

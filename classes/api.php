@@ -66,26 +66,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function get_organization() {
-        $location = RBAC_ROOT . '/organization/' . $this->wallet;
-        return $this->execute_command($location, '');
-    }
-
-    /**
-     * Get the credits
-     * @return string API response, in json encoded format
-     */
-    public function get_credits() {
-        $location = CREDITS_ROOT . '/credits/' . $this->wallet;
-        return $this->execute_command($location, '');
-    }
-
-    /**
-     * Certificate count
-     * @return string API response, in json encoded format
-     */
-    public function count_certificates() {
         $location = API_ROOT . '/organization/me';
-        //$params['wallet'] = $this->wallet;
         return $this->execute_command($location, '');
     }
 
@@ -94,18 +75,17 @@ class api {
      * @return string API response, in json encoded format
      */
     public function get_templates_list() {
-        $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet;
+        $location = API_ROOT . '/template';
         return $this->execute_command($location, '');
     }
 
     /**
      * Template definition
-     * @param  string $templatename Name of the template
+     * @param  string $templateid ID of the template
      * @return string API response, in json encoded format
      */
-    public function get_template_definition($templatename) {
-        $templatename = rawurlencode($templatename);
-        $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename;
+    public function get_template_definition($templateid) {
+        $location = API_ROOT . '/template/' . $templateid;
         return $this->execute_command($location, '');
     }
 
@@ -116,7 +96,7 @@ class api {
      * @return string API response, in json encoded format
      */
     public function emit_certificate($data = '') {
-        $location = MINTER_ROOT . '/mint';
+        $location = API_ROOT . '/credential';
         return $this->execute_command($location, $data, 'post');
     }
 
@@ -126,7 +106,7 @@ class api {
      * @return string certificate url
      */
     public function get_certificate($certid = '') {
-        $location = MINTER_ROOT . '/certificate/' . $certid . '/details';
+        $location = API_ROOT . '/credential/' . $certid;
         return $this->execute_command($location, '');
     }
 
@@ -136,9 +116,8 @@ class api {
      * @param  object $data
      * @return string API response, in json encoded format
      */
-    public function preview_certificate($templatename, $data) {
-        $templatename = rawurlencode($templatename);
-        $location = TEMPLATE_MANAGER_ROOT . '/templates/' . $this->wallet . '/' . $templatename . '/render';
+    public function preview_certificate($data) {
+        $location = API_ROOT . '/template/preview';
         return $this->execute_command($location, $data, 'post');
     }
 

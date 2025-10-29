@@ -264,17 +264,13 @@ class mod_pokcertificate_external extends external_api {
             if ($result) {
                 $orgdetails = (new mod_pokcertificate\api)->get_organization();
                 $organisation = json_decode($orgdetails);
-                if (isset($organisation->id) && isset($organisation->name)) {
-                    set_config('orgid', $organisation->id, 'mod_pokcertificate');
+                if (isset($organisation->wallet) && isset($organisation->name)) {
+                    set_config('orgid', $organisation->wallet, 'mod_pokcertificate');
                     set_config('institution', $organisation->name, 'mod_pokcertificate');
                 }
-                $credits = (new mod_pokcertificate\api)->get_credits();
-                $credits = json_decode($credits);
-                $certificatecount = (new mod_pokcertificate\api)->count_certificates();
-                $certificatecount = json_decode($certificatecount);
-                set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
-                set_config('pendingcertificates', $certificatecount->processingCredentials, 'mod_pokcertificate');
-                set_config('issuedcertificates', $certificatecount->emittedCredentials, 'mod_pokcertificate');
+                set_config('availablecertificate', $organisation->availableCredits, 'mod_pokcertificate');
+                set_config('pendingcertificates', $organisation->processingCredentials, 'mod_pokcertificate');
+                set_config('issuedcertificates', $organisation->emittedCredentials, 'mod_pokcertificate');
                 $msg = get_string("success");
                 return ["status" => 0, "msg" => $msg, "response" => $orgdetails];
             } else {

@@ -74,6 +74,8 @@ class pokcertificate extends persistent {
             'page' => [
                 'type' => PARAM_RAW,
                 'optional' => true,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ],
             'templateid' => [
                 'type' => PARAM_INT,
