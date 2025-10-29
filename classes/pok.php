@@ -368,6 +368,19 @@ class pok {
     }
 
     public static function get_preview_data($templateid, $lang, $sampledata) {
+
+        $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templateid);
+
+        if (!empty($templatedefinition)) {
+            $templatedefinition = json_decode($templatedefinition);
+        }
+        $customparams = [];
+        if ($templatedefinition && $templatedefinition->customParameters) {
+            foreach ($templatedefinition->customParameters as $param) {
+                $customparams[$param->id] = '';                
+            }
+        }
+
         $emitdata = new \stdclass;
         
         // credential data
@@ -395,7 +408,11 @@ class pok {
         $customdata = new \stdclass;
         $customdata->template = new \stdclass;
         $customdata->template->id = $templateid;
-        $customdata->template->customParameters = new \stdclass;
+        if (!empty($customparams)) {
+            $customdata->template->customParameters = $customparams;
+        } else {
+            $customdata->template->customParameters = new \stdclass;
+        }
         $emitdata->customization = $customdata;
 
         return $emitdata;
