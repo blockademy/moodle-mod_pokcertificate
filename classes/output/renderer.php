@@ -149,9 +149,9 @@ class renderer extends \plugin_renderer_base {
                 $previewdata = json_encode($previewdata);
                 $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($previewdata);
                 if ($templatepreview) {
-                    $temppreview = trim($templatepreview, '"');
+                    $previewimageurl = json_decode($templatepreview)->url;
                     $output .= \html_writer::start_tag('div', ['class' => 'pokcertificate_img_container']);
-                    $output .= \html_writer::tag('img', '', ['src' => $temppreview, 'alt' => "Snow"]);
+                    $output .= \html_writer::tag('img', '', ['src' => $previewimageurl, 'alt' => "Snow"]);
                     $output .= \html_writer::end_tag('div');
                     $output .= \html_writer::tag('br', '');
                     $output .= \html_writer::tag(
@@ -352,7 +352,7 @@ class renderer extends \plugin_renderer_base {
     public function emit_certificate_templates($cmid, $user) {
         $output  = '';
         $user = \core_user::get_user($user->id);
-        $orgdetails = (new mod_pokcertificate\api)->get_organization();
+        $orgdetails = (new \mod_pokcertificate\api)->get_organization();
         $organisation = json_decode($orgdetails);
         $cm = pok::get_cm_instance($cmid);
         $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
@@ -790,7 +790,7 @@ class renderer extends \plugin_renderer_base {
     public function verificationstats() {
         $records = helper::pokcertificate_incompletestudentprofilelist();
         $data['creditscount'] = $records['count'];
-        $orgdetails = (new mod_pokcertificate\api)->get_organization();
+        $orgdetails = (new \mod_pokcertificate\api)->get_organization();
         $pendingcount = get_string('notavailable');
         if($orgdetails){
             $organisation = json_decode($orgdetails);

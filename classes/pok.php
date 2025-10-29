@@ -355,7 +355,8 @@ class pok {
                     $data['cmid'] = ($cmid) ?? $cmid;
                     $data['selectedtemplate'] = ($templaterecord &&
                         $templaterecord->get('templatename') === $template->name) ? true : false;
-                    $data['certimage'] = (!empty($templatepreview)) ? trim($templatepreview, '"') : '';
+                    $previewimageurl = json_decode($templatepreview)->url;
+                    $data['certimage'] = $previewimageurl;
                     $templates['certdata'][] = $data;
                 }
             }
