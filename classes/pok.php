@@ -346,7 +346,7 @@ class pok {
             $templateslist = json_decode($templateslist);
             foreach ($templateslist->data as $template) {
                 $data = [];
-                $previewdata = self::get_preview_data($template->id, $user->lang, SAMPLE_DATA);
+                $previewdata = self::get_preview_data($template->id, $user->lang, SAMPLE_DATA, null);
                 $previewdata = json_encode($previewdata);                
                 $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($previewdata);
                 if (!empty($templatepreview)) {
@@ -368,13 +368,15 @@ class pok {
         return $templates;
     }
 
-    public static function get_preview_data($templateid, $lang, $sampledata) {
+    public static function get_preview_data($templateid, $lang, $sampledata, $templatedefinition) {
 
-        $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templateid);
-
-        if (!empty($templatedefinition)) {
-            $templatedefinition = json_decode($templatedefinition);
+        if (empty($templatedefinition)) {
+            $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templateid);    
+            if (!empty($templatedefinition)) {
+                $templatedefinition = json_decode($templatedefinition);
+            }
         }
+
         $customparams = [];
         if ($templatedefinition && $templatedefinition->customParameters) {
             foreach ($templatedefinition->customParameters as $param) {

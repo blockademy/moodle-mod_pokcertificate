@@ -80,11 +80,13 @@ class actionbar {
 
             $cm = get_coursemodule_from_id('pokcertificate', $this->cmid, 0, false, MUST_EXIST);
             $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
-            $template = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);
+            $templatedefinition = pokcertificate_templates::get_field('templatedefinition', ['id' => $templateid]);
+            $templatedefinition = json_decode($templatedefinition);
+            $tempid = $templatedefinition->id;
 
             $fieldmappinglink = new \moodle_url(
                 '/mod/pokcertificate/fieldmapping.php',
-                ['id' => $this->cmid, 'temp' => base64_encode($template)]
+                ['id' => $this->cmid, 'temp' => $tempid]
             );
             $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');
 

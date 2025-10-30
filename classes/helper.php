@@ -175,7 +175,7 @@ class helper {
                 ['pokid' => $pokid, 'templatename' => $template]
             );
             $templatedefinition = json_decode($templatedefinition);
-            if ($templatedefinition && $templatedefinition->params) {                
+            if ($templatedefinition && isset($templatedefinition->params)) {                
                 foreach ($templatedefinition->params as $param) {
                     $pos = strpos($param->name, 'custom:');
                     if ($pos !== false) {
@@ -187,7 +187,7 @@ class helper {
                 }
             }
             // also support Public API to get custom fields 
-            if ($templatedefinition && $templatedefinition->customParameters) {
+            if ($templatedefinition && isset($templatedefinition->customParameters)) {
                 foreach ($templatedefinition->customParameters as $param) {
                     $templatefields[$param->id] = $param->id;
                 }
@@ -211,13 +211,24 @@ class helper {
                 ['pokid' => $pokid, 'templatename' => $template]
             );
             $templatedefinition = json_decode($templatedefinition);
-            if ($templatedefinition) {
+            if ($templatedefinition && isset($templatedefinition->params)) {
                 foreach ($templatedefinition->params as $param) {
                     $pos = strpos($param->name, ':');
-                    if ($pos === false && in_array($param->name, ['date', 'title', 'institution'/* , 'achiever' */])) {
+                    if ($pos === false && in_array($param->name, ['date', 'title', 'institution'])) {
                         $mandatoryfields[$param->name] = $param->name;
                     }
                 }
+            } elseif ($templatedefinition && isset($templatedefinition->parameters)) {
+                foreach ($templatedefinition->customParameters as $param) {
+                    if (in_array($param->id, ['date', 'title', 'institution'])) {
+                        $mandatoryfields[$param->id] = $param->id;
+                    }
+                }
+            } else {
+                // fallback to always required fields...
+                $mandatoryfields = [
+                    "date" => "date", "title" => "title", "institution" => "institution"
+                ];
             }
         }
         return $mandatoryfields;

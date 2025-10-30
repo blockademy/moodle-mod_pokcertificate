@@ -95,7 +95,7 @@ final class api_test extends \advanced_testcase {
         }
         $this->assertNotEmpty($selectedtemplate);
 
-        $previewdata = pok::get_preview_data($selectedtemplate->id, 'en', SAMPLE_DATA);
+        $previewdata = pok::get_preview_data($selectedtemplate->id, 'en', SAMPLE_DATA, null);
         $previewdata = json_encode($previewdata);
         $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($previewdata);
         $this->assertNotEmpty($templatepreview);

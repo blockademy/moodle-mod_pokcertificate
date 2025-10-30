@@ -57,15 +57,15 @@ $renderer->verify_authentication_check();
 
 // Save selected template definition.
 if (!empty(trim($tempid))) {
-    $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($tempid);
+    $resptemplatedefinition = (new \mod_pokcertificate\api)->get_template_definition($tempid);
 
-    if ($templatedefinition) {
-        $templatedefinition = json_decode($templatedefinition);
+    if ($resptemplatedefinition) {
+        $templatedefinition = json_decode($resptemplatedefinition);
         $templateinfo = new \stdclass;
         $templateinfo->template = $templatedefinition->name;
         $templateinfo->templatetype = $temptype;
 
-        $data = pok::save_template_definition($templateinfo, $templatedefinition, $cm);
+        $data = pok::save_template_definition($templateinfo, $resptemplatedefinition, $cm);
 
         $pokid = $pokcertificate->id;
         $fielddata = helper::get_mapped_fields($pokid);

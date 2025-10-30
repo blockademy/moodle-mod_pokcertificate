@@ -137,15 +137,17 @@ class renderer extends \plugin_renderer_base {
             $pokcertificate = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
             if ($pokcertificate && $pokcertificate->get('templateid')) {
                 $templateid = $pokcertificate->get('templateid');
+                $templateDef = pokcertificate_templates::get_field('templatedefinition', ['id' => $templateid]);
+                $templateDef = json_decode($templateDef);
                 $user = \core_user::get_user($USER->id);
                 $previewdata = [
                     "firstName" => $user->firstname,
                     "lastName" => $user->lastname,
                     "title" => $pokcertificate->get('title'),
-                    "date" => round(microtime(true) * 1000),
+                    "date" => round(microtime(true)),
                     "institution" => get_config('mod_pokcertificate', 'institution'),
                 ];
-                $previewdata = pok::get_preview_data($templateid, $user->lang, $previewdata);
+                $previewdata = pok::get_preview_data($templateDef->id, $user->lang, $previewdata, $templateDef);
                 $previewdata = json_encode($previewdata);
                 $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($previewdata);
                 if ($templatepreview) {
