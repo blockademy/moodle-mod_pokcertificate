@@ -45,7 +45,7 @@ class helper {
      */
     public static function pokcertificate_validate_apikey($key) {
 
-        $location = API_KEYS_ROOT . '/me';
+        $location = API_ROOT . '/organization/me';
         $params = '';
         self::set_pokcertificate_settings();
         $curl = new \curl();
@@ -66,9 +66,9 @@ class helper {
         }
         if ($curl->get_info()['http_code'] == 200) {
             $result = json_decode($result);
-            if (isset($result->org)) {
+            if (isset($result->wallet)) {
                 set_config('pokverified', true, 'mod_pokcertificate');
-                set_config('wallet', $result->org, 'mod_pokcertificate');
+                set_config('wallet', $result->wallet, 'mod_pokcertificate');
                 set_config('authenticationtoken', $key, 'mod_pokcertificate');
                 return true;
             } else {
@@ -172,7 +172,7 @@ class helper {
                 ['pokid' => $pokid, 'templatename' => $template]
             );
             $templatedefinition = json_decode($templatedefinition);
-            if ($templatedefinition) {
+            if ($templatedefinition && isset($templatedefinition->params)) {                
                 foreach ($templatedefinition->params as $param) {
                     $pos = strpos($param->name, 'custom:');
                     if ($pos !== false) {
@@ -181,6 +181,12 @@ class helper {
                             $templatefields[$var] = $var;
                         }
                     }
+                }
+            }
+            // also support Public API to get custom fields 
+            if ($templatedefinition && isset($templatedefinition->customParameters)) {
+                foreach ($templatedefinition->customParameters as $param) {
+                    $templatefields[$param->id] = $param->id;
                 }
             }
         }
@@ -202,13 +208,24 @@ class helper {
                 ['pokid' => $pokid, 'templatename' => $template]
             );
             $templatedefinition = json_decode($templatedefinition);
-            if ($templatedefinition) {
+            if ($templatedefinition && isset($templatedefinition->params)) {
                 foreach ($templatedefinition->params as $param) {
                     $pos = strpos($param->name, ':');
-                    if ($pos === false && in_array($param->name, ['date', 'title', 'institution'/* , 'achiever' */])) {
+                    if ($pos === false && in_array($param->name, ['date', 'title', 'institution'])) {
                         $mandatoryfields[$param->name] = $param->name;
                     }
                 }
+            } elseif ($templatedefinition && isset($templatedefinition->parameters)) {
+                foreach ($templatedefinition->customParameters as $param) {
+                    if (in_array($param->id, ['date', 'title', 'institution'])) {
+                        $mandatoryfields[$param->id] = $param->id;
+                    }
+                }
+            } else {
+                // fallback to always required fields...
+                $mandatoryfields = [
+                    "date" => "date", "title" => "title", "institution" => "institution"
+                ];
             }
         }
         return $mandatoryfields;

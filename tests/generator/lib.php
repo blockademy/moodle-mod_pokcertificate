@@ -95,8 +95,8 @@ class mod_pokcertificate_generator extends testing_module_generator {
         $templateinfo = new \stdclass;
         $templateinfo->template = 'Crossed Paths';
         $templateinfo->templatetype = 0;
-        $tempname = 'Crossed Paths';
-        $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($tempname);
+        $templateid = '671150d5-c867-41ce-a687-17e64c8a163b';
+        $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templateid);
 
         $data = pok::save_template_definition($templateinfo,  $templatedefinition, $cm);
 
