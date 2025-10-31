@@ -45,7 +45,7 @@ class helper {
      */
     public static function pokcertificate_validate_apikey($key) {
 
-        $location = API_KEYS_ROOT . '/me';
+        $location = API_ROOT . '/organization/me';
         $params = '';
         self::set_pokcertificate_settings();
         $curl = new \curl();
@@ -66,18 +66,15 @@ class helper {
         }
         if ($curl->get_info()['http_code'] == 200) {
             $result = json_decode($result);
-            if (isset($result->org)) {
+            if (isset($result->wallet)) {
                 set_config('pokverified', true, 'mod_pokcertificate');
-                set_config('wallet', $result->org, 'mod_pokcertificate');
+                set_config('wallet', $result->wallet, 'mod_pokcertificate');
                 set_config('authenticationtoken', $key, 'mod_pokcertificate');
                 return true;
             } else {
-                // log the result output!
-                mtrace($result);
                 return false;
             }
         } else {
-            mtrace($result);
             return false;
         }
     }
