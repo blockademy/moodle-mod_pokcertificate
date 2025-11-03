@@ -36,7 +36,6 @@ use html_writer;
  * This class provides utility functions for validating user upload columns and displaying continue buttons.
  */
 class progresslibfunctions {
-
     /**
      * Validates the columns of a CSV file for user upload.
      *

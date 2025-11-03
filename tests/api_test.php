@@ -52,7 +52,7 @@ final class api_test extends \advanced_testcase {
         $this->assertNotEmpty(get_config('mod_pokcertificate', 'wallet'));
         $this->assertNotEmpty(get_config('mod_pokcertificate', 'authenticationtoken'));
 
-        $orgdetails = (new \mod_pokcertificate\api)->get_organization();
+        $orgdetails = (new \mod_pokcertificate\api())->get_organization();
         $organisation = json_decode($orgdetails);
         $this->assertNotEmpty($organisation->wallet);
         set_config('orgid', $organisation->wallet, 'mod_pokcertificate');
@@ -66,7 +66,7 @@ final class api_test extends \advanced_testcase {
         $this->assertGreaterThanOrEqual(0, $certificatecount->processing);
         $this->assertGreaterThanOrEqual(0, $certificatecount->emitted); */
 
-        $templateslist = (new \mod_pokcertificate\api)->get_templates_list();
+        $templateslist = (new \mod_pokcertificate\api())->get_templates_list();
         $templateslist = json_decode($templateslist);
         $this->assertGreaterThanOrEqual(0, count($templateslist->data));
 
@@ -97,7 +97,7 @@ final class api_test extends \advanced_testcase {
 
         $previewdata = pok::get_preview_data($selectedtemplate->id, 'en', SAMPLE_DATA, null);
         $previewdata = json_encode($previewdata);
-        $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($previewdata);
+        $templatepreview = (new \mod_pokcertificate\api())->preview_certificate($previewdata);
         $this->assertNotEmpty($templatepreview);
 
         $poktemplate = $generator->create_pok_template($cm, $selectedtemplate->id);
@@ -122,7 +122,7 @@ final class api_test extends \advanced_testcase {
         $result = mod_pokcertificate_external::view_pokcertificate($pokcertificate->get('id'));
         $result = external_api::clean_returnvalue(mod_pokcertificate_external::view_pokcertificate_returns(), $result);
 
-        $organisation = (new \mod_pokcertificate\api)->get_organization();
+        $organisation = (new \mod_pokcertificate\api())->get_organization();
         $organisation = json_decode($organisation);
         $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
         if (
@@ -135,7 +135,8 @@ final class api_test extends \advanced_testcase {
                 set_config('availablecertificate', $organisation->availableCredits, 'mod_pokcertificate');
             }
             if (isset($organisation->availableCredits) && $organisation->availableCredits >= 0) {
-                if ((empty($pokissuerec)) ||
+                if (
+                    (empty($pokissuerec)) ||
                     ($pokissuerec && $pokissuerec->get('useremail') != $user->email)
                 ) {
                     $template = pokcertificate_templates::get_record(['id' => $pokcertificate->get('templateid')]);
@@ -143,7 +144,7 @@ final class api_test extends \advanced_testcase {
                     $emitdata = pok::get_emitcertificate_data($user, $template, $pokcertificate);
                     $data = json_encode($emitdata);
 
-                    $emitcertificate = (new \mod_pokcertificate\api)->emit_certificate($data);
+                    $emitcertificate = (new \mod_pokcertificate\api())->emit_certificate($data);
                     $emitcertificate = json_decode($emitcertificate);
 
                     if ($emitcertificate) {
@@ -158,7 +159,6 @@ final class api_test extends \advanced_testcase {
                         $issuecertificate = pok::issue_certificate($pokissuerec);
                         if (!empty($issuecertificate)) {
                             if ($issuecertificate->emitted) {
-
                                 if ($issuecertificate->processing) {
                                     $this->assertTrue($issuecertificate->processing, false);
                                 } else {

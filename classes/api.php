@@ -38,7 +38,6 @@ require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
  * Represents an API class for handling certain functionalities.
  */
 class api {
-
     /**
      * Authentication token for API access.
      *
@@ -130,8 +129,8 @@ class api {
         $result_json = $this->execute_command($location, '');
         $result = json_decode($result_json);
         $pages = ['-' => get_string('none', 'mod_pokcertificate')];
-        
-        foreach ($result->data as $page){
+
+        foreach ($result->data as $page) {
             $pages[$page->id] = $page->name;
         }
 
@@ -188,7 +187,6 @@ class api {
                 'curlapierror',
                 'mod_pokcertificate'
             ) . '</p>', $url);
-
         }
         self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $httpCode, $result);
 

@@ -38,7 +38,6 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
  * form shown while adding activity.
  */
 class fieldmapping_form extends moodleform {
-
     /**
      * Definition method for the form.
      */
@@ -121,7 +120,6 @@ class fieldmapping_form extends moodleform {
         }
 
         foreach ($remotefields as $key => $value) {
-
             $mform->addElement('html', '<tr class="">
                                             <td class="cell c0 " style=""></td>
                                             <td class="cell c1 fieldmapfields" style="">');

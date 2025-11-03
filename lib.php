@@ -195,11 +195,13 @@ function pokcertificate_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
     require_once("$CFG->libdir/resourcelib.php");
 
-    if (!$pokcertificate = $DB->get_record(
-        'pokcertificate',
-        ['id' => $coursemodule->instance],
-        'id, name, display, displayoptions, intro, introformat,completionsubmit'
-    )) {
+    if (
+        !$pokcertificate = $DB->get_record(
+            'pokcertificate',
+            ['id' => $coursemodule->instance],
+            'id, name, display, displayoptions, intro, introformat,completionsubmit'
+        )
+    ) {
         return null;
     }
 
@@ -264,9 +266,11 @@ function mod_pokcertificate_cm_info_dynamic(\cm_info $cm) {
         $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
         if ($pokrecord && !empty($pokrecord->get('templateid')) &&  $pokrecord->get('templateid') != 0) {
             $poktemplate = pokcertificate_templates::get_record(['id' => $pokrecord->get('templateid')]);
-            $templatename = base64_encode($poktemplate->get('templatename'));;
+            $templatename = base64_encode($poktemplate->get('templatename'));
+            ;
             $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
-            if ((empty($pokissuerec)) ||
+            if (
+                (empty($pokissuerec)) ||
                 ($pokissuerec && $pokissuerec->get('useremail') != $user->email)
             ) {
                 $externalfields = helper::get_externalfield_list($templatename, $pokrecord->get('id'));
@@ -426,7 +430,6 @@ function mod_pokcertificate_extend_navigation_course(navigation_node $navigation
     global $PAGE;
 
     if (has_capability('mod/pokcertificate:managecoursecertificate', $context)) {
-
         $node = navigation_node::create(
             get_string('coursecertificatestatus', 'mod_pokcertificate'),
             new moodle_url(

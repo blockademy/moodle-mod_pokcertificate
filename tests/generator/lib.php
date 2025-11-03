@@ -33,7 +33,6 @@ use mod_pokcertificate\pok;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_pokcertificate_generator extends testing_module_generator {
-
     /**
      * create_instance
      *
@@ -92,19 +91,19 @@ class mod_pokcertificate_generator extends testing_module_generator {
      */
     public function create_pok_template($cm = null, $templateid = null) {
 
-        $templateinfo = new \stdclass;
-        
+        $templateinfo = new \stdclass();
+
         if (empty($templateid)) {
             $templateid = '671150d5-c867-41ce-a687-17e64c8a163b';
             $templateinfo->template = 'Crossed Paths';
-            $templateinfo->templatetype = 0;            
+            $templateinfo->templatetype = 0;
             $templatedefinition = [
                 "id" => $templateid,
                 "name" => "Crossed Paths",
-                "customParameters" => []                    
+                "customParameters" => [],
             ];
         } else {
-            $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templateid);
+            $templatedefinition = (new \mod_pokcertificate\api())->get_template_definition($templateid);
 
             if ($templatedefinition) {
                 $templatedefinition = json_decode($templatedefinition);
@@ -113,7 +112,7 @@ class mod_pokcertificate_generator extends testing_module_generator {
             }
         }
 
-        $data = pok::save_template_definition($templateinfo,  json_encode($templatedefinition), $cm);
+        $data = pok::save_template_definition($templateinfo, json_encode($templatedefinition), $cm);
 
         return $data;
     }

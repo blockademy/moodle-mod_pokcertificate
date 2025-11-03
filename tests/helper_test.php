@@ -27,7 +27,6 @@ use mod_pokcertificate\helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class helper_test extends \advanced_testcase {
-
     /**
      * Validates the API key for the POK certificate.
      *

@@ -39,7 +39,6 @@ use stdClass;
  * into Moodle for the mod_pokcertificate module.
  */
 class syncfunctionality {
-
     /**
      * @var mixed The data to be synchronized.
      */
@@ -258,7 +257,7 @@ class syncfunctionality {
      */
     public function mandatory_field_validation($user, $field) {
         if (empty(trim($user->$field))) {
-            $strings = new stdClass;
+            $strings = new stdClass();
             $strings->field = $field;
             $strings->linenumber = $this->excellinenumber;
             $missingstring = get_string('missing', 'mod_pokcertificate', $strings);
@@ -278,7 +277,7 @@ class syncfunctionality {
      * @param object $excel The Excel data for a user.
      */
     public function nouserexist($excel) {
-        $strings = new stdClass;
+        $strings = new stdClass();
         $strings->linenumber = $this->excellinenumber;
         $strings->username = $excel->username;
         $nouserrecord = get_string('nouserrecord', 'mod_pokcertificate', $strings);

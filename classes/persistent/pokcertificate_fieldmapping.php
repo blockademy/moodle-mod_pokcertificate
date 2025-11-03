@@ -26,7 +26,6 @@ use core\persistent;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pokcertificate_fieldmapping extends persistent {
-
     /** Database table pokcertificate_fieldmapping. */
     public const TABLE = 'pokcertificate_fieldmapping';
     /**

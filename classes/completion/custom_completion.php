@@ -30,7 +30,6 @@ use mod_pokcertificate\persistent\pokcertificate_issues;
  */
 
 class custom_completion extends activity_custom_completion {
-
     /**
      * Fetches the completion state for a given completion rule.
      *

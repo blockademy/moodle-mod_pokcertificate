@@ -28,7 +28,6 @@ use mod_pokcertificate\persistent\pokcertificate_templates;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class actionbar {
-
     /** @var int $cmid The course module id. */
     protected $cmid;
     protected $pageurl;
@@ -71,7 +70,6 @@ class actionbar {
 
         $menu = [];
         if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
-
             $previewlink = new \moodle_url('/mod/pokcertificate/preview.php', ['id' => $this->cmid]);
             $menu[$previewlink->out(false)] = get_string('previewcertificate', 'mod_pokcertificate');
 

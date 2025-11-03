@@ -57,11 +57,11 @@ $renderer->verify_authentication_check();
 
 // Save selected template definition.
 if (!empty(trim($tempid))) {
-    $resptemplatedefinition = (new \mod_pokcertificate\api)->get_template_definition($tempid);
+    $resptemplatedefinition = (new \mod_pokcertificate\api())->get_template_definition($tempid);
 
     if ($resptemplatedefinition) {
         $templatedefinition = json_decode($resptemplatedefinition);
-        $templateinfo = new \stdclass;
+        $templateinfo = new \stdclass();
         $templateinfo->template = $templatedefinition->name;
         $templateinfo->templatetype = $temptype;
 

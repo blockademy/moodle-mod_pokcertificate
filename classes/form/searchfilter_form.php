@@ -38,7 +38,6 @@ use moodleform;
  * student certificates or course participants based on various criteria.
  */
 class searchfilter_form extends moodleform {
-
     /**
      * Defines the form elements.
      *
@@ -68,7 +67,6 @@ class searchfilter_form extends moodleform {
         $mform->setType('email', PARAM_RAW);
 
         if ($viewtype == 'participaints' || $viewtype == 'generalcertificate') {
-
             if ($viewtype == 'participaints') {
                 // Autocomplete input field 1.
                 $mform->addElement(
@@ -104,7 +102,6 @@ class searchfilter_form extends moodleform {
             }
 
             if ($viewtype == 'generalcertificate') {
-
                 // Autocomplete input field 2.
                 $mform->addElement(
                     'select',

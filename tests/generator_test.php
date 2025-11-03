@@ -28,8 +28,7 @@ use mod_pokcertificate\helper;
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
-
+final class generator_test extends \advanced_testcase {
     /**
      * Test create pokkcertificate activity
      * @return void
@@ -68,7 +67,7 @@ class generator_test extends \advanced_testcase {
      * Test update pokkcertificate activity
      * @return void
      */
-    public function test_update_instance() {
+    public function test_update_instance(): void {
         global $DB, $CFG;
 
         require_once($CFG->dirroot . '/course/modlib.php');
@@ -131,7 +130,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_delete_instance() {
+    public function test_delete_instance(): void {
         global $DB;
         $this->resetAfterTest();
         // Turn off debugging.
@@ -161,7 +160,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_fieldmapping_save_instance() {
+    public function test_fieldmapping_save_instance(): void {
         global $DB;
         $this->resetAfterTest(false);
         // Turn off debugging.

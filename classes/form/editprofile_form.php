@@ -40,7 +40,6 @@ require_once($CFG->dirroot . '/user/editlib.php');
  * form shown while adding activity.
  */
 class editprofile_form extends moodleform {
-
     /**
      * Defines the form elements for editing a user profile.
      *

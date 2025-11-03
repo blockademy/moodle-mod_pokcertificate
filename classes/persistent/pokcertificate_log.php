@@ -26,7 +26,6 @@ use core\persistent;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pokcertificate_log extends persistent {
-
     /** Database table pokcertificate_log. */
     public const TABLE = 'pokcertificate_log';
 

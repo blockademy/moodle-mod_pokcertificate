@@ -44,13 +44,13 @@ class userupload_form extends moodleform {
         $mform->addElement('filepicker', 'userfile', get_string('file'));
         $mform->addRule('userfile', null, 'required');
 
-        $mform->addElement('hidden',  'delimiter_name');
+        $mform->addElement('hidden', 'delimiter_name');
         $mform->setType('delimiter_name', PARAM_TEXT);
-        $mform->setDefault('delimiter_name',  'comma');
+        $mform->setDefault('delimiter_name', 'comma');
 
-        $mform->addElement('hidden',  'encoding');
+        $mform->addElement('hidden', 'encoding');
         $mform->setType('encoding', PARAM_RAW);
-        $mform->setDefault('encoding',  'UTF-8');
+        $mform->setDefault('encoding', 'UTF-8');
 
         $mform->addElement('hidden', 'option', ADD_UPDATE);
         $mform->setType('option', PARAM_INT);

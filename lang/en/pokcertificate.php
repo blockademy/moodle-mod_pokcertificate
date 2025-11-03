@@ -45,9 +45,9 @@ $string['legacyfilesdone'] = 'Finished';
 
 $string['modulename_link'] = 'https://www.pok.tech/';
 $string['optionsheader'] = 'Display options';
+$string['pluginadministration'] = 'Page module administration';
 $string['pokcertificate-mod-pokcertificate-x'] = 'Any pokcertificate module pokcertificate';
 
-$string['pluginadministration'] = 'Page module administration';
 
 $string['popupheight'] = 'Pop-up height (in pixels)';
 $string['popupheightexplain'] = 'Specifies default height of popup windows.';
