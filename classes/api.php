@@ -126,8 +126,8 @@ class api {
      */
     public function get_pages() {
         $location = API_ROOT . '/page';
-        $result_json = $this->execute_command($location, '');
-        $result = json_decode($result_json);
+        $resultjson = $this->execute_command($location, '');
+        $result = json_decode($resultjson);
         $pages = ['-' => get_string('none', 'mod_pokcertificate')];
 
         foreach ($result->data as $page) {
@@ -173,7 +173,7 @@ class api {
             self::saveupdate_logdata($apiurl, $response, $curl->get_errno(), $result, $logrec->get('id'));
             throw new moodle_exception('connecterror', 'mod_pokcertificate', '', ['url' => $location]);
         }
-        $httpCode = $curl->get_info()['http_code'];
+        $httpcode = $curl->get_info()['http_code'];
 
         // Insert the API log here.
         if ($curl->get_info()['http_code'] == 200) {
@@ -181,14 +181,14 @@ class api {
             $apiresult = $result;
         } else {
             $response = get_string('fail', 'pokcertificate');
-            self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $httpCode, $result);
+            self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $httpcode, $result);
             $url = new \moodle_url('/my/courses.php', []);
             return notice('<p class="errorbox alert alert-danger">' . get_string(
                 'curlapierror',
                 'mod_pokcertificate'
             ) . '</p>', $url);
         }
-        self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $httpCode, $result);
+        self::saveupdate_logdata($apiurl, $logrec->get('id'), $response, $httpcode, $result);
 
         return $apiresult;
     }
@@ -209,7 +209,6 @@ class api {
      *
      * @return object The logid.
      */
-
     public function saveupdate_logdata($apiurl, $logid, $responsemsg = null, $responsecode = 0, $apiresult = null) {
 
         if ($logid == 0) {

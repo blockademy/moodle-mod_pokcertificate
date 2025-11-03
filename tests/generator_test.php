@@ -22,7 +22,6 @@ use mod_pokcertificate\helper;
 
 /**
  * PHPUnit data generator testcase
- *
  * @package    mod_pokcertificate
  * @category   test
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
@@ -32,6 +31,7 @@ final class generator_test extends \advanced_testcase {
     /**
      * Test create pokkcertificate activity
      * @return void
+     * @covers ::create_instance
      */
     public function test_create_instance(): void {
         global $DB;
@@ -66,6 +66,7 @@ final class generator_test extends \advanced_testcase {
     /**
      * Test update pokkcertificate activity
      * @return void
+     * @covers ::update_instance
      */
     public function test_update_instance(): void {
         global $DB, $CFG;
@@ -129,6 +130,7 @@ final class generator_test extends \advanced_testcase {
      * test_delete_instance
      *
      * @return void
+     * @covers ::delete_instance
      */
     public function test_delete_instance(): void {
         global $DB;
@@ -159,6 +161,7 @@ final class generator_test extends \advanced_testcase {
      * test_fieldmapping_save_instance
      *
      * @return void
+     * @covers ::fieldmapping_save_instance
      */
     public function test_fieldmapping_save_instance(): void {
         global $DB;

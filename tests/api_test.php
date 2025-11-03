@@ -35,6 +35,7 @@ final class api_test extends \advanced_testcase {
     /**
      * Test pokkcertificate api's
      * @return void
+     * @covers \mod_pokcertificate\api
      */
     public function test_api_instance(): void {
         global $CFG, $DB;
@@ -42,7 +43,7 @@ final class api_test extends \advanced_testcase {
         require_once($CFG->dirroot . '/mod/pokcertificate/constants.php');
         $this->resetAfterTest(false);
         // Turn off debugging.
-        // set_debugging(DEBUG_DEVELOPER, true);
+        set_debugging(DEBUG_DEVELOPER, true);
 
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_pokcertificate');
 
@@ -60,11 +61,6 @@ final class api_test extends \advanced_testcase {
         set_config('institution', $organisation->name, 'mod_pokcertificate');
 
         $this->assertGreaterThanOrEqual(0, $organisation->availableCredits);
-
-        /* $certificatecount = (new \mod_pokcertificate\api)->count_certificates();
-        $certificatecount = json_decode($certificatecount);
-        $this->assertGreaterThanOrEqual(0, $certificatecount->processing);
-        $this->assertGreaterThanOrEqual(0, $certificatecount->emitted); */
 
         $templateslist = (new \mod_pokcertificate\api())->get_templates_list();
         $templateslist = json_decode($templateslist);
@@ -85,7 +81,7 @@ final class api_test extends \advanced_testcase {
         $this->assertEquals('pokcertificate', $cm->modname);
         $this->assertEquals($course->id, $cm->course);
 
-        // Find Crossed Paths template from API templatelist
+        // Find Crossed Paths template from API templatelist.
         $selectedtemplate = null;
         foreach ($templateslist->data as $template) {
             if ($template->name == 'Crossed Paths') {

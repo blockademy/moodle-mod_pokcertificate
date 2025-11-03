@@ -28,7 +28,6 @@ use mod_pokcertificate\persistent\pokcertificate_issues;
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class custom_completion extends activity_custom_completion {
     /**
      * Fetches the completion state for a given completion rule.

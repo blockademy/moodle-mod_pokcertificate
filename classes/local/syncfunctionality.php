@@ -91,7 +91,7 @@ class syncfunctionality {
      */
     public function __construct($data = null) {
         $this->data = $data;
-    } // End of constructor.
+    }
 
     /**
      * Main method for HRMS frontend form submission.
@@ -191,7 +191,7 @@ class syncfunctionality {
 
         $uploadinfo .= html_writer::div($link, 'w-full pull-left text-xs-center');
         mtrace($uploadinfo);
-    } // End of main_hrms_frontendform_method.
+    }
 
     /**
      * Prepares the user object from Excel data.
@@ -217,7 +217,7 @@ class syncfunctionality {
             }
         }
         return $user;
-    } // End of  preparing_users_object method.
+    }
 
     /**
      * Updates a user record.
@@ -245,7 +245,7 @@ class syncfunctionality {
             profile_save_data($existinguser);
             $this->updatedcount++;
         }
-    } // End of  update_row method.
+    }
 
     /**
      * Validates mandatory missing fields.
@@ -266,7 +266,7 @@ class syncfunctionality {
             $this->mfields[] = $field;
             $this->errorcount++;
         }
-    } //End of mandatory_field_validation method.
+    }
 
     /**
      * Handles the case where no user record exists.
@@ -284,7 +284,7 @@ class syncfunctionality {
         echo html_writer::tag('div', $nouserrecord);
         $this->errors[] = $nouserrecord;
         $this->errorcount++;
-    } // End of nouserexist method.
+    }
 
     /**
      * Validates the studentname field.
@@ -306,7 +306,7 @@ class syncfunctionality {
             $this->mfields[] = 'studentname';
             $this->errorcount++;
         }
-    } // End of studentname_validation method.
+    }
 
     /**
      * Validates the surname field.
@@ -328,7 +328,7 @@ class syncfunctionality {
             $this->mfields[] = 'surname';
             $this->errorcount++;
         }
-    } // End of surname_validation method.
+    }
 
     /**
      * Validates the email field.
@@ -366,7 +366,7 @@ class syncfunctionality {
             $this->mfields[] = 'email';
             $this->errorcount++;
         }
-    } // End of email_validation method.
+    }
 
     /**
      * Validates the student ID field.
@@ -389,5 +389,5 @@ class syncfunctionality {
             $this->mfields[] = "studentid";
             $this->errorcount++;
         }
-    } // End of studentid_validation method.
-} // End of class.
+    }
+}

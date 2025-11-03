@@ -41,7 +41,7 @@ class mod_pokcertificate_generator extends testing_module_generator {
      *
      * @return object
      */
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG, $USER, $SITE;
         require_once($CFG->libdir . '/resourcelib.php');
         if (!isset($CFG->institution)) {    // To catch the first time.
@@ -154,6 +154,7 @@ class mod_pokcertificate_generator extends testing_module_generator {
     public function set_pokcertificate_settings() {
         set_config(
             'wallet',
+            // phpcs:ignore PHPCompatibility.Numbers.RemovedHexadecimalNumericStrings.Found
             '0x8cd7c619a1685a1f6e991946af6295ca05210af7',
             'mod_pokcertificate'
         );

@@ -20,7 +20,6 @@ use mod_pokcertificate\helper;
 
 /**
  * Tests for POK Certificate
- *
  * @package    mod_pokcertificate
  * @category   test
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
@@ -32,7 +31,7 @@ final class helper_test extends \advanced_testcase {
      *
      * This function performs validation on an API key used for POK certificate operations.
      * Detailed description of what validations are performed or any specific requirements.
-     *
+     * @covers ::pokcertificate_validate_apikey
      * @return void
      */
     public function test_pokcertificate_validate_apikey(): void {
@@ -52,6 +51,7 @@ final class helper_test extends \advanced_testcase {
      * fetching and processing these profiles.
      *
      * @return void
+     * @covers ::pokcertificate_incompletestudentprofilelist
      */
 
     public function test_pokcertificate_incompletestudentprofilelist(): void {
@@ -65,6 +65,16 @@ final class helper_test extends \advanced_testcase {
         $this->assertGreaterThanOrEqual(1, $count);
     }
 
+    /**
+     * Tests the retrieval of course certificates for POK certificates.
+     *
+     * This function tests the retrieval process for course certificates
+     * associated with POK certificates. It verifies the correctness of
+     * fetching and processing these certificates.
+     *
+     * @return void
+     * @covers ::pokcertificate_coursecertificatestatuslist
+     */
     public function test_pokcertificate_coursecertificatestatuslist(): void {
         global $DB;
         $this->resetAfterTest();
@@ -101,6 +111,7 @@ final class helper_test extends \advanced_testcase {
      * user data.
      *
      * @return void
+     * @covers ::validate_userinputs
      */
     public function test_validate_userinputs(): void {
         global $DB;

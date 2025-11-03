@@ -365,6 +365,14 @@ class pok {
         return $templates;
     }
 
+    /**
+     * Summary of get_preview_data
+     * @param mixed $templateid
+     * @param mixed $lang
+     * @param mixed $sampledata
+     * @param mixed $templatedefinition
+     * @return \stdclass
+     */
     public static function get_preview_data($templateid, $lang, $sampledata, $templatedefinition) {
 
         if (empty($templatedefinition)) {
@@ -383,19 +391,19 @@ class pok {
 
         $emitdata = new \stdclass();
 
-        // credential data
+        // Credential data.
         $creddata = new \stdclass();
         $creddata->emissionType = 'pok';
         $creddata->dateFormat = 'dd/MM/yyyy';
         $timemilliseconds = $sampledata["date"];
-        $emissionDate = new \DateTime('@' . $timemilliseconds);
-        $emissionDate->setTimezone(new \DateTimeZone('UTC'));
-        $creddata->emissionDate = $emissionDate->format(DATE_ISO8601);
+        $emissiondate = new \DateTime('@' . $timemilliseconds);
+        $emissiondate->setTimezone(new \DateTimeZone('UTC'));
+        $creddata->emissionDate = $emissiondate->format(DATE_ISO8601);
         $creddata->title = $sampledata["title"];
         $creddata->emitter = $sampledata["institution"];
         $emitdata->credential = $creddata;
 
-        // receiver data
+        // Receiver data.
         $recdata = new \stdclass();
         if (!empty($lang)) {
             $recdata->languageTag = $lang;
@@ -404,7 +412,7 @@ class pok {
         $recdata->firstName = $sampledata["firstName"];
         $emitdata->receiver = $recdata;
 
-        // customization data
+        // Customization data.
         $customdata = new \stdclass();
         $customdata->template = new \stdclass();
         $customdata->template->id = $templateid;
@@ -517,9 +525,9 @@ class pok {
      */
     public static function get_emitcertificate_data($user, $template, $pokrecord) {
 
-        $templateDef = $template->get('templatedefinition');
-        $templateDef = json_decode($templateDef);
-        $resptemplatedefinition = (new \mod_pokcertificate\api())->get_template_definition($templateDef->id);
+        $templatedefrecord = $template->get('templatedefinition');
+        $templatedefrecord = json_decode($templatedefrecord);
+        $resptemplatedefinition = (new \mod_pokcertificate\api())->get_template_definition($templatedefrecord->id);
 
         if (!empty($resptemplatedefinition)) {
             $templatedefinition = json_decode($resptemplatedefinition);
@@ -579,20 +587,20 @@ class pok {
         }
         $emitdata = new \stdclass();
 
-        // credential data
+        // Credential data.
         $creddata = new \stdclass();
         $creddata->emissionType = ($template->get('templatetype') == 0) ? 'pok' : 'blockchain';
         $creddata->tags = [];
         $creddata->dateFormat = 'dd/MM/yyyy';       // FIXME!
-        $emissionDate = new \DateTime('@' . $timemilliseconds);
-        $emissionDate->setTimezone(new \DateTimeZone('UTC'));
-        $creddata->emissionDate = $emissionDate->format(DATE_ISO8601);
+        $emissiondate = new \DateTime('@' . $timemilliseconds);
+        $emissiondate->setTimezone(new \DateTimeZone('UTC'));
+        $creddata->emissionDate = $emissiondate->format(DATE_ISO8601);
         $creddata->title = $title;
         $creddata->emitter = $institution;
         $creddata->skipAcceptance = false;
         $emitdata->credential = $creddata;
 
-        // receiver data
+        // Receiver data.
         $recdata = new \stdclass();
         $recdata->languageTag = $user->lang;
         $recdata->identification = $user->idnumber;
@@ -601,13 +609,13 @@ class pok {
         $recdata->firstName = $user->firstname;
         $emitdata->receiver = $recdata;
 
-        // customization data
+        // Customization data.
         $customdata = new \stdclass();
         if (!empty($page) && $page != "-") {
             $customdata->page = $page;
         }
         $customdata->template = new \stdclass();
-        $customdata->template->id = $templateDef->id;
+        $customdata->template->id = $templatedefrecord->id;
         if (!empty($customparams)) {
             $customdata->template->customParameters = $customparams;
         } else {

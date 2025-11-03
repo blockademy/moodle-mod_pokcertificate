@@ -182,7 +182,6 @@ class helper {
                     }
                 }
             }
-            // also support Public API to get custom fields
             if ($templatedefinition && isset($templatedefinition->customParameters)) {
                 foreach ($templatedefinition->customParameters as $param) {
                     $templatefields[$param->id] = $param->id;
@@ -221,7 +220,7 @@ class helper {
                     }
                 }
             } else {
-                // fallback to always required fields...
+                // Fallback to always required fields.
                 $mandatoryfields = [
                     "date" => "date", "title" => "title", "institution" => "institution",
                 ];
@@ -721,7 +720,6 @@ class helper {
      * @param array $useractivityids
      * @return array An array containing validation results.
      */
-
     public static function pokcertificate_userslist($useractivityids) {
         $languages = get_string_manager()->get_list_of_languages();
         $list = [];

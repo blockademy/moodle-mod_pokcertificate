@@ -58,7 +58,10 @@ class fieldmapping_form extends moodleform {
         $mandatoryfields = helper::get_mandatoryfield_list($templatename, $pokid);
 
         $pokrecord = pokcertificate::get_record(['id' => $pokid]);
-        $templatedefinition = pokcertificate_templates::get_field('templatedefinition', ['pokid' => $pokid, 'templatename' => $templatename]);
+        $templatedefinition = pokcertificate_templates::get_field(
+            'templatedefinition',
+            ['pokid' => $pokid, 'templatename' => $templatename]
+        );
         $templatedefinition = json_decode($templatedefinition);
         $tempid = $templatedefinition->id;
 

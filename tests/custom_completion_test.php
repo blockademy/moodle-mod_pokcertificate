@@ -40,7 +40,6 @@ require_once($CFG->libdir . '/completionlib.php');
 
 /**
  * Class for unit testing mod_pokcertificate/custom_completion.
- *
  * @package    mod_pokcertificate
  * @category   test
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
@@ -78,8 +77,8 @@ final class custom_completion_test extends advanced_testcase {
      * @param int|null $status Expected status.
      * @param string|null $exception Expected exception.
      * @dataProvider get_state_provider
+     * @covers ::get_state
      */
-
     public function test_get_state(string $rule, int $available, ?bool $submitted, ?int $status, ?string $exception): void {
         global $DB;
 
@@ -123,6 +122,7 @@ final class custom_completion_test extends advanced_testcase {
 
     /**
      * Test for get_defined_custom_rules().
+     * @covers ::get_defined_custom_rules
      */
     public function test_get_defined_custom_rules(): void {
         $rules = custom_completion::get_defined_custom_rules();
@@ -132,6 +132,7 @@ final class custom_completion_test extends advanced_testcase {
 
     /**
      * Test for get_defined_custom_rule_descriptions().
+     * @covers ::get_defined_custom_rule_descriptions
      */
     public function test_get_custom_rule_descriptions(): void {
         // Get defined custom rules.
@@ -158,6 +159,7 @@ final class custom_completion_test extends advanced_testcase {
 
     /**
      * Test for is_defined().
+     * @covers ::is_defined
      */
     public function test_is_defined(): void {
         // Build a mock cm_info instance.
@@ -194,6 +196,7 @@ final class custom_completion_test extends advanced_testcase {
      * Test for get_available_custom_rules().
      *
      * @dataProvider get_available_custom_rules_provider
+     * @covers ::get_available_custom_rules
      * @param int $status
      * @param array $expected
      */

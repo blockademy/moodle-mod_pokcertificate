@@ -30,6 +30,7 @@ use mod_pokcertificate\persistent\pokcertificate_templates;
 class actionbar {
     /** @var int $cmid The course module id. */
     protected $cmid;
+    /** @var moodle_url $pageurl The page url.*/
     protected $pageurl;
     /**
      * The class constructor.
