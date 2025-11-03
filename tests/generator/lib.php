@@ -90,15 +90,30 @@ class mod_pokcertificate_generator extends testing_module_generator {
      * @param  mixed $cm
      * @return object
      */
-    public function create_pok_template($cm = null) {
+    public function create_pok_template($cm = null, $templateid = null) {
 
         $templateinfo = new \stdclass;
-        $templateinfo->template = 'Crossed Paths';
-        $templateinfo->templatetype = 0;
-        $templateid = '671150d5-c867-41ce-a687-17e64c8a163b';
-        $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templateid);
+        
+        if (empty($templateid)) {
+            $templateid = '671150d5-c867-41ce-a687-17e64c8a163b';
+            $templateinfo->template = 'Crossed Paths';
+            $templateinfo->templatetype = 0;            
+            $templatedefinition = [
+                "id" => $templateid,
+                "name" => "Crossed Paths",
+                "customParameters" => []                    
+            ];
+        } else {
+            $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templateid);
 
-        $data = pok::save_template_definition($templateinfo,  $templatedefinition, $cm);
+            if ($templatedefinition) {
+                $templatedefinition = json_decode($templatedefinition);
+                $templateinfo->template = $templatedefinition->name;
+                $templateinfo->templatetype = 0;
+            }
+        }
+
+        $data = pok::save_template_definition($templateinfo,  json_encode($templatedefinition), $cm);
 
         return $data;
     }

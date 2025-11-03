@@ -41,7 +41,7 @@ final class helper_test extends \advanced_testcase {
         $this->resetAfterTest();
         // Turn off debugging.
         set_debugging(DEBUG_NONE);
-        $valid = helper::pokcertificate_validate_apikey('7cb608d4-0bb6-4641-aa06-594f2fedf2a0');
+        $valid = helper::pokcertificate_validate_apikey('43ea6742-28d8-48ff-b9de-fd3458fb4dac');
         $this->assertTrue($valid);
     }
 

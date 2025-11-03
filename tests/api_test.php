@@ -100,7 +100,7 @@ final class api_test extends \advanced_testcase {
         $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($previewdata);
         $this->assertNotEmpty($templatepreview);
 
-        $poktemplate = $generator->create_pok_template($cm);
+        $poktemplate = $generator->create_pok_template($cm, $selectedtemplate->id);
         $remotefields = helper::get_externalfield_list($selectedtemplate->name, $pokcertificate->id);
         if ($remotefields) {
             $data = $generator->get_fieldmapping_data($cm->id, $pokcertificate->id, $templatename, $poktemplate['templateid']);
