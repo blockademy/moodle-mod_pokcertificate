@@ -111,7 +111,6 @@ class api {
 
     /**
      * Preview the certificate
-     * @param  string $templatename Name of the template
      * @param  object $data
      * @return string API response, in json encoded format
      */

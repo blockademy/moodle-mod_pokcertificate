@@ -36,10 +36,9 @@ class mod_pokcertificate_generator extends testing_module_generator {
     /**
      * create_instance
      *
-     * @param  mixed $record
-     * @param  array $options
-     *
-     * @return object
+     * @param mixed|null $record  The record data or null.
+     * @param array|null $options Optional settings for instance creation.
+     * @return object The created instance.
      */
     public function create_instance($record = null, ?array $options = null) {
         global $CFG, $USER, $SITE;
@@ -86,7 +85,8 @@ class mod_pokcertificate_generator extends testing_module_generator {
     /**
      * create_pok_template
      *
-     * @param  mixed $cm
+     * @param  mixed|null $cm
+     * @param  mixed|null $templateid
      * @return object
      */
     public function create_pok_template($cm = null, $templateid = null) {

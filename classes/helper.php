@@ -450,6 +450,7 @@ class helper {
      * such as student ID, pagination settings, and offset. It prepares the data for awarding general certificates
      * by selecting relevant user information and formatting it appropriately.
      *
+     * @param string $course The name of the course to retrieve participants from.
      * @param int $courseid The ID of the course to retrieve participants from.
      * @param int $studentid The student ID to search for (optional).
      * @param string $studentname The student name to search for (optional).

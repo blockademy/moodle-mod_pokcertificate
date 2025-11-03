@@ -73,9 +73,10 @@ final class custom_completion_test extends advanced_testcase {
      *
      * @param string $rule The custom completion rule.
      * @param int $available Whether this rule is available.
-     * @param bool $submitted Whether the user has received pok certificate.
+     * @param bool|null $submitted Whether the user has received pok certificate.
      * @param int|null $status Expected status.
      * @param string|null $exception Expected exception.
+     * @return void
      * @dataProvider get_state_provider
      * @covers ::get_state
      */
