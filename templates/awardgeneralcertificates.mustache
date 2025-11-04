@@ -15,6 +15,15 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 }}
+{{!
+    @template mod_pokcertificate/awardgeneralcertificates
+
+    Describe template awardgeneralcertificates
+
+    Example context (json):
+    {
+    }
+}}
 {{#showdata}}
 <div class= "row">
  <form action="previewusers.php" method="post">
@@ -88,14 +97,14 @@
         <button type="submit" id="award-certificate-btn" class="btn btn-primary">{{#str}}award, mod_pokcertificate{{/str}}</button>
     </div>
     </form>
-
+</div>
 {{/showdata}}
 {{^showdata}}
     <div class="alert alert-info alert-block fade in  alert-dismissible" role="alert" data-aria-autofocus="true">
         {{#str}}norecordavailable, mod_pokcertificate{{/str}}
     </div>
 {{/showdata}}
-</div>
+
 <script>
     // Function to handle the click event of the "Award Certificate" button
     document.getElementById("award-certificate-btn").addEventListener("click", function() {
