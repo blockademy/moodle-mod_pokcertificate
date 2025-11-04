@@ -64,13 +64,14 @@
     </div>
 </form>
 {{#js}}
+    /* eslint-env jquery */
    function disableButton() {
         var templates = document.getElementsByClassName("certradio");
         var certbutton = document.getElementById("certbutton");
         var atLeastOneSelected = false;
-        if($('.certificates_container .selection_btn').hasClass('btn-success')){
+        if ($('.certificates_container .selection_btn').hasClass('btn-success')) {
             certbutton.disabled = atLeastOneSelected;
-        }else{
+        } else {
             for (var i = 0; i < templates.length; i++) {
                 if (templates[i].checked) {
                     atLeastOneSelected = true;
@@ -84,13 +85,13 @@
     // Call the disableButton function when the page loads.
     window.addEventListener("load", disableButton);
 
-    $(document).ready(function(){
+    $(document).ready(function() {
 
-        $('.certificates_container .selection_btn').click(function(e){
+        $('.certificates_container .selection_btn').click(function(e) {
             e.preventDefault();
             var certbutton = document.getElementById("certbutton");
-            var card_element = $(this).parent().parent().parent();
-            card_element.find('.certradio').prop('checked',true);
+            var cardElement = $(this).parent().parent().parent();
+            cardElement.find('.certradio').prop('checked', true);
             certbutton.disabled = false;
             $('.certificates_container .selection_btn').removeClass('btn-success').addClass('btn-light');
             $(this).removeClass('btn-light').addClass('btn-success');
