@@ -39,11 +39,11 @@ var SERVICES = {
 };
 
 /**
-* Displays a modal form
-*
-* @param {Event} e
-*/
-const verify = function(e){
+ * Displays a modal form
+ *
+ * @param {Event} e
+ */
+const verify = function(e) {
     e.preventDefault();
     var institution = $("#id_institution").val();
     var authtoken = $("#id_authtoken").val();
@@ -81,11 +81,11 @@ const verify = function(e){
 };
 
 /**
-* Load certificate templates
-*
-* @param {Event} e
-*/
-export const loadtemplates = function(e){
+ * Load certificate templates
+ *
+ * @param {Event} e
+ */
+export const loadtemplates = function(e) {
     e.preventDefault();
     var type = $(e.currentTarget).attr('data-value');//$("input[type='radio'][name='optradio']:checked").val();
     var cmid = $(e.currentTarget).attr('data-cmid');
@@ -104,11 +104,11 @@ export const loadtemplates = function(e){
 };
 
 /**
-* Emit general certificate for selected users.
-*
-* @param {Event} e
-*/
-const emit = function(e){
+ * Emit general certificate for selected users.
+ *
+ * @param {Event} e
+ */
+const emit = function(e) {
     e.preventDefault();
 
     var userinputs = $("#id_userinputs").val();
@@ -121,7 +121,7 @@ const emit = function(e){
     ]);
     promises[0].done(function(resp) {
         $('#loading-image').show();
-        if(resp){
+        if (resp) {
             ModalFactory.create({
                 title: Str.get_string('generalcertstatus','mod_pokcertificate'),
                 type: ModalFactory.types.DEFAULT,
