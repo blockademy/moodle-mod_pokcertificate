@@ -57,18 +57,18 @@ const verify = function(e) {
     ]).then(function(s) {
             var promises = Ajax.call([
                 {
-                    methodname:SERVICES.VERIFY_AUTHENTICATION,
-                    args: {prodtype:prodtype,authtoken: authtoken, institution:institution}
+                    methodname: SERVICES.VERIFY_AUTHENTICATION,
+                    args: {prodtype: prodtype, authtoken: authtoken, institution: institution}
                 }
             ]);
-            promises[0].done(function(data) {
+            return promises[0].done(function(data) {
                 $('.pokcertificateloader').fadeOut();
-                if(data.status == 1){
+                if (data.status == 1) {
                     $("#verifyresponse").html('<i class="notverified fa-solid fa-circle-xmark"></i>' +
-                                                '<span">' +s[1]+'</span>');
-                }else{
+                                                '<span">' + s[1] + '</span>');
+                } else {
                     $("#verifyresponse").html('<i class="verified fa-solid fa-circle-check"></i>' +
-                                                '<span>' +s[2]+ '</span>');
+                                                '<span>' + s[2] + '</span>');
                     var resp = JSON.parse(data.response);
                     $("#id_institution").val(resp.name);
                     window.location.reload();
@@ -87,19 +87,20 @@ const verify = function(e) {
  */
 export const loadtemplates = function(e) {
     e.preventDefault();
-    var type = $(e.currentTarget).attr('data-value');//$("input[type='radio'][name='optradio']:checked").val();
+    var type = $(e.currentTarget).attr('data-value');
     var cmid = $(e.currentTarget).attr('data-cmid');
     var promise = Ajax.call([{
-        methodname:SERVICES.SHOW_CERTIFICATE_TEMPLATES,
-        args: {type:type,cmid:cmid}
+        methodname: SERVICES.SHOW_CERTIFICATE_TEMPLATES,
+        args: {type: type, cmid: cmid}
     }]);
     promise[0].done(function(data) {
         var resp = JSON.parse(data);
         var content = Templates.render('mod_pokcertificate/certificatetemplates', resp);
-        content.then(function (html) {
-            $('.certtemplatedata').html(html);
+        return content.then(function(html) {
+            return $('.certtemplatedata').html(html);
         });
     }).fail(function() {
+        // Do nothing
     });
 };
 
@@ -117,22 +118,22 @@ const emit = function(e) {
     var loadingIcon = LoadingIcon.addIconToContainerWithPromise(loadElement);
 
     var promises = Ajax.call([
-        {methodname: SERVICES.EMIT_CERTIFICATE, args: {userinputs: userinputs,courseid:courseid}}
+        {methodname: SERVICES.EMIT_CERTIFICATE, args: {userinputs: userinputs, courseid: courseid}}
     ]);
     promises[0].done(function(resp) {
         $('#loading-image').show();
         if (resp) {
             ModalFactory.create({
-                title: Str.get_string('generalcertstatus','mod_pokcertificate'),
+                title: Str.get_string('generalcertstatus', 'mod_pokcertificate'),
                 type: ModalFactory.types.DEFAULT,
-                body: Str.get_string('certificatesent','mod_pokcertificate'),
+                body: Str.get_string('certificatesent', 'mod_pokcertificate'),
                 footer: '<button type="button" class="btn btn-primary" data-action="save">Done</button>'
             }).done(function(modal) {
 
                 this.modal = modal;
                 modal.getRoot().find('[data-action="save"]').on('click', function() {
-                    window.location.href = 'generalcertificate.php?courseid='+courseid;
-                }.bind(this));
+                    window.location.href = 'generalcertificate.php?courseid=' + courseid;
+                });
 
                 modal.show();
                 $(this).prop('disabled', false);
