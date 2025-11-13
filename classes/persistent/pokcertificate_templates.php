@@ -27,7 +27,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pokcertificate_templates extends persistent {
-
     /** Database table pokcertificate_templates. */
     public const TABLE = 'pokcertificate_templates';
 

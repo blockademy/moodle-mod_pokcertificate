@@ -32,12 +32,10 @@ use core_privacy\local\request\writer;
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class provider implements
+    \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\plugin\provider,
-    \core_privacy\local\request\core_userlist_provider {
-
+    \core_privacy\local\request\plugin\provider {
     /**
      * Return the fields which contain personal data.
      *
@@ -152,7 +150,7 @@ class provider implements
         // Get all the pokcertificate activities associated with the above course modules.
         $pokcertificateidstocmids = self::get_pokcertificate_ids_to_cmids_from_cmids($cmids);
 
-        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($pokcertificateidstocmids), SQL_PARAMS_NAMED);
+        [$insql, $inparams] = $DB->get_in_or_equal(array_keys($pokcertificateidstocmids), SQL_PARAMS_NAMED);
         $params = array_merge($inparams, ['userid' => $user->id]);
         $recordset = $DB->get_recordset_select(
             'pokcertificate_issues',
@@ -238,7 +236,7 @@ class provider implements
         }
 
         $userids = $userlist->get_userids();
-        list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        [$usersql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
 
         $select = "pokid = :id AND userid $usersql";
         $params = ['id' => $cm->instance] + $userparams;
@@ -254,7 +252,7 @@ class provider implements
     protected static function get_pokcertificate_ids_to_cmids_from_cmids(array $cmids) {
         global $DB;
 
-        list($insql, $inparams) = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED);
+        [$insql, $inparams] = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED);
         $sql = "SELECT pok.id, cm.id AS cmid
                  FROM {pokcertificate} pok
                  JOIN {modules} m

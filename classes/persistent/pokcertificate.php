@@ -26,7 +26,6 @@ use core\persistent;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class pokcertificate extends persistent {
-
     /** Database table pokcertificate. */
     public const TABLE = 'pokcertificate';
 
@@ -74,6 +73,8 @@ class pokcertificate extends persistent {
             'page' => [
                 'type' => PARAM_RAW,
                 'optional' => true,
+                'null' => NULL_ALLOWED,
+                'default' => null,
             ],
             'templateid' => [
                 'type' => PARAM_INT,

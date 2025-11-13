@@ -22,17 +22,16 @@ use mod_pokcertificate\helper;
 
 /**
  * PHPUnit data generator testcase
- *
  * @package    mod_pokcertificate
  * @category   test
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class generator_test extends \advanced_testcase {
-
+final class generator_test extends \advanced_testcase {
     /**
      * Test create pokkcertificate activity
      * @return void
+     * @covers ::create_instance
      */
     public function test_create_instance(): void {
         global $DB;
@@ -47,7 +46,7 @@ class generator_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         $this->assertEquals(0, $DB->count_records('pokcertificate'));
-        $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course]);
+        $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course, 'page' => 1]);
         $this->assertEquals(1, $DB->count_records('pokcertificate', ['id' => $pokcertificate->id]));
         $this->assertTrue($DB->record_exists('pokcertificate', ['course' => $course->id]));
         $this->assertTrue($DB->record_exists('pokcertificate', ['id' => $pokcertificate->id]));
@@ -67,8 +66,9 @@ class generator_test extends \advanced_testcase {
     /**
      * Test update pokkcertificate activity
      * @return void
+     * @covers ::update_instance
      */
-    public function test_update_instance() {
+    public function test_update_instance(): void {
         global $DB, $CFG;
 
         require_once($CFG->dirroot . '/course/modlib.php');
@@ -83,7 +83,7 @@ class generator_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         $this->assertEquals(0, $DB->count_records('pokcertificate'));
-        $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course]);
+        $pokcertificate = $this->getDataGenerator()->create_module('pokcertificate', ['course' => $course, 'page' => 'default']);
         $this->assertEquals(1, $DB->count_records('pokcertificate', ['id' => $pokcertificate->id]));
         // Check if the records created.
         $this->assertTrue($DB->record_exists('pokcertificate', ['course' => $course->id]));
@@ -130,8 +130,9 @@ class generator_test extends \advanced_testcase {
      * test_delete_instance
      *
      * @return void
+     * @covers ::delete_instance
      */
-    public function test_delete_instance() {
+    public function test_delete_instance(): void {
         global $DB;
         $this->resetAfterTest();
         // Turn off debugging.
@@ -160,8 +161,9 @@ class generator_test extends \advanced_testcase {
      * test_fieldmapping_save_instance
      *
      * @return void
+     * @covers ::fieldmapping_save_instance
      */
-    public function test_fieldmapping_save_instance() {
+    public function test_fieldmapping_save_instance(): void {
         global $DB;
         $this->resetAfterTest(false);
         // Turn off debugging.

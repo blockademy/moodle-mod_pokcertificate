@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 use core_course\external\helper_for_get_mods_by_courses;
 use core_external\external_api;
 use core_external\external_files;
@@ -36,7 +35,6 @@ use mod_pokcertificate\helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_pokcertificate_external extends external_api {
-
     /**
      * Returns description of method parameters
      *
@@ -74,7 +72,7 @@ class mod_pokcertificate_external extends external_api {
 
         // Request and permission validation.
         $pokcertificate = $DB->get_record('pokcertificate', ['id' => $params['pokcertificateid']], '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($pokcertificate, 'pokcertificate');
+        [$course, $cm] = get_course_and_cm_from_instance($pokcertificate, 'pokcertificate');
 
         $context = \context_module::instance($cm->id);
         self::validate_context($context);
@@ -150,8 +148,7 @@ class mod_pokcertificate_external extends external_api {
 
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
-
-            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
+            [$courses, $warnings] = util::validate_courses($params['courseids'], $mycourses);
 
             // Get the pokcertificates in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -160,7 +157,7 @@ class mod_pokcertificate_external extends external_api {
                 $pokdetails = helper_for_get_mods_by_courses::format_name_and_intro($pokcertificate, 'mod_pokcertificate');
                 $context = \context_module::instance($pokcertificate->coursemodule);
                 self::validate_context($context);
-                list($pokcertificate->content, $pokcertificate->contentformat) = \core_external\util::format_text(
+                [$pokcertificate->content, $pokcertificate->contentformat] = \core_external\util::format_text(
                     $pokcertificate->content,
                     $pokcertificate->contentformat,
                     $context,
@@ -262,19 +259,15 @@ class mod_pokcertificate_external extends external_api {
             $result = helper::pokcertificate_validate_apikey($params['authtoken']);
 
             if ($result) {
-                $orgdetails = (new mod_pokcertificate\api)->get_organization();
+                $orgdetails = (new mod_pokcertificate\api())->get_organization();
                 $organisation = json_decode($orgdetails);
-                if (isset($organisation->id) && isset($organisation->name)) {
-                    set_config('orgid', $organisation->id, 'mod_pokcertificate');
+                if (isset($organisation->wallet) && isset($organisation->name)) {
+                    set_config('orgid', $organisation->wallet, 'mod_pokcertificate');
                     set_config('institution', $organisation->name, 'mod_pokcertificate');
                 }
-                $credits = (new mod_pokcertificate\api)->get_credits();
-                $credits = json_decode($credits);
-                $certificatecount = (new mod_pokcertificate\api)->count_certificates();
-                $certificatecount = json_decode($certificatecount);
-                set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
-                set_config('pendingcertificates', $certificatecount->processingCredentials, 'mod_pokcertificate');
-                set_config('issuedcertificates', $certificatecount->emittedCredentials, 'mod_pokcertificate');
+                set_config('availablecertificate', $organisation->availableCredits, 'mod_pokcertificate');
+                set_config('pendingcertificates', $organisation->processingCredentials, 'mod_pokcertificate');
+                set_config('issuedcertificates', $organisation->emittedCredentials, 'mod_pokcertificate');
                 $msg = get_string("success");
                 return ["status" => 0, "msg" => $msg, "response" => $orgdetails];
             } else {
@@ -343,7 +336,6 @@ class mod_pokcertificate_external extends external_api {
         }
         self::validate_context($context);
         if (has_capability('mod/pokcertificate:awardcertificate', $context)) {
-
             $useridsarr = explode(",", $userinputs);
             if ($useridsarr) {
                 foreach ($useridsarr as $userrec) {

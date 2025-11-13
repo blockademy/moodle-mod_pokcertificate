@@ -79,7 +79,7 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         $mform->addRule('title', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('title', 'title', 'pokcertificate');
 
-        $pages = (new mod_pokcertificate\api)->get_pages();
+        $pages = (new mod_pokcertificate\api())->get_pages();
         $mform->addElement('select', 'page', get_string('pages', 'pokcertificate'), $pages);
 
         $this->standard_intro_elements();
@@ -160,6 +160,17 @@ class mod_pokcertificate_mod_form extends moodleform_mod {
         return [$completionsubmit];
     }
 
+    /**
+     * Determines whether custom completion rules are enabled in the form.
+     *
+     * This method is called automatically by Moodle to check if any of the
+     * custom completion conditions defined in {@see add_completion_rules()}
+     * are active. It should return true if at least one of those rules is
+     * enabled based on the data passed in.
+     *
+     * @param stdClass $data The data submitted from the form.
+     * @return bool True if any completion rule is enabled, false otherwise.
+     */
     public function completion_rule_enabled($data) {
         $suffix = $this->get_suffix();
         return !empty($data['completionsubmit' . $suffix]);

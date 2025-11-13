@@ -33,16 +33,14 @@ use mod_pokcertificate\pok;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_pokcertificate_generator extends testing_module_generator {
-
     /**
      * create_instance
      *
-     * @param  mixed $record
-     * @param  array $options
-     *
-     * @return object
+     * @param mixed|null $record  The record data or null.
+     * @param array|null $options Optional settings for instance creation.
+     * @return object The created instance.
      */
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         global $CFG, $USER, $SITE;
         require_once($CFG->libdir . '/resourcelib.php');
         if (!isset($CFG->institution)) {    // To catch the first time.
@@ -87,18 +85,34 @@ class mod_pokcertificate_generator extends testing_module_generator {
     /**
      * create_pok_template
      *
-     * @param  mixed $cm
+     * @param  mixed|null $cm
+     * @param  mixed|null $templateid
      * @return object
      */
-    public function create_pok_template($cm = null) {
+    public function create_pok_template($cm = null, $templateid = null) {
 
-        $templateinfo = new \stdclass;
-        $templateinfo->template = 'Crossed Paths';
-        $templateinfo->templatetype = 0;
-        $tempname = 'Crossed Paths';
-        $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($tempname);
+        $templateinfo = new \stdclass();
 
-        $data = pok::save_template_definition($templateinfo,  $templatedefinition, $cm);
+        if (empty($templateid)) {
+            $templateid = '671150d5-c867-41ce-a687-17e64c8a163b';
+            $templateinfo->template = 'Crossed Paths';
+            $templateinfo->templatetype = 0;
+            $templatedefinition = [
+                "id" => $templateid,
+                "name" => "Crossed Paths",
+                "customParameters" => [],
+            ];
+        } else {
+            $templatedefinition = (new \mod_pokcertificate\api())->get_template_definition($templateid);
+
+            if ($templatedefinition) {
+                $templatedefinition = json_decode($templatedefinition);
+                $templateinfo->template = $templatedefinition->name;
+                $templateinfo->templatetype = 0;
+            }
+        }
+
+        $data = pok::save_template_definition($templateinfo, json_encode($templatedefinition), $cm);
 
         return $data;
     }
@@ -140,6 +154,7 @@ class mod_pokcertificate_generator extends testing_module_generator {
     public function set_pokcertificate_settings() {
         set_config(
             'wallet',
+            // phpcs:ignore PHPCompatibility.Numbers.RemovedHexadecimalNumericStrings.Found
             '0x8cd7c619a1685a1f6e991946af6295ca05210af7',
             'mod_pokcertificate'
         );

@@ -29,12 +29,12 @@
 </div>
 
 {{#js}}
-
-     $(document).ready(function(){
+    /* eslint-env jquery */
+     $(document).ready(function() {
         var pokcertificateloader = $('.pokcertificateloader');
         pokcertificateloader.hide();
      });
-    $(window).on("beforeunload", function(){
+    $(window).on("beforeunload", function() {
         var pokcertificateloader = $('.pokcertificateloader');
         pokcertificateloader.show();
      });

@@ -53,4 +53,3 @@ echo html_writer::tag(
 );
 echo get_string('helpmanualsdata', 'mod_pokcertificate');
 echo $OUTPUT->footer();
-

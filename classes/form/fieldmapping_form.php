@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 use moodleform;
 use mod_pokcertificate\helper;
 use mod_pokcertificate\persistent\pokcertificate;
+use mod_pokcertificate\persistent\pokcertificate_templates;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->libdir . '/filelib.php');
@@ -37,7 +38,6 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
  * form shown while adding activity.
  */
 class fieldmapping_form extends moodleform {
-
     /**
      * Definition method for the form.
      */
@@ -58,6 +58,12 @@ class fieldmapping_form extends moodleform {
         $mandatoryfields = helper::get_mandatoryfield_list($templatename, $pokid);
 
         $pokrecord = pokcertificate::get_record(['id' => $pokid]);
+        $templatedefinition = pokcertificate_templates::get_field(
+            'templatedefinition',
+            ['pokid' => $pokid, 'templatename' => $templatename]
+        );
+        $templatedefinition = json_decode($templatedefinition);
+        $tempid = $templatedefinition->id;
 
         $html =
             '<div class="table-responsive ">
@@ -117,7 +123,6 @@ class fieldmapping_form extends moodleform {
         }
 
         foreach ($remotefields as $key => $value) {
-
             $mform->addElement('html', '<tr class="">
                                             <td class="cell c0 " style=""></td>
                                             <td class="cell c1 fieldmapfields" style="">');
@@ -149,7 +154,7 @@ class fieldmapping_form extends moodleform {
         $mform->addElement('hidden', 'id', $id);
         $mform->setType('id', PARAM_INT);
 
-        $mform->addElement('hidden', 'temp', $templatename);
+        $mform->addElement('hidden', 'temp', $tempid);
         $mform->setType('temp', PARAM_TEXT);
 
         $mform->addElement('hidden', 'type', $templatetype);

@@ -28,9 +28,9 @@ use mod_pokcertificate\persistent\pokcertificate_templates;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class actionbar {
-
     /** @var int $cmid The course module id. */
     protected $cmid;
+    /** @var moodle_url $pageurl The page url.*/
     protected $pageurl;
     /**
      * The class constructor.
@@ -71,7 +71,6 @@ class actionbar {
 
         $menu = [];
         if (has_capability('mod/pokcertificate:manageinstance', $PAGE->context)) {
-
             $previewlink = new \moodle_url('/mod/pokcertificate/preview.php', ['id' => $this->cmid]);
             $menu[$previewlink->out(false)] = get_string('previewcertificate', 'mod_pokcertificate');
 
@@ -80,11 +79,13 @@ class actionbar {
 
             $cm = get_coursemodule_from_id('pokcertificate', $this->cmid, 0, false, MUST_EXIST);
             $templateid = pokcertificate::get_field('templateid', ['id' => $cm->instance, 'course' => $cm->course]);
-            $template = pokcertificate_templates::get_field('templatename', ['id' => $templateid]);
+            $templatedefinition = pokcertificate_templates::get_field('templatedefinition', ['id' => $templateid]);
+            $templatedefinition = json_decode($templatedefinition);
+            $tempid = $templatedefinition->id;
 
             $fieldmappinglink = new \moodle_url(
                 '/mod/pokcertificate/fieldmapping.php',
-                ['id' => $this->cmid, 'temp' => base64_encode($template)]
+                ['id' => $this->cmid, 'temp' => $tempid]
             );
             $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');
 

@@ -30,7 +30,7 @@ require('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
 $id = required_param('id', PARAM_INT); // Course module id.
-$tempname = required_param('temp', PARAM_RAW); // Selected template name.
+$tempid = required_param('temp', PARAM_RAW); // Selected template name.
 $temptype = optional_param('type', 0, PARAM_INT);
 
 if ($id && !$cm = get_coursemodule_from_id('pokcertificate', $id)) {
@@ -39,10 +39,11 @@ if ($id && !$cm = get_coursemodule_from_id('pokcertificate', $id)) {
 
 $pokcertificate = $DB->get_record('pokcertificate', ['id' => $cm->instance], '*', MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$templateid = $pokcertificate->templateid;
 
 require_course_login($course, true, $cm);
 $context = \context_module::instance($cm->id);
-$url = new moodle_url('/mod/pokcertificate/fieldmapping.php', ['id' => $id, 'temp' => $tempname]);
+$url = new moodle_url('/mod/pokcertificate/fieldmapping.php', ['id' => $id, 'temp' => $tempid]);
 require_capability('mod/pokcertificate:manageinstance', $context);
 
 $PAGE->set_url('/mod/pokcertificate/view.php', ['id' => $cm->id]);
@@ -55,25 +56,25 @@ $renderer = $PAGE->get_renderer('mod_pokcertificate');
 $renderer->verify_authentication_check();
 
 // Save selected template definition.
-if (!empty(trim($tempname)) && helper::validate_encoded_data($tempname)) {
-    $templatename = base64_decode($tempname);
-    $templateinfo = new \stdclass;
-    $templateinfo->template = $templatename;
-    $templateinfo->templatetype = $temptype;
-    $templatedefinition = (new \mod_pokcertificate\api)->get_template_definition($templatename);
+if (!empty(trim($tempid))) {
+    $resptemplatedefinition = (new \mod_pokcertificate\api())->get_template_definition($tempid);
 
-    if ($templatedefinition) {
-        $data = pok::save_template_definition($templateinfo, $templatedefinition, $cm);
+    if ($resptemplatedefinition) {
+        $templatedefinition = json_decode($resptemplatedefinition);
+        $templateinfo = new \stdclass();
+        $templateinfo->template = $templatedefinition->name;
+        $templateinfo->templatetype = $temptype;
+
+        $data = pok::save_template_definition($templateinfo, $resptemplatedefinition, $cm);
 
         $pokid = $pokcertificate->id;
-        $templateid = $pokcertificate->templateid;
         $fielddata = helper::get_mapped_fields($pokid);
 
         $mform = new fieldmapping_form(
             $url,
             [
-                'data' => $fielddata, 'id' => $id, 'template' => $tempname, 'type' => $temptype,
-                'templateid' => $templateid, 'pokid' => $pokid,
+                'data' => $fielddata, 'id' => $id, 'template' => $templatedefinition->name, 'type' => $temptype,
+                'templateid' => $tempid, 'pokid' => $pokid,
             ] + (array)$data
         );
 

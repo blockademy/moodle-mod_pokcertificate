@@ -45,7 +45,7 @@ class helper {
      */
     public static function pokcertificate_validate_apikey($key) {
 
-        $location = API_KEYS_ROOT . '/me';
+        $location = API_ROOT . '/organization/me';
         $params = '';
         self::set_pokcertificate_settings();
         $curl = new \curl();
@@ -66,9 +66,9 @@ class helper {
         }
         if ($curl->get_info()['http_code'] == 200) {
             $result = json_decode($result);
-            if (isset($result->org)) {
+            if (isset($result->wallet)) {
                 set_config('pokverified', true, 'mod_pokcertificate');
-                set_config('wallet', $result->org, 'mod_pokcertificate');
+                set_config('wallet', $result->wallet, 'mod_pokcertificate');
                 set_config('authenticationtoken', $key, 'mod_pokcertificate');
                 return true;
             } else {
@@ -108,10 +108,9 @@ class helper {
     public static function get_mapped_fields(int $pokid) {
 
         $fields = pokcertificate_fieldmapping::fieldmapping_records(['pokid' => $pokid], 'id');
-        $data = new \stdClass;
+        $data = new \stdClass();
         $i = 0;
         if (count($fields) > 0) {
-
             foreach ($fields as $field) {
                 if ($i < count($fields)) {
                     $templatefield = 'templatefield_' . $i;
@@ -172,7 +171,7 @@ class helper {
                 ['pokid' => $pokid, 'templatename' => $template]
             );
             $templatedefinition = json_decode($templatedefinition);
-            if ($templatedefinition) {
+            if ($templatedefinition && isset($templatedefinition->params)) {
                 foreach ($templatedefinition->params as $param) {
                     $pos = strpos($param->name, 'custom:');
                     if ($pos !== false) {
@@ -181,6 +180,11 @@ class helper {
                             $templatefields[$var] = $var;
                         }
                     }
+                }
+            }
+            if ($templatedefinition && isset($templatedefinition->customParameters)) {
+                foreach ($templatedefinition->customParameters as $param) {
+                    $templatefields[$param->id] = $param->id;
                 }
             }
         }
@@ -202,13 +206,24 @@ class helper {
                 ['pokid' => $pokid, 'templatename' => $template]
             );
             $templatedefinition = json_decode($templatedefinition);
-            if ($templatedefinition) {
+            if ($templatedefinition && isset($templatedefinition->params)) {
                 foreach ($templatedefinition->params as $param) {
                     $pos = strpos($param->name, ':');
-                    if ($pos === false && in_array($param->name, ['date', 'title', 'institution'/* , 'achiever' */])) {
+                    if ($pos === false && in_array($param->name, ['date', 'title', 'institution'])) {
                         $mandatoryfields[$param->name] = $param->name;
                     }
                 }
+            } else if ($templatedefinition && isset($templatedefinition->parameters)) {
+                foreach ($templatedefinition->customParameters as $param) {
+                    if (in_array($param->id, ['date', 'title', 'institution'])) {
+                        $mandatoryfields[$param->id] = $param->id;
+                    }
+                }
+            } else {
+                // Fallback to always required fields.
+                $mandatoryfields = [
+                    "date" => "date", "title" => "title", "institution" => "institution",
+                ];
             }
         }
         return $mandatoryfields;
@@ -435,6 +450,7 @@ class helper {
      * such as student ID, pagination settings, and offset. It prepares the data for awarding general certificates
      * by selecting relevant user information and formatting it appropriately.
      *
+     * @param string $course The name of the course to retrieve participants from.
      * @param int $courseid The ID of the course to retrieve participants from.
      * @param int $studentid The student ID to search for (optional).
      * @param string $studentname The student name to search for (optional).
@@ -530,13 +546,12 @@ class helper {
 
         $orderbysql = " ORDER BY pc.id DESC ";
 
-        $count = $DB->count_records_sql($countsql  . $fromsql , $queryparam);
+        $count = $DB->count_records_sql($countsql  . $fromsql, $queryparam);
         $records = $DB->get_records_sql($selectsql . $fromsql . $orderbysql, $queryparam, $offset, $perpage);
 
         $list = [];
         $data = [];
         if ($records) {
-
             foreach ($records as $c) {
                 $incomplete = false;
                 $poktemplate = pokcertificate_templates::get_record(['id' => $c->templateid]);
@@ -692,7 +707,8 @@ class helper {
 
             // Finally, check if input string and real Base64 are identical.
             if ($input === $b64) {
-                return true;;
+                return true;
+                ;
             } else {
                 return false;
             }
@@ -705,7 +721,6 @@ class helper {
      * @param array $useractivityids
      * @return array An array containing validation results.
      */
-
     public static function pokcertificate_userslist($useractivityids) {
         $languages = get_string_manager()->get_list_of_languages();
         $list = [];
@@ -740,7 +755,8 @@ class helper {
                 $list['lastname'] = $user->lastname;
                 $list['email'] = $user->email;
                 $list['activityname'] = $pokcertificate->get('name');
-                $list['coursename'] = $course->fullname;;
+                $list['coursename'] = $course->fullname;
+                ;
                 $list['studentid'] = $user->idnumber ? $user->idnumber : '-';
                 $list['language'] = $languages[$user->lang];
                 $list['status'] = ($validuser) ?

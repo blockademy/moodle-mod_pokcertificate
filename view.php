@@ -67,7 +67,6 @@ echo $OUTPUT->render_from_template('mod_pokcertificate/loader', []);
 
 pok::set_cmid($id);
 if ($pok = helper::pokcertificate_preview_by_user($cm, $pokcertificate, $flag)) {
-
     if ($pok['url']) {
         redirect($pok['url']);
     } else if ($pok['student']) {

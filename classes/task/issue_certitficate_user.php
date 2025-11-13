@@ -54,7 +54,6 @@ class issue_certitficate_user extends \core\task\scheduled_task {
 
         $pokcertificates = $this->get_pokcertificates();
         foreach ($pokcertificates as $pokcertificate) {
-
             try {
                 [$course, $cm] = get_course_and_cm_from_instance(
                     $pokcertificate->id,
@@ -70,7 +69,6 @@ class issue_certitficate_user extends \core\task\scheduled_task {
 
                 // Issue the certificate.
                 foreach ($users as $user) {
-
                     $pokissuerec = pokcertificate_issues::get_record([
                         'pokid' => $pokcertificate->id,
                         'userid' => $user->userid,
@@ -78,7 +76,6 @@ class issue_certitficate_user extends \core\task\scheduled_task {
                     if ($pokissuerec) {
                         $issuecertificate = pok::issue_certificate($pokissuerec);
                         if (!empty($issuecertificate)) {
-
                             if ($issuecertificate->emitted && !$issuecertificate->processing) {
                                 if (!empty($issuecertificate->viewUrl)) {
                                     $user->id = $user->userid;

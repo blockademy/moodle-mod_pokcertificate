@@ -33,7 +33,6 @@ require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends \plugin_renderer_base {
-
     /**
      * Display the navigation tabs for the plugin.
      *
@@ -100,9 +99,7 @@ class renderer extends \plugin_renderer_base {
         $recexists = $DB->record_exists('course_modules', ['id' => $id]);
         if (get_config('mod_pokcertificate', 'pokverified')) {
             if ($recexists) {
-
                 if (has_capability('mod/pokcertificate:manageinstance', $context)) {
-
                     $certificatetemplatecontent = pok::get_certificate_templates($id);
                     if ($certificatetemplatecontent) {
                         $output .= $this->render_from_template(
@@ -136,22 +133,24 @@ class renderer extends \plugin_renderer_base {
             $cm = get_coursemodule_from_id('pokcertificate', $cmid, 0, false, MUST_EXIST);
             $pokcertificate = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
             if ($pokcertificate && $pokcertificate->get('templateid')) {
-                $template = pokcertificate_templates::get_field(
-                    'templatename',
-                    ['id' => $pokcertificate->get('templateid')]
-                );
+                $templateid = $pokcertificate->get('templateid');
+                $templatedefrecord = pokcertificate_templates::get_field('templatedefinition', ['id' => $templateid]);
+                $templatedefrecord = json_decode($templatedefrecord);
+                $user = \core_user::get_user($USER->id);
                 $previewdata = [
-                    "name" => fullname($USER),
+                    "firstName" => $user->firstname,
+                    "lastName" => $user->lastname,
                     "title" => $pokcertificate->get('title'),
-                    "date" => round(microtime(true) * 1000),
+                    "date" => round(microtime(true)),
                     "institution" => get_config('mod_pokcertificate', 'institution'),
                 ];
+                $previewdata = pok::get_preview_data($templatedefrecord->id, $user->lang, $previewdata, $templatedefrecord);
                 $previewdata = json_encode($previewdata);
-                $templatepreview = (new \mod_pokcertificate\api)->preview_certificate($template, $previewdata);
+                $templatepreview = (new \mod_pokcertificate\api())->preview_certificate($previewdata);
                 if ($templatepreview) {
-                    $temppreview = trim($templatepreview, '"');
+                    $previewimageurl = json_decode($templatepreview)->url;
                     $output .= \html_writer::start_tag('div', ['class' => 'pokcertificate_img_container']);
-                    $output .= \html_writer::tag('img', '', ['src' => $temppreview, 'alt' => "Snow"]);
+                    $output .= \html_writer::tag('img', '', ['src' => $previewimageurl, 'alt' => "Snow"]);
                     $output .= \html_writer::end_tag('div');
                     $output .= \html_writer::tag('br', '');
                     $output .= \html_writer::tag(
@@ -352,8 +351,8 @@ class renderer extends \plugin_renderer_base {
     public function emit_certificate_templates($cmid, $user) {
         $output  = '';
         $user = \core_user::get_user($user->id);
-        $credits = (new \mod_pokcertificate\api)->get_credits();
-        $credits = json_decode($credits);
+        $orgdetails = (new \mod_pokcertificate\api())->get_organization();
+        $organisation = json_decode($orgdetails);
         $cm = pok::get_cm_instance($cmid);
         $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
 
@@ -363,17 +362,17 @@ class renderer extends \plugin_renderer_base {
         ) {
             $output = self::display_certificate($pokissuerec->get('certificateurl'));
         } else {
-            if (!empty($credits) && isset($credits->pokCredits)) {
-                set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
+            if (!empty($organisation) && isset($organisation->availableCredits)) {
+                set_config('availablecertificate', $organisation->availableCredits, 'mod_pokcertificate');
             }
-            
+
             $pokrecord = pokcertificate::get_record(['id' => $cm->instance, 'course' => $cm->course]);
             $pokid = $pokrecord->get('id');
             $templateid = $pokrecord->get('templateid');
             $templatetype = pokcertificate_templates::get_field('templatetype', ['id' => $templateid, 'pokid' => $pokid]);
-            
-            if ($templatetype == PAID){
-                if (isset($credits->pokCredits) && $credits->pokCredits > 0) {
+
+            if ($templatetype == PAID) {
+                if (isset($organisation->availableCredits) && $organisation->availableCredits > 0) {
                     $output = self::render_emit_certificate($cm, $user, $pokissuerec);
                 } else {
                     $msg = get_string(
@@ -406,7 +405,8 @@ class renderer extends \plugin_renderer_base {
     public function render_emit_certificate($cm, $user, $pokissuerec) {
 
         $output = '';
-        if ((empty($pokissuerec)) ||
+        if (
+            (empty($pokissuerec)) ||
             ($pokissuerec && $pokissuerec->get('useremail') != $user->email)
         ) {
             $emitcertificate = pok::emit_certificate($cm->id, $user);
@@ -419,13 +419,13 @@ class renderer extends \plugin_renderer_base {
             } else if (!empty($pokissuerec->get('pokcertificateid'))) {
                 $issuecertificate = pok::issue_certificate($pokissuerec);
                 if (!empty($issuecertificate)) {
-                    if ($issuecertificate->emitted) {
+                    if ($issuecertificate->state == 'emitted' || $issuecertificate->state == 'processing') {
                         $msg = get_string(
                             'pendingcertificatemsg',
                             'mod_pokcertificate',
                             ['institution' => get_config('mod_pokcertificate', 'institution')]
                         );
-                        if ($issuecertificate->processing || empty($issuecertificate->viewUrl)) {
+                        if ($issuecertificate->state == 'processing' || empty($issuecertificate->viewUrl)) {
                             $output = self::certificate_pending_message($msg, $cm);
                         } else {
                             $issuecertificate->status = true;
@@ -473,7 +473,7 @@ class renderer extends \plugin_renderer_base {
      * @param \moodle_url $pageurl The page url.
      * @return string The HTML for the action bar.
      */
-    public function action_bar(int $id,  \moodle_url $pageurl): string {
+    public function action_bar(int $id, \moodle_url $pageurl): string {
         $actionbar = new actionbar($id, $pageurl);
         $data = $actionbar->export_for_template($this);
         return $this->render_from_template('mod_pokcertificate/actionbar', $data);
@@ -632,7 +632,6 @@ class renderer extends \plugin_renderer_base {
             $certificatestatus,
             $recordperpage,
             $offset,
-
         );
         $records['showdata'] = $records['data'] ? true : false;
         $return['recordlist'] = $this->render_from_template('mod_pokcertificate/awardgeneralcertificates', $records);
@@ -790,11 +789,11 @@ class renderer extends \plugin_renderer_base {
     public function verificationstats() {
         $records = helper::pokcertificate_incompletestudentprofilelist();
         $data['creditscount'] = $records['count'];
-        $credits = (new \mod_pokcertificate\api)->get_credits();
+        $orgdetails = (new \mod_pokcertificate\api())->get_organization();
         $pendingcount = get_string('notavailable');
-        if($credits){
-            $credits = json_decode($credits);
-            $pendingcount = $credits->toSend ?? get_string('notavailable');
+        if ($orgdetails) {
+            $organisation = json_decode($orgdetails);
+            $pendingcount = $organisation->availableCredits ?? get_string('notavailable');
         }
         $data['pendingcount'] = $pendingcount;
         return $this->render_from_template('mod_pokcertificate/verificationstats', $data);

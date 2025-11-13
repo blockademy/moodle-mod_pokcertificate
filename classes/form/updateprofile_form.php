@@ -89,7 +89,10 @@ class updateprofile_form extends moodleform {
             foreach ($pokfieldsarr as $key => $field) {
                 $fieldname = $field;
 
-                if ((!in_array($fieldname, ['id','firstname', 'lastname', 'email']) && strpos($fieldname, 'profile_field_') === false)) {
+                if (
+                    (!in_array($fieldname, ['id', 'firstname', 'lastname', 'email']) &&
+                    strpos($fieldname, 'profile_field_') === false)
+                ) {
                     $purpose = user_edit_map_field_purpose($user->id, $fieldname);
                     $style = '';
                     if (!empty($user->$fieldname)) {
@@ -107,7 +110,6 @@ class updateprofile_form extends moodleform {
                             $mform->setDefault('country', \core_user::get_property_default('country'));
                         }
                     } else {
-
                         $mform->addElement(
                             'text',
                             $fieldname,
@@ -154,7 +156,6 @@ class updateprofile_form extends moodleform {
         }
 
         if ($user = $DB->get_record('user', ['id' => $userid])) {
-
             // Disable fields that are locked by auth plugins.
             $fields = get_user_fieldnames();
             $authplugin = get_auth_plugin($user->auth);

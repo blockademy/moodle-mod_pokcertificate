@@ -34,7 +34,6 @@ require_once("$CFG->dirroot/mod/pokcertificate/lib.php");
  * File browsing support class
  */
 class pokcertificate_content_file_info extends file_info_stored {
-
     /**
      * Get the parent file information.
      *

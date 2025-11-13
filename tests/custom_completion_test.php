@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Class for unit testing mod_pokcertificate/custom_completion.
  *
@@ -39,20 +40,18 @@ require_once($CFG->libdir . '/completionlib.php');
 
 /**
  * Class for unit testing mod_pokcertificate/custom_completion.
- *
  * @package    mod_pokcertificate
  * @category   test
  * @copyright  2024 Moodle India Information Solutions Pvt Ltd
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_completion_test extends advanced_testcase {
-
+final class custom_completion_test extends advanced_testcase {
     /**
      * Data provider for get_state().
      *
      * @return array[]
      */
-    public function get_state_provider(): array {
+    public static function get_state_provider(): array {
         return [
             'Undefined rule' => [
                 'somenonexistentrule', COMPLETION_DISABLED, false, null, coding_exception::class,
@@ -74,13 +73,17 @@ class custom_completion_test extends advanced_testcase {
      *
      * @param string $rule The custom completion rule.
      * @param int $available Whether this rule is available.
-     * @param bool $submitted Whether the user has received pok certificate.
+     * @param bool|null $submitted Whether the user has received pok certificate.
      * @param int|null $status Expected status.
      * @param string|null $exception Expected exception.
+     * @return void
+     * @dataProvider get_state_provider
+     * @covers ::get_state
      */
-
     public function test_get_state(string $rule, int $available, ?bool $submitted, ?int $status, ?string $exception): void {
         global $DB;
+
+        $this->resetAfterTest(true);
 
         if (!is_null($exception)) {
             $this->expectException($exception);
@@ -120,8 +123,9 @@ class custom_completion_test extends advanced_testcase {
 
     /**
      * Test for get_defined_custom_rules().
+     * @covers ::get_defined_custom_rules
      */
-    public function test_get_defined_custom_rules() {
+    public function test_get_defined_custom_rules(): void {
         $rules = custom_completion::get_defined_custom_rules();
         $this->assertCount(1, $rules);
         $this->assertEquals('completionsubmit', reset($rules));
@@ -129,8 +133,9 @@ class custom_completion_test extends advanced_testcase {
 
     /**
      * Test for get_defined_custom_rule_descriptions().
+     * @covers ::get_defined_custom_rule_descriptions
      */
-    public function test_get_custom_rule_descriptions() {
+    public function test_get_custom_rule_descriptions(): void {
         // Get defined custom rules.
         $rules = custom_completion::get_defined_custom_rules();
 
@@ -155,8 +160,9 @@ class custom_completion_test extends advanced_testcase {
 
     /**
      * Test for is_defined().
+     * @covers ::is_defined
      */
-    public function test_is_defined() {
+    public function test_is_defined(): void {
         // Build a mock cm_info instance.
         $mockcminfo = $this->getMockBuilder(cm_info::class)
             ->disableOriginalConstructor()
@@ -176,7 +182,7 @@ class custom_completion_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function get_available_custom_rules_provider(): array {
+    public static function get_available_custom_rules_provider(): array {
         return [
             'Completion submit available' => [
                 COMPLETION_ENABLED, ['completionsubmit'],
@@ -191,10 +197,11 @@ class custom_completion_test extends advanced_testcase {
      * Test for get_available_custom_rules().
      *
      * @dataProvider get_available_custom_rules_provider
+     * @covers ::get_available_custom_rules
      * @param int $status
      * @param array $expected
      */
-    public function test_get_available_custom_rules(int $status, array $expected) {
+    public function test_get_available_custom_rules(int $status, array $expected): void {
         $customdataval = [
             'customcompletionrules' => [
                 'completionsubmit' => $status,
