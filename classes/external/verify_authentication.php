@@ -39,7 +39,6 @@ use mod_pokcertificate\helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class verify_authentication extends \external_api {
-
     /**
      * Get parameters for verifying authentication.
      *
@@ -81,15 +80,15 @@ class verify_authentication extends \external_api {
             $result = helper::pokcertificate_validate_apikey($params['authtoken']);
 
             if ($result) {
-                $orgdetails = (new \mod_pokcertificate\api)->get_organization();
+                $orgdetails = (new \mod_pokcertificate\api())->get_organization();
                 $organisation = json_decode($orgdetails);
                 if (isset($organisation->id) && isset($organisation->name)) {
                     set_config('orgid', $organisation->id, 'mod_pokcertificate');
                     set_config('institution', $organisation->name, 'mod_pokcertificate');
                 }
-                $credits = (new \mod_pokcertificate\api)->get_credits();
+                $credits = (new \mod_pokcertificate\api())->get_credits();
                 $credits = json_decode($credits);
-                $certificatecount = (new \mod_pokcertificate\api)->count_certificates();
+                $certificatecount = (new \mod_pokcertificate\api())->count_certificates();
                 $certificatecount = json_decode($certificatecount);
                 set_config('availablecertificate', $credits->pokCredits, 'mod_pokcertificate');
                 set_config('pendingcertificates', $certificatecount->processingCredentials, 'mod_pokcertificate');

@@ -41,7 +41,6 @@ use mod_pokcertificate\helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class get_pokcertificates_by_courses extends \external_api {
-
     /**
      * Describes the parameters for execute.
      *
@@ -87,8 +86,7 @@ class get_pokcertificates_by_courses extends \external_api {
 
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
-
-            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
+            [$courses, $warnings] = util::validate_courses($params['courseids'], $mycourses);
 
             // Get the pokcertificates in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -97,7 +95,7 @@ class get_pokcertificates_by_courses extends \external_api {
                 $pokdetails = helper_for_get_mods_by_courses::format_name_and_intro($pokcertificate, 'mod_pokcertificate');
                 $context = \context_module::instance($pokcertificate->coursemodule);
                 self::validate_context($context);
-                list($pokcertificate->content, $pokcertificate->contentformat) = \core_external\util::format_text(
+                [$pokcertificate->content, $pokcertificate->contentformat] = \core_external\util::format_text(
                     $pokcertificate->content,
                     $pokcertificate->contentformat,
                     $context,

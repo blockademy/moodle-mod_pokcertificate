@@ -38,7 +38,6 @@ use mod_pokcertificate\helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class view_pokcertificate extends \external_api {
-
     /**
      * Returns description of method parameters
      *
@@ -76,7 +75,7 @@ class view_pokcertificate extends \external_api {
 
         // Request and permission validation.
         $pokcertificate = $DB->get_record('pokcertificate', ['id' => $params['pokcertificateid']], '*', MUST_EXIST);
-        list($course, $cm) = get_course_and_cm_from_instance($pokcertificate, 'pokcertificate');
+        [$course, $cm] = get_course_and_cm_from_instance($pokcertificate, 'pokcertificate');
 
         $context = \context_module::instance($cm->id);
         self::validate_context($context);

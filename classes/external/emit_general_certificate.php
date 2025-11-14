@@ -39,7 +39,6 @@ use mod_pokcertificate\helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class emit_general_certificate extends \external_api {
-
     /**
      * Get parameters for emitting general certificate templates to selected users.
      *
@@ -81,7 +80,6 @@ class emit_general_certificate extends \external_api {
         }
         self::validate_context($context);
         if (has_capability('mod/pokcertificate:awardcertificate', $context)) {
-
             $useridsarr = explode(",", $userinputs);
             if ($useridsarr) {
                 foreach ($useridsarr as $userrec) {
