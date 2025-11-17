@@ -17,7 +17,6 @@
 namespace mod_pokcertificate\external;
 
 use core_course\external\helper_for_get_mods_by_courses;
-
 use external_api;
 use external_files;
 use external_format_value;
