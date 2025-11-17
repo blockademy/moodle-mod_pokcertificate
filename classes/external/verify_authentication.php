@@ -16,9 +16,6 @@
 
 namespace mod_pokcertificate\external;
 
-global $CFG;
-require_once("{$CFG->libdir}/externallib.php");
-
 use external_api;
 use external_files;
 use external_format_value;
