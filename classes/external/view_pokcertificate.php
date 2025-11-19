@@ -16,6 +16,10 @@
 
 namespace mod_pokcertificate\external;
 
+// phpcs:ignoreFile moodle.Files.MoodleInternal.MoodleInternalGlobalState
+global $CFG;
+require_once("{$CFG->libdir}/externallib.php");
+
 use external_files;
 use external_format_value;
 use external_function_parameters;
