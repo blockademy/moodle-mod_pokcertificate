@@ -85,7 +85,7 @@ class actionbar {
 
             $fieldmappinglink = new \moodle_url(
                 '/mod/pokcertificate/fieldmapping.php',
-                ['id' => $this->cmid, 'temp' => $tempid]
+                ['id' => $this->cmid, 'tempid' => $tempid]
             );
             $menu[$fieldmappinglink->out(false)] = get_string('fieldmapping', 'mod_pokcertificate');
 
