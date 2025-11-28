@@ -184,7 +184,7 @@ class helper {
             }
             if ($templatedefinition && isset($templatedefinition->customParameters)) {
                 foreach ($templatedefinition->customParameters as $param) {
-                    $templatefields[$param->id] = $param->id;
+                    $templatefields[$param->id] = $param->label;
                 }
             }
         }
