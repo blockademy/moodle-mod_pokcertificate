@@ -30,7 +30,7 @@ require('../../config.php');
 require_once($CFG->dirroot . '/mod/pokcertificate/lib.php');
 
 $id = required_param('id', PARAM_INT); // Course module id.
-$tempid = required_param('temp', PARAM_RAW); // Selected template name.
+$tempid = required_param('tempid', PARAM_RAW); // Selected template ID.
 $temptype = optional_param('type', 0, PARAM_INT);
 
 if ($id && !$cm = get_coursemodule_from_id('pokcertificate', $id)) {
@@ -73,7 +73,7 @@ if (!empty(trim($tempid))) {
         $mform = new fieldmapping_form(
             $url,
             [
-                'data' => $fielddata, 'id' => $id, 'template' => $templatedefinition->name, 'type' => $temptype,
+                'data' => $fielddata, 'id' => $id, 'template' => base64_encode($templatedefinition->name), 'type' => $temptype,
                 'templateid' => $tempid, 'pokid' => $pokid,
             ] + (array)$data
         );
