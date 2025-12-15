@@ -385,7 +385,7 @@ class pok {
         $customparams = [];
         if ($templatedefinition && $templatedefinition->customParameters) {
             foreach ($templatedefinition->customParameters as $param) {
-                $customparams[$param->id] = '';
+                $customparams[$param->id] = $param->label;
             }
         }
 
