@@ -76,7 +76,7 @@ class issue_certitficate_user extends \core\task\scheduled_task {
                     if ($pokissuerec) {
                         $issuecertificate = pok::issue_certificate($pokissuerec);
                         if (!empty($issuecertificate)) {
-                            if ($issuecertificate->emitted && !$issuecertificate->processing) {
+                            if ($issuecertificate->state === 'emitted') {
                                 if (!empty($issuecertificate->viewUrl)) {
                                     $user->id = $user->userid;
                                     $user->email = $user->useremail;
