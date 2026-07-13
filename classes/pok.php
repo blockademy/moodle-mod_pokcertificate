@@ -760,16 +760,22 @@ class pok {
     }
 
     /**
-     * Verifies whether user has mapped field data if template has custom fields and if valid
-     * checking
+     * Queues automatic emission of the credential when the user is eligible.
+     *
+     * This runs from {@see mod_pokcertificate_cm_info_dynamic()}, which Moodle invokes
+     * lazily while building the course navigation/header (i.e. after output has started).
+     * It must therefore never perform the emission itself: the emission does an external
+     * API call plus a DB write, and doing that here previously broke course rendering
+     * ("Cannot call moodle_page::add_body_class after output has been started") and
+     * re-notified the user on every page reload. Instead we schedule an adhoc task that
+     * performs the emission off the render path. Queueing is idempotent (deduped), so
+     * repeated course-page loads do not enqueue duplicate work.
      *
      * @param  mixed $cm
      * @param  mixed $user
-     * @return void
+     * @return string always empty; emission now happens asynchronously.
      */
     public static function auto_emit_certificate($cm, $user) {
-
-        $link = '';
 
         $pokissuerec = pokcertificate_issues::get_record(['pokid' => $cm->instance, 'userid' => $user->id]);
         if (
@@ -778,19 +784,27 @@ class pok {
         ) {
             $validuser = helper::check_usermapped_fielddata($cm, $user);
             if ($validuser) {
-                $emitcertificate = self::emit_certificate($cm->id, $user);
-                if ($emitcertificate) {
-                    $link = \html_writer::tag(
-                        'p',
-                        get_string('certificateissuemsg', 'mod_pokcertificate') . $user->email,
-                        [
-                            'class' => 'success-complheading',
-                            'style' => 'font-size: .875em; color: #495057;',
-                        ]
-                    );
-                }
+                self::queue_emit_certificate($cm->id, $user->id);
             }
         }
-        return $link;
+        return '';
+    }
+
+    /**
+     * Queue an adhoc task to emit a credential for a user, out of the page render cycle.
+     *
+     * Uses {@see \core\task\manager::queue_adhoc_task()} with the "check for existing"
+     * flag so that identical pending tasks (same course module + user) are not queued
+     * more than once when a course page is reloaded repeatedly.
+     *
+     * @param  int $cmid course module id
+     * @param  int $userid user id
+     * @return void
+     */
+    public static function queue_emit_certificate($cmid, $userid) {
+        $task = new \mod_pokcertificate\task\emit_certificate_user();
+        $task->set_custom_data(['cmid' => $cmid, 'userid' => $userid]);
+        $task->set_userid($userid);
+        \core\task\manager::queue_adhoc_task($task, true);
     }
 }
