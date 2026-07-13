@@ -122,6 +122,7 @@ $string['done'] = 'Done';
 $string['duplicatefieldname'] = 'Duplicate field name \'{$a}\' detected.';
 $string['email'] = 'Email';
 $string['email_help'] = 'Email which will be displayed on certificate.';
+$string['emitcertificatetask'] = 'Emit POK Certificate to user task';
 $string['empfile_syncstatus'] = 'Student file sync status';
 $string['enrolldate'] = 'Enroll Date';
 $string['errorscount_msg'] = 'Total {$a} errors occured in the bulk upload.';
