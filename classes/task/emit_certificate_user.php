@@ -41,7 +41,6 @@ use mod_pokcertificate\pok;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class emit_certificate_user extends \core\task\adhoc_task {
-
     /**
      * Get a descriptive name for this task (used in admin task logs).
      *
