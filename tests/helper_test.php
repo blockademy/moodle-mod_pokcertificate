@@ -39,8 +39,16 @@ final class helper_test extends \advanced_testcase {
         $this->resetAfterTest();
         // Turn off debugging.
         set_debugging(DEBUG_NONE);
+
+        // Mock the POK API /organization/me response so this test does not depend on a
+        // reachable external service. A body containing a "wallet" is what the helper
+        // treats as a successfully validated key.
+        \curl::mock_response(json_encode(['wallet' => '0xtestwallet', 'name' => 'Test Org']));
+
         $valid = helper::pokcertificate_validate_apikey('43ea6742-28d8-48ff-b9de-fd3458fb4dac');
         $this->assertTrue($valid);
+        $this->assertNotEmpty(get_config('mod_pokcertificate', 'pokverified'));
+        $this->assertEquals('0xtestwallet', get_config('mod_pokcertificate', 'wallet'));
     }
 
     /**

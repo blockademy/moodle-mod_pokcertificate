@@ -45,9 +45,21 @@ final class api_test extends \advanced_testcase {
         // Turn off debugging.
         set_debugging(DEBUG_DEVELOPER, true);
 
+        // This is an end-to-end integration test that talks to the live POK API (it
+        // validates a key, reads the organisation and template catalogue, and emits a
+        // real credential). It only runs when a real API key is supplied through the
+        // POK_TEST_APIKEY environment variable, so continuous integration does not
+        // depend on a reachable external service or a valid long-lived key.
+        $apikey = getenv('POK_TEST_APIKEY');
+        if (empty($apikey)) {
+            $this->markTestSkipped(
+                'Set the POK_TEST_APIKEY environment variable to run the live POK API integration test.'
+            );
+        }
+
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_pokcertificate');
 
-        $result = helper::pokcertificate_validate_apikey('43ea6742-28d8-48ff-b9de-fd3458fb4dac');
+        $result = helper::pokcertificate_validate_apikey($apikey);
         $this->assertTrue($result);
         $this->assertNotEmpty(get_config('mod_pokcertificate', 'pokverified'));
         $this->assertNotEmpty(get_config('mod_pokcertificate', 'wallet'));
